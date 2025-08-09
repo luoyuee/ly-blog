@@ -7,14 +7,37 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "cleanup": "npx nuxi cleanup",
+    "postinstall": "nuxt prepare",
+    "prisma-migrate-dev": "npx prisma migrate dev",
+    "prisma-generate": "npx prisma generate"
   },
   "dependencies": {
     "@nuxt/eslint": "1.8.0",
     "@nuxt/icon": "1.15.0",
+    "@prisma/client": "^6.13.0",
+    "axios": "^1.11.0",
     "eslint": "^9.0.0",
+    "lodash-es": "^4.17.21",
+    "mitt": "^3.0.1",
+    "numeral": "^2.0.6",
     "nuxt": "^4.0.1",
+    "sharp": "^0.34.3",
+    "typed.js": "^2.1.0",
+    "ua-parser-js": "^2.0.4",
     "vue": "^3.5.18",
-    "vue-router": "^4.5.1"
+    "vue-router": "^4.5.1",
+    "winston": "^3.17.0",
+    "winston-daily-rotate-file": "^5.0.0",
+    "zod": "^4.0.16"
+  },
+  "devDependencies": {
+    "@iconify/json": "^2.2.367",
+    "@nuxtjs/i18n": "^10.0.4",
+    "@types/lodash-es": "^4.17.12",
+    "@types/numeral": "^2.0.5",
+    "prisma": "^6.13.0",
+    "sass": "^1.90.0",
+    "sass-loader": "^16.0.5"
   }
 }

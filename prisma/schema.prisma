@@ -1,0 +1,351 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Config {
+  id         Int       @id @default(autoincrement())
+  created_at DateTime? @default(now())
+  created_by Int?
+  updated_at DateTime?
+  updated_by Int?
+  name       String    @unique
+  data       Json
+
+  @@index([name])
+  @@map("config")
+}
+
+model HitokotoType {
+  id          Int       @id @default(autoincrement())
+  created_at  DateTime? @default(now())
+  created_by  Int?
+  updated_at  DateTime?
+  updated_by  Int?
+  name        String    @unique
+  description String?
+
+  hitokotos Hitokoto[]
+
+  @@map("hitokoto_type")
+}
+
+model Hitokoto {
+  id         Int       @id @default(autoincrement())
+  created_at DateTime? @default(now())
+  created_by Int?
+  updated_at DateTime?
+  updated_by Int?
+  type       Int?
+  source     String?
+  author     String?
+  content    String
+  length     Int
+
+  HitokotoType HitokotoType? @relation(fields: [type], references: [id])
+
+  @@index([length, type])
+  @@index([type])
+  @@map("hitokoto")
+}
+
+model ArticleCategory {
+  id          Int       @id @default(autoincrement())
+  created_at  DateTime? @default(now())
+  created_by  Int?
+  updated_at  DateTime?
+  updated_by  Int?
+  parent_id   Int?
+  icon        String?
+  name        String
+  description String?
+  status      Int       @default(1) // 0:已删除，1:正常状态
+
+  articles Article[]
+
+  @@map("article_category")
+}
+
+model Article {
+  id                 Int       @id @default(autoincrement())
+  created_at         DateTime? @default(now())
+  created_by         Int?
+  updated_at         DateTime?
+  updated_by         Int?
+  note_id            Int
+  note_version       Int
+  extension          String
+  published_at       DateTime
+  category_id        Int
+  title              String
+  abstract           String
+  content            String
+  chars              Int
+  tags               Json?
+  author             String
+  cover              Json?
+  pin_priority       Int       @default(0) // 优先级（默认不置顶）
+  password           String?
+  allow_comments     Boolean   @default(true)
+  allow_rewards      Boolean   @default(false)
+  custom_path        String?   @unique
+  is_custom_url_only Boolean   @default(false)
+  toc                Json?
+  view_count         Int       @default(0)
+  like_count         Int       @default(0)
+  comment_count      Int       @default(0)
+  status             Int       @default(1) // 0:已删除，1:正常状态, 2:锁定状态（不展示）
+
+  ArticleCategory ArticleCategory? @relation(fields: [category_id], references: [id])
+  Note            Note?            @relation(fields: [note_id], references: [id])
+
+  articleComments ArticleComment[]
+
+  @@map("article")
+}
+
+model ArticleComment {
+  id             Int       @id @default(autoincrement())
+  created_at     DateTime? @default(now())
+  created_by     Int?
+  updated_at     DateTime?
+  updated_by     Int?
+  article_id     Int
+  email          String
+  website        String?
+  avatar         String?
+  nickname       String
+  content        String
+  parent_id      Int?
+  reply_id       Int?
+  reply_nickname String?
+  ip             String?
+  location       String?
+  platform       String?
+  browser        String?
+  role           Int       @default(2) // 0:超级管理员 1:普通用户 2:游客
+  status         Int       @default(1) // 0:已删除，1:正常状态
+
+  Article Article? @relation(fields: [article_id], references: [id])
+
+  @@map("article_comment")
+}
+
+model NoteFolder {
+  id         Int       @id @default(autoincrement())
+  created_at DateTime? @default(now())
+  created_by Int?
+  updated_at DateTime?
+  updated_by Int?
+  parent_id  Int?
+  name       String
+  status     Int       @default(1) // 0:已删除，1:正常状态
+  locked     Boolean   @default(false) // 锁定状态（默认未锁定）
+  locked_at  DateTime? // 锁定时间
+  locked_by  Int? // 锁定操作者ID
+
+  notes Note[]
+
+  @@map("note_folder")
+}
+
+model Note {
+  id         Int       @id @default(autoincrement())
+  created_at DateTime? @default(now())
+  created_by Int?
+  updated_at DateTime?
+  updated_by Int?
+  folder_id  Int?
+  name       String
+  extension  String
+  version    Int       @default(1)
+  content    String
+  chars      Int
+  metadata   Json? // 通用元数据存储
+  status     Int       @default(1) // 0:已删除，1:正常状态
+  locked     Boolean   @default(false) // 文件锁定状态
+  locked_at  DateTime? // 锁定时间
+  locked_by  Int? // 锁定操作者ID
+
+  NoteFolder NoteFolder? @relation(fields: [folder_id], references: [id])
+
+  versions NoteVersion[]
+  Article  Article[]
+
+  @@map("note")
+}
+
+model NoteVersion {
+  id         Int       @id @default(autoincrement())
+  created_at DateTime? @default(now())
+  created_by Int?
+  updated_at DateTime?
+  updated_by Int?
+  note_id    Int
+  folder_id  Int?
+  name       String
+  extension  String
+  version    Int
+  content    String
+  chars      Int
+  metadata   Json? // 通用元数据存储
+  status     Int       @default(1) // 0:已删除，1:正常状态
+
+  Note Note? @relation(fields: [note_id], references: [id])
+
+  @@map("note_version")
+}
+
+model ImageFolder {
+  id          Int       @id @default(autoincrement())
+  created_at  DateTime? @default(now())
+  created_by  Int?
+  updated_at  DateTime?
+  updated_by  Int?
+  name        String
+  description String?
+  cover       String?
+  count       Int       @default(0)
+  size        Int       @default(0)
+  is_system   Boolean   @default(false)
+  status      Int       @default(1) // 0:已删除，1:正常状态
+
+  images Image[]
+
+  @@map("image_folder")
+}
+
+model Image {
+  id         Int       @id @default(autoincrement())
+  created_at DateTime? @default(now())
+  created_by Int?
+  updated_at DateTime?
+  updated_by Int?
+  folder_id  Int
+  tags       Json?
+  width      Int
+  height     Int
+  size       Int
+  format     String
+  preview    String?
+  hash       String
+  status     Int       @default(1) // 0:已删除，1:正常状态
+
+  ImageFolder ImageFolder? @relation(fields: [folder_id], references: [id])
+
+  @@index([folder_id, hash])
+  @@map("image")
+}
+
+model File {
+  id             Int       @id @default(autoincrement())
+  created_at     DateTime? @default(now())
+  created_by     Int?
+  updated_at     DateTime?
+  updated_by     Int?
+  hash           String    @unique
+  original_name  String?
+  ext            String
+  mime_type      String?
+  size           Int
+  download_count Int       @default(0)
+  password       String?
+  metadata       Json? // 通用元数据存储
+  status         Int       @default(1) // 0:已删除，1:正常状态
+
+  @@index([hash])
+  @@map("file")
+}
+
+model User {
+  id            Int       @id @default(autoincrement())
+  created_at    DateTime? @default(now())
+  created_by    Int?
+  updated_at    DateTime?
+  updated_by    Int?
+  username      String    @unique
+  password      String
+  avatar        String?
+  email         String    @unique
+  role          Int       @default(1) // 0:超级管理员 1:普通用户 2:游客
+  last_login_at DateTime?
+  last_login_ip String?
+  status        Int       @default(1) // 0:已删除，1:正常状态
+
+  @@index([username, email])
+  @@map("user")
+}
+
+model MessageBoard {
+  id             Int       @id @default(autoincrement())
+  created_at     DateTime? @default(now())
+  created_by     Int?
+  updated_at     DateTime?
+  updated_by     Int?
+  email          String
+  website        String?
+  avatar         String?
+  nickname       String
+  content        String
+  parent_id      Int?
+  reply_id       Int?
+  reply_nickname String?
+  ip             String?
+  location       String?
+  platform       String?
+  browser        String?
+  role           Int       @default(2) // 0:超级管理员 1:普通用户 2:游客
+  status         Int       @default(1) // 0:已删除，1:正常状态
+
+  @@map("message_board")
+}
+
+model FleetingThought {
+  id         Int       @id @default(autoincrement())
+  created_at DateTime? @default(now())
+  created_by Int?
+  updated_at DateTime?
+  updated_by Int?
+  content    String
+  is_public  Boolean   @default(true)
+  ip         String?
+  location   String?
+  platform   String?
+  browser    String?
+  status     Int       @default(1) // 0:已删除，1:正常状态
+
+  @@map("fleeting_thought")
+}
+
+model SystemRuntimeData {
+  id         Int       @id @default(autoincrement())
+  created_at DateTime? @default(now())
+  created_by Int?
+  updated_at DateTime?
+  updated_by Int?
+  name       String    @unique
+  data       Json?
+
+  @@index([name])
+  @@map("system_runtime_data")
+}
+
+model RequestStats {
+  id         Int       @id @default(autoincrement())
+  created_at DateTime? @default(now())
+  created_by Int?
+  updated_at DateTime?
+  updated_by Int?
+  time       DateTime  @unique
+  data       Json
+
+  @@index([time])
+  @@map("request_stats")
+}

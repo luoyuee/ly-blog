@@ -1,0 +1,102 @@
+{
+  "message": {
+    "create": {
+      "success": "创建成功",
+      "error": "创建失败"
+    },
+    "read": {
+      "success": "获取成功",
+      "error": "获取失败"
+    },
+    "update": {
+      "success": "更新成功",
+      "error": "更新失败"
+    },
+    "delete": {
+      "success": "删除成功",
+      "error": "删除失败"
+    }
+  },
+  "common": {
+    "cancel": "取消",
+    "save": "保存"
+  },
+  "placeholder": {
+    "hyphen": "--",
+    "underline": "__"
+  },
+  "format": {
+    "date": "YYYY-MM-DD",
+    "datetime": "YYYY-MM-DD HH:mm:ss"
+  },
+  "dateFormat": "YYYY-MM-DD HH:mm:ss",
+  "login_page": {
+    "login_box_title": "LY Blog",
+    "username": {
+      "placeholder": "用户名或邮箱"
+    },
+    "password": {
+      "placeholder": "密码"
+    },
+    "login_btn_text": "管理员登录",
+    "remember": "记住我",
+    "back_home": "返回首页"
+  },
+  "editor": {
+    "folder": {
+      "title": {
+        "1": "新建文件夹",
+        "2": "重命名文件夹"
+      },
+      "parent": {
+        "label": "父目录"
+      },
+      "name": {
+        "label": "文件名",
+        "placeholder": "请输入文件名"
+      }
+    }
+  },
+  "delete": "删除",
+  "confirm": "确认",
+  "components": {
+    "lifeCountdownCard": {
+      "title": "人生倒计时",
+      "today": {
+        "before": "今日已经过去",
+        "after": "小时"
+      },
+      "week": {
+        "before": "这周已经过去",
+        "after": "天"
+      },
+      "month": {
+        "before": "本月已经过去",
+        "after": "天"
+      },
+      "year": {
+        "before": "今年已经过去",
+        "after": "月"
+      }
+    },
+    "noticeCard": {
+      "title": "网站公告"
+    },
+    "tagCard": {
+      "title": "标签云"
+    },
+    "settingCard": {
+      "storage": {
+        "title": "存储设置",
+        "form": {
+          "typeLabel": "存储类型",
+          "typeRequired": "请选择存储类型",
+          "typeDescription": "文件存储的类型，可选本地目录或对象存储",
+          "typePlaceholder": "请选择存储类型",
+          "basePathRequired": "请输入存储桶基础路径",
+          "endPointRequired": "请输入对象存储服务端点"
+        }
+      }
+    }
+  }
+}
