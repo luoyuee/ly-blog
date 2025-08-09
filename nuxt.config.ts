@@ -2,7 +2,13 @@
 export default defineNuxtConfig({
   compatibilityDate: "2025-07-15",
   devtools: { enabled: true },
-  modules: ["@nuxt/eslint", "@nuxt/icon", "@nuxtjs/i18n"],
+  modules: [
+    "@nuxt/eslint",
+    "@nuxt/icon",
+    "@nuxtjs/i18n",
+    "@pinia/nuxt",
+    "@element-plus/nuxt",
+  ],
   i18n: {
     vueI18n: "./app/i18n.config.ts",
   },
@@ -21,4 +27,5 @@ export default defineNuxtConfig({
       },
     ],
   },
+  elementPlus: {},
 });
