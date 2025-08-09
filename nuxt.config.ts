@@ -6,4 +6,19 @@ export default defineNuxtConfig({
   i18n: {
     vueI18n: "./app/i18n.config.ts",
   },
+  icon: {
+    serverBundle: {
+      collections: ["ep", "lucide"],
+    },
+    customCollections: [
+      {
+        prefix: "custom",
+        dir: "./app/assets/icons",
+      },
+      {
+        prefix: "custom-color",
+        dir: "./app/assets/color-icons",
+      },
+    ],
+  },
 });
