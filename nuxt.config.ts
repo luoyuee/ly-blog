@@ -2,15 +2,22 @@
 export default defineNuxtConfig({
   compatibilityDate: "2025-07-15",
   devtools: { enabled: true },
+  css: [
+    "@/styles/reset.css",
+    "@/styles/index.css",
+    "@/styles/github-markdown.css",
+  ],
   modules: [
     "@nuxt/eslint",
     "@nuxt/icon",
     "@nuxtjs/i18n",
     "@pinia/nuxt",
     "@element-plus/nuxt",
+    "@unocss/nuxt",
   ],
   i18n: {
-    vueI18n: "./app/i18n.config.ts",
+    defaultLocale: "zh-CN",
+    locales: [{ code: "zh-CN", name: "简体中文", file: "zh-CN.json" }],
   },
   icon: {
     serverBundle: {

@@ -1,4 +1,4 @@
-import type { ArticleItem, GetListRequest, GetListResponse } from "@/types";
+import type { ArticleItem, GetListRequest, GetListResponse } from "#shared/types";
 
 export interface GetFolderTreeRequest {
   "include-file": boolean;

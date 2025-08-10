@@ -20,13 +20,13 @@ const formRules: FormRules<typeof formData> = {
   password: [{ required: true, message: "请输入密码" }],
 };
 
-await useFetch<{ admin: boolean }>("/api/user/has-admin/", {
-  method: "get",
-}).then((response) => {
-  if (response.data.value && !response.data.value.admin) {
-    navigateTo("/admin/register");
-  }
-});
+const { data: hasAdminResp } = await useFetch<{ admin: boolean }>(
+  "/api/user/has-admin/",
+  { method: "get" }
+);
+if (hasAdminResp?.value && !hasAdminResp.value.admin) {
+  await navigateTo("/admin/register");
+}
 
 const handleSubmit = async (): Promise<void> => {
   try {
