@@ -14,7 +14,6 @@
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.2",
-    "@nuxt/eslint": "1.8.0",
     "@nuxt/icon": "1.15.0",
     "@pinia/nuxt": "^0.11.2",
     "@prisma/client": "^6.13.0",
@@ -22,7 +21,6 @@
     "crypto-js": "^4.2.0",
     "czdb": "^0.4.0",
     "dayjs": "^1.11.13",
-    "eslint": "^9.0.0",
     "file-type": "^21.0.0",
     "jose": "^6.0.12",
     "lenis": "^1.3.8",
@@ -47,6 +45,7 @@
   "devDependencies": {
     "@element-plus/nuxt": "^1.1.4",
     "@iconify/json": "^2.2.367",
+    "@nuxt/eslint": "1.8.0",
     "@nuxtjs/i18n": "^10.0.4",
     "@types/crypto-js": "^4.2.2",
     "@types/lodash-es": "^4.17.12",
@@ -54,9 +53,11 @@
     "@types/numeral": "^2.0.5",
     "@unocss/nuxt": "^66.4.2",
     "element-plus": "^2.10.6",
+    "eslint": "^9.0.0",
     "prisma": "^6.13.0",
     "sass": "^1.90.0",
     "sass-loader": "^16.0.5",
+    "typescript": "^5.9.2",
     "unocss": "^66.4.2"
   }
 }
