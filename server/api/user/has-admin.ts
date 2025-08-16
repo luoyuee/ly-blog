@@ -10,6 +10,8 @@ export default defineEventHandler(async (event) => {
     },
   });
 
+  console.log(user)
+
   if (user) {
     return getOKResponse(event, { has_admin: true });
   } else {

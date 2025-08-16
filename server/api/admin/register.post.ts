@@ -32,7 +32,7 @@ const handleUserAvatar = async (file: File): Promise<string> => {
   }
 
   let transformer = sharp(rawBuffer);
-  let format: UserAvatarFormat = "webp";
+  const format: UserAvatarFormat = "webp";
 
   switch (fileType.ext as string) {
     case "png":

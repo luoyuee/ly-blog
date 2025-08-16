@@ -2,11 +2,7 @@
 export default defineNuxtConfig({
   compatibilityDate: "2025-07-15",
   devtools: { enabled: true },
-  css: [
-    "@/styles/reset.css",
-    "@/styles/index.css",
-    "@/styles/github-markdown.css",
-  ],
+  css: ["@/styles/index.css", "@/styles/github-markdown.css"],
   modules: [
     "@nuxt/eslint",
     "@nuxt/icon",
@@ -14,6 +10,7 @@ export default defineNuxtConfig({
     "@pinia/nuxt",
     "@element-plus/nuxt",
     "@unocss/nuxt",
+    "@nuxtjs/color-mode",
   ],
   i18n: {
     defaultLocale: "zh-CN",
@@ -35,4 +32,14 @@ export default defineNuxtConfig({
     ],
   },
   elementPlus: {},
+  app: {
+    head: {
+      script: [
+        // TODO: 暂时使用外链
+        { src: "//at.alicdn.com/t/c/font_4522837_24pab06z3yu.js" }, //彩色图标
+        { src: "//at.alicdn.com/t/c/font_4346236_exivd4en94v.js" },
+      ],
+      link: [{ rel: "icon", type: "image/svg+xml", href: "ly.svg" }],
+    },
+  },
 });

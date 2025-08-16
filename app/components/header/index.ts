@@ -1,3 +1,5 @@
 import Header from "./src/Header.vue";
+import AdminHeader from "./src/AdminHeader.vue";
 
-export { Header };
+export default Header;
+export { AdminHeader };

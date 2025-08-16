@@ -1,6 +1,8 @@
 <script setup lang="ts">
+import type { IconFontType } from "@/components/icon-font";
 import { useAppStore, useConfigStore } from "@/stores";
 import { useDebounceFn } from "@vueuse/core";
+import IconFont from "@/components/icon-font";
 
 const configStore = useConfigStore();
 const appStore = useAppStore();
@@ -104,216 +106,219 @@ const handleActive = (e: Event) => {
 };
 
 const { data: categories } = useFetch<
-  { id: number; icon: string; name: string }[]
+  { id: number; icon: IconFontType; name: string }[]
 >("/api/article/category/root", {
   method: "get",
 });
 </script>
 <template>
-  <USlideover v-model:open="visible" side="left">
-    <template #content>
-      <div class="header-drawer">
-        <img class="author-bg" src="/images/author_bg.jpg" alt="author_bg" />
-        <div class="user">
-          <img
-            class="avatar"
-            :src="configStore.author_card.avatar ?? '/images/avatar.webp'"
-            alt="avatar"
-          />
-          <a class="name" :href="configStore.author_card.name_link ?? '/'">
-            {{ configStore.author_card.name }}
-          </a>
-          <p class="motto" v-if="configStore.author_card.motto">
-            {{ configStore.author_card.motto }}
-          </p>
+  <el-drawer
+    :model-value="visible"
+    direction="ltr"
+    @close="handleClose"
+    modal-class="header-drawer"
+    :show-close="false"
+    :with-header="false"
+    size="80%"
+  >
+    <img class="author-bg" src="/images/author_bg.jpg" alt="author_bg" />
+    <div class="user">
+      <img
+        class="avatar"
+        :src="configStore.author_card.avatar ?? '/images/avatar.webp'"
+        alt="avatar"
+      />
+      <a class="name" :href="configStore.author_card.name_link ?? '/'">
+        {{ configStore.author_card.name }}
+      </a>
+      <p class="motto" v-if="configStore.author_card.motto">
+        {{ configStore.author_card.motto }}
+      </p>
+    </div>
+    <ul class="nav-menu">
+      <li class="nav-menu-item">
+        <a href="/">
+          <span>
+            <IconFont icon="icon-color-shouye" :size="16" />
+            首页
+          </span>
+        </a>
+      </li>
+      <li class="nav-menu-item" @click="handleActive">
+        <div class="sub-nav-menu-title">
+          <span>
+            <IconFont icon="icon-color-wenjianjia" :size="16" />
+            文档目录
+          </span>
+          <IconFont icon="icon-down" class="nav-menu-arrow" />
         </div>
-        <ul class="nav-menu">
-          <li class="nav-menu-item">
-            <a href="/">
+        <ul class="sub-nav-menu" @click.stop>
+          <li class="nav-menu-item" v-for="item in categories">
+            <a class="item" :href="`/category/${item.id}`">
               <span>
-                <UIcon name="custom-color:home" :size="16" />
-                首页
+                <IconFont
+                  :icon="item.icon ?? 'icon-color-wenjianjia'"
+                  :size="16"
+                />
+                {{ item.name }}
               </span>
             </a>
           </li>
-          <li class="nav-menu-item" @click="handleActive">
-            <div class="sub-nav-menu-title">
-              <span>
-                <UIcon name="custom-color:folder" :size="16" />
-                文档目录
-              </span>
-              <UIcon name="custom:down" class="nav-menu-arrow" />
-            </div>
-            <ul class="sub-nav-menu" @click.stop>
-              <li class="nav-menu-item" v-for="item in categories">
-                <a class="item" :href="`/category/${item.id}`">
-                  <span>
-                    <UIcon
-                      :name="item.icon ?? 'custom-color:folder'"
-                      :size="16"
-                    />
-                    {{ item.name }}
-                  </span>
-                </a>
-              </li>
-            </ul>
-          </li>
-          <li class="nav-menu-item">
-            <a href="/sn">
-              <span>
-                <UIcon name="custom-color:note" :size="16" />
-                闪念笔记
-              </span>
-            </a>
-          </li>
-          <li class="nav-menu-item">
-            <a href="/message">
-              <span>
-                <UIcon name="custom-color:message" :size="16" />
-                留言板
-              </span>
-            </a>
-          </li>
-          <template v-for="item in configStore.nav_menu" :key="item.id">
+        </ul>
+      </li>
+      <li class="nav-menu-item">
+        <a href="/sn">
+          <span>
+            <IconFont icon="icon-color-zhihangshu" :size="16" />
+            闪念笔记
+          </span>
+        </a>
+      </li>
+      <li class="nav-menu-item">
+        <a href="/message">
+          <span>
+            <IconFont icon="icon-color-xiaoxi" :size="16" />
+            留言板
+          </span>
+        </a>
+      </li>
+      <template v-for="item in configStore.nav_menu" :key="item.id">
+        <li
+          v-if="item.children && item.children.length > 0 && item.show"
+          class="nav-menu-item"
+          @click="handleActive"
+        >
+          <div class="sub-nav-menu-title">
+            <span>
+              <IconFont
+                :icon="item.icon ?? 'icon-color-wenjianjia'"
+                :size="16"
+              />
+              {{ item.name }}
+            </span>
+            <IconFont icon="icon-down" class="nav-menu-arrow" />
+          </div>
+          <ul class="sub-nav-menu" @click.stop>
             <li
-              v-if="item.children && item.children.length > 0 && item.show"
               class="nav-menu-item"
-              @click="handleActive"
+              v-for="sub_item in item.children"
+              :key="sub_item.id"
             >
-              <div class="sub-nav-menu-title">
+              <a :href="sub_item.url" v-if="sub_item.show">
                 <span>
-                  <UIcon
-                    :name="item.icon ?? 'custom-color:folder'"
+                  <IconFont
+                    :icon="sub_item.icon ?? 'icon-color-lianjie'"
                     :size="16"
                   />
-                  {{ item.name }}
-                </span>
-                <UIcon name="custom:down" class="nav-menu-arrow" />
-              </div>
-              <ul class="sub-nav-menu" @click.stop>
-                <li
-                  class="nav-menu-item"
-                  v-for="sub_item in item.children"
-                  :key="sub_item.id"
-                >
-                  <a :href="sub_item.url" v-if="sub_item.show">
-                    <span>
-                      <UIcon
-                        :name="sub_item.icon ?? 'custom-color:lianjie'"
-                        :size="16"
-                      />
-                      {{ sub_item.name }}
-                    </span>
-                  </a>
-                </li>
-              </ul>
-            </li>
-            <li class="nav-menu-item" v-else-if="item.show">
-              <a :href="item.url">
-                <span>
-                  <UIcon
-                    :name="item.icon ?? 'custom-color:lianjie'"
-                    :size="16"
-                  />
-                  {{ item.name }}
+                  {{ sub_item.name }}
                 </span>
               </a>
             </li>
-          </template>
-        </ul>
-      </div>
-    </template>
-  </USlideover>
+          </ul>
+        </li>
+        <li class="nav-menu-item" v-else-if="item.show">
+          <a :href="item.url">
+            <span>
+              <IconFont :icon="item.icon ?? 'icon-color-lianjie'" :size="16" />
+              {{ item.name }}
+            </span>
+          </a>
+        </li>
+      </template>
+    </ul>
+  </el-drawer>
 </template>
 <style lang="scss">
 .header-drawer {
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  .author-bg {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 120px;
-    object-fit: cover;
-    z-index: 1;
-  }
-  .user {
-    position: relative;
-    margin-top: 60px;
-    z-index: 2;
+  .el-drawer__body {
+    padding: 0;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    padding-bottom: 24px;
-    .avatar {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      overflow: hidden;
-      margin-bottom: 16px;
+    .author-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 120px;
       object-fit: cover;
-      transition: transform 0.75s;
-      box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+      z-index: 1;
     }
-    .name {
-      color: var(--theme-color);
-      text-decoration: none;
-      margin-bottom: 16px;
-      font-size: 1.125rem;
-      font-weight: 500;
-    }
-    .motto {
-      font-size: 0.875rem;
-      color: #909399;
-      text-align: center;
-      word-break: break-word;
-    }
-  }
-  .nav-menu {
-    list-style: none;
-    flex: 1;
-    overflow-y: auto;
-    overflow-x: hidden;
-    padding: 20px;
-    li {
-      line-height: 28px;
-
-      .nav-menu-arrow.iconfont {
-        transform: rotate(-90deg);
-        transition: all 0.35s;
-      }
-      .sub-nav-menu-title {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-      }
-      a {
-        display: flex;
-        color: var(--main);
-        text-decoration: none;
-        font-size: 1rem;
-      }
-
-      ul {
-        list-style: none;
-        padding-left: 0;
-        height: 0;
-        width: 0;
+    .user {
+      position: relative;
+      margin-top: 60px;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-bottom: 24px;
+      .avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
         overflow: hidden;
-        white-space: nowrap;
-        transition: all 0.35s;
+        margin-bottom: 16px;
+        object-fit: cover;
+        transition: transform 0.75s;
+        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+      }
+      .name {
+        color: var(--theme-color);
+        text-decoration: none;
+        margin-bottom: 16px;
+        font-size: 1.125rem;
+        font-weight: 500;
+      }
+      .motto {
+        font-size: 0.875rem;
+        color: #909399;
+        text-align: center;
+        word-break: break-word;
       }
     }
-    li.active {
-      ul {
-        width: 100%;
-        padding-left: 25px;
+    .nav-menu {
+      list-style: none;
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: 20px;
+      li {
+        line-height: 28px;
+
+        .nav-menu-arrow.iconfont {
+          transform: rotate(-90deg);
+          transition: all 0.35s;
+        }
+        .sub-nav-menu-title {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+        }
+        a {
+          display: flex;
+          color: var(--main);
+          text-decoration: none;
+          font-size: 1rem;
+        }
+
+        ul {
+          list-style: none;
+          padding-left: 0;
+          height: 0;
+          width: 0;
+          overflow: hidden;
+          white-space: nowrap;
+          transition: all 0.35s;
+        }
       }
-      .nav-menu-arrow.iconfont {
-        float: right;
-        transform: rotate(0deg);
+      li.active {
+        ul {
+          width: 100%;
+          padding-left: 25px;
+        }
+        .nav-menu-arrow.iconfont {
+          float: right;
+          transform: rotate(0deg);
+        }
       }
     }
   }

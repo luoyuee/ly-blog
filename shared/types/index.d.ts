@@ -20,30 +20,6 @@ export interface LogMessage {
   time: number;
 }
 
-export type FolderTreeItem = {
-  key: string; // 生成的唯一标识符,资源类型+ID
-  id: number; // 资源ID,可能会重复
-  name: string; // 显示在目录中的
-  is_folder?: boolean;
-  created_at?: number;
-  updated_at?: number;
-  children?: FolderTreeItem[];
-  parent_id?: number;
-} & (
-  | {
-      type: "folder";
-      data: object;
-    }
-  | {
-      type: "note";
-      data: {
-        is_published?: boolean;
-        article_id?: number;
-        extension: string;
-      };
-    }
-);
-
 export interface Note {
   id: number;
   created_at?: number;
@@ -65,14 +41,6 @@ export interface ArticleCategory {
   updated_at?: number;
   updated_by?: number;
   parent?: number;
-  name: string;
-  description?: string;
-}
-
-export interface ArticleCategoryItem {
-  id: number;
-  parent?: number;
-  icon?: string;
   name: string;
   description?: string;
 }
@@ -104,37 +72,6 @@ export interface ViewArticleDetail {
   likes_count: number;
   locked?: boolean;
 }
-
-export interface ArticleDetail {
-  id: number;
-  created_at?: number;
-  created_by?: number;
-  updated_at?: number;
-  updated_by?: number;
-  content_updated_at: number;
-  note_id: number;
-  publish_time?: number;
-  category?: number;
-  title: string;
-  abstract: string;
-  content: string;
-  words: number;
-  tags?: string[];
-  author: string;
-  cover?: string[];
-  pinned?: number;
-  password?: string;
-  enable_comments: boolean;
-  enable_tipping: boolean;
-  url?: string;
-  url_access_only: boolean;
-  toc: ArticleTOCItem[];
-  views_count: number;
-  comments_count: number;
-  likes_count: number;
-}
-
-export type ArticleItem = Omit<ArticleDetail, "content">;
 
 export interface ArticleTOCItem {
   id: number;

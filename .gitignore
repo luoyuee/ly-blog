@@ -28,3 +28,6 @@ prisma/migrations
 
 # db
 database/*
+
+# static
+static/*

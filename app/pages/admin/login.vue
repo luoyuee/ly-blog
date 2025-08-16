@@ -3,6 +3,7 @@ import type { FormRules, FormInstance } from "element-plus";
 import { Lock, User } from "@element-plus/icons-vue";
 import { adminLogin } from "@/apis/user";
 import { reactive } from "vue";
+import { useParticleAnimation } from "@/composables/useParticleAnimation";
 
 definePageMeta({
   layout: "blank",
@@ -20,11 +21,12 @@ const formRules: FormRules<typeof formData> = {
   password: [{ required: true, message: "请输入密码" }],
 };
 
-const { data: hasAdminResp } = await useFetch<{ admin: boolean }>(
+const { data: hasAdminResp } = await useFetch<{ has_admin: boolean }>(
   "/api/user/has-admin/",
   { method: "get" }
 );
-if (hasAdminResp?.value && !hasAdminResp.value.admin) {
+
+if (hasAdminResp?.value && !hasAdminResp.value.has_admin) {
   await navigateTo("/admin/register");
 }
 
@@ -50,28 +52,44 @@ const handleSubmit = async (): Promise<void> => {
     ElMessage.error("登录失败！");
   }
 };
+
+const particleCanvasRef = useTemplateRef("particleCanvasRef");
+
+onMounted(() => {
+  if (particleCanvasRef.value) {
+    useParticleAnimation(particleCanvasRef.value);
+  }
+});
 </script>
 <template>
-  <div class="page-container">
-    <div class="login-box">
-      <h1 class="title">
-        <img src="/ly.svg" alt="logo" />
-        {{ $t("login_page.login_box_title") }}
+  <div
+    class="flex h-dvh items-center justify-center bg-box sm:bg-page sm:bg-[url('/images/login_background.svg')] bg-cover bg-center bg-no-repeat transition-all"
+  >
+    <div class="bg-box sm:shadow-md p-6 rounded-md w-128 transition-all">
+      <h1 class="flex items-center justify-center mb-8 mt-2 select-none">
+        <img class="w-12" src="/ly.svg" alt="logo" />
+        <span class="text-3xl text-gray-300">Blog</span>
       </h1>
-      <el-form :model="formData" :rules="formRules" ref="formRef">
-        <el-form-item prop="username">
+      <el-form
+        ref="formRef"
+        label-position="top"
+        :model="formData"
+        :rules="formRules"
+        @submit.prevent
+      >
+        <el-form-item label="管理员邮箱" prop="username">
           <el-input
-            size="large"
             v-model="formData.username"
+            size="large"
             :placeholder="$t('login_page.username.placeholder')"
             :prefix-icon="User"
           />
         </el-form-item>
-        <el-form-item prop="password">
+        <el-form-item label="管理员密码" prop="password">
           <el-input
+            v-model="formData.password"
             size="large"
             type="password"
-            v-model="formData.password"
             :placeholder="$t('login_page.password.placeholder')"
             :prefix-icon="Lock"
           />
@@ -91,50 +109,21 @@ const handleSubmit = async (): Promise<void> => {
         <el-form-item>
           <div class="w-full flex justify-between">
             <el-checkbox
-              size="large"
               v-model="formData.remember"
+              size="large"
               :label="$t('login_page.remember')"
             />
-            <el-link type="primary" :underline="false">
+            <el-link type="primary" :underline="false" href="/">
               {{ $t("login_page.back_home") }}
             </el-link>
           </div>
         </el-form-item>
       </el-form>
     </div>
+
+    <canvas
+      ref="particleCanvasRef"
+      class="fixed top-0 left-0 -z-0 select-none pointer-events-none"
+    />
   </div>
 </template>
-<style scoped lang="scss">
-.page-container {
-  width: 100vw;
-  height: 100vh;
-  background-color: var(--bg-color);
-  background-image: url("/images/login_background.svg");
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  .login-box {
-    width: 360px;
-    transform: translateY(-20%);
-    padding: 24px 24px 0 24px;
-    background-color: var(--white);
-    border-radius: var(--radius-inner);
-    box-shadow: var(--box-shadow);
-    background-color: var(--bg-color);
-    .title {
-      font-size: 2rem;
-      color: var(--text-color-4);
-      text-align: center;
-      margin-bottom: 24px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      img {
-        width: 50px;
-        height: 50px;
-        margin-right: 16px;
-      }
-    }
-  }
-}
-</style>

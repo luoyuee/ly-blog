@@ -2,8 +2,11 @@
 import type { FormRules, FormInstance } from "element-plus";
 import { Lock, User, Message } from "@element-plus/icons-vue";
 import { adminRegister } from "@/apis/user";
-import { ElMessage } from "element-plus";
-import { ref, reactive } from "vue";
+import { reactive } from "vue";
+import { AvatarUpload } from "@/components/avatar";
+import { useParticleAnimation } from "@/composables/useParticleAnimation";
+
+const $message = useMessage();
 
 definePageMeta({
   layout: "blank",
@@ -24,12 +27,12 @@ const formData = reactive<{
 });
 
 const formRules = reactive<FormRules<typeof formData>>({
-  username: [{ required: true }],
+  username: [{ required: true, message: "请输入用户名" }],
   password: [
-    { required: true },
+    { required: true, message: "请输入密码" },
     {
       validator: (_, value, callback) => {
-        elFormRef.value?.validateField("confirmPassword");
+        formRef.value?.validateField("confirmPassword");
         if (value.length < 6) {
           callback(new Error("密码不能小于6位"));
         } else {
@@ -39,9 +42,9 @@ const formRules = reactive<FormRules<typeof formData>>({
       trigger: "blur",
     },
   ],
-  email: [{ required: true, type: "email" }],
+  email: [{ required: true, type: "email", message: "请输入邮箱" }],
   confirmPassword: [
-    { required: true },
+    { required: true, message: "请输入密码" },
     {
       validator: (_, value, callback) => {
         if (value === formData.password) {
@@ -54,40 +57,18 @@ const formRules = reactive<FormRules<typeof formData>>({
   ],
 });
 
-const avatar_preview = ref<string>("/images/blank_avatar.webp");
-
-const inputFileRef = ref<HTMLInputElement | null>(null);
-const clickInputFile = () => {
-  inputFileRef.value?.click();
-};
-
-const handleSelectIcon = (e: any) => {
-  if (e.target.files.length > 0) {
-    formData.avatar = e.target.files[0];
-    avatar_preview.value = window.URL.createObjectURL(e.target.files[0]);
-
-    if (inputFileRef.value) {
-      inputFileRef.value.value = "";
-    }
-  }
-};
-
-const handleDeleteIcon = (): void => {
-  formData.avatar = undefined;
-  avatar_preview.value = "/images/blank_avatar.webp";
-};
-
 const state = reactive<{
   submitting: boolean;
 }>({
   submitting: false,
 });
-const elFormRef = ref<FormInstance | null>(null);
-const handleInit = async () => {
+const formRef = useTemplateRef<FormInstance>("formRef");
+
+const handleSubmit = async () => {
   state.submitting = true;
 
   try {
-    await elFormRef.value?.validate();
+    await formRef.value?.validate();
   } catch {
     state.submitting = false;
     return;
@@ -105,179 +86,89 @@ const handleInit = async () => {
     await adminRegister(form);
     location.href = "/admin/login";
   } catch (error) {
-    ElMessage({
-      message: "error",
-      type: "error",
-    });
+    $message.error(error, "初始化失败");
   } finally {
     state.submitting = false;
   }
 };
+
+const handleAvatarChange = (file: File | null) => {
+  formData.avatar = file ?? undefined;
+};
+
+const particleCanvasRef = useTemplateRef("particleCanvasRef");
+
+onMounted(() => {
+  if (particleCanvasRef.value) {
+    useParticleAnimation(particleCanvasRef.value);
+  }
+});
 </script>
 <template>
-  <div class="page-container">
-    <div class="register-wrap">
-      <h1 class="title">
-        <img src="/ly.svg" alt="logo" />
-        LY Blog
+  <div
+    class="flex h-dvh items-center justify-center bg-box sm:bg-page sm:bg-[url('/images/login_background.svg')] bg-cover bg-center bg-no-repeat transition-all"
+  >
+    <div class="bg-box sm:shadow-md p-6 rounded-md w-128 transition-all">
+      <h1 class="flex items-center justify-center mb-6 select-none">
+        <img class="w-12" src="/ly.svg" alt="logo" />
+        <span class="text-3xl text-gray-300">Blog</span>
       </h1>
-      <div class="register-box">
-        <el-form
-          label-position="top"
-          ref="elFormRef"
-          :model="formData"
-          :rules="formRules"
-          @submit.native.prevent
-        >
-          <el-form-item>
-            <div class="w-full flex justify-center" ref="ttRef">
-              <input
-                class="hidden"
-                ref="inputFileRef"
-                type="file"
-                accept=".png,.jpg,.webp,.svg"
-                @change="handleSelectIcon"
-              />
-              <div
-                class="avatar shadow"
-                ref="avatarRef"
-                @click="clickInputFile"
-              >
-                <img :src="avatar_preview" alt="icon" />
-                <span
-                  :class="{ disabled: formData.avatar === undefined }"
-                  class="delete-btn"
-                  @click.stop="handleDeleteIcon"
-                >
-                  删除
-                </span>
-              </div>
-            </div>
-          </el-form-item>
-          <el-form-item label="用户名" prop="username">
-            <el-input
-              v-model="formData.username"
-              placeholder="请输入管理员用户名"
-              :prefix-icon="User"
-            />
-          </el-form-item>
-          <el-form-item label="邮箱" prop="email">
-            <el-input
-              v-model="formData.email"
-              placeholder="请输入管理员邮箱"
-              :prefix-icon="Message"
-            />
-          </el-form-item>
-          <el-form-item label="密码" prop="password">
-            <el-input
-              v-model="formData.password"
-              type="password"
-              placeholder="请输入管理员密码"
-              :prefix-icon="Lock"
-            />
-          </el-form-item>
-          <el-form-item label="确认密码" prop="confirmPassword">
-            <el-input
-              v-model="formData.confirmPassword"
-              type="password"
-              placeholder="请再次输入密码"
-              :prefix-icon="Lock"
-            />
-          </el-form-item>
-          <el-form-item>
-            <el-button
-              class="w-full mt-2"
-              type="primary"
-              :loading="state.submitting"
-              @click="handleInit"
-            >
-              创建管理员，开始写作吧
-            </el-button>
-          </el-form-item>
-        </el-form>
-      </div>
+      <el-form
+        ref="formRef"
+        label-position="top"
+        :model="formData"
+        :rules="formRules"
+        @submit.prevent
+      >
+        <el-form-item>
+          <AvatarUpload class="mx-auto" @change="handleAvatarChange" />
+        </el-form-item>
+        <el-form-item label="用户名" prop="username">
+          <el-input
+            v-model="formData.username"
+            placeholder="请输入管理员用户名"
+            :prefix-icon="User"
+          />
+        </el-form-item>
+        <el-form-item label="邮箱" prop="email">
+          <el-input
+            v-model="formData.email"
+            placeholder="请输入管理员邮箱"
+            :prefix-icon="Message"
+          />
+        </el-form-item>
+        <el-form-item label="密码" prop="password">
+          <el-input
+            v-model="formData.password"
+            type="password"
+            placeholder="请输入管理员密码"
+            :prefix-icon="Lock"
+          />
+        </el-form-item>
+        <el-form-item label="确认密码" prop="confirmPassword">
+          <el-input
+            v-model="formData.confirmPassword"
+            type="password"
+            placeholder="请再次输入密码"
+            :prefix-icon="Lock"
+          />
+        </el-form-item>
+        <el-form-item>
+          <el-button
+            class="w-full mt-2"
+            type="primary"
+            :loading="state.submitting"
+            @click="handleSubmit"
+          >
+            创建管理员，开始写作吧
+          </el-button>
+        </el-form-item>
+      </el-form>
     </div>
+
+    <canvas
+      ref="particleCanvasRef"
+      class="fixed top-0 left-0 -z-0 select-none pointer-events-none"
+    />
   </div>
 </template>
-<style scoped lang="scss">
-.page-container {
-  width: 100vw;
-  height: 100vh;
-  background-color: var(--bg-color);
-  background-image: url("/images/login_background.svg");
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  .register-wrap {
-    width: 480px;
-    transform: translateY(-74px);
-
-    .title {
-      font-size: 2rem;
-      color: var(--text-color-4);
-      text-align: center;
-      margin-bottom: 24px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      img {
-        width: 50px;
-        height: 50px;
-        margin-right: 16px;
-      }
-    }
-
-    .register-box {
-      background-color: var(--white);
-      border-radius: var(--radius-inner);
-      box-shadow: var(--box-shadow);
-      padding: 24px;
-      background-color: var(--bg-color);
-    }
-
-    .avatar {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      position: relative;
-      overflow: hidden;
-      cursor: pointer;
-
-      img {
-        width: 80px;
-        height: 80px;
-      }
-
-      .delete-btn {
-        user-select: none;
-        font-size: 12px;
-        position: absolute;
-        width: 100%;
-        height: 24px;
-        line-height: 24px;
-        display: block;
-        background-color: rgba(0, 0, 0, 0.3);
-        color: #ffffff;
-        text-align: center;
-        bottom: -24px;
-        transition: bottom 0.3s;
-        letter-spacing: 2px;
-
-        &:hover {
-          background-color: rgba(0, 0, 0, 0.5);
-        }
-      }
-
-      &:hover {
-        .delete-btn:not(.disabled) {
-          bottom: 0;
-        }
-      }
-    }
-  }
-}
-</style>
