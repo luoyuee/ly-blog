@@ -10,36 +10,37 @@ export default defineNuxtConfig({
     "@pinia/nuxt",
     "@element-plus/nuxt",
     "@unocss/nuxt",
-    "@nuxtjs/color-mode",
+    "@nuxtjs/color-mode"
   ],
   i18n: {
     defaultLocale: "zh-CN",
-    locales: [{ code: "zh-CN", name: "简体中文", file: "zh-CN.json" }],
+    locales: [{ code: "zh-CN", name: "简体中文", file: "zh-CN.json" }]
   },
   icon: {
     serverBundle: {
-      collections: ["ep", "lucide"],
+      collections: ["ep", "lucide"]
     },
     customCollections: [
       {
         prefix: "custom",
-        dir: "./app/assets/icons",
+        dir: "./app/assets/icons"
       },
       {
         prefix: "custom-color",
-        dir: "./app/assets/color-icons",
-      },
-    ],
+        dir: "./app/assets/color-icons"
+      }
+    ]
   },
   elementPlus: {},
+  eslint: {},
   app: {
     head: {
       script: [
         // TODO: 暂时使用外链
         { src: "//at.alicdn.com/t/c/font_4522837_24pab06z3yu.js" }, //彩色图标
-        { src: "//at.alicdn.com/t/c/font_4346236_exivd4en94v.js" },
+        { src: "//at.alicdn.com/t/c/font_4346236_exivd4en94v.js" }
       ],
-      link: [{ rel: "icon", type: "image/svg+xml", href: "ly.svg" }],
-    },
-  },
+      link: [{ rel: "icon", type: "image/svg+xml", href: "ly.svg" }]
+    }
+  }
 });

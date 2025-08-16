@@ -1,6 +1,11 @@
 {
-    "i18n-ally.localesPaths": [
-        "i18n",
-        "i18n/locales"
-    ]
+  "i18n-ally.localesPaths": ["i18n", "i18n/locales"],
+  "eslint.useFlatConfig": true,
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+  "eslint.validate": ["javascript", "typescript", "vue"],
+  "prettier.requireConfig": true
 }

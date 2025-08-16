@@ -3,7 +3,7 @@ import Lenis from "lenis";
 import { onMounted, watch, nextTick } from "vue";
 import { useAppStore } from "@/stores";
 import { Header } from "@/components/header";
-import {useParticleAnimation} from "@/composables/useParticleAnimation"
+import { useParticleAnimation } from "@/composables/useParticleAnimation";
 
 const appStore = useAppStore();
 
@@ -14,7 +14,7 @@ onMounted(() => {
     smoothWheel: true,
     touchMultiplier: 2, // 触摸设备滚动速度
     gestureOrientation: "vertical", // 允许垂直滚动
-    duration: 0.8,
+    duration: 0.8
   });
 
   const raf = (time: any) => {
@@ -83,9 +83,7 @@ onMounted(() => {
   .default-layout {
     :deep(.container) {
       .content {
-        max-width: calc(
-          100vw - var(--content-padding-left) - var(--content-padding-right)
-        );
+        max-width: calc(100vw - var(--content-padding-left) - var(--content-padding-right));
       }
       .aside {
         display: none;

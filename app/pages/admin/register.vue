@@ -9,7 +9,7 @@ import { useParticleAnimation } from "@/composables/useParticleAnimation";
 const $message = useMessage();
 
 definePageMeta({
-  layout: "blank",
+  layout: "blank"
 });
 
 const formData = reactive<{
@@ -23,7 +23,7 @@ const formData = reactive<{
   password: undefined,
   confirmPassword: undefined,
   email: undefined,
-  avatar: undefined,
+  avatar: undefined
 });
 
 const formRules = reactive<FormRules<typeof formData>>({
@@ -39,8 +39,8 @@ const formRules = reactive<FormRules<typeof formData>>({
           callback();
         }
       },
-      trigger: "blur",
-    },
+      trigger: "blur"
+    }
   ],
   email: [{ required: true, type: "email", message: "请输入邮箱" }],
   confirmPassword: [
@@ -52,15 +52,15 @@ const formRules = reactive<FormRules<typeof formData>>({
         } else {
           callback(new Error("密码不一致"));
         }
-      },
-    },
-  ],
+      }
+    }
+  ]
 });
 
 const state = reactive<{
   submitting: boolean;
 }>({
-  submitting: false,
+  submitting: false
 });
 const formRef = useTemplateRef<FormInstance>("formRef");
 

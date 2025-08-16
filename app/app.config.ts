@@ -1,5 +1,5 @@
 export default defineAppConfig({
   log: {
-    retention: 15,
-  },
+    retention: 15
+  }
 });

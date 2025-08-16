@@ -1,13 +1,14 @@
 import { useThrottleFn } from "@vueuse/core";
 export const useParticleAnimation = (canvas: HTMLCanvasElement) => {
   const velocityFactor = 0.05;
+  const particles: Particle[] = [];
+  const cometColor = "226,225,224";
+
   let ctx: CanvasRenderingContext2D | null = null;
   let canvasWidth = 0;
   let canvasHeight = 0;
   let particleCount = 0;
-  let particles = [];
   let allowComets = false;
-  let cometColor = "226,225,224";
 
   const resizeCanvas = () => {
     canvasWidth = window.innerWidth;
@@ -117,7 +118,7 @@ export const useParticleAnimation = (canvas: HTMLCanvasElement) => {
         }
       } else {
         // 普通粒子（黄色方块）
-        ctx.fillStyle = "rgba(226,225,142," + this.opacity + ")";
+        ctx.fillStyle = `rgba(226,225,142,${this.opacity})`;
         ctx.rect(this.x, this.y, this.size, this.size);
       }
 
@@ -159,10 +160,12 @@ export const useParticleAnimation = (canvas: HTMLCanvasElement) => {
     const count = particles.length;
     for (let i = 0; i < count; i++) {
       const s = particles[i];
-      s.move();
-      s.fadeIn();
-      s.fadeOut();
-      s.draw();
+      if (s) {
+        s.move();
+        s.fadeIn();
+        s.fadeOut();
+        s.draw();
+      }
     }
 
     window.requestAnimationFrame(loop);
@@ -173,6 +176,6 @@ export const useParticleAnimation = (canvas: HTMLCanvasElement) => {
     destroy: () => {
       isRunning = false;
       window.removeEventListener("resize", throttleResizeCanvas);
-    },
+    }
   };
 };
