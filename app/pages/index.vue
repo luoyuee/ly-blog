@@ -14,7 +14,7 @@
   <main>
     <!-- <FullBannerImage /> -->
     <div class="container mx-auto">
-      <div class="content"></div>
+      <div class="content" />
       <div class="aside space-y-4">
         <!-- <AuthorCard />
         <NoticeCard />

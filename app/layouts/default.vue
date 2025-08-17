@@ -2,7 +2,7 @@
 import Lenis from "lenis";
 import { onMounted, watch, nextTick } from "vue";
 import { useAppStore } from "@/stores";
-import { Header } from "@/components/header";
+import Header from "@/components/header";
 import { useParticleAnimation } from "@/composables/useParticleAnimation";
 
 const appStore = useAppStore();
@@ -41,12 +41,12 @@ onMounted(() => {
 });
 </script>
 <template>
-  <div class="default-layout" ref="layoutRef">
+  <div ref="layoutRef" class="default-layout">
     <Header />
     <canvas
       ref="particleCanvasRef"
       class="fixed top-0 left-0 -z-0 select-none pointer-events-none"
-    ></canvas>
+    />
     <slot />
   </div>
 </template>

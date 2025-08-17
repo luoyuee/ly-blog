@@ -1,0 +1,153 @@
+<script setup lang="ts">
+import type { EditorTabItem } from "@/types/mdc-editor";
+import type { FormSubmitEvent } from "@nuxt/ui";
+import type { FolderTreeItem } from "@/types";
+import { getFolderTree, createNote } from "@/apis/note";
+import { mdcEditorEmitter } from "@/events";
+import { reactive } from "vue";
+import { z } from "zod";
+import { TreeSelect } from "@/components/tree-select";
+
+const notify = useNotification();
+
+const emits = defineEmits(["cancel", "submit"]);
+
+const schema = z.object({
+  id: z.number().optional(),
+  folder_id: z.number().optional(),
+  name: z.string({ message: "请输入名称" }),
+  content: z.string(),
+});
+
+const state = reactive<{
+  visible: boolean;
+  submitting: boolean;
+}>({
+  visible: false,
+  submitting: false,
+});
+
+const formData = reactive<{
+  id?: number;
+  name: string;
+  folder_id?: number;
+  content: string;
+}>({
+  name: "",
+  content: "",
+});
+
+const folderData = ref<FolderTreeItem[]>();
+
+mdcEditorEmitter.on(
+  "editor-core:save",
+  async (e: EditorTabItem): Promise<void> => {
+    if (e.type !== "note") return;
+    state.visible = true;
+
+    try {
+      if (e.data.id) return;
+      // 同步数据
+      formData.id = e.data.id;
+      formData.name = e.data.name;
+      formData.folder_id = e.data.folder_id;
+      formData.content = e.data.content;
+
+      // 读取目录
+      folderData.value = await getFolderTree();
+
+      state.visible = true;
+    } catch {
+      notify.error("获取目录失败");
+    }
+  }
+);
+
+const formRef = useTemplateRef("formRef");
+
+const handleSubmit = async (
+  event: FormSubmitEvent<z.output<typeof schema>>
+) => {
+  try {
+    state.submitting = true;
+
+    const note = await createNote({
+      name: event.data.name,
+      folder_id: event.data.folder_id,
+      content: event.data.content,
+      extension: ".md",
+    });
+
+    // mdcEditorEmitter.emit("monaco-editor:update-file", {
+    //   ...state.data,
+    //   isChange: false,
+    // });
+
+    notify.success("保存成功");
+    state.visible = false;
+    // mdcEditorEmitter.emit("explorer:reload");
+
+    // if (state.data && state.data.closeTab) {
+    //   mdcEditorEmitter.emit("monaco-editor:close-file", state.data);
+    // }
+  } catch (error) {
+    notify.error("保存失败", error);
+  } finally {
+    state.submitting = false;
+  }
+};
+
+const handleConfirm = async () => {
+  formRef.value?.submit();
+};
+
+const handleCancel = () => {
+  state.visible = false;
+  emits("cancel");
+};
+</script>
+<template>
+  <UModal v-model:open="state.visible" title="保存文件">
+    <template #body>
+      <UForm
+        class="space-y-2"
+        ref="formRef"
+        :schema="schema"
+        :state="formData"
+        :validateOnInputDelay="100"
+        @submit="handleSubmit"
+      >
+        <UFormField name="folder_id" label="父目录">
+          <TreeSelect
+            :options="folderData"
+            label-key="name"
+            v-model="formData.folder_id"
+          />
+        </UFormField>
+        <UFormField name="name" label="文件名" required>
+          <UInput
+            class="w-full"
+            placeholder="请输入文件名"
+            v-model="formData.name"
+          />
+        </UFormField>
+      </UForm>
+    </template>
+
+    <template #footer>
+      <UButton
+        label="取消"
+        color="neutral"
+        variant="outline"
+        :disabled="state.submitting"
+        @click="handleCancel"
+      />
+      <UButton
+        label="确认"
+        color="primary"
+        :loading="state.submitting"
+        @click="handleConfirm"
+      />
+    </template>
+  </UModal>
+</template>

@@ -1,17 +1,14 @@
 <script setup lang="ts">
-import type { IconFontType } from "@/components/icon-font";
+import type { CategoryItem } from "./types";
 import { useConfigStore, useUserStore } from "@/stores";
-import { ElMessage } from "element-plus";
+import { SearchDrawer } from "@/components/search-box";
 import HeaderDrawer from "./HeaderDrawer.vue";
-import Search from "@/components/search";
 
 const configStore = useConfigStore();
 const userStore = useUserStore();
 
-const { data: categories } = useFetch<
-  { id: number; icon: IconFontType; name: string }[]
->("/api/article/category/root", {
-  method: "get",
+const { data: categories } = useFetch<CategoryItem[]>("/api/article/category/root", {
+  method: "get"
 });
 
 const active = ref(false);
@@ -33,8 +30,8 @@ onBeforeUnmount(() => {
 const toAdmin = async () => {
   await navigateTo("/admin", {
     open: {
-      target: "_blank",
-    },
+      target: "_blank"
+    }
   });
 };
 
@@ -51,7 +48,7 @@ const logout = () => {
     message: "已退出登录，3秒后将刷新页面",
     onClose: () => {
       window.location.reload();
-    },
+    }
   });
 };
 
@@ -64,112 +61,91 @@ const showDrawer = () => {
 </script>
 <template>
   <div class="header" :class="{ active }">
-    <div class="menu-btn" @click="showDrawer">
-      <IconFont icon="icon-menu" :size="22" />
+    <div class="header__menu-btn" @click="showDrawer">
+      <Icon name="custom:menu-button" :size="22" />
     </div>
-    <a href="/" class="header-logo">
-      <img
-        :src="configStore.author_card.avatar ?? '/images/avatar.webp'"
-        alt="avatar"
-      />
+    <a href="/" class="header__logo">
+      <img :src="configStore.author_card.avatar ?? '/images/avatar.webp'" alt="avatar" />
     </a>
-    <nav class="header-nav">
-      <a class="item" href="/">
-        <span>
-          <IconFont icon="icon-color-shouye" :size="16" />
-          首页
-        </span>
+    <nav class="header__nav">
+      <a class="nav-item" href="/">
+        <Icon name="custom-color:home" :size="16" />
+        <span> 首页 </span>
       </a>
-      <div class="item-dropdown">
-        <span>
-          <IconFont icon="icon-color-wenjianjia" :size="16" />
+      <div class="nav-item__dropdown">
+        <span class="flex items-center gap-1">
+          <Icon name="custom-color:folder" :size="16" />
           文档目录
-          <IconFont class="arrow" icon="icon-down" :size="18" />
+          <Icon class="arrow" name="custom:down" :size="16" />
         </span>
         <nav class="dropdown-menu">
-          <a
-            :href="`/category/${item.id}`"
-            v-for="item in categories"
-            :key="item.id"
-          >
-            <span>
-              <IconFont
-                :icon="item.icon ?? 'icon-color-wenjianjia'"
-                :size="16"
-              />
-              {{ item.name }}
-            </span>
+          <a v-for="item in categories" :key="item.id" :href="`/category/${item.id}`">
+            <Icon :name="item.icon ?? 'custom-color:folder'" :size="16" />
+            <span>{{ item.name }}</span>
           </a>
         </nav>
       </div>
-      <a class="item" href="/sn">
-        <span>
-          <IconFont icon="icon-color-zhihangshu" :size="16" />
-          闪念笔记
-        </span>
+      <a class="nav-item" href="/sn">
+        <Icon name="custom-color:note" :size="16" />
+        <span> 闪念笔记 </span>
       </a>
-      <a class="item" href="/message">
-        <span>
-          <IconFont icon="icon-color-xiaoxi" :size="16" />
-          留言板
-        </span>
+      <a class="nav-item" href="/message">
+        <Icon name="custom-color:message" :size="16" />
+        <span> 留言板 </span>
       </a>
       <template v-for="item in configStore.nav_menu" :key="item.id">
-        <div
-          class="item-dropdown"
-          v-if="item.children && item.children.length > 0 && item.show"
-        >
+        <div v-if="item.children && item.children.length > 0 && item.show" class="item-dropdown">
           <span>
-            <IconFont :icon="item.icon ?? 'icon-color-wenjianjia'" :size="16" />
-            {{ item.name }}
-            <IconFont class="arrow" icon="icon-down" :size="18" />
+            <Icon :name="item.icon ?? ''" :size="16" />
+            {{ item.title }}
+            <Icon class="arrow" name="custom:down" :size="18" />
           </span>
           <nav class="dropdown-menu">
-            <template v-for="sub_item in item.children" :key="sub_item.id">
-              <a :href="sub_item.url" v-if="sub_item.show">
+            <template v-for="sub in item.children" :key="sub.id">
+              <a v-if="sub.show" :href="sub.href ?? '#'">
                 <span>
-                  <IconFont
-                    :icon="sub_item.icon ?? 'icon-color-lianjie'"
-                    :size="16"
-                  />
-                  {{ sub_item.name }}
+                  <Icon :name="sub.icon ?? ''" :size="16" />
+                  {{ sub.title }}
                 </span>
               </a>
             </template>
           </nav>
         </div>
-        <a class="item" :href="item.url" v-else-if="item.show">
+        <a v-else-if="item.show" class="item" :href="item.href ?? '#'">
           <span>
-            <IconFont :icon="item.icon ?? 'icon-color-lianjie'" :size="16" />
-            {{ item.name }}
+            <Icon :name="item.icon ?? ''" :size="16" />
+            {{ item.title }}
           </span>
         </a>
       </template>
     </nav>
-    <div class="header-action">
-      <IconFont icon="icon-search" :size="20" @click="switchSearch" />
-      <IconFont icon="icon-me" :size="20" v-navigate-to="'/admin/login'" />
+    <div class="header__action">
+      <Icon name="i-lucide-search" :size="20" @click="switchSearch" />
+      <Icon v-navigate-to="'/admin/login'" name="i-lucide-circle-user-round" :size="20" />
       <ClientOnly>
         <template #fallback>
-          <IconFont icon="icon-light" :size="20"></IconFont>
+          <Icon name="custom:light" :size="20" />
         </template>
         <div class="theme-switch">
-          <IconFont
+          <Icon
+            class="theme-switch__item"
+            name="custom:dark"
             :class="{ active: $colorMode.value === 'dark' }"
-            icon="icon-dark"
+            :size="20"
             @click="$colorMode.preference = 'light'"
-            :size="20"
-          ></IconFont>
-          <IconFont
+          />
+          <Icon
+            class="theme-switch__item"
+            name="custom:light"
             :class="{ active: $colorMode.value !== 'dark' }"
-            icon="icon-light"
-            @click="$colorMode.preference = 'dark'"
             :size="20"
-          ></IconFont>
+            @click="$colorMode.preference = 'dark'"
+          />
         </div>
       </ClientOnly>
     </div>
-    <el-dropdown style="margin-right: 30px" v-if="userStore.userInfo">
+
+    <el-dropdown v-if="userStore.userInfo" style="margin-right: 30px">
       <div class="user">{{ userStore.userInfo.username }}</div>
       <template #dropdown>
         <el-dropdown-menu>
@@ -179,233 +155,13 @@ const showDrawer = () => {
         </el-dropdown-menu>
       </template>
     </el-dropdown>
-    <div class="search-btn" @click="switchSearch">
-      <IconFont icon="icon-search" :size="22" />
+    <div class="header__search-btn" @click="switchSearch">
+      <Icon name="i-lucide-search" :size="20" />
     </div>
   </div>
-  <Search v-model:visible="showSearch" />
+  <SearchDrawer v-model:visible="showSearch" />
   <HeaderDrawer v-model:visible="drawerVisible" />
 </template>
 <style scoped lang="scss">
-.header {
-  position: sticky;
-  top: 0;
-  left: 0;
-  z-index: 999;
-  height: var(--header-height);
-  background: transparent;
-  transition: 0.35s ease-out;
-  backdrop-filter: blur(3px);
-  padding: 0 32px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-
-  .header-logo {
-    img {
-      border-radius: 50%;
-      width: 40px;
-      height: 40px;
-      object-fit: cover;
-    }
-  }
-  .header-nav {
-    display: flex;
-    align-items: center;
-    flex: 1;
-    margin-left: 32px;
-    .item {
-      margin-right: 8px;
-      padding: 0 8px;
-      color: #ffffff;
-      text-decoration: none;
-      position: relative;
-      height: 60px;
-      line-height: 60px;
-      font-size: 15px;
-      transition: color 0.35s;
-      white-space: nowrap;
-      display: flex;
-      align-items: center;
-
-      &:hover {
-        color: var(--theme-color);
-      }
-    }
-    .item.active {
-      color: var(--theme-color) !important;
-
-      &::after {
-        content: "";
-        height: 3px;
-        width: 100%;
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        border-radius: 6px 6px 0 0;
-        background-color: var(--theme-color);
-        transition: 0.35s ease-out;
-      }
-    }
-    .item-dropdown {
-      height: 60px;
-      line-height: 60px;
-      position: relative;
-      padding: 0 5px;
-      font-size: 15px;
-      margin-right: 8px;
-      padding: 0 8px;
-      transition: color 0.35s;
-      white-space: nowrap;
-      color: var(--white);
-      cursor: pointer;
-      .arrow {
-        color: var(--white);
-        transition: transform 0.35s;
-      }
-
-      &:hover {
-        .arrow {
-          transform: rotateZ(-180deg);
-        }
-        .dropdown-menu {
-          visibility: visible;
-          opacity: 1;
-          transform: translateX(-50%) perspective(600px) rotateX(0);
-        }
-      }
-
-      .dropdown-menu {
-        position: absolute;
-        left: 50%;
-        visibility: hidden;
-        z-index: 999;
-        transform-origin: top;
-        background: var(--bg-color);
-        display: flex;
-        flex-direction: column;
-        box-shadow: var(--box-shadow);
-        border-radius: 4px;
-        overflow: hidden;
-        opacity: 0;
-        transform: translateX(-50%) perspective(600px) rotateX(-45deg);
-        transition: opacity 0.35s, visibility 0.35s, transform 0.35s;
-
-        > a {
-          display: block;
-          line-height: 40px;
-          height: 40px;
-          transition: 0.35s;
-          color: var(--text-color-1);
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          padding: 0 16px;
-          text-decoration: none;
-
-          &:hover {
-            background: var(--hover-bg-color);
-            color: var(--theme-color);
-            transition: 0.35s;
-          }
-        }
-      }
-    }
-  }
-  .header-action {
-    color: var(--white);
-    display: flex;
-
-    .iconfont {
-      margin-left: 16px;
-      cursor: pointer;
-
-      &:hover {
-        color: var(--theme-color);
-      }
-    }
-
-    .theme-switch {
-      margin-left: 16px;
-      width: 20px;
-      position: relative;
-
-      .iconfont {
-        margin-left: 0;
-        position: absolute;
-        transition: all 0.35s;
-        transform: scale(0);
-      }
-
-      .iconfont.active {
-        transform: scale(1);
-      }
-    }
-  }
-  .user {
-    color: var(--white);
-    margin-left: 1rem;
-    outline: none;
-    user-select: none;
-    cursor: pointer;
-    padding: 6px 0;
-
-    &:hover {
-      color: var(--theme-color);
-    }
-  }
-
-  .menu-btn,
-  .search-btn {
-    display: none;
-  }
-}
-
-.header.active {
-  box-shadow: 0 2px 10px 0px rgba(121, 121, 121, 0.4);
-  background-color: var(--bg-color);
-
-  .header-nav {
-    .item {
-      color: var(--text-color);
-
-      &:hover {
-        color: var(--theme-color);
-      }
-    }
-    .item-dropdown {
-      color: var(--text-color);
-      .arrow {
-        color: var(--text-color);
-      }
-    }
-  }
-  .user,
-  .header-action {
-    color: var(--text-color);
-  }
-}
-
-@media screen and (max-width: 1024px) {
-  .header {
-    background-color: var(--bg-color);
-    padding: 0 1rem;
-    .header-logo {
-      img {
-        width: 32px;
-        height: 32px;
-      }
-    }
-    .el-dropdown,
-    .header-nav,
-    .header-action,
-    .user {
-      display: none;
-    }
-    .menu-btn,
-    .search-btn {
-      display: block;
-    }
-  }
-}
+@import url("../style/header.scss");
 </style>

@@ -1,20 +1,4 @@
-html {
-  --white: #fff;
-  --black: #000;
-  --blue: #6e8cd7;
-  --pink: #e83e8c;
-  --red: #ef4444;
-  --orange: #fd7e14;
-  --yellow: #ffc107;
-  --teal: #33b86c;
-  --gray: #eef0f4;
-  --primary: #007bff;
-  --secondary: #6c757d;
-  --success: #28a745;
-  --info: #17a2b8;
-  --warning: #ffc107;
-  --danger: #f87171;
-
+/* html {
   --theme-color: #73aaff;
 
   --bg-color: #ffffff;
@@ -65,13 +49,7 @@ html.dark {
 
   --box-shadow: none;
   --text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
-}
-
-@media screen and (max-width: 1024px) {
-  :root {
-    --header-height: 46px;
-  }
-}
+} */
 
 @font-face {
   font-family: "DingTalk JinBuTi";
@@ -134,38 +112,6 @@ html::-webkit-scrollbar-track {
   background: transparent;
 }
 
-.mac-card {
-  background-color: var(--bg-color);
-  overflow: hidden;
-  border-radius: var(--radius-wrap);
-  box-shadow: var(--box-shadow);
-  .header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    position: relative;
-    border-bottom: 1px solid var(--text-color-4);
-    font-size: 1rem;
-    font-weight: 500;
-    height: 45px;
-    line-height: 45px;
-    padding: 0 16px;
-    color: var(--text-color-1);
-    .dot {
-      border-radius: 50%;
-      background: #fc625d;
-      width: 11px;
-      height: 11px;
-      box-shadow: 20px 0 #fdbc40, 40px 0 #35cd4b;
-      margin-right: 40px;
-    }
-  }
-  .content-wrap {
-    padding: 16px;
-    color: var(--text-color-2);
-  }
-}
-
 .el-dialog.el-basic-modal {
   padding: 0;
   .el-dialog__header {
@@ -194,7 +140,6 @@ html::-webkit-scrollbar-track {
   position: sticky !important;
   top: 0;
 }
-
 
 @keyframes move-out {
   from {

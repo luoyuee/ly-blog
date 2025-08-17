@@ -1,13 +1,12 @@
 <script setup lang="ts">
-import type { IconFontType } from "@/components/icon-font";
+import type { CategoryItem } from "./types";
 import { useAppStore, useConfigStore } from "@/stores";
 import { useDebounceFn } from "@vueuse/core";
-import IconFont from "@/components/icon-font";
 
 const configStore = useConfigStore();
 const appStore = useAppStore();
 
-const visible = defineModel("visible", { default: false });
+const visible = defineModel<boolean>("visible", { default: false });
 
 const autoHide = useDebounceFn(() => {
   if (window.innerWidth > 1024) {
@@ -30,9 +29,7 @@ const handleClose = () => {
 const handleActive = (e: Event) => {
   const closeSubMenu = (menu: HTMLElement, delay = 350) => {
     setTimeout(() => {
-      const subMenuList = menu.querySelectorAll(
-        "ul.sub-nav-menu"
-      ) as NodeListOf<HTMLElement>;
+      const subMenuList = menu.querySelectorAll("ul.sub-nav-menu");
 
       for (let i = 0; i < subMenuList.length; i++) {
         const parent = subMenuList[i].parentElement;
@@ -50,12 +47,10 @@ const handleActive = (e: Event) => {
     if (currentEl.classList.contains("active")) {
       // 关闭
       currentEl.classList.remove("active");
-      const subMenu = currentEl.querySelector(
-        "ul.sub-nav-menu"
-      ) as HTMLUListElement;
+      const subMenu = currentEl.querySelector("ul.sub-nav-menu") as HTMLUListElement;
 
       if (subMenu) {
-        subMenu.style.height = subMenu.scrollHeight + "px";
+        subMenu.style.height = `${subMenu.scrollHeight}px`;
 
         setTimeout(() => {
           subMenu.style.height = "0px";
@@ -74,12 +69,10 @@ const handleActive = (e: Event) => {
             elList[i].classList.contains("nav-menu-item")
           ) {
             elList[i].classList.remove("active");
-            const subMenu = elList[i].querySelector(
-              "ul.sub-nav-menu"
-            ) as HTMLUListElement;
+            const subMenu = elList[i].querySelector("ul.sub-nav-menu") as HTMLUListElement;
 
             if (subMenu) {
-              subMenu.style.height = subMenu.clientHeight + "px";
+              subMenu.style.height = `${subMenu.clientHeight}px`;
               setTimeout(() => {
                 subMenu.style.height = "0px";
                 closeSubMenu(subMenu);
@@ -90,12 +83,10 @@ const handleActive = (e: Event) => {
       }
 
       currentEl.classList.add("active");
-      const subMenu = currentEl.querySelector(
-        "ul.sub-nav-menu"
-      ) as HTMLUListElement;
+      const subMenu = currentEl.querySelector("ul.sub-nav-menu") as HTMLUListElement;
 
       if (subMenu) {
-        subMenu.style.height = subMenu.scrollHeight + "px";
+        subMenu.style.height = `${subMenu.scrollHeight}px`;
 
         setTimeout(() => {
           subMenu.style.height = "auto";
@@ -105,21 +96,19 @@ const handleActive = (e: Event) => {
   }
 };
 
-const { data: categories } = useFetch<
-  { id: number; icon: IconFontType; name: string }[]
->("/api/article/category/root", {
-  method: "get",
+const { data: categories } = useFetch<CategoryItem[]>("/api/article/category/root", {
+  method: "get"
 });
 </script>
 <template>
   <el-drawer
-    :model-value="visible"
+    size="80%"
     direction="ltr"
-    @close="handleClose"
     modal-class="header-drawer"
+    :model-value="visible"
     :show-close="false"
     :with-header="false"
-    size="80%"
+    @close="handleClose"
   >
     <img class="author-bg" src="/images/author_bg.jpg" alt="author_bg" />
     <div class="user">
@@ -131,7 +120,7 @@ const { data: categories } = useFetch<
       <a class="name" :href="configStore.author_card.name_link ?? '/'">
         {{ configStore.author_card.name }}
       </a>
-      <p class="motto" v-if="configStore.author_card.motto">
+      <p v-if="configStore.author_card.motto" class="motto">
         {{ configStore.author_card.motto }}
       </p>
     </div>
@@ -139,7 +128,7 @@ const { data: categories } = useFetch<
       <li class="nav-menu-item">
         <a href="/">
           <span>
-            <IconFont icon="icon-color-shouye" :size="16" />
+            <Icon name="icon-color-shouye" :size="16" />
             首页
           </span>
         </a>
@@ -147,19 +136,16 @@ const { data: categories } = useFetch<
       <li class="nav-menu-item" @click="handleActive">
         <div class="sub-nav-menu-title">
           <span>
-            <IconFont icon="icon-color-wenjianjia" :size="16" />
+            <Icon name="icon-color-wenjianjia" :size="16" />
             文档目录
           </span>
-          <IconFont icon="icon-down" class="nav-menu-arrow" />
+          <Icon name="icon-down" class="nav-menu-arrow" />
         </div>
         <ul class="sub-nav-menu" @click.stop>
-          <li class="nav-menu-item" v-for="item in categories">
+          <li v-for="item in categories" :key="item.id" class="nav-menu-item">
             <a class="item" :href="`/category/${item.id}`">
               <span>
-                <IconFont
-                  :icon="item.icon ?? 'icon-color-wenjianjia'"
-                  :size="16"
-                />
+                <Icon :name="item.icon ?? 'icon-color-wenjianjia'" :size="16" />
                 {{ item.name }}
               </span>
             </a>
@@ -169,7 +155,7 @@ const { data: categories } = useFetch<
       <li class="nav-menu-item">
         <a href="/sn">
           <span>
-            <IconFont icon="icon-color-zhihangshu" :size="16" />
+            <Icon name="icon-color-zhihangshu" :size="16" />
             闪念笔记
           </span>
         </a>
@@ -177,7 +163,7 @@ const { data: categories } = useFetch<
       <li class="nav-menu-item">
         <a href="/message">
           <span>
-            <IconFont icon="icon-color-xiaoxi" :size="16" />
+            <Icon name="icon-color-xiaoxi" :size="16" />
             留言板
           </span>
         </a>
@@ -190,37 +176,27 @@ const { data: categories } = useFetch<
         >
           <div class="sub-nav-menu-title">
             <span>
-              <IconFont
-                :icon="item.icon ?? 'icon-color-wenjianjia'"
-                :size="16"
-              />
-              {{ item.name }}
+              <Icon :name="item.icon ?? 'icon-color-wenjianjia'" :size="16" />
+              {{ item.title }}
             </span>
-            <IconFont icon="icon-down" class="nav-menu-arrow" />
+            <Icon name="icon-down" class="nav-menu-arrow" />
           </div>
           <ul class="sub-nav-menu" @click.stop>
-            <li
-              class="nav-menu-item"
-              v-for="sub_item in item.children"
-              :key="sub_item.id"
-            >
-              <a :href="sub_item.url" v-if="sub_item.show">
+            <li v-for="sub in item.children" :key="sub.id" class="nav-menu-item">
+              <a v-if="sub.show" :href="sub.href ?? '#'">
                 <span>
-                  <IconFont
-                    :icon="sub_item.icon ?? 'icon-color-lianjie'"
-                    :size="16"
-                  />
-                  {{ sub_item.name }}
+                  <Icon :name="sub.icon ?? 'icon-color-lianjie'" :size="16" />
+                  {{ sub.title }}
                 </span>
               </a>
             </li>
           </ul>
         </li>
-        <li class="nav-menu-item" v-else-if="item.show">
-          <a :href="item.url">
+        <li v-else-if="item.show" class="nav-menu-item">
+          <a :href="item.href ?? '#'">
             <span>
-              <IconFont :icon="item.icon ?? 'icon-color-lianjie'" :size="16" />
-              {{ item.name }}
+              <Icon :name="item.icon ?? 'icon-color-lianjie'" :size="16" />
+              {{ item.title }}
             </span>
           </a>
         </li>
@@ -229,98 +205,5 @@ const { data: categories } = useFetch<
   </el-drawer>
 </template>
 <style lang="scss">
-.header-drawer {
-  .el-drawer__body {
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    .author-bg {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 120px;
-      object-fit: cover;
-      z-index: 1;
-    }
-    .user {
-      position: relative;
-      margin-top: 60px;
-      z-index: 2;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding-bottom: 24px;
-      .avatar {
-        width: 80px;
-        height: 80px;
-        border-radius: 50%;
-        overflow: hidden;
-        margin-bottom: 16px;
-        object-fit: cover;
-        transition: transform 0.75s;
-        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-      }
-      .name {
-        color: var(--theme-color);
-        text-decoration: none;
-        margin-bottom: 16px;
-        font-size: 1.125rem;
-        font-weight: 500;
-      }
-      .motto {
-        font-size: 0.875rem;
-        color: #909399;
-        text-align: center;
-        word-break: break-word;
-      }
-    }
-    .nav-menu {
-      list-style: none;
-      flex: 1;
-      overflow-y: auto;
-      overflow-x: hidden;
-      padding: 20px;
-      li {
-        line-height: 28px;
-
-        .nav-menu-arrow.iconfont {
-          transform: rotate(-90deg);
-          transition: all 0.35s;
-        }
-        .sub-nav-menu-title {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-        }
-        a {
-          display: flex;
-          color: var(--main);
-          text-decoration: none;
-          font-size: 1rem;
-        }
-
-        ul {
-          list-style: none;
-          padding-left: 0;
-          height: 0;
-          width: 0;
-          overflow: hidden;
-          white-space: nowrap;
-          transition: all 0.35s;
-        }
-      }
-      li.active {
-        ul {
-          width: 100%;
-          padding-left: 25px;
-        }
-        .nav-menu-arrow.iconfont {
-          float: right;
-          transform: rotate(0deg);
-        }
-      }
-    }
-  }
-}
+@import url("../style/header-drawer.scss");
 </style>

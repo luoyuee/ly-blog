@@ -2,7 +2,7 @@
 export default defineNuxtConfig({
   compatibilityDate: "2025-07-15",
   devtools: { enabled: true },
-  css: ["@/styles/index.css", "@/styles/github-markdown.css"],
+  css: ["@/styles/var.scss", "@/styles/index.css", "@/styles/github-markdown.css"],
   modules: [
     "@nuxt/eslint",
     "@nuxt/icon",
@@ -10,8 +10,12 @@ export default defineNuxtConfig({
     "@pinia/nuxt",
     "@element-plus/nuxt",
     "@unocss/nuxt",
-    "@nuxtjs/color-mode"
+    "@nuxtjs/color-mode",
+    "@vueuse/nuxt"
   ],
+  colorMode: {
+    classSuffix: ""
+  },
   i18n: {
     defaultLocale: "zh-CN",
     locales: [{ code: "zh-CN", name: "简体中文", file: "zh-CN.json" }]
@@ -41,6 +45,13 @@ export default defineNuxtConfig({
         { src: "//at.alicdn.com/t/c/font_4346236_exivd4en94v.js" }
       ],
       link: [{ rel: "icon", type: "image/svg+xml", href: "ly.svg" }]
+    }
+  },
+  typescript: {
+    tsConfig: {
+      compilerOptions: {
+        lib: ["DOM", "ESNext"]
+      }
     }
   }
 });

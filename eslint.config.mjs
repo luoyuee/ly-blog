@@ -59,14 +59,15 @@ export default withNuxt([
       "vue/require-default-prop": "off",
       "vue/require-explicit-emits": "off",
       "vue/valid-template-root": "error",
+      "@typescript-eslint/no-explicit-any": "warn",
 
       // HTML标签规则
       "vue/html-self-closing": [
-        "error",
+        "warn",
         {
           html: {
             void: "always", // HTML空元素使用自闭合
-            normal: "always", // 普通元素使用自闭合
+            normal: "never", // 普通元素使用自闭合
             component: "always" // Vue组件使用自闭合
           },
           svg: "always", // SVG元素使用自闭合
@@ -102,8 +103,8 @@ export default withNuxt([
       // 基础规则
       "no-console": process.env.NODE_ENV === "production" ? "warn" : "off",
       "no-debugger": process.env.NODE_ENV === "production" ? "error" : "off",
-      "no-unused-vars": "warn",
-      "no-undef": "error",
+      "no-unused-vars": "off",
+      "no-undef": "off",
 
       // 代码风格
       "prefer-const": "error",
@@ -115,7 +116,7 @@ export default withNuxt([
       // 格式规则
       quotes: ["error", "double"],
       semi: ["error", "always"],
-      indent: ["error", 2],
+      // indent: ["error", 2],
       "no-trailing-spaces": "error",
       "eol-last": "error",
 
