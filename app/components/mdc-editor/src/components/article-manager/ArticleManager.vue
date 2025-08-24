@@ -1,15 +1,13 @@
 <script setup lang="ts">
-import type { ArticleCategoryItem } from "@/types/article";
+import type { ArticleCategoryItem } from "#shared/types/article";
 import { IndeterminateProgressBar } from "@/components/progress";
 import { getAllArticleCategory, deleteArticleCategory } from "@/apis/article";
 import { useMdcEditorStore } from "@/stores";
 import CategoryFormModal from "./CategoryFormModal.vue";
 import CategoryDetailsModal from "./CategoryDetailsModal.vue";
 import Scrollbar from "@/components/scrollbar";
-import { useMessageBox } from "~/components/message-box/src/method";
 
 const mdcEditorStore = useMdcEditorStore();
-const notification = useNotification();
 
 const data = ref<ArticleCategoryItem[]>([]);
 
@@ -17,7 +15,8 @@ const loadData = async () => {
   try {
     data.value = await getAllArticleCategory();
   } catch (error) {
-    notification.error("获取数据失败", error);
+    console.error(error);
+    // notification.error("获取数据失败", error);
   }
 };
 
@@ -43,47 +42,42 @@ const handleOpenHitokoto = (e: ArticleCategoryItem) => {
     openTime: new Date().getTime(),
     type: "article-manager",
     data: e,
-    isChange: true,
+    isChange: true
   });
 
   mdcEditorStore.currenTab = "article-manager";
 };
 
 const handleDelete = (e: ArticleCategoryItem) => {
-  const { show } = useMessageBox({
-    title: "确认删除?",
-    message: `即将删除「${e.name}」，删除后将无法恢复，是否继续？`,
-    type: "warning",
-    confirmButtonText: "删除",
-    confirmButtonProps: {
-      color: "error",
-    },
-    onConfirm: async () => {
-      try {
-        await deleteArticleCategory(e.id);
-        notification.success("删除成功");
-        loadData();
-      } catch (error) {
-        notification.error("操作失败", error);
-      }
-    },
-  });
-
-  show();
+  // const { show } = useMessageBox({
+  //   title: "确认删除?",
+  //   message: `即将删除「${e.name}」，删除后将无法恢复，是否继续？`,
+  //   type: "warning",
+  //   confirmButtonText: "删除",
+  //   confirmButtonProps: {
+  //     color: "error"
+  //   },
+  //   onConfirm: async () => {
+  //     try {
+  //       await deleteArticleCategory(e.id);
+  //       notification.success("删除成功");
+  //       loadData();
+  //     } catch (error) {
+  //       notification.error("操作失败", error);
+  //     }
+  //   }
+  // });
+  // show();
 };
 </script>
 <template>
   <div class="mdc-article-category-manager" @contextmenu.prevent>
     <div class="header">
-      <div class="whitespace-nowrap text-ellipsis overflow-hidden">
-        文章管理
-      </div>
+      <div class="whitespace-nowrap text-ellipsis overflow-hidden"> 文章管理 </div>
       <div class="actions">
-        <UTooltip text="新建分类">
-          <span @click="handleOpenFormModal()">
-            <UIcon name="ep:plus" :size="16" />
-          </span>
-        </UTooltip>
+        <span @click="handleOpenFormModal()">
+          <Icon name="ep:plus" :size="16" />
+        </span>
       </div>
     </div>
 
@@ -93,15 +87,12 @@ const handleDelete = (e: ArticleCategoryItem) => {
       <Scrollbar>
         <div
           v-for="item in data"
-          class="px-3 py-2 hover:bg-gray-100/5 cursor-pointer"
           :key="item.id"
+          class="px-3 py-2 hover:bg-gray-100/5 cursor-pointer"
           @click="handleOpenHitokoto(item)"
         >
           <div class="flex items-center">
-            <UIcon
-              :name="item.icon ?? 'custom-color:folder'"
-              class="mr-1 shrink-0"
-            />
+            <Icon :name="item.icon ?? 'custom-color:folder'" class="mr-1 shrink-0" />
             <span class="truncate">
               {{ item.name }}
             </span>
@@ -111,25 +102,25 @@ const handleDelete = (e: ArticleCategoryItem) => {
           </p>
           <div class="flex justify-between items-center leading-none pt-1">
             <div class="text-xs flex items-center gap-1">
-              <UIcon name="custom:database" />
+              <Icon name="custom:database" />
               {{ item.count }}
             </div>
             <div class="flex items-center gap-1" @click.stop>
-              <UDropdownMenu
+              <!-- <UDropdownMenu
                 :items="[
                   {
                     label: '重命名',
                     icon: 'ep:edit',
                     onSelect: () => {
                       handleOpenFormModal(item);
-                    },
+                    }
                   },
                   {
                     label: '分类详情',
                     icon: 'ep:warning',
                     onSelect: () => {
                       handleOpenDetailsModal(item);
-                    },
+                    }
                   },
                   {
                     label: '删除分类',
@@ -137,26 +128,22 @@ const handleDelete = (e: ArticleCategoryItem) => {
                     color: 'error',
                     onSelect: () => {
                       handleDelete(item);
-                    },
-                  },
+                    }
+                  }
                 ]"
                 :content="{
                   align: 'start',
                   side: 'bottom',
-                  sideOffset: 8,
+                  sideOffset: 8
                 }"
                 :ui="{
-                  content: 'w-48',
+                  content: 'w-48'
                 }"
               >
                 <UTooltip text="设置">
-                  <UIcon
-                    name="custom:setting"
-                    class="hover:text-gray-400"
-                    :size="16"
-                  />
+                  <UIcon name="custom:setting" class="hover:text-gray-400" :size="16" />
                 </UTooltip>
-              </UDropdownMenu>
+              </UDropdownMenu> -->
             </div>
           </div>
         </div>

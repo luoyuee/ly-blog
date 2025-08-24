@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import { useFullscreen } from "@vueuse/core";
 import { useMdcEditorStore } from "@/stores";
-import type { DropdownMenuItem } from "@nuxt/ui";
 
 const mdcEditorStore = useMdcEditorStore();
 
-const dropdownMenu = ref<{ key: number; name: string; items: DropdownMenuItem[] }[]>([
+const dropdownMenu = ref<{ key: number; name: string; items: any[] }[]>([
   {
     key: 1,
     name: "文件",
@@ -89,9 +88,9 @@ const userDropdownMenuItem = ref<DropdownMenuItem[][]>([
       </UDropdownMenu>
     </div>
 
-    <div class="menu-bar-center-group" />
+    <div class="menu-bar-center-group"></div>
 
-    <div class="menu-bar-end-group" />
+    <div class="menu-bar-end-group"></div>
 
     <div class="menu-bar-window-controls">
       <UTooltip text="切换主侧栏" :content="{ side: 'bottom' }">

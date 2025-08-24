@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { HitokotoTypeItem } from "@/types/hitokoto";
+import type { HitokotoTypeItem } from "#shared/types/hitokoto";
 import { getHitokotoDetails } from "@/apis/hitokoto";
-import { Descriptions, DescriptionsItem } from "@/components/descriptions";
+import { BasicModal } from "@/components/basic-modal";
 
 const emits = defineEmits(["cancel"]);
 
@@ -18,7 +18,7 @@ const handleOpen = (e: HitokotoTypeItem) => {
 };
 
 defineExpose({
-  open: handleOpen,
+  open: handleOpen
 });
 
 const handleCancel = () => {
@@ -27,28 +27,13 @@ const handleCancel = () => {
 };
 </script>
 <template>
-  <UModal
-    v-model:open="visible"
-    title="分类详情"
-    :ui="{ footer: 'justify-end', overlay: 'bg-elevated/40' }"
-  >
-    <template #body>
-      <Descriptions class="w-full">
-        <DescriptionsItem label="分类名称" :content="data.name" />
-        <DescriptionsItem label="分类描述" :content="data.description" />
-        <DescriptionsItem label="创建日期" :content="data.created_at" />
-        <DescriptionsItem label="更新日期" :content="data.updated_at" />
-        <DescriptionsItem label="语句数量" :content="data.count" />
-      </Descriptions>
-    </template>
-
-    <template #footer>
-      <UButton
-        label="关闭"
-        color="neutral"
-        variant="outline"
-        @click="handleCancel"
-      />
-    </template>
-  </UModal>
+  <BasicModal v-model:visible="visible" title="分类详情">
+    <el-descriptions class="w-full">
+      <el-descriptions-item label="分类名称">{{ data.name }}</el-descriptions-item>
+      <el-descriptions-item label="分类描述">{{ data.description }}</el-descriptions-item>
+      <el-descriptions-item label="创建日期">{{ data.created_at }}</el-descriptions-item>
+      <el-descriptions-item label="更新日期">{{ data.updated_at }}</el-descriptions-item>
+      <el-descriptions-item label="语句数量">{{ data.count }}</el-descriptions-item>
+    </el-descriptions>
+  </BasicModal>
 </template>

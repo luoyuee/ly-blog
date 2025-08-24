@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ArticleCategoryItem } from "@/types/article";
+import type { ArticleCategoryItem } from "#shared/types/article";
 import { getArticleCategoryDetails } from "@/apis/article";
 import dayjs from "dayjs";
 
@@ -18,7 +18,7 @@ const handleOpen = (e: ArticleCategoryItem) => {
 };
 
 defineExpose({
-  open: handleOpen,
+  open: handleOpen
 });
 
 const handleCancel = () => {
@@ -36,9 +36,7 @@ const handleCancel = () => {
       <table class="w-full">
         <tbody>
           <tr>
-            <td
-              class="border-1 border-white/20 bg-white/5 py-1 px-2 text-nowrap w-fit"
-            >
+            <td class="border-1 border-white/20 bg-white/5 py-1 px-2 text-nowrap w-fit">
               父级分类
             </td>
             <td class="border-1 border-white/20 py-1 px-2 text-sm">
@@ -46,9 +44,7 @@ const handleCancel = () => {
             </td>
           </tr>
           <tr>
-            <td
-              class="border-1 border-white/20 bg-white/5 py-1 px-2 text-nowrap w-fit"
-            >
+            <td class="border-1 border-white/20 bg-white/5 py-1 px-2 text-nowrap w-fit">
               分类名称
             </td>
             <td class="border-1 border-white/20 py-1 px-2 text-sm">
@@ -56,20 +52,16 @@ const handleCancel = () => {
             </td>
           </tr>
           <tr>
-            <td
-              class="border-1 border-white/20 bg-white/5 py-1 px-2 text-nowrap w-fit"
-            >
+            <td class="border-1 border-white/20 bg-white/5 py-1 px-2 text-nowrap w-fit">
               分类图标
             </td>
             <td class="border-1 border-white/20 py-1 px-2 text-sm">
-              <UIcon :name="data.icon" v-if="data.icon" />
+              <UIcon v-if="data.icon" :name="data.icon" />
               <UIcon v-else name="custom-color:folder" />
             </td>
           </tr>
           <tr>
-            <td
-              class="border-1 border-white/20 bg-white/5 py-1 px-2 text-nowrap w-0"
-            >
+            <td class="border-1 border-white/20 bg-white/5 py-1 px-2 text-nowrap w-0">
               分类描述
             </td>
             <td class="border-1 border-white/20 py-1 px-2 text-sm">
@@ -77,9 +69,7 @@ const handleCancel = () => {
             </td>
           </tr>
           <tr>
-            <td
-              class="border-1 border-white/20 bg-white/5 py-1 px-2 text-nowrap w-0"
-            >
+            <td class="border-1 border-white/20 bg-white/5 py-1 px-2 text-nowrap w-0">
               创建日期
             </td>
             <td class="border-1 border-white/20 py-1 px-2 text-sm">
@@ -91,9 +81,7 @@ const handleCancel = () => {
             </td>
           </tr>
           <tr>
-            <td
-              class="border-1 border-white/20 bg-white/5 py-1 px-2 text-nowrap w-0"
-            >
+            <td class="border-1 border-white/20 bg-white/5 py-1 px-2 text-nowrap w-0">
               更新日期
             </td>
             <td class="border-1 border-white/20 py-1 px-2 text-sm">
@@ -105,9 +93,7 @@ const handleCancel = () => {
             </td>
           </tr>
           <tr>
-            <td
-              class="border-1 border-white/20 bg-white/5 py-1 px-2 text-nowrap w-0"
-            >
+            <td class="border-1 border-white/20 bg-white/5 py-1 px-2 text-nowrap w-0">
               文章数量
             </td>
             <td class="border-1 border-white/20 py-1 px-2 text-sm">
@@ -119,12 +105,7 @@ const handleCancel = () => {
     </template>
 
     <template #footer>
-      <UButton
-        label="关闭"
-        color="neutral"
-        variant="outline"
-        @click="handleCancel"
-      />
+      <UButton label="关闭" color="neutral" variant="outline" @click="handleCancel" />
     </template>
   </UModal>
 </template>

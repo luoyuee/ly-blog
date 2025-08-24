@@ -62,32 +62,34 @@ const handleClickAction = (e: ActivityMenuItem) => {
 <template>
   <aside class="mdc-editor-activity-bar">
     <ul class="activity-bar-start-group">
-      <UTooltip
+      <el-tooltip
         v-for="item in activityMenu"
         :key="item.key"
-        :text="item.label"
-        :content="{ side: 'left' }"
+        effect="dark"
+        :content="item.label"
+        placement="right"
       >
         <li
           class="item"
           :class="{ active: mdcEditorStore.sidebar.active === item.key }"
           @click="handleClickMenu(item)"
         >
-          <UIcon :name="item.icon" class="size-6" />
+          <Icon :name="item.icon" class="size-6" />
         </li>
-      </UTooltip>
+      </el-tooltip>
     </ul>
     <ul class="activity-bar-end-group">
-      <UTooltip
+      <el-tooltip
         v-for="item in actionMenu"
         :key="item.key"
-        :text="item.label"
-        :content="{ side: 'left' }"
+        effect="dark"
+        :content="item.label"
+        placement="right"
       >
         <li class="item" @click="handleClickAction(item)">
-          <UIcon :name="item.icon" class="size-6" />
+          <Icon :name="item.icon" class="size-6" />
         </li>
-      </UTooltip>
+      </el-tooltip>
     </ul>
   </aside>
 </template>

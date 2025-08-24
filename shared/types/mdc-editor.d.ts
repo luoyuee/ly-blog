@@ -12,7 +12,7 @@ export interface ImagePreviewData {
   url: string;
 }
 
-export interface ImageManagerData extends ImageFolder {}
+export type ImageManagerData = ImageFolder;
 
 export type EditorTabItem = {
   key: string;
@@ -31,7 +31,7 @@ export type EditorTabItem = {
     }
   | {
       type: "image-preview";
-      data: Object;
+      data: object;
     }
   | {
       type: "image-manager";

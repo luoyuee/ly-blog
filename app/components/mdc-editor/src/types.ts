@@ -1,8 +1,8 @@
-import type { FolderTreeItem } from "@/types";
+import type { FolderTreeItem } from "#shared/types/mdc-editor";
 
-export interface ClickTreeNodeData extends FolderTreeItem {
+export type ClickTreeNodeData = FolderTreeItem & {
   $treeNodeId: number;
-}
+};
 
 export interface ContextMenuItem {
   label: string;
@@ -29,7 +29,7 @@ export interface ActivityMenuItem {
 
 export const enum FileTreeItemType {
   FOLDER = "folder",
-  FILE = "file",
+  FILE = "file"
 }
 
 // 定义不同 item_type 对应的 data 类型

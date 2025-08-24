@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useMdcEditorStore } from "@/stores";
 import { ResizeArea } from "@/components/resize-area";
-import { MdcEditorActivityMenu } from "@/constants";
+import { MdcEditorActivityMenu } from "#shared/constants";
 
 import ArticleManager from "./components/article-manager/ArticleManager.vue";
 import NoteManager from "./components/note-manager/NoteManager.vue";
@@ -13,31 +13,17 @@ const editorStore = useMdcEditorStore();
 <template>
   <div class="mdc-editor-sidebar">
     <ResizeArea
+      v-show="editorStore.sidebar.show"
       position="right"
       class="h-full"
-      v-show="editorStore.sidebar.show"
       :width="280"
-      :maxWidth="400"
+      :max-width="400"
     >
-      <ArticleManager
-        v-if="
-          editorStore.sidebar.active === MdcEditorActivityMenu.ArticleManager
-        "
-      />
-      <NoteManager
-        v-else-if="
-          editorStore.sidebar.active === MdcEditorActivityMenu.NoteManager
-        "
-      />
-      <ImageManager
-        v-else-if="
-          editorStore.sidebar.active === MdcEditorActivityMenu.ImageManager
-        "
-      />
+      <ArticleManager v-if="editorStore.sidebar.active === MdcEditorActivityMenu.ArticleManager" />
+      <NoteManager v-else-if="editorStore.sidebar.active === MdcEditorActivityMenu.NoteManager" />
+      <ImageManager v-else-if="editorStore.sidebar.active === MdcEditorActivityMenu.ImageManager" />
       <HitokotoManager
-        v-else-if="
-          editorStore.sidebar.active === MdcEditorActivityMenu.HitokotoManager
-        "
+        v-else-if="editorStore.sidebar.active === MdcEditorActivityMenu.HitokotoManager"
       />
     </ResizeArea>
   </div>
