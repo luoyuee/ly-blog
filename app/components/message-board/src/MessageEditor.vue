@@ -185,7 +185,7 @@ const handelEmailChange = () => {
     <TipTapEditor v-model="formData.content" :max="configStore.message_board.message_max_length" />
     <div class="footer">
       <a class="md-support" href="https://markdown.com.cn/cheat-sheet.html" target="_blank">
-        <Icon name="custom:markdown-fill" />
+        <Icon name="custom:markdown-fill" :size="18" class="mr-1" />
         支持Markdown语法
       </a>
       <el-space>
@@ -250,6 +250,8 @@ const handelEmailChange = () => {
       color: var(--text-color-2);
       font-size: 0.875rem;
       text-decoration: none;
+      display: flex;
+      align-items: center;
 
       &:hover {
         color: var(--theme-color);

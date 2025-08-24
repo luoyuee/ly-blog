@@ -4,7 +4,6 @@ import type { ArticleComment } from "#shared/types";
 import { PlatformIcon, BrowserIcon } from "#shared/constants";
 import { TiptapRender } from "@/components/tiptap-editor";
 import { useUserStore } from "@/stores";
-import IconFont from "@/components/icon-font";
 import dayjs from "dayjs";
 
 const props = defineProps({
@@ -56,8 +55,8 @@ const handleDelete = () => {
       <div class="user">
         <span class="nickname">{{ props.data.nickname }}</span>
         <div class="agent">
-          <Icon :name="platform.icon" :alt="platform.name" :title="platform.name" />
-          <Icon :name="browser.icon" :alt="browser.name" :title="browser.name" />
+          <Icon :name="platform.icon" />
+          <Icon :name="browser.icon" />
         </div>
       </div>
       <div class="message-text">
@@ -77,7 +76,7 @@ const handleDelete = () => {
         </div>
         <div>
           <span class="reply-btn" @click="handleReply">
-            <IconFont icon="icon-edit" />
+            <Icon name="custom:edit" />
             回复
           </span>
           <el-popconfirm
@@ -88,7 +87,7 @@ const handleDelete = () => {
           >
             <template #reference>
               <span class="delete-btn">
-                <IconFont icon="icon-delete" />
+                <Icon name="custom:delete" />
                 删除
               </span>
             </template>

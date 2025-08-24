@@ -1,14 +1,14 @@
-import type { FleetingThought, GetListRequest, GetListResponse } from "#shared/types";
+import type { GetPaginatedRequest, GetPaginatedResponse } from "#shared/types/common";
+import type { FleetingThought } from "#shared/types/fleeting-thought";
 
 export interface CreateFleetingThoughtRequest {
   public: boolean;
   content: string;
 }
 
-export interface GetFleetingThoughtRequest extends GetListRequest {}
+export type GetFleetingThoughtPaginatedRequest = GetPaginatedRequest;
 
-export interface GetFleetingThoughtResponse
-  extends GetListResponse<FleetingThought> {}
+export type GetFleetingThoughtPaginatedResponse = GetPaginatedResponse<FleetingThought>;
 
 export interface UpdateFleetingThoughtRequest {
   id: number;

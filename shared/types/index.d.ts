@@ -114,14 +114,3 @@ export interface ArticleListItem {
   comments_count: number;
   likes_count: number;
 }
-
-export interface FleetingThought {
-  id: number;
-  created_at: number;
-  content: string;
-  public: boolean;
-  ip?: string;
-  location?: string;
-  platform?: string;
-  browser?: string;
-}

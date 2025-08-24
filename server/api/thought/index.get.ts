@@ -1,14 +1,13 @@
 import { getBadResponse, getOKResponse } from "@@/server/utils/response";
-import { prisma } from "@@/server/db";
-import { recursiveDelete } from "@/utils";
 import { UserRoleEnum } from "#shared/enums";
+import { prisma } from "@@/server/db";
 import { getQuery } from "h3";
 import { z } from "zod";
 
 export default defineEventHandler(async (event) => {
   const zodSchema = z.object({
-    page: z.number().int(),
-    per_page: z.number().int(),
+    page: z.coerce.number().int(),
+    per_page: z.coerce.number().int()
   });
 
   const { error, data: queryParams } = zodSchema.safeParse(getQuery(event));
@@ -25,21 +24,20 @@ export default defineEventHandler(async (event) => {
       ip: true,
       location: true,
       platform: true,
-      browser: true,
+      browser: true
     },
     skip: (queryParams.page - 1) * queryParams.per_page,
     take: queryParams.per_page,
     orderBy: {
-      id: "desc",
-    },
+      id: "desc"
+    }
   });
 
   const total = await prisma.fleetingThought.count({
-    where: { status: 1 },
+    where: { status: 1 }
   });
 
-  const isAdmin =
-    event.context.user && event.context.user.role === UserRoleEnum.ADMIN;
+  const isAdmin = event.context.user && event.context.user.role === UserRoleEnum.ADMIN;
 
   const data = result.map((item) => ({
     id: item.id,
@@ -49,13 +47,13 @@ export default defineEventHandler(async (event) => {
     ip: item.ip,
     location: item.location,
     platform: item.platform,
-    browser: item.browser,
+    browser: item.browser
   }));
 
   return getOKResponse(event, {
     page: queryParams.page,
     per_page: queryParams.per_page,
     total,
-    data,
+    data
   });
 });

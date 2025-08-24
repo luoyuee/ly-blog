@@ -13,7 +13,7 @@ export default defineEventHandler(async (event) => {
 
   const zodSchema = z.object({
     content: z.string(),
-    is_public: z.boolean(),
+    is_public: z.coerce.boolean()
   });
 
   const { error, data: body } = zodSchema.safeParse(await readBody(event));
@@ -30,8 +30,8 @@ export default defineEventHandler(async (event) => {
       browser,
       ip,
       location,
-      is_public: body.is_public,
-    },
+      is_public: body.is_public
+    }
   });
 
   return getOKResponse(event, thought);

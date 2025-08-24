@@ -1,9 +1,9 @@
-import type { FleetingThought } from "#shared/types";
+import type { FleetingThought } from "#shared/types/fleeting-thought";
 import type {
   CreateFleetingThoughtRequest,
-  GetFleetingThoughtRequest,
-  GetFleetingThoughtResponse,
-  UpdateFleetingThoughtRequest,
+  GetFleetingThoughtPaginatedRequest,
+  GetFleetingThoughtPaginatedResponse,
+  UpdateFleetingThoughtRequest
 } from "./models";
 import { serviceAxios } from "@/utils/request";
 
@@ -14,7 +14,7 @@ export async function createFleetingThought(
     const response = await serviceAxios({
       url: "/admin/thought",
       method: "post",
-      data,
+      data
     });
     return response.data;
   } catch (error) {
@@ -22,14 +22,14 @@ export async function createFleetingThought(
   }
 }
 
-export async function getFleetingThoughtList(
-  params: GetFleetingThoughtRequest
-): Promise<GetFleetingThoughtResponse> {
+export async function getPaginatedFleetingThought(
+  params: GetFleetingThoughtPaginatedRequest
+): Promise<GetFleetingThoughtPaginatedResponse> {
   try {
     const response = await serviceAxios({
       url: "/thought",
       method: "get",
-      params,
+      params
     });
     return response.data;
   } catch (error) {
@@ -41,7 +41,7 @@ export async function deleteFleetingThought(id: number): Promise<void> {
   try {
     await serviceAxios({
       url: "/admin/thought/" + id,
-      method: "delete",
+      method: "delete"
     });
   } catch (error) {
     return Promise.reject(error);
@@ -55,7 +55,7 @@ export async function updateFleetingThought(
     const response = await serviceAxios({
       url: "/admin/thought",
       method: "patch",
-      data,
+      data
     });
     return response.data;
   } catch (error) {

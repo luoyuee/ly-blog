@@ -170,3 +170,16 @@ html::-webkit-scrollbar-track {
 ::view-transition-new(root) {
   animation: 1.5s cubic-bezier(0.87, 0, 0.13, 1) both move-in;
 }
+
+.iconify {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  color: inherit;
+  font-style: normal;
+  vertical-align: -0.15em;
+  outline: none;
+  stroke: currentColor;
+  fill: currentColor;
+  font-size: inherit;
+}
