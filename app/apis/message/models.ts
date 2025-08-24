@@ -1,8 +1,5 @@
-import type {
-  MessageItem,
-  GetListRequest,
-  GetListResponse,
-} from "#shared/types";
+import type { GetPaginatedRequest, GetPaginatedResponse } from "#shared/types/common";
+import type { MessageItem } from "#shared/types/message";
 
 export interface CreateMessageRequest {
   avatar?: string;
@@ -10,13 +7,13 @@ export interface CreateMessageRequest {
   email: string;
   website?: string;
   content: string;
-  parent?: number;
-  reply?: number;
+  parent_id?: number;
+  reply_id?: number;
 }
 
-export interface GetMessageListRequest extends GetListRequest {}
+export type GetMessagePaginatedRequest = GetPaginatedRequest;
 
-export interface GetMessageListResponse extends GetListResponse<MessageItem> {}
+export type GetMessagePaginatedResponse = GetPaginatedResponse<MessageItem>;
 
 export interface UpdateMessageContentRequest {
   id: number;

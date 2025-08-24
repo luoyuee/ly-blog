@@ -1,4 +1,3 @@
-import type { UserRoleEnum } from "@/enums";
 import type { HTTPMethod } from "h3";
 
 export interface GetListRequest {
@@ -116,25 +115,6 @@ export interface ArticleListItem {
   likes_count: number;
 }
 
-export interface MessageItem {
-  id: number;
-  created_at: number;
-  avatar?: string;
-  nickname: string;
-  role: number;
-  email: string;
-  website?: string;
-  content: string;
-  parent?: number;
-  reply?: number;
-  reply_nickname?: string;
-  ip?: string;
-  location?: string;
-  platform?: string;
-  browser?: string;
-  children?: MessageItem[];
-}
-
 export interface FleetingThought {
   id: number;
   created_at: number;
@@ -144,12 +124,4 @@ export interface FleetingThought {
   location?: string;
   platform?: string;
   browser?: string;
-}
-
-export interface UserInfo {
-  username: string;
-  email: string;
-  avatar: string;
-  role: UserRoleEnum;
-  last_login_time: number;
 }

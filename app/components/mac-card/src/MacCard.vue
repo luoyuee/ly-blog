@@ -2,12 +2,12 @@
 const props = defineProps({
   title: {
     type: String,
-    default: "",
-  },
+    default: ""
+  }
 });
 </script>
 <template>
-  <div class="mac-card dark:bg-red-50">
+  <div class="mac-card">
     <div class="mac-card-header">
       <slot name="header">
         <span>{{ props.title }}</span>
@@ -21,14 +21,14 @@ const props = defineProps({
 </template>
 <style scoped lang="scss">
 .mac-card {
-  background-color: var(--color-white);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-md);
+  background-color: var(--card-bg-color);
+  border-radius: var(--card-radius);
+  box-shadow: var(--card-shadow);
   overflow: hidden;
 
   .mac-card-header {
-    color: var(--color-gray-800);
-    border-bottom: 1px solid var(--color-gray-200);
+    color: var(--text-color-1);
+    border-bottom: 1px solid var(--text-color-5);
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -41,26 +41,15 @@ const props = defineProps({
       background: #fc625d;
       width: 12px;
       height: 12px;
-      box-shadow: 20px 0 #fdbc40, 40px 0 #35cd4b;
+      box-shadow:
+        20px 0 #fdbc40,
+        40px 0 #35cd4b;
       margin-right: 40px;
     }
   }
   .mac-card-content {
-    color: var(--color-gray-700);
+    color: var(--text-color-4);
     padding: 1rem;
-  }
-}
-
-.mac-card:where(.dark, .dark *) {
-  background-color: var(--color-neutral-900);
-
-  .mac-card-header {
-    border-bottom: 1px solid var(--color-gray-600);
-    color: var(--color-gray-200);
-  }
-
-  .mac-card-content {
-    color: var(--color-gray-300);
   }
 }
 </style>

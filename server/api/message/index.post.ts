@@ -9,18 +9,18 @@ import { z } from "zod";
 export default defineEventHandler(async (event) => {
   const userAgent = event.headers.get("User-Agent");
 
-  let ip = getRequestIP(event, { xForwardedFor: true });
+  const ip = getRequestIP(event, { xForwardedFor: true });
 
   const { browser, platform, location } = getDeviceInfo(userAgent, ip);
 
   const schema = z.object({
     avatar: z.string().max(255),
     nickname: z.string().max(100),
-    email: z.string().email(),
+    email: z.email(),
     website: z.string().optional(),
     content: z.string(),
     parent_id: z.number().int().optional(),
-    reply_id: z.number().int().optional(),
+    reply_id: z.number().int().optional()
   });
 
   const { error, data: body } = schema.safeParse(await readBody(event));
@@ -31,7 +31,7 @@ export default defineEventHandler(async (event) => {
 
   if (body.reply_id) {
     replied = await prisma.messageBoard.findUnique({
-      where: { id: body.reply_id },
+      where: { id: body.reply_id }
     });
   }
 
@@ -50,8 +50,8 @@ export default defineEventHandler(async (event) => {
       location,
       platform,
       browser,
-      role: UserRoleEnum.VISITOR,
-    },
+      role: UserRoleEnum.VISITOR
+    }
   });
 
   return getOKResponse(event, result);

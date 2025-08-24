@@ -110,11 +110,18 @@ export default withNuxt([
       "prefer-const": "error",
       "no-var": "error",
       "object-shorthand": "error",
-      "prefer-template": "error",
+      // "prefer-template": "error",
       "prefer-arrow-callback": "error",
 
       // 格式规则
-      quotes: ["error", "double"],
+      quotes: [
+        "error",
+        "double",
+        {
+          avoidEscape: true,
+          allowTemplateLiterals: true
+        }
+      ],
       semi: ["error", "always"],
       // indent: ["error", 2],
       "no-trailing-spaces": "error",

@@ -4,7 +4,7 @@ import MacCard from "./MacCard.vue";
 const props = defineProps({
   data: {
     type: Array as PropType<string[]>,
-    default: [],
+    default: () => []
   },
   colors: {
     type: Array as PropType<string[]>,
@@ -20,18 +20,18 @@ const props = defineProps({
       "#f9bb3c",
       "#F067B4",
       "#28C76F",
-      "#F6416C",
-    ],
+      "#F6416C"
+    ]
   },
   hrefPrefix: {
     type: String,
-    default: "/tag",
-  },
+    default: "/tag"
+  }
 });
 
 const randomColor = (): string => {
   const index = Math.floor(Math.random() * props.colors.length);
-  return props.colors[index];
+  return props.colors[index] ?? "#6fa3ef";
 };
 </script>
 <template>

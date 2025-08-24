@@ -10,20 +10,20 @@ export const TagColors: string[] = [
   "#f9bb3c",
   "#F067B4",
   "#28C76F",
-  "#F6416C",
+  "#F6416C"
 ] as const;
 
 export const PlatformIcon: Record<string, string> = {
-  "Windows 11": "win11",
-  "Windows 10": "win10",
-  unknown: "unknown-system",
+  "Windows 11": "custom-color:win11",
+  "Windows 10": "custom-color:win10",
+  unknown: "custom-color:unknown-system"
 } as const;
 
 export const BrowserIcon: Record<string, string> = {
-  Chrome: "chrome",
-  Edge: "edge",
-  Firefox: "firefox",
-  unknown: "browser",
+  Chrome: "custom-color:chrome",
+  Edge: "custom-color:edge",
+  Firefox: "custom-color:firefox",
+  unknown: "custom-color:browser"
 } as const;
 
 export const MdcEditorActivityMenu = {
@@ -32,11 +32,11 @@ export const MdcEditorActivityMenu = {
   SearchPanel: 3,
   ImageManager: 4,
   HitokotoManager: 5,
-  SettingPanel: 99,
+  SettingPanel: 99
 } as const;
 
 export const ImageFolderEnum = {
   SYSTEM: 1,
   BACKGROUND: 2,
-  ARTICLE: 3,
+  ARTICLE: 3
 } as const;

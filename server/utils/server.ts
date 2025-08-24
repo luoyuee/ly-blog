@@ -36,6 +36,6 @@ export function getDeviceInfo(
   return {
     browser,
     platform,
-    location,
+    location
   };
 }

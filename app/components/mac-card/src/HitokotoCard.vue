@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { HitokotoItem } from "@/types/hitokoto";
+import type { HitokotoItem } from "#shared/types/hitokoto";
 import { randomHitokoto } from "@/apis/hitokoto";
 import { useConfigStore } from "@/stores";
 import { ref } from "vue";
@@ -13,7 +13,7 @@ const hitokoto = ref("");
 
 await useFetch<HitokotoItem>("/api/hitokoto/random", {
   method: "post",
-  body: configStore.hitokoto,
+  body: configStore.hitokoto
 }).then(({ data }) => {
   if (data.value) {
     hitokoto.value = data.value.content;
@@ -23,7 +23,7 @@ await useFetch<HitokotoItem>("/api/hitokoto/random", {
 const loading = ref(false);
 const handleChange = async (): Promise<void> => {
   loading.value = true;
-  contentBorder.value = "border-" + (Math.floor(Math.random() * 6) + 1);
+  contentBorder.value = `border-${Math.floor(Math.random() * 6) + 1}`;
   try {
     const response = await randomHitokoto(configStore.hitokoto);
     hitokoto.value = response.content;
@@ -41,11 +41,7 @@ const handleChange = async (): Promise<void> => {
         {{ hitokoto }}
       </div>
       <div class="change-btn" @click="handleChange">
-        <UIcon
-          name="custom:refresh"
-          :size="30"
-          :class="{ 'animate-spin': loading }"
-        />
+        <Icon name="custom:refresh" :size="26" :class="{ 'animate-spin': loading }" />
       </div>
     </div>
   </MacCard>
@@ -53,15 +49,12 @@ const handleChange = async (): Promise<void> => {
 
 <style scoped lang="scss">
 .hitokoto {
-  --content-bg-color: #f2f6fc;
-  --border-color: #ebeef5;
-
   .content {
     border-style: solid;
-    border-color: var(--border-color);
+    border-color: var(--card-border-color);
     padding: 15px;
     line-height: 1.8;
-    background: var(--content-bg-color);
+    background-color: var(--card-bg-color);
     margin-bottom: 16px;
     border-width: 2px;
   }
@@ -108,16 +101,11 @@ const handleChange = async (): Promise<void> => {
     border-radius: 50%;
     width: fit-content;
     height: fit-content;
-    padding: 6px;
+    padding: 8px;
     margin: 0 auto;
     cursor: pointer;
-    border: 2px solid var(--color-gray-300);
-    color: var(--color-gray-300);
+    border: 2px solid var(--text-color-5);
+    color: var(--text-color-4);
   }
-}
-
-.dark .hitokoto {
-  --content-bg-color: #303030;
-  --border-color: #555;
 }
 </style>

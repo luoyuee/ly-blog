@@ -12,7 +12,7 @@ const countdown = reactive({
   date: 0,
   datePercent: "0%",
   month: 0,
-  monthPercent: "0%",
+  monthPercent: "0%"
 });
 
 onMounted(() => {
@@ -25,9 +25,7 @@ onMounted(() => {
   countdown.weekPercent = numeral(countdown.week).divide(7).format("0%");
 
   countdown.date = now.date();
-  countdown.datePercent = numeral(countdown.date)
-    .divide(now.daysInMonth())
-    .format("0%");
+  countdown.datePercent = numeral(countdown.date).divide(now.daysInMonth()).format("0%");
 
   countdown.month = now.month() + 1;
   countdown.monthPercent = numeral(countdown.month).divide(12).format("0%");
@@ -44,10 +42,7 @@ onMounted(() => {
         </div>
         <div class="progress">
           <div class="progress-bar">
-            <div
-              class="progress-bar-inner blue"
-              :style="`width:${countdown.hourPercent}`"
-            ></div>
+            <div class="progress-bar-inner blue" :style="`width:${countdown.hourPercent}`"></div>
           </div>
           <div class="progress-percentage">{{ countdown.hourPercent }}</div>
         </div>
@@ -60,10 +55,7 @@ onMounted(() => {
         </div>
         <div class="progress">
           <div class="progress-bar">
-            <div
-              class="progress-bar-inner yellow"
-              :style="`width:${countdown.weekPercent}`"
-            ></div>
+            <div class="progress-bar-inner yellow" :style="`width:${countdown.weekPercent}`"></div>
           </div>
           <div class="progress-percentage">{{ countdown.weekPercent }}</div>
         </div>
@@ -76,10 +68,7 @@ onMounted(() => {
         </div>
         <div class="progress">
           <div class="progress-bar">
-            <div
-              class="progress-bar-inner red"
-              :style="`width:${countdown.datePercent}`"
-            ></div>
+            <div class="progress-bar-inner red" :style="`width:${countdown.datePercent}`"></div>
           </div>
           <div class="progress-percentage">{{ countdown.datePercent }}</div>
         </div>
@@ -92,10 +81,7 @@ onMounted(() => {
         </div>
         <div class="progress">
           <div class="progress-bar">
-            <div
-              class="progress-bar-inner green"
-              :style="`width:${countdown.monthPercent}`"
-            ></div>
+            <div class="progress-bar-inner green" :style="`width:${countdown.monthPercent}`"></div>
           </div>
           <div class="progress-percentage">{{ countdown.monthPercent }}</div>
         </div>

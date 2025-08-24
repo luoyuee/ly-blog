@@ -1,7 +1,4 @@
-import type {
-  GetPaginatedRequest,
-  GetPaginatedResponse,
-} from "#shared/types/common";
+import type { GetPaginatedRequest, GetPaginatedResponse } from "#shared/types/common";
 import type { HitokotoItem, HitokotoTypeItem } from "#shared/types/hitokoto";
 
 export interface RandomHitokotoRequest {
@@ -14,10 +11,9 @@ export type RandomHitokotoResponse = Pick<
   "id" | "type" | "author" | "source" | "content"
 >;
 
-export interface GetHitokotoTypePaginatedRequest extends GetPaginatedRequest {}
+export type GetHitokotoTypePaginatedRequest = GetPaginatedRequest;
 
-export interface GetHitokotoTypePaginatedResponse
-  extends GetPaginatedResponse<HitokotoTypeItem> {}
+export type GetHitokotoTypePaginatedResponse = GetPaginatedResponse<HitokotoTypeItem>;
 
 export interface CreateHitokotoTypeRequest {
   name: string;
@@ -33,7 +29,6 @@ export interface GetHitokotoPaginatedRequest extends GetPaginatedRequest {
   keyword?: string;
 }
 
-export interface GetHitokotoPaginatedResponse
-  extends GetPaginatedResponse<HitokotoItem> {
+export interface GetHitokotoPaginatedResponse extends GetPaginatedResponse<HitokotoItem> {
   type?: number;
 }

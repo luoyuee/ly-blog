@@ -18,29 +18,22 @@ const { data } = await useFetch<{
   like_count: number;
   tag_count: number;
 }>("/api/article/count", {
-  method: "get",
+  method: "get"
 });
 </script>
 <template>
   <div class="author-card">
-    <img
-      class="author-card__cover"
-      src="/images/author_bg.jpg"
-      alt="author_bg"
-    />
+    <img class="author-card__cover" src="/images/author_bg.jpg" alt="author_bg" />
     <div class="author-card__profile">
       <img class="author-card__avatar" :src="avatar" alt="avatar" />
-      <a
-        class="author-card__name"
-        :href="configStore.author_card.name_link ?? '/'"
-      >
+      <a class="author-card__name" :href="configStore.author_card.name_link ?? '/'">
         {{ configStore.author_card.name }}
       </a>
-      <p class="author-card__motto" v-if="configStore.author_card.motto">
+      <p v-if="configStore.author_card.motto" class="author-card__motto">
         {{ configStore.author_card.motto }}
       </p>
     </div>
-    <div class="author-card__stats" v-if="data">
+    <div v-if="data" class="author-card__stats">
       <div class="author-card__stat-item" title="累计文章数">
         <span class="author-card__stat-value">
           {{ data.article_count ?? 0 }}
@@ -56,15 +49,15 @@ const { data } = await useFetch<{
         <span class="author-card__stat-label">标签</span>
       </div>
     </div>
-    <ul class="author-card__links" v-if="configStore.author_card.links">
+    <ul class="author-card__links">
       <li
-        class="author-card__link-item"
         v-for="(item, index) in configStore.author_card.links"
         :key="index"
+        class="author-card__link-item"
       >
-        <a :href="item.url" target="_blank">
+        <a :href="item.href" target="_blank">
           <span class="author-card__link-title">{{ item.title }}</span>
-          <UIcon
+          <Icon
             class="author-card__link-icon"
             :name="configStore.author_card.link_icon ?? 'custom:link'"
           />
@@ -75,11 +68,11 @@ const { data } = await useFetch<{
 </template>
 <style scoped lang="scss">
 .author-card {
-  background-color: var(--ui-bg);
+  background-color: var(--card-bg-color);
   padding: 85px 16px 0 16px;
   position: relative;
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-md);
+  border-radius: var(--card-radius);
+  box-shadow: var(--card-shadow);
   overflow: hidden;
 
   &::before {
@@ -90,7 +83,7 @@ const { data } = await useFetch<{
     width: 100%;
     height: 30px;
     z-index: 2;
-    background: linear-gradient(to bottom, transparent, var(--bg-color));
+    background: linear-gradient(to bottom, transparent, var(--card-bg-color));
     pointer-events: none;
   }
 
@@ -144,7 +137,6 @@ const { data } = await useFetch<{
     padding-bottom: 16px;
     display: flex;
     align-items: center;
-    border-bottom: 1px solid var(--text-color-4);
   }
 
   &__stat-item {
@@ -174,7 +166,7 @@ const { data } = await useFetch<{
   &__links {
     padding: 12px 0;
     list-style: none;
-    border-top: 1px solid var(--color-gray-200);
+    border-top: 1px solid var(--text-color-5);
 
     a {
       color: var(--text-color-2);

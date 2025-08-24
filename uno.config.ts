@@ -6,9 +6,9 @@ export default defineConfig({
     presetWind4({
       preflights: {
         reset: true,
-        theme: true,
-      },
-    }),
+        theme: true
+      }
+    })
   ],
   theme: {
     colors: {
@@ -24,16 +24,16 @@ export default defineConfig({
         "800": "#174eb6",
         "900": "#19448f",
         "950": "#142b57",
-        DEFAULT: "#409eff",
+        DEFAULT: "#409eff"
       },
       page: { DEFAULT: "#fcfcfc" },
-      box: { DEFAULT: "#ffffff" },
+      box: { DEFAULT: "#ffffff" }
     },
     font: {
       sans: '"DingTalk JinBuTi", sans-serif',
       serif: '"DingTalk JinBuTi", sans-serif',
       mono: '"DingTalk JinBuTi", sans-serif',
-      DEFAULT: '"DingTalk JinBuTi", sans-serif',
-    },
-  },
+      DEFAULT: '"DingTalk JinBuTi", sans-serif'
+    }
+  }
 });

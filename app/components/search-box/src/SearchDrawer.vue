@@ -43,7 +43,7 @@ const formatNumber = (num: number): string => {
   <div class="search-drawer" :class="{ 'search-drawer--active': props.visible }">
     <div class="search-drawer__search">
       <div class="search-drawer__title">
-        <Icon name="custom-color-edit" :size="18" />
+        <Icon name="custom-color:edit" :size="18" />
         关键词搜索
       </div>
       <form class="search-drawer__form" action="/search" method="get">
@@ -88,7 +88,7 @@ const formatNumber = (num: number): string => {
     class="search-drawer__overlay"
     :class="{ 'search-drawer__overlay--active': props.visible }"
     @click="hide"
-  />
+  ></div>
 </template>
 <style scoped lang="scss">
 @import url("../style/search-drawer.scss");

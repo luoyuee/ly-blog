@@ -2,7 +2,16 @@
 export default defineNuxtConfig({
   compatibilityDate: "2025-07-15",
   devtools: { enabled: true },
-  css: ["@/styles/var.scss", "@/styles/index.css", "@/styles/github-markdown.css"],
+  devServer: {
+    host: "0.0.0.0",
+    port: 3000
+  },
+  css: [
+    "@/styles/font.css",
+    "@/styles/var.scss",
+    "@/styles/index.css",
+    "@/styles/github-markdown.css"
+  ],
   modules: [
     "@nuxt/eslint",
     "@nuxt/icon",

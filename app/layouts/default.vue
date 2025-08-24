@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import Lenis from "lenis";
-import { onMounted, watch, nextTick } from "vue";
+import { onMounted, watch } from "vue";
 import { useAppStore } from "@/stores";
 import Header from "@/components/header";
 import { useParticleAnimation } from "@/composables/useParticleAnimation";
@@ -11,10 +11,10 @@ const particleCanvasRef = useTemplateRef("particleCanvasRef");
 const layoutRef = useTemplateRef("layoutRef");
 onMounted(() => {
   const lenis = new Lenis({
-    smoothWheel: true,
-    touchMultiplier: 2, // 触摸设备滚动速度
-    gestureOrientation: "vertical", // 允许垂直滚动
-    duration: 0.8
+    smoothWheel: true
+    // touchMultiplier: 2, // 触摸设备滚动速度
+    // gestureOrientation: "vertical", // 允许垂直滚动
+    // duration: 0.8
   });
 
   const raf = (time: any) => {
@@ -46,8 +46,8 @@ onMounted(() => {
     <canvas
       ref="particleCanvasRef"
       class="fixed top-0 left-0 -z-0 select-none pointer-events-none"
-    />
-    <slot />
+    ></canvas>
+    <slot></slot>
   </div>
 </template>
 <style scoped lang="scss">

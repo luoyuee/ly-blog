@@ -1,17 +1,19 @@
 import type {
   CreateMessageRequest,
-  GetMessageListRequest,
-  GetMessageListResponse,
-  UpdateMessageContentRequest,
+  GetMessagePaginatedRequest,
+  GetMessagePaginatedResponse,
+  UpdateMessageContentRequest
 } from "./models";
+import type { MessageItem } from "#shared/types/message";
+
 import { serviceAxios } from "@/utils/request";
 
-export async function createMessage(data: CreateMessageRequest): Promise<any> {
+export async function createMessage(data: CreateMessageRequest): Promise<MessageItem> {
   try {
     const response = await serviceAxios({
       url: "/message",
       method: "post",
-      data,
+      data
     });
     return response.data;
   } catch (error) {
@@ -19,14 +21,14 @@ export async function createMessage(data: CreateMessageRequest): Promise<any> {
   }
 }
 
-export async function getMessageList(
-  params: GetMessageListRequest
-): Promise<GetMessageListResponse> {
+export async function getPaginatedMessages(
+  params: GetMessagePaginatedRequest
+): Promise<GetMessagePaginatedResponse> {
   try {
     const response = await serviceAxios({
       url: "/message",
       method: "get",
-      params,
+      params
     });
     return response.data;
   } catch (error) {
@@ -34,14 +36,14 @@ export async function getMessageList(
   }
 }
 
-export async function getAdminMessageList(
-  params: GetMessageListRequest
-): Promise<GetMessageListResponse> {
+export async function getPaginatedAdminMessages(
+  params: GetMessagePaginatedRequest
+): Promise<GetMessagePaginatedResponse> {
   try {
     const response = await serviceAxios({
       url: "/admin/message",
       method: "get",
-      params,
+      params
     });
     return response.data;
   } catch (error) {
@@ -53,21 +55,19 @@ export async function deleteMessage(id: number): Promise<void> {
   try {
     await serviceAxios({
       url: "/admin/message/" + id,
-      method: "delete",
+      method: "delete"
     });
   } catch (error) {
     return Promise.reject(error);
   }
 }
 
-export async function updateMessageContent(
-  data: UpdateMessageContentRequest
-): Promise<void> {
+export async function updateMessageContent(data: UpdateMessageContentRequest): Promise<void> {
   try {
     const response = await serviceAxios({
       url: "/admin/message/content",
       method: "patch",
-      data,
+      data
     });
     return response.data;
   } catch (error) {

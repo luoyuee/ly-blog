@@ -6,8 +6,8 @@ import { z } from "zod";
 
 export default defineEventHandler(async (event) => {
   const schema = z.object({
-    page: z.number().int(),
-    per_page: z.number().int(),
+    page: z.coerce.number().int(),
+    per_page: z.coerce.number().int()
   });
 
   const { error, data: params } = schema.safeParse(getQuery(event));
@@ -15,7 +15,7 @@ export default defineEventHandler(async (event) => {
 
   const where: Prisma.MessageBoardWhereInput = {
     status: 1,
-    OR: [{ parent_id: null }, { reply_id: null }],
+    OR: [{ parent_id: null }, { reply_id: null }]
   };
 
   const select: Prisma.MessageBoardSelect = {
@@ -32,7 +32,7 @@ export default defineEventHandler(async (event) => {
     reply_nickname: true,
     location: true,
     platform: true,
-    browser: true,
+    browser: true
   };
 
   const result = await prisma.messageBoard.findMany({
@@ -41,8 +41,8 @@ export default defineEventHandler(async (event) => {
     skip: (params.page - 1) * params.per_page,
     take: params.per_page,
     orderBy: {
-      id: "desc",
-    },
+      id: "desc"
+    }
   });
 
   const total = await prisma.messageBoard.count({ where });
@@ -52,9 +52,9 @@ export default defineEventHandler(async (event) => {
     where: {
       status: 1,
       parent_id: {
-        in: result.map((item) => item.id),
-      },
-    },
+        in: result.map((item) => item.id)
+      }
+    }
   });
 
   const replyMap: Record<number, MessageBoard[]> = {};
@@ -71,13 +71,13 @@ export default defineEventHandler(async (event) => {
 
   const data = result.map((item) => ({
     ...item,
-    children: replyMap[item.id] ?? undefined,
+    children: replyMap[item.id] ?? undefined
   }));
 
   return getOKResponse(event, {
     page: params.page,
     per_page: params.per_page,
     total,
-    data,
+    data
   });
 });

@@ -1,8 +1,8 @@
 import DbSearcher, { QueryType } from "czdb";
 import { existsSync } from "fs";
 
-const IPV4_DB_PATH = "./assets/cz88_public_v4.czdb";
-const IPV6_DB_PATH = "./assets/cz88_public_v4.czdb";
+const IPV4_DB_PATH = "./database/cz88_public_v4.czdb";
+const IPV6_DB_PATH = "./database/cz88_public_v4.czdb";
 const KEY = "hgOaQEfF168MCAaakksTFg==";
 
 let searcherV4: DbSearcher | null = null;
@@ -26,8 +26,7 @@ export function useIPLocation() {
     searcherV6 = new DbSearcher(IPV6_DB_PATH, QueryType.MEMORY, KEY);
   }
 
-  const re =
-    /^((25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(25[0-5]|2[0-4]\d|[01]?\d\d?)$/;
+  const re = /^((25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(25[0-5]|2[0-4]\d|[01]?\d\d?)$/;
 
   const getIPLocation = (ip: string): string | null => {
     let region: string | null = null;
@@ -45,7 +44,7 @@ export function useIPLocation() {
     }
 
     if (region) {
-      return region.replace("\t", "|");
+      return region.replace("\t", " - ");
     }
 
     return null;
@@ -54,6 +53,6 @@ export function useIPLocation() {
   return {
     getIPLocation,
     searcherV4,
-    searcherV6,
+    searcherV6
   };
 }

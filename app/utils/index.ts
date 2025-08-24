@@ -3,14 +3,11 @@ import crypto from "crypto";
 
 import axios from "axios";
 
-export function recursiveDelete(
-  object: Record<any, any>,
-  deleteValue: any
-): Record<any, any> {
+export function recursiveDelete(object: Record<any, any>, deleteValue: any): Record<any, any> {
   if (!isObject(object)) return object;
 
   const data = cloneDeep(object);
-  for (var key in data) {
+  for (const key in data) {
     if (data[key] === deleteValue) {
       delete data[key];
     } else if (isObject(data[key])) {
@@ -21,9 +18,7 @@ export function recursiveDelete(
   return data;
 }
 
-export function toTree<
-  T extends { id: number; parent?: number; children?: T[] }
->(data: T[]): T[] {
+export function toTree<T extends { id: number; parent?: number; children?: T[] }>(data: T[]): T[] {
   const map: Record<number, T> = {};
 
   data.forEach((item) => {
@@ -47,16 +42,14 @@ export function toTree<
   return tree;
 }
 
-export async function getQQInfo(
-  qq: string
-): Promise<{ nickname: string; avatar: string }> {
+export async function getQQInfo(qq: string): Promise<{ nickname: string; avatar: string }> {
   const result = {
     nickname: "",
-    avatar: `https://q1.qlogo.cn/g?b=qq&nk=${qq}&s=100`,
+    avatar: `https://q1.qlogo.cn/g?b=qq&nk=${qq}&s=100`
   };
   try {
     const response = await axios.get("https://api.oioweb.cn/api/qq/info", {
-      params: { qq },
+      params: { qq }
     });
     if (response.data.code === 200) {
       result.nickname = response.data.result.nickname;
@@ -87,7 +80,7 @@ export function saveFile(
 
   const a = document.createElement("a");
   a.href = url;
-  a.download = options ? options.filename ?? defaultName : defaultName;
+  a.download = options ? (options.filename ?? defaultName) : defaultName;
   document.body.appendChild(a);
   a.click();
 

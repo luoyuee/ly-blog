@@ -148,24 +148,6 @@
         color: var(--theme-color);
       }
     }
-
-    .theme-switch {
-      position: relative;
-      width: 20px;
-      height: 20px;
-
-      &__item {
-        position: absolute;
-        transition: all 0.35s;
-        transform: scale(0);
-        top: 0;
-        left: 0;
-      }
-
-      &__item.active {
-        transform: scale(1);
-      }
-    }
   }
 
   &__user {

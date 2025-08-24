@@ -9,23 +9,14 @@ const configStore = useConfigStore();
   <footer class="page-footer space-y-1">
     <div>
       {{
-        `Copyright © ${dayjs
-          .unix(configStore.created_at)
-          .format("YYYY")} - ${dayjs().year()} 版权所有 `
+        `Copyright © ${dayjs(configStore.created_at).format("YYYY")} - ${dayjs().year()} 版权所有 `
       }}
-      <a
-        v-if="configStore.author_card.name"
-        class="hover:text-primary-400"
-        href="/me"
-      >
+      <a v-if="configStore.author_card.name" class="hover:text-primary-400" href="/me">
         {{ configStore.author_card.name }}
       </a>
     </div>
     <div
-      v-if="
-        configStore.beian &&
-        (configStore.beian.beian_code || configStore.beian.icp_code)
-      "
+      v-if="configStore.beian && (configStore.beian.beian_code || configStore.beian.icp_code)"
       class="flex items-center"
     >
       <a
@@ -53,7 +44,7 @@ const configStore = useConfigStore();
         href="https://nuxt.com"
         target="_blank"
       >
-        <UIcon name="custom:nuxt-green" :size="20" />
+        <Icon name="custom:nuxt-green" :size="20" />
         Nuxt
       </a>
       强力驱动

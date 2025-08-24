@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import type { UserInfo } from "#shared/types";
+import type { UserInfo } from "#shared/types/user";
 import { UserRoleEnum } from "#shared/enums";
 
 export interface UserStoreModel {
@@ -10,15 +10,14 @@ export interface UserStoreModel {
 export const userStore = defineStore("user", {
   state: (): UserStoreModel => ({
     userInfo: undefined,
-    isAdmin: false,
+    isAdmin: false
   }),
   actions: {
     async fetchUserInfo() {
       const auth = useCookie("Authorization", {
         readonly: true,
-        watch: false,
+        watch: false
       });
-
       if (auth) {
         try {
           const { data } = await useFetch<UserInfo>("/api/user/info");
@@ -30,8 +29,8 @@ export const userStore = defineStore("user", {
           console.log(error);
         }
       }
-    },
-  },
+    }
+  }
 });
 
 export const useUserStore = () => userStore();

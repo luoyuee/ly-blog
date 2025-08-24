@@ -3,6 +3,7 @@ import type { CategoryItem } from "./types";
 import { useConfigStore, useUserStore } from "@/stores";
 import { SearchDrawer } from "@/components/search-box";
 import HeaderDrawer from "./HeaderDrawer.vue";
+import ThemeSwitch from "@/components/theme-switch";
 
 const configStore = useConfigStore();
 const userStore = useUserStore();
@@ -122,27 +123,7 @@ const showDrawer = () => {
     <div class="header__action">
       <Icon name="i-lucide-search" :size="20" @click="switchSearch" />
       <Icon v-navigate-to="'/admin/login'" name="i-lucide-circle-user-round" :size="20" />
-      <ClientOnly>
-        <template #fallback>
-          <Icon name="custom:light" :size="20" />
-        </template>
-        <div class="theme-switch">
-          <Icon
-            class="theme-switch__item"
-            name="custom:dark"
-            :class="{ active: $colorMode.value === 'dark' }"
-            :size="20"
-            @click="$colorMode.preference = 'light'"
-          />
-          <Icon
-            class="theme-switch__item"
-            name="custom:light"
-            :class="{ active: $colorMode.value !== 'dark' }"
-            :size="20"
-            @click="$colorMode.preference = 'dark'"
-          />
-        </div>
-      </ClientOnly>
+      <ThemeSwitch />
     </div>
 
     <el-dropdown v-if="userStore.userInfo" style="margin-right: 30px">

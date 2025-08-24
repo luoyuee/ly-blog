@@ -2,7 +2,7 @@ import type { RequiredKeys } from "#shared/types/utils";
 import type {
   HitokotoTypeItem,
   HitokotoTypeSelectOption,
-  HitokotoForm,
+  HitokotoForm
 } from "#shared/types/hitokoto";
 import type {
   RandomHitokotoRequest,
@@ -12,16 +12,16 @@ import type {
   GetHitokotoTypePaginatedRequest,
   GetHitokotoTypePaginatedResponse,
   CreateHitokotoTypeRequest,
-  UpdateHitokotoTypeResquest,
+  UpdateHitokotoTypeResquest
 } from "./models";
-import { serviceAxios } from "@/utils/request";
 import type { AxiosProgressEvent } from "axios";
+import { serviceAxios } from "@/utils/request";
 
 export async function getAllHitokotoType(): Promise<HitokotoTypeItem[]> {
   try {
     const response = await serviceAxios({
       url: "/admin/hitokoto/type/all",
-      method: "get",
+      method: "get"
     });
     return response.data;
   } catch (error) {
@@ -29,13 +29,11 @@ export async function getAllHitokotoType(): Promise<HitokotoTypeItem[]> {
   }
 }
 
-export async function getHitokotoDetails(
-  id: number
-): Promise<HitokotoTypeItem> {
+export async function getHitokotoDetails(id: number): Promise<HitokotoTypeItem> {
   try {
     const response = await serviceAxios({
       url: "/admin/hitokoto/type/" + id,
-      method: "get",
+      method: "get"
     });
     return response.data;
   } catch (error) {
@@ -57,7 +55,7 @@ export async function uploadHitokotoData(
       data: form,
       onUploadProgress: (progressEvent: AxiosProgressEvent) => {
         if (callBack) callBack(progressEvent);
-      },
+      }
     });
     return response.data;
   } catch (error) {
@@ -72,7 +70,7 @@ export async function getHitokotoTypeList(
     const response = await serviceAxios({
       url: "/admin/hitokoto/type",
       method: "get",
-      params,
+      params
     });
     return response.data;
   } catch (error) {
@@ -80,13 +78,11 @@ export async function getHitokotoTypeList(
   }
 }
 
-export async function getHitokotoTypeOptions(): Promise<
-  HitokotoTypeSelectOption[]
-> {
+export async function getHitokotoTypeOptions(): Promise<HitokotoTypeSelectOption[]> {
   try {
     const response = await serviceAxios({
       url: "/admin/hitokoto/type/options",
-      method: "get",
+      method: "get"
     });
     return response.data;
   } catch (error) {
@@ -94,28 +90,24 @@ export async function getHitokotoTypeOptions(): Promise<
   }
 }
 
-export async function createHitokotoType(
-  data: CreateHitokotoTypeRequest
-): Promise<void> {
+export async function createHitokotoType(data: CreateHitokotoTypeRequest): Promise<void> {
   try {
     await serviceAxios({
       url: "/admin/hitokoto/type",
       method: "post",
-      data,
+      data
     });
   } catch (error) {
     return Promise.reject(error);
   }
 }
 
-export async function updateHitokotoType(
-  data: UpdateHitokotoTypeResquest
-): Promise<void> {
+export async function updateHitokotoType(data: UpdateHitokotoTypeResquest): Promise<void> {
   try {
     await serviceAxios({
       url: "/admin/hitokoto/type",
       method: "put",
-      data,
+      data
     });
   } catch (error) {
     return Promise.reject(error);
@@ -126,21 +118,19 @@ export async function deleteHitokotoType(id: number): Promise<void> {
   try {
     await serviceAxios({
       url: "/admin/hitokoto/type/" + id,
-      method: "delete",
+      method: "delete"
     });
   } catch (error) {
     return Promise.reject(error);
   }
 }
 
-export async function randomHitokoto(
-  data: RandomHitokotoRequest
-): Promise<RandomHitokotoResponse> {
+export async function randomHitokoto(data: RandomHitokotoRequest): Promise<RandomHitokotoResponse> {
   try {
     const response = await serviceAxios({
       url: "/hitokoto/random",
       method: "post",
-      data,
+      data
     });
     return response.data;
   } catch (error) {
@@ -155,7 +145,7 @@ export async function getPaginatedHitokotos(
     const response = await serviceAxios({
       url: "/admin/hitokoto",
       method: "get",
-      params,
+      params
     });
     return response.data;
   } catch (error) {
@@ -167,7 +157,7 @@ export async function deleteHitokoto(id: number): Promise<void> {
   try {
     await serviceAxios({
       url: "/admin/hitokoto/" + id,
-      method: "delete",
+      method: "delete"
     });
   } catch (error) {
     return Promise.reject(error);
@@ -179,21 +169,19 @@ export async function createHitokoto(data: HitokotoForm): Promise<void> {
     await serviceAxios({
       url: "/admin/hitokoto",
       method: "post",
-      data,
+      data
     });
   } catch (error) {
     return Promise.reject(error);
   }
 }
 
-export async function updateHitokoto(
-  data: RequiredKeys<HitokotoForm, "id">
-): Promise<void> {
+export async function updateHitokoto(data: RequiredKeys<HitokotoForm, "id">): Promise<void> {
   try {
     await serviceAxios({
       url: "/admin/hitokoto",
       method: "put",
-      data,
+      data
     });
   } catch (error) {
     return Promise.reject(error);

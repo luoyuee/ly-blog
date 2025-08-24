@@ -1,19 +1,19 @@
 :root {
-  //   --white: #fff;
-  //   --black: #000;
-  //   --blue: #6e8cd7;
-  //   --pink: #e83e8c;
-  //   --red: #ef4444;
-  //   --orange: #fd7e14;
-  //   --yellow: #ffc107;
-  //   --teal: #33b86c;
-  //   --gray: #eef0f4;
-  //   --primary: #007bff;
-  //   --secondary: #6c757d;
-  //   --success: #28a745;
-  //   --info: #17a2b8;
-  //   --warning: #ffc107;
-  //   --danger: #f87171;
+  --white: #fff;
+  --black: #000;
+  --blue: #6e8cd7;
+  --pink: #e83e8c;
+  --red: #ef4444;
+  --orange: #fd7e14;
+  --yellow: #ffc107;
+  --teal: #33b86c;
+  --gray: #eef0f4;
+  --primary: #007bff;
+  --secondary: #6c757d;
+  --success: #28a745;
+  --info: #17a2b8;
+  --warning: #ffc107;
+  --danger: #f87171;
 
   // 主题色
   --theme-color: var(--el-color-primary);
@@ -68,11 +68,20 @@
   --page-bg-color: #ffffff;
   --page-bg-color-alpha: rgba(255, 255, 255, 0.85);
   --box-bg-color: #ffffff;
-  --card-bg-color: #f9fafb;
+  --bg-comment-color: #f4f6fa;
+  --bg-message-color: var(--bg-comment-color);
+
+  --header-bg-color: #fff;
 
   // header 高度
   --header-height: 60px;
   --admin-header-height: 40px;
+
+  // card 组件
+  --card-bg-color: #f9fafb;
+  --card-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+  --card-radius: var(--radius-md);
+  --card-border-color: var(--text-color-5);
 }
 
 // 深色主题变量定义

@@ -1,8 +1,9 @@
 import type { UpdateClientConfigRequest } from "@/apis/config/models";
 import type { IClientConfig } from "#shared/types/config";
-import { getClientConfig, updateClientConfig } from "@/apis/config";
+import { updateClientConfig } from "@/apis/config";
 import { defineStore } from "pinia";
 import { AxiosError } from "axios";
+import { ElNotification } from "element-plus";
 import relativeTime from "dayjs/plugin/relativeTime";
 import dayjs from "dayjs";
 import "dayjs/locale/zh-cn";
@@ -16,10 +17,10 @@ export const configStore = defineStore("config", {
     created_at: 0,
     basic: {
       title: "",
-      description: "",
+      description: ""
     },
     author_card: {
-      name: "",
+      name: ""
     },
     external_link_card: [],
     background: {},
@@ -29,39 +30,36 @@ export const configStore = defineStore("config", {
     hitokoto: {},
     article: {},
     message_board: {},
-    fleeting_thought: {},
+    fleeting_thought: {}
   }),
   actions: {
     async fetch() {
-      const toast = useToast();
-
       try {
-        const data = await getClientConfig();
-
-        this.$patch(data);
+        // const data = await getClientConfig();
+        const { data } = await useFetch<IClientConfig>("/api/config/client", {
+          method: "get"
+        });
+        if (data.value) this.$patch(data.value);
       } catch (error) {
-        toast.add({
+        console.error(error);
+        ElNotification.error({
           title: "获取客户端配置失败！",
-          color: "error",
-          icon: "i-lucide-circle-x",
+          type: "error"
         });
       }
     },
     async update(data: UpdateClientConfigRequest) {
-      const toast = useToast();
-
       try {
         await updateClientConfig({
           ...this.$state,
-          ...data,
+          ...data
         });
 
         await this.fetch();
 
-        toast.add({
+        ElNotification.success({
           title: "更新客户端配置成功！",
-          color: "success",
-          icon: "i-lucide-circle-check",
+          type: "success"
         });
       } catch (error) {
         let description: string | undefined = undefined;
@@ -72,19 +70,18 @@ export const configStore = defineStore("config", {
           description = error.message;
         }
 
-        toast.add({
+        ElNotification.error({
           title: "更新客户端配置失败！",
-          description,
-          color: "error",
-          icon: "i-lucide-circle-x",
+          message: description,
+          type: "error"
         });
       }
     },
     async switchLocale(locale: string) {
       const switchLocalePath = useSwitchLocalePath();
-      switchLocalePath(locale);
-    },
-  },
+      switchLocalePath(locale as any);
+    }
+  }
 });
 
 export const useConfigStore = () => configStore();
