@@ -1,0 +1,103 @@
+@import "tailwindcss";
+@import "@nuxt/ui";
+
+@theme {
+  --color-dodger-blue-50: #eef8ff;
+  --color-dodger-blue-100: #d9eeff;
+  --color-dodger-blue-200: #bce3ff;
+  --color-dodger-blue-300: #8ed2ff;
+  --color-dodger-blue-400: #59b7ff;
+  --color-dodger-blue-500: #409eff;
+  --color-dodger-blue-600: #1b78f5;
+  --color-dodger-blue-700: #1461e1;
+  --color-dodger-blue-800: #174eb6;
+  --color-dodger-blue-900: #19448f;
+  --color-dodger-blue-950: #142b57;
+
+  --background-image-login: url("/images/login_background.svg");
+
+  --background-color-page: #fcfcfc;
+  --background-color-box: #ffffff;
+
+  /* --ui-bg: var(--background-color-box); */
+
+  --header-bg-color: var(--background-color-box);
+}
+
+:root {
+  font-family: "DingTalk JinBuTi", sans-serif;
+
+  --radius-wrap: 6px;
+  --radius-inner: 4px;
+
+  --box-gap: 16px;
+  --box-padding: 16px;
+
+  --header-height: 60px;
+  --admin-header-height: 40px;
+
+  --selection-bg-color: #0c344b;
+
+  --theme-color: var(--ui-color-primary-400);
+}
+
+.dark {
+  --background-color-page: #121212;
+  --background-color-box: #232323;
+
+  /* --ui-bg: var(--background-color-box); */
+
+  --header-bg-color: var(--background-color-box);
+}
+
+body {
+  background: linear-gradient(
+    90deg,
+    rgba(247, 149, 51, 0.1),
+    rgba(243, 112, 85, 0.1) 15%,
+    rgba(239, 78, 123, 0.1) 30%,
+    rgba(161, 102, 171, 0.1) 44%,
+    rgba(80, 115, 184, 0.1) 58%,
+    rgba(16, 152, 173, 0.1) 72%,
+    rgba(7, 179, 155, 0.1) 86%,
+    rgba(109, 186, 130, 0.1)
+  );
+}
+
+.dark body {
+  background: var(--background-color-primary);
+}
+
+@media screen and (max-width: 1024px) {
+  :root {
+    --header-height: 46px;
+  }
+}
+
+html::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+html::-webkit-scrollbar-thumb {
+  border-radius: 2px;
+  background: #c0c4cc;
+}
+
+html::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.slim-scrollbar::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+.slim-scrollbar::-webkit-scrollbar-thumb {
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.slim-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}

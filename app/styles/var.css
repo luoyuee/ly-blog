@@ -1,0 +1,130 @@
+:root {
+  --white: #fff;
+  --black: #000;
+  --blue: #6e8cd7;
+  --pink: #e83e8c;
+  --red: #ef4444;
+  --orange: #fd7e14;
+  --yellow: #ffc107;
+  --teal: #33b86c;
+  --gray: #eef0f4;
+  --primary: #007bff;
+  --secondary: #6c757d;
+  --success: #28a745;
+  --info: #17a2b8;
+  --warning: #ffc107;
+  --danger: #f87171;
+
+  /* 主题色 */
+  --theme-color: var(--color-primary);
+
+  /* 前景色 */
+  --text-color-1: #1f2937;
+  --text-color-2: #374151;
+  --text-color-3: #6b7280;
+  --text-color-4: #9ca3af;
+  --text-color-5: #d1d5db;
+
+  --text-color-primary: var(--text-color-1);
+  --text-color-secondary: var(--text-color-2);
+  --text-color-tertiary: var(--text-color-3);
+  --text-color-quaternary: var(--text-color-4);
+  --text-color-quinary: var(--text-color-5);
+
+  /* 背景色 */
+  --bg-color-1: #ffffff;
+  --bg-color-2: #f9fafb;
+  --bg-color-3: #f3f4f6;
+  --bg-color-4: #e5e7eb;
+  --bg-color-5: #d1d5db;
+
+  --bg-color-primary: var(--bg-color-1);
+  --bg-color-secondary: var(--bg-color-2);
+  --bg-color-tertiary: var(--bg-color-3);
+  --bg-color-quaternary: var(--bg-color-4);
+  --bg-color-quinary: var(--bg-color-5);
+
+  /* 阴影 */
+  --box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+  --text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+  --hero-text-shadow: 0 3px 5px #1c1f21;
+  --article-circle-button-shadow: 0 0 1px rgba(0, 0, 0, 0.1), 0 0 8px #c0c4cc;
+
+  /* 圆角 */
+  --radius-wrap: 6px;
+  --radius-inner: 4px;
+
+  /* 间距 */
+  --box-gap: 16px;
+  --box-padding: 16px;
+  --box-margin: 16px;
+
+  /* 边框 */
+  --border-color: #6b7280;
+
+  /* hover颜色 */
+  --hover-bg-color: #f4f4f4;
+  --hover-text-color: var(--theme-color);
+
+  /* 组件背景色 */
+  --page-bg-color: #ffffff;
+  --page-bg-color-alpha: rgba(255, 255, 255, 0.85);
+  --box-bg-color: #ffffff;
+  --bg-comment-color: #f4f6fa;
+  --bg-message-color: var(--bg-comment-color);
+
+  --component-bg-color: #f9fafb;
+
+  --header-bg-color: #fff;
+
+  /* header 高度 */
+  --header-height: 60px;
+  --admin-header-height: 40px;
+
+  /* card 组件 */
+  --card-bg-color: #f9fafb;
+  --card-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+  --card-shadow-hover: 0 6px 12px rgba(0, 0, 0, 0.2);
+  --card-radius: var(--radius-md);
+  --card-border-color: var(--text-color-5);
+}
+
+/* 深色主题变量定义 */
+:root.dark {
+  /* 前景色 */
+  --text-color-1: #f9fafb;
+  --text-color-2: #f3f4f6;
+  --text-color-3: #e5e7eb;
+  --text-color-4: #d1d5db;
+  --text-color-5: #9ca3af;
+
+  /* 背景色 */
+  --bg-color-1: #1f2937;
+  --bg-color-2: #111827;
+  --bg-color-3: #000000;
+  --bg-color-4: #000000;
+  --bg-color-5: #000000;
+
+  /* 阴影 */
+  --box-shadow: 0 5px 10px rgba(0, 0, 0, 0.5);
+  --text-shadow: 0 1px 2px rgba(0, 0, 0, 0.75);
+
+  /* 边框 */
+  --border-color: #4b5563;
+
+  /* hover颜色 */
+  --hover-bg-color: #374151;
+  --hover-text-color: var(--theme-color);
+
+  /* 组件背景色 */
+  --page-bg-color: #1f2937;
+  --page-bg-color-alpha: rgba(31, 41, 55, 0.85);
+  --box-bg-color: #27303a;
+  --card-bg-color: #27303a;
+}
+
+@media screen and (max-width: 1024px) {
+  :root {
+    --header-height: 46px;
+  }
+}

@@ -1,0 +1,185 @@
+/* html {
+  --theme-color: #73aaff;
+
+  --bg-color: #ffffff;
+  --bg-color-alpha: rgba(255, 255, 255, 0.85);
+
+  --bg-comment-color: #f4f6fa;
+
+  --hover-bg-color: #f4f4f4;
+  --hover-text-color: #73aaff;
+
+  --border-color: #6b7280;
+
+  --text-color: #1f2937;
+  --text-color-1: #374151;
+  --text-color-2: #6b7280;
+  --text-color-3: #9ca3af;
+  --text-color-4: #d1d5db;
+
+  --box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+  --text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+
+  --radius-wrap: 6px;
+  --radius-inner: 4px;
+
+  --box-gap: 16px;
+  --box-padding: 16px;
+
+  --header-height: 60px;
+  --admin-header-height: 40px;
+}
+
+html.dark {
+  --bg-color: #232323;
+  --bg-color-alpha: rgba(35, 35, 35, 0.88);
+
+  --bg-comment-color: #000;
+
+  --hover-bg-color: #363636;
+  --hover-text-color: #73aaff;
+
+  --border-color: #a1a1aa;
+
+  --text-color: #f9fafb;
+  --text-color-1: #e4e4e7;
+  --text-color-2: #d4d4d8;
+  --text-color-3: #a1a1aa;
+  --text-color-4: #71717a;
+
+  --box-shadow: none;
+  --text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
+} */
+
+/* @font-face {
+  font-family: "DingTalk JinBuTi";
+  src: url("/fonts/DingTalk JinBuTi.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+} */
+
+html {
+  font-family: "DingTalk JinBuTi", sans-serif;
+}
+
+::selection {
+  background: #73aaff;
+  color: #fff;
+  text-shadow: none;
+}
+
+body {
+  background: linear-gradient(
+    90deg,
+    rgba(247, 149, 51, 0.1),
+    rgba(243, 112, 85, 0.1) 15%,
+    rgba(239, 78, 123, 0.1) 30%,
+    rgba(161, 102, 171, 0.1) 44%,
+    rgba(80, 115, 184, 0.1) 58%,
+    rgba(16, 152, 173, 0.1) 72%,
+    rgba(7, 179, 155, 0.1) 86%,
+    rgba(109, 186, 130, 0.1)
+  );
+}
+.dark body {
+  background: #121212;
+}
+
+.el-table .el-scrollbar .el-scrollbar__view {
+  min-width: 100%;
+}
+
+.el-descriptions.label-nowrap .el-descriptions__label {
+  text-wrap: nowrap;
+  width: 0;
+}
+
+.el-descriptions.label-nowrap .el-descriptions__content {
+  word-break: break-all;
+}
+
+html::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+html::-webkit-scrollbar-thumb {
+  border-radius: 4px;
+  background: #c0c4cc;
+}
+
+html::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.el-dialog.el-basic-modal {
+  padding: 0;
+  .el-dialog__header {
+    padding: 0 16px;
+    margin: 0;
+    border-bottom: 1px solid var(--el-border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 48px;
+  }
+  .el-dialog__body {
+    padding: 16px;
+  }
+  .el-dialog__footer {
+    padding: 10px 16px;
+    border-top: 1px solid var(--el-border-color);
+  }
+}
+
+.custom-message {
+  z-index: 3000 !important;
+}
+
+.cm-editor {
+  position: sticky !important;
+  top: 0;
+}
+
+@keyframes move-out {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  to {
+    opacity: 0.5;
+    transform: translateY(-35%);
+  }
+}
+
+@keyframes move-in {
+  from {
+    clip-path: polygon(0% 100%, 100% 100%, 100% 100%, 0% 100%);
+  }
+
+  to {
+    clip-path: polygon(0% 100%, 100% 100%, 100% 0%, 0% 0%);
+  }
+}
+
+::view-transition-old(root) {
+  animation: 1.5s cubic-bezier(0.87, 0, 0.13, 1) both move-out;
+}
+
+::view-transition-new(root) {
+  animation: 1.5s cubic-bezier(0.87, 0, 0.13, 1) both move-in;
+}
+
+.iconify {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  color: inherit;
+  font-style: normal;
+  vertical-align: -0.15em;
+  outline: none;
+  stroke: currentColor;
+  fill: currentColor;
+  font-size: inherit;
+}
