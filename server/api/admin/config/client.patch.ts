@@ -1,13 +1,8 @@
+import { getBadResponse, getNotFoundResponse, getOKResponse } from "@@/server/utils/response";
+import { ConfigNameEnum } from "@@/shared/constants";
 import { prisma } from "@@/server/db";
 import { readBody } from "h3";
 import { z } from "zod";
-import {
-  getBadResponse,
-  getNotFoundResponse,
-  getOKResponse,
-} from "@@/server/utils/response";
-
-const ConfigName = "client";
 
 export default defineEventHandler(async (event) => {
   const navMenuSchema: z.ZodType = z.lazy(() =>
@@ -17,7 +12,7 @@ export default defineEventHandler(async (event) => {
       href: z.string().optional().nullable(),
       icon: z.string().optional().nullable(),
       show: z.boolean(),
-      children: z.array(navMenuSchema).optional().nullable(),
+      children: z.array(navMenuSchema).optional().nullable()
     })
   );
 
@@ -28,10 +23,10 @@ export default defineEventHandler(async (event) => {
 
     basic: z.object({
       title: z.string(),
-      site_url: z.string().url().optional().nullable(),
+      site_url: z.url().optional().nullable(),
       description: z.string(),
       keywords: z.string().array().optional().nullable(),
-      notice: z.string().optional().nullable(),
+      notice: z.string().optional().nullable()
     }),
 
     author_card: z.object({
@@ -42,17 +37,17 @@ export default defineEventHandler(async (event) => {
       links: z
         .object({
           title: z.string(),
-          href: z.string(),
+          href: z.string()
         })
         .array(),
-      link_icon: z.string().optional().nullable(),
+      link_icon: z.string().optional().nullable()
     }),
 
     external_link_card: z
       .object({
         title: z.string(),
-        href: z.string().url(),
-        icon: z.string().optional().nullable(),
+        href: z.url(),
+        icon: z.string().optional().nullable()
       })
       .array(),
 
@@ -62,14 +57,14 @@ export default defineEventHandler(async (event) => {
       home_sub_title: z.string().optional().nullable(),
       article_page_bg: z.string().optional().nullable(),
       catalog_page_bg: z.string().optional().nullable(),
-      tag_page_bg: z.string().optional().nullable(),
+      tag_page_bg: z.string().optional().nullable()
     }),
 
     swiper: z
       .object({
         title: z.string(),
         href: z.string().url(),
-        image: z.string(),
+        image: z.string()
       })
       .array(),
 
@@ -77,12 +72,12 @@ export default defineEventHandler(async (event) => {
 
     beian: z.object({
       beian_code: z.string().optional().nullable(),
-      icp_code: z.string().optional().nullable(),
+      icp_code: z.string().optional().nullable()
     }),
 
     hitokoto: z.object({
       max_length: z.number().optional().nullable(),
-      type: z.number().array().optional().nullable(),
+      type: z.number().array().optional().nullable()
     }),
 
     article: z.object({
@@ -90,21 +85,21 @@ export default defineEventHandler(async (event) => {
       payment_qr_code: z
         .object({
           name: z.string(),
-          image: z.string(),
+          image: z.string()
         })
         .array()
         .optional()
-        .nullable(),
+        .nullable()
     }),
 
     message_board: z.object({
       intro: z.string().optional().nullable(),
-      message_max_length: z.number().optional().nullable(),
+      message_max_length: z.number().optional().nullable()
     }),
 
     fleeting_thought: z.object({
-      intro: z.string().optional().nullable(),
-    }),
+      intro: z.string().optional().nullable()
+    })
   });
 
   const { error, data: body } = schema.safeParse(await readBody(event));
@@ -112,26 +107,24 @@ export default defineEventHandler(async (event) => {
   if (error) return getBadResponse(event, error.message);
 
   const config = await prisma.config.findUnique({
-    where: { name: ConfigName },
+    where: { name: ConfigNameEnum.CLIENT }
   });
 
   if (config === null) return getNotFoundResponse(event);
 
   const now = new Date();
 
-  body.created_at = Math.floor(
-    (config.created_at ?? new Date()).getTime() / 1000
-  );
+  body.created_at = Math.floor((config.created_at ?? new Date()).getTime() / 1000);
 
   body.updated_at = Math.floor(now.getTime() / 1000);
 
   await prisma.config.update({
-    where: { name: ConfigName },
+    where: { name: ConfigNameEnum.CLIENT },
     data: {
       updated_at: new Date(),
       updated_by: event.context.user.id,
-      data: body,
-    },
+      data: body as object
+    }
   });
 
   return getOKResponse(event);

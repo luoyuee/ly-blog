@@ -121,3 +121,15 @@ export interface IServerConfig {
   mailer: IServerConfigMailer;
   storage: IServerConfigStorage;
 }
+
+//========== 作品 ==========
+export interface WorkItem {
+  name: string;
+  icon: string;
+  description: string;
+  image: string;
+  languages: string[];
+  repoUrl: string;
+}
+
+export type WorkForm = Partial<WorkItem>;

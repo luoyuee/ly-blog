@@ -84,7 +84,7 @@ const handleChangePage = () => {
 <template>
   <main>
     <BannerImage title="闪念笔记" />
-    <div class="container m-x-auto">
+    <div class="container mx-auto">
       <div class="content">
         <div v-if="configStore.fleeting_thought.intro" class="intros">
           {{ configStore.fleeting_thought.intro }}

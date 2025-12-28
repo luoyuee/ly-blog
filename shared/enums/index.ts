@@ -1,13 +1,13 @@
 export enum UserRoleEnum {
   ADMIN = 1,
   VISITOR = 2,
-  NORMAL_USER = 3,
+  NORMAL_USER = 3
 }
 
 export enum ImageFolderEnum {
   SYSTEM = 1,
   BACKGROUND = 2,
-  ARTICLE = 3,
+  ARTICLE = 3
 }
 
 export enum DashboardEnum {
@@ -15,5 +15,5 @@ export enum DashboardEnum {
   LIKE = 2,
   COMMENT = 3,
   API = 4,
-  PAGE = 5,
+  PAGE = 5
 }

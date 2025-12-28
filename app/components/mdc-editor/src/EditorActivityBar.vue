@@ -30,6 +30,11 @@ const activityMenu = ref<ActivityMenuItem[]>([
     key: MdcEditorActivityMenu.HitokotoManager,
     label: "一言管理",
     icon: "custom:hitokoto"
+  },
+  {
+    key: MdcEditorActivityMenu.WorkManager,
+    label: "项目管理",
+    icon: "custom:work"
   }
 ]);
 
@@ -73,7 +78,7 @@ const handleClickAction = (e: ActivityMenuItem) => {
           :class="{ active: mdcEditorStore.sidebar.active === item.key }"
           @click="handleClickMenu(item)"
         >
-          <UIcon :name="item.icon" class="size-6" />
+          <UIcon :name="item.icon" class="size-5" />
         </li>
       </UTooltip>
     </ul>

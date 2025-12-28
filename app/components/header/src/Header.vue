@@ -89,12 +89,20 @@ const open = ref(false);
         </nav>
       </div>
       <a class="nav-item" href="/sn">
-        <UIcon name="custom-color:notebook" :size="16" />
+        <UIcon name="custom-color:execute-book" :size="16" />
         <span> 闪念笔记 </span>
       </a>
       <a class="nav-item" href="/message">
         <UIcon name="custom-color:message" :size="16" />
         <span> 留言板 </span>
+      </a>
+      <a class="nav-item" href="/work">
+        <UIcon name="custom-color:recommend" :size="16" />
+        <span> 作品 </span>
+      </a>
+      <a class="nav-item" href="/about">
+        <UIcon name="custom-color:config" :size="16" />
+        <span> 关于 </span>
       </a>
       <template v-for="item in configStore.nav_menu" :key="item.id">
         <div v-if="item.children && item.children.length > 0 && item.show" class="item-dropdown">

@@ -32,6 +32,7 @@ export const MdcEditorActivityMenu = {
   SearchPanel: 3,
   ImageManager: 4,
   HitokotoManager: 5,
+  WorkManager: 6,
   SettingPanel: 99
 } as const;
 
@@ -42,3 +43,9 @@ export const ImageFolderEnum = {
 } as const;
 
 export const MarkdownSupportURL = "https://markdown.com.cn/cheat-sheet.html" as const;
+
+export const ConfigNameEnum = {
+  CLIENT: "client",
+  SERVER: "server",
+  WORK: "work"
+} as const;

@@ -1,7 +1,6 @@
-import { ImageFolderEnum } from "#shared/constants";
-import { prisma } from "@@/server/db";
-
+import { ImageFolderEnum, ConfigNameEnum } from "#shared/constants";
 import { mkdirSync, existsSync } from "fs";
+import { prisma } from "@@/server/db";
 
 const HitokotoTypeData = [
   {
@@ -108,7 +107,7 @@ export default defineNitroPlugin(async () => {
       data: [
         {
           created_at: now,
-          name: "client",
+          name: ConfigNameEnum.CLIENT,
           data: {
             created_at: now.getTime(),
             locale: "zh-CN",
@@ -144,7 +143,7 @@ export default defineNitroPlugin(async () => {
         },
         {
           created_at: now,
-          name: "server",
+          name: ConfigNameEnum.SERVER,
           data: {
             mailer: {
               enable: false
@@ -154,6 +153,11 @@ export default defineNitroPlugin(async () => {
               use_ssl: true
             }
           }
+        },
+        {
+          created_at: now,
+          name: ConfigNameEnum.WORK,
+          data: []
         }
       ]
     });

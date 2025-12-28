@@ -2,9 +2,9 @@ import DbSearcher, { QueryType } from "czdb";
 import { existsSync } from "fs";
 import config from "@@/server/config";
 
-const IPV4_DB_PATH = config.DATABASE_IPV4_PATH;
+const IPV4_DB_PATH = config.CZDB_IPV4_PATH;
 
-const IPV6_DB_PATH = config.DATABASE_IPV6_PATH;
+const IPV6_DB_PATH = config.CZDB_IPV6_PATH;
 
 const CZDB_KEY = config.CZDB_KEY;
 

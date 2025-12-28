@@ -3,10 +3,7 @@ import { prisma } from "@@/server/db";
 import { z } from "zod";
 
 export default defineEventHandler(async (event) => {
-  const { error, data: id } = z
-    .number({ coerce: true })
-    .int()
-    .safeParse(getRouterParam(event, "id"));
+  const { error, data: id } = z.coerce.number().int().safeParse(getRouterParam(event, "id"));
 
   if (error) return getBadResponse(event, error.message);
 

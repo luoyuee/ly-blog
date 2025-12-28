@@ -50,7 +50,7 @@ const canAddItem = computed(() => {
     }
     return true;
   }
-  return !modalVisible.value;
+  return !modelValue.value;
 });
 
 const imageItems = computed(() => {

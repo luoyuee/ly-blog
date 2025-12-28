@@ -1,4 +1,5 @@
 import tailwindcss from "@tailwindcss/vite";
+import injectMetadata from "./vite-config/inject-metadata";
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
@@ -17,6 +18,9 @@ export default defineNuxtConfig({
     plugins: [tailwindcss()],
     build: {
       target: "esnext"
+    },
+    define: {
+      ...injectMetadata()
     }
   },
   vue: {

@@ -7,6 +7,7 @@ import ArticleManager from "./components/article-manager/ArticleManager.vue";
 import NoteManager from "./components/note-manager/NoteManager.vue";
 import ImageManager from "./components/image-manager/ImageManager.vue";
 import HitokotoManager from "./components/hitokoto-manager/HitokotoManager.vue";
+import WorkManager from "./components/work-manager/WorkManager.vue";
 
 const editorStore = useMdcEditorStore();
 </script>
@@ -25,6 +26,7 @@ const editorStore = useMdcEditorStore();
       <HitokotoManager
         v-else-if="editorStore.sidebar.active === MdcEditorActivityMenu.HitokotoManager"
       />
+      <WorkManager v-else-if="editorStore.sidebar.active === MdcEditorActivityMenu.WorkManager" />
     </ResizeArea>
   </div>
 </template>

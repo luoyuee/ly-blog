@@ -24,6 +24,19 @@
   --header-bg-color: var(--background-color-box);
 }
 
+@layer utilities {
+  /* 
+    Tailwind v4 的基础层（base/preflight）包含“* { padding: 0 }”之类的重置，在某些构建顺序下可能会压过在 components 层的样式。
+  */
+  .base-card {
+    color: var(--text-color-2);
+    background: var(--card-bg-color);
+    box-shadow: var(--card-shadow);
+    border-radius: var(--card-radius);
+    padding: 1rem;
+  }
+}
+
 :root {
   font-family: "DingTalk JinBuTi", sans-serif;
 
