@@ -47,5 +47,6 @@ export const MarkdownSupportURL = "https://markdown.com.cn/cheat-sheet.html" as 
 export const ConfigNameEnum = {
   CLIENT: "client",
   SERVER: "server",
-  WORK: "work"
+  WORK: "work",
+  NOTICE: "notice"
 } as const;

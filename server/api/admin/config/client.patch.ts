@@ -25,8 +25,7 @@ export default defineEventHandler(async (event) => {
       title: z.string(),
       site_url: z.url().optional().nullable(),
       description: z.string(),
-      keywords: z.string().array().optional().nullable(),
-      notice: z.string().optional().nullable()
+      keywords: z.string().array().optional().nullable()
     }),
 
     author_card: z.object({

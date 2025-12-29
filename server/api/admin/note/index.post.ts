@@ -8,7 +8,7 @@ export default defineEventHandler(async (event) => {
     name: z.string().max(255),
     folder_id: z.number().int().optional(),
     content: z.string(),
-    extension: z.string().max(64),
+    extension: z.string().max(64)
   });
 
   const { error, data: body } = schema.safeParse(await readBody(event));
@@ -22,7 +22,7 @@ export default defineEventHandler(async (event) => {
     extension: body.extension,
     version: 1,
     content: body.content,
-    chars: body.content.length,
+    chars: body.content.length
   });
 
   const result = await prisma.note.create({
@@ -34,11 +34,9 @@ export default defineEventHandler(async (event) => {
       extension: body.extension,
       version: 1,
       content: body.content,
-      chars: body.content.length,
-    },
+      chars: body.content.length
+    }
   });
-
-  console.log(result)
 
   return getOKResponse(event, result);
 });

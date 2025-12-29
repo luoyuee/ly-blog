@@ -50,6 +50,10 @@ const props = defineProps({
   cancelButtonProps: {
     type: Object as () => Partial<ButtonProps>,
     default: () => ({})
+  },
+  overlay: {
+    type: Boolean,
+    default: true
   }
 });
 
@@ -73,7 +77,7 @@ const handleCancel = () => {
 };
 </script>
 <template>
-  <UModal v-model:open="visible" @after:leave="handleAfterLeave">
+  <UModal v-model:open="visible" :overlay="props.overlay" @after:leave="handleAfterLeave">
     <template #content>
       <div class="p-4 relative" :class="props.titleClass">
         <div v-if="props.title">

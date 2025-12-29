@@ -158,6 +158,25 @@ export default defineNitroPlugin(async () => {
           created_at: now,
           name: ConfigNameEnum.WORK,
           data: []
+        },
+        {
+          created_at: now,
+          name: ConfigNameEnum.NOTICE,
+          data: {
+            card: {
+              content: "网站初始化完毕！"
+            },
+            toast: {
+              content: "",
+              delay: 3000,
+              position: "top-right"
+            },
+            modal: {
+              content: "",
+              delay: 3000,
+              fullscreen: false
+            }
+          }
         }
       ]
     });

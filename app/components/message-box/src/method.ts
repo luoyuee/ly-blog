@@ -20,6 +20,7 @@ export type CreateMessageBoxOptions = {
   confirmButtonText?: string;
   confirmButtonProps?: ButtonProps;
   cancelButtonProps?: ButtonProps;
+  overlay?: boolean;
   onConfirm?: () => void;
   onCancel?: () => void;
   onClose?: () => void;
@@ -91,6 +92,7 @@ export const createMessageBox = (options: CreateMessageBoxOptions) => {
     confirmButtonText: options.confirmButtonText,
     confirmButtonProps: options.confirmButtonProps,
     cancelButtonProps: options.cancelButtonProps,
+    overlay: options.overlay,
     onAfterLeave: () => {
       destroy();
     },

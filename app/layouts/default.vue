@@ -3,6 +3,7 @@ import Lenis from "lenis";
 import { onMounted, watch } from "vue";
 import { useAppStore } from "@/stores";
 import Header from "@/components/header";
+import { WebsiteNotice } from "@/components/notice";
 import { useParticleAnimation } from "@/composables/useParticleAnimation";
 
 const appStore = useAppStore();
@@ -40,6 +41,8 @@ onMounted(() => {
       class="fixed top-0 left-0 -z-0 select-none pointer-events-none"
     ></canvas>
     <slot></slot>
+
+    <WebsiteNotice />
   </div>
 </template>
 <style scoped lang="scss">

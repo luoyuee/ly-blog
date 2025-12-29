@@ -2,6 +2,7 @@
 import type { DropdownMenuItem } from "@nuxt/ui";
 import { useFullscreen } from "@vueuse/core";
 import { useMdcEditorStore, useUserStore } from "@/stores";
+import NoticeManagerModal from "./components/notice-manager/NoticeManagerModal.vue";
 
 const mdcEditorStore = useMdcEditorStore();
 const userStore = useUserStore();
@@ -65,6 +66,12 @@ const userDropdownMenuItem = ref<DropdownMenuItem[]>([
     }
   ]
 ]);
+
+const noticeManagerModalRef = useTemplateRef("noticeManagerModalRef");
+
+const openNoticeManagerModal = () => {
+  noticeManagerModalRef.value?.open();
+};
 </script>
 <template>
   <nav class="mdc-editor-menu-bar">
@@ -109,6 +116,11 @@ const userDropdownMenuItem = ref<DropdownMenuItem[]>([
           <UIcon :name="isFullscreen ? 'custom:off-screen' : 'custom:full-screen'" />
         </div>
       </UTooltip>
+      <UTooltip text="公告" :content="{ side: 'bottom' }">
+        <div @click="openNoticeManagerModal">
+          <UIcon name="lucide:bell" />
+        </div>
+      </UTooltip>
       <UTooltip text="首页" :content="{ side: 'bottom' }">
         <div v-navigate-to="'/'">
           <UIcon name="custom:home" />
@@ -130,6 +142,8 @@ const userDropdownMenuItem = ref<DropdownMenuItem[]>([
         />
       </UDropdownMenu>
     </div>
+
+    <NoticeManagerModal ref="noticeManagerModalRef" />
   </nav>
 </template>
 <style scoped lang="scss">

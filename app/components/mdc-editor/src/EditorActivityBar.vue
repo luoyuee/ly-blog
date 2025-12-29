@@ -34,7 +34,7 @@ const activityMenu = ref<ActivityMenuItem[]>([
   {
     key: MdcEditorActivityMenu.WorkManager,
     label: "项目管理",
-    icon: "custom:work"
+    icon: "ep:briefcase"
   }
 ]);
 

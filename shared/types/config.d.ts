@@ -3,7 +3,6 @@ export interface IClientConfigBasic {
   site_url?: string;
   description: string;
   keywords?: string[];
-  notice?: string;
 }
 
 export interface IClientConfigAuthorCard {
@@ -133,3 +132,22 @@ export interface WorkItem {
 }
 
 export type WorkForm = Partial<WorkItem>;
+
+//========== 公告 ==========
+export interface NoticeConfig {
+  card: {
+    content: string;
+  };
+  toast: {
+    content: string;
+    delay: number;
+    position: string;
+  };
+  modal: {
+    content: string;
+    delay: number;
+    fullscreen: boolean;
+  };
+}
+
+export type NoticeConfigForm = Partial<NoticeConfig>;

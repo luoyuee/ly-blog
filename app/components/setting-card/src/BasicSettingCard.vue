@@ -13,16 +13,14 @@ const schema = z.object({
   title: z.string(),
   description: z.string(),
   site_url: z.url(),
-  keywords: z.string().array(),
-  notice: z.string().optional()
+  keywords: z.string().array()
 });
 
 const formData = reactive<IClientConfigBasic>({
   title: "",
   description: "",
   site_url: undefined,
-  keywords: [],
-  notice: undefined
+  keywords: []
 });
 
 const state = reactive({
@@ -142,17 +140,6 @@ const handleReset = () => {
         }"
       >
         <InputTagArea v-model="formData.keywords" class="w-full" />
-      </UFormField>
-      <UFormField
-        name="notice"
-        label="博客公告"
-        description="博客公告将显示在网页右侧"
-        :ui="{
-          description: 'text-xs',
-          container: 'mt-2'
-        }"
-      >
-        <UTextarea v-model="formData.notice" class="w-full" placeholder="请输入站点描述" />
       </UFormField>
     </UForm>
   </div>

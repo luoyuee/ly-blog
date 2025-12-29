@@ -23,19 +23,6 @@ export default defineEventHandler(async (event) => {
 
   const now = new Date();
 
-  console.log({
-    created_at: now,
-    created_by: event.context.user.id,
-    note_id: note.id,
-    folder_id: note.folder_id,
-    name: note.name,
-    version: note.id,
-    extension: note.extension,
-    metadata: note.metadata?.toString(),
-    content: note.content,
-    chars: note.chars
-  });
-
   if (note.content !== body.content) {
     await prisma.noteVersion.create({
       data: {

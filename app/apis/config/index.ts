@@ -83,14 +83,37 @@ export async function getWorkConfig(): Promise<WorkItem[]> {
   }
 }
 
-export async function updateWorkConfig(data: WorkItem[]): Promise<WorkItem[]> {
+export async function updateWorkConfig(data: WorkItem[]): Promise<void> {
   try {
-    const response = await serviceAxios({
+    await serviceAxios({
       url: "/admin/config/work",
       method: "put",
       data
     });
+  } catch (error) {
+    return Promise.reject(error);
+  }
+}
+
+export async function getNoticeConfig(): Promise<NoticeConfig> {
+  try {
+    const response = await serviceAxios({
+      url: "/config/notice",
+      method: "get"
+    });
     return response.data;
+  } catch (error) {
+    return Promise.reject(error);
+  }
+}
+
+export async function updateNoticeConfig(data: NoticeConfig): Promise<void> {
+  try {
+    await serviceAxios({
+      url: "/admin/config/notice",
+      method: "put",
+      data
+    });
   } catch (error) {
     return Promise.reject(error);
   }
