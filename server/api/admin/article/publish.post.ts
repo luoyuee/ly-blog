@@ -41,11 +41,7 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  console.log("note.id", note.id);
-
   const ast = await parseMarkdown(note.content);
-
-  console.log(ast.toc);
 
   const article = await prisma.article.create({
     data: {
@@ -64,7 +60,7 @@ export default defineEventHandler(async (event) => {
       tags: body.tags,
       author: body.author,
       cover: body.cover,
-      pin_priority: body.pin_priority ?? null,
+      pin_priority: body.pin_priority,
       password: body.password ?? null,
       allow_comments: body.allow_comments,
       allow_rewards: body.allow_rewards,

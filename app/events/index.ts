@@ -1,3 +1,3 @@
-import mdcEditorEmitter from "./mdc-editor";
+import lyEditorEmitter from "./ly-editor";
 
-export { mdcEditorEmitter };
+export { lyEditorEmitter };

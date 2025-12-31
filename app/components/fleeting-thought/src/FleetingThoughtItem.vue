@@ -189,8 +189,10 @@ const handelUpdate = (e: FleetingThought) => {
       flex-direction: column;
       justify-content: space-around;
       .agent {
+        padding-left: 0.5rem;
         display: flex;
         align-items: center;
+        gap: 0.5rem;
         .iconify {
           width: 14px;
           height: 14px;

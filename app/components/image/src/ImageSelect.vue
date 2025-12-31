@@ -99,6 +99,8 @@ const handlePreview = (index: number) => {
     <ImageSelectModal
       v-model:visible="modalVisible"
       :title="props.title"
+      :multiple="props.multiple"
+      :limit="props.limit"
       @confirm="handleConfirm"
     />
   </div>

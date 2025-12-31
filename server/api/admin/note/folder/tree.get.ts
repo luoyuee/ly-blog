@@ -1,4 +1,4 @@
-import type { FolderTreeItem } from "#shared/types/mdc-editor";
+import type { FolderTreeItem } from "#shared/types/ly-editor";
 import { getOKResponse, getBadResponse } from "@@/server/utils/response";
 import { getQuery } from "h3";
 import { prisma } from "@@/server/db";

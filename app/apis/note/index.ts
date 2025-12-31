@@ -1,4 +1,4 @@
-import type { FolderTreeItem } from "#shared/types/mdc-editor";
+import type { FolderTreeItem } from "#shared/types/ly-editor";
 import type {
   CreateFolderRequest,
   GetFolderTreeRequest,
@@ -6,7 +6,8 @@ import type {
   MoveFolderRequest,
   CreateNoteRequest,
   UpdateNoteRequest,
-  RenameNoteRequest
+  RenameNoteRequest,
+  UpdateNoteContentRequest
 } from "./models";
 import { serviceAxios } from "@/utils/request";
 
@@ -100,6 +101,19 @@ export async function updateNote(data: UpdateNoteRequest): Promise<void> {
       data
     });
     return response.data;
+  } catch (error) {
+    return Promise.reject(error);
+  }
+}
+
+// 更新笔记内容
+export async function updateNoteContent(data: UpdateNoteContentRequest): Promise<void> {
+  try {
+    await serviceAxios({
+      url: "/admin/note/content",
+      method: "patch",
+      data
+    });
   } catch (error) {
     return Promise.reject(error);
   }

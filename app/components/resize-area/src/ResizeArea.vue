@@ -183,7 +183,7 @@ onUnmounted(() => {
       width: calc(var(--handle-size) / 2);
       height: 100%;
       display: none;
-      background-color: var(--mdc-editor-active-color);
+      background-color: var(--ly-editor-active-color);
     }
   }
 
@@ -207,7 +207,7 @@ onUnmounted(() => {
       width: 100%;
       height: calc(var(--handle-size) / 2);
       display: none;
-      background-color: var(--mdc-editor-active-color);
+      background-color: var(--ly-editor-active-color);
     }
   }
 

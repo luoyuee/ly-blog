@@ -74,3 +74,49 @@ export function toTree<
 
   return tree;
 }
+
+/**
+ * 对树状结构数组进行递归映射
+ * 会深度遍历每一个节点，对节点本身调用 mapper，并自动处理其子节点
+ *
+ * @typeParam T 原始节点的数据类型
+ * @typeParam R 映射后的节点数据类型，默认与 T 相同
+ * @typeParam ChildrenKey 子节点字段名类型，默认 "children"
+ * @param data 输入的树状结构数组
+ * @param mapper 节点映射函数，仅负责处理当前节点数据，子节点由函数内部递归处理
+ * @param options.childrenKey 自定义子节点字段名，默认使用 "children"
+ * @returns 映射后的树状结构数组，结构与入参保持一致
+ */
+export function mapTree<
+  T extends object,
+  R extends object = T,
+  ChildrenKey extends PropertyKeyGeneric = "children"
+>(
+  data: Array<WithChildren<T, ChildrenKey>>,
+  mapper: (node: WithChildren<T, ChildrenKey>) => WithChildren<R, ChildrenKey>,
+  options?: { childrenKey?: ChildrenKey }
+): Array<WithChildren<R, ChildrenKey>> {
+  const childrenKey = options?.childrenKey ?? ("children" as ChildrenKey);
+
+  const mapNode = (node: WithChildren<T, ChildrenKey>): WithChildren<R, ChildrenKey> => {
+    const children = node[childrenKey];
+    let mappedChildren: Array<WithChildren<R, ChildrenKey>> | undefined;
+    if (Array.isArray(children)) {
+      mappedChildren = children.map((child) => mapNode(child));
+    }
+    const mappedNode = mapper(node);
+    if (mappedChildren) {
+      return {
+        ...mappedNode,
+        [childrenKey]: mappedChildren
+      } as WithChildren<R, ChildrenKey>;
+    }
+    if (children !== undefined) {
+      const { [childrenKey]: _, ...rest } = mappedNode as Record<PropertyKeyGeneric, unknown>;
+      return rest as WithChildren<R, ChildrenKey>;
+    }
+    return mappedNode;
+  };
+
+  return data.map((item) => mapNode(item));
+}

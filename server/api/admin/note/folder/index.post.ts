@@ -3,21 +3,18 @@ import { prisma } from "@@/server/db";
 import { readBody } from "h3";
 import { z } from "zod";
 
-export async function CheckDuplicateName(
-  name: string,
-  parent_id?: number
-): Promise<boolean> {
+export async function checkDuplicateName(name: string, parent_id?: number): Promise<boolean> {
   const res = await prisma.noteFolder.findMany({
     select: {
-      id: true,
+      id: true
     },
     where: {
       status: 1,
-      name: name,
+      name,
       parent_id: {
-        equals: parent_id ?? null,
-      },
-    },
+        equals: parent_id ?? null
+      }
+    }
   });
   return res.length > 0;
 }
@@ -25,7 +22,7 @@ export async function CheckDuplicateName(
 export default defineEventHandler(async (event) => {
   const schema = z.object({
     parent_id: z.number().int().optional(),
-    name: z.string().max(255),
+    name: z.string().max(255)
   });
 
   const { error, data: body } = schema.safeParse(await readBody(event));
@@ -37,7 +34,7 @@ export default defineEventHandler(async (event) => {
   if (body.parent_id) {
     // 检查父级分类是否存在
     const parent = await prisma.noteFolder.findFirst({
-      where: { id: body.parent_id, status: 1 },
+      where: { id: body.parent_id, status: 1 }
     });
 
     if (parent === null) {
@@ -45,7 +42,7 @@ export default defineEventHandler(async (event) => {
     }
   }
 
-  const isDuplicate = await CheckDuplicateName(body.name, body.parent_id);
+  const isDuplicate = await checkDuplicateName(body.name, body.parent_id);
 
   if (isDuplicate) return getBadResponse(event, "目录名重复");
 
@@ -55,8 +52,8 @@ export default defineEventHandler(async (event) => {
       created_at: new Date(),
       parent_id: body.parent_id,
       name: body.name,
-      status: 1,
-    },
+      status: 1
+    }
   });
 
   return getOKResponse(event, result);

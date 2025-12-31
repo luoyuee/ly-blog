@@ -6,7 +6,7 @@ export interface GetFolderTreeRequest {
 }
 
 export interface CreateFolderRequest {
-  parent?: number;
+  parent_id?: number;
   name: string;
 }
 
@@ -35,6 +35,11 @@ export interface CreateNoteRequest {
 
 export interface UpdateNoteRequest extends CreateNoteRequest {
   id: number;
+}
+
+export interface UpdateNoteContentRequest {
+  id: number;
+  content: string;
 }
 
 export interface RenameNoteRequest {

@@ -16,3 +16,9 @@ export interface Note {
   locked_at?: string;
   locked_by?: number;
 }
+
+export interface NoteFolderForm {
+  id?: number;
+  parent_id?: number;
+  name?: string;
+}

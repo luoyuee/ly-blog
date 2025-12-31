@@ -51,6 +51,7 @@ export default defineEventHandler(async (event) => {
       browser: true
     },
     where: {
+      article_id: queryParams.article_id,
       status: 1,
       parent_id: null,
       reply_id: null

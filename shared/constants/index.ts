@@ -26,7 +26,7 @@ export const BrowserIcon: Record<string, string> = {
   unknown: "custom-color:browser"
 } as const;
 
-export const MdcEditorActivityMenu = {
+export const LyEditorActivityMenu = {
   NoteManager: 1,
   ArticleManager: 2,
   SearchPanel: 3,
