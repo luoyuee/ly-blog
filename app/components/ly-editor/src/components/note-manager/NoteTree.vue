@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { FolderTreeItem } from "#shared/types/ly-editor";
-import { getEditorFilePath } from "@/utils/editor";
+import { getEditorFilePath } from "../../utils";
 import { lyEditorEmitter } from "@/events";
 import { getNoteDetail } from "@/apis/note";
 import dayjs from "dayjs";

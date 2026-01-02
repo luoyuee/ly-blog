@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import ArticlePaneContent from "./components/article-manager/ArticlePaneContent.vue";
 import ImageFolderPane from "./components/image-manager/ImageFolderPane.vue";
 import HitokotoPaneContent from "./components/hitokoto-manager/HitokotoPaneContent.vue";
 import SettingPlane from "./components/SettingPlane.vue";
@@ -35,6 +36,8 @@ const showEditorCore = computed(() => {
 <template>
   <div class="overflow-hidden">
     <EditorCore v-show="showEditorCore" />
+
+    <ArticlePaneContent v-show="lyEditorStore.currentTab === 'article-manager'" />
 
     <ImageFolderPane
       v-for="item in ImageFolderPanes"

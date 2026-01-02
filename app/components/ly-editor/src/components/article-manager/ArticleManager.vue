@@ -40,7 +40,6 @@ const handleOpenHitokoto = (e: ArticleCategory) => {
     openTime: new Date().getTime(),
     type: "article-manager",
     data: e,
-    isChange: true
   });
 
   lyEditorStore.currentTab = "article-manager";

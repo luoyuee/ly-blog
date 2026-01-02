@@ -34,31 +34,33 @@ const handleWheel = (e: WheelEvent) => {
 };
 </script>
 <template>
-  <Scrollbar ref="scrollbarRef" :height="34" class="w-full" mouse-wheel="horizontal">
-    <VueDraggable v-model="lyEditorStore.tabs" target=".editor-tab-bar" :animation="150">
-      <div class="editor-tab-bar" @wheel="handleWheel">
-        <div
-          v-for="item in lyEditorStore.tabs"
-          :key="item.key"
-          class="editor-tab-bar__item"
-          :class="{
-            'editor-tab-bar__item--active': lyEditorStore.currentTab === item.key,
-            'editor-tab-bar__item--changed': item.isChange
-          }"
-          @click="handleChangeTab(item)"
-        >
-          <span class="editor-tab-bar__item-label">{{ item.label }}</span>
-          <span class="editor-tab-bar__item-action" @click.stop="handleCloseTab(item)">
-            <UIcon class="editor-tab-bar__icon editor-tab-bar__icon--change" name="custom:dot" />
-            <UIcon
-              class="editor-tab-bar__icon editor-tab-bar__icon--close"
-              name="custom:close-small"
-            />
-          </span>
+  <div>
+    <Scrollbar ref="scrollbarRef" :height="34" class="w-full" mouse-wheel="horizontal">
+      <VueDraggable v-model="lyEditorStore.tabs" target=".editor-tab-bar" :animation="150">
+        <div class="editor-tab-bar" @wheel="handleWheel">
+          <div
+            v-for="item in lyEditorStore.tabs"
+            :key="item.key"
+            class="editor-tab-bar__item"
+            :class="{
+              'editor-tab-bar__item--active': lyEditorStore.currentTab === item.key,
+              'editor-tab-bar__item--changed': item.isChange
+            }"
+            @click="handleChangeTab(item)"
+          >
+            <span class="editor-tab-bar__item-label">{{ item.label }}</span>
+            <span class="editor-tab-bar__item-action" @click.stop="handleCloseTab(item)">
+              <UIcon class="editor-tab-bar__icon editor-tab-bar__icon--change" name="custom:dot" />
+              <UIcon
+                class="editor-tab-bar__icon editor-tab-bar__icon--close"
+                name="custom:close-small"
+              />
+            </span>
+          </div>
         </div>
-      </div>
-    </VueDraggable>
-  </Scrollbar>
+      </VueDraggable>
+    </Scrollbar>
+  </div>
 </template>
 <style scoped lang="scss">
 .editor-tab-bar {

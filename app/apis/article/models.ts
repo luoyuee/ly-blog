@@ -42,6 +42,15 @@ export interface GetArticlePaginatedResponse extends GetPaginatedResponse<Articl
   tag?: string;
 }
 
+export interface GetAdminArticlePaginatedRequest extends GetPaginatedRequest {
+  keyword?: string;
+  category_id?: number;
+}
+
+export interface GetAdminArticlePaginatedResponse extends GetPaginatedResponse<ArticleItem> {
+  category_id?: number;
+}
+
 export interface SearchArticleRequest extends GetPaginatedRequest {
   kw: string;
 }

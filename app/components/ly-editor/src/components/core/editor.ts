@@ -6,7 +6,7 @@ import dayjs from "dayjs";
 import { updateNoteContent } from "@/apis/note";
 import { language as mdc } from "@nuxtlabs/monarch-mdc";
 import { useDebounceFn } from "@vueuse/core";
-import { getEditorFilePath } from "@/utils/editor";
+import { getEditorFilePath } from "../../utils";
 
 async function handleSaveNote(e: EditorTabItem) {
   if (e.type === "note" && e.data.id) {

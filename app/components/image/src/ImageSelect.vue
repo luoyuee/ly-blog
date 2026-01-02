@@ -18,6 +18,10 @@ const props = defineProps({
   title: {
     type: String,
     default: "选择图片"
+  },
+  size: {
+    type: String as PropType<"xs" | "sm" | "md" | "lg" | "xl">,
+    default: "md"
   }
 });
 
@@ -27,20 +31,18 @@ const handleShowModal = () => {
   modalVisible.value = true;
 };
 
-const handleConfirm = (item: ImageItem) => {
-  const url = `/static/image/${item.hash}.${item.format}`;
+const handleConfirm = (item: ImageSelectItem[]) => {
+  const urlList = item.map((i) => `/static/image/${i.hash}.${i.format}`);
 
   if (props.multiple) {
     if (Array.isArray(modelValue.value)) {
-      modelValue.value = [...modelValue.value, url];
+      modelValue.value = [...modelValue.value, ...urlList];
     } else {
-      modelValue.value = [url];
+      modelValue.value = [...urlList];
     }
   } else {
-    modelValue.value = url;
+    modelValue.value = urlList[0] || null;
   }
-
-  console.log(modelValue.value);
 };
 
 const canAddItem = computed(() => {
@@ -60,6 +62,11 @@ const imageItems = computed(() => {
   return modelValue.value ? [modelValue.value] : [];
 });
 
+const sizeClass = computed(() => {
+  const size = props.size || "md";
+  return `image-select--${size}`;
+});
+
 const handleDelete = (index: number) => {
   if (Array.isArray(modelValue.value)) {
     modelValue.value.splice(index, 1);
@@ -77,7 +84,7 @@ const handlePreview = (index: number) => {
 };
 </script>
 <template>
-  <div class="image-select">
+  <div class="image-select" :class="sizeClass">
     <div ref="imageListRef" class="image-select__list">
       <div
         v-for="(img, index) in imageItems"
@@ -110,14 +117,42 @@ const handlePreview = (index: number) => {
 .image-select {
   user-select: none;
 
+  --image-select-width: 180px;
+  --image-select-height: 120px;
+
+  &--xs {
+    --image-select-width: 80px;
+    --image-select-height: 60px;
+  }
+
+  &--sm {
+    --image-select-width: 120px;
+    --image-select-height: 80px;
+  }
+
+  &--md {
+    --image-select-width: 180px;
+    --image-select-height: 120px;
+  }
+
+  &--lg {
+    --image-select-width: 240px;
+    --image-select-height: 160px;
+  }
+
+  &--xl {
+    --image-select-width: 300px;
+    --image-select-height: 200px;
+  }
+
   &__list {
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
 
     &-item {
-      width: 180px;
-      height: 120px;
+      width: var(--image-select-width);
+      height: var(--image-select-height);
       border-radius: 6px;
       position: relative;
       overflow: hidden;
@@ -162,8 +197,8 @@ const handlePreview = (index: number) => {
     }
 
     .image-select__add {
-      width: 180px;
-      height: 120px;
+      width: var(--image-select-width);
+      height: var(--image-select-height);
       border-radius: 6px;
       border: 1px dashed #ccc;
       display: flex;

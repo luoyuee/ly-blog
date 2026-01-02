@@ -6,7 +6,9 @@ import type {
   SearchArticleRequest,
   UpdateArticleCategoryRequest,
   UpdateArticleRequest,
-  LikeResponse
+  LikeResponse,
+  GetAdminArticlePaginatedRequest,
+  GetAdminArticlePaginatedResponse
 } from "./models";
 import type {
   ArticleCategory,
@@ -31,7 +33,7 @@ export async function getAllArticleCategory(): Promise<ArticleCategory[]> {
 export async function getArticleCategoryOptions(): Promise<ArticleCategoryOption[]> {
   try {
     const response = await serviceAxios({
-      url: "admin/article/category/options",
+      url: "/admin/article/category/options",
       method: "get"
     });
     return response.data;
@@ -155,9 +157,9 @@ export async function getPaginatedArticles(
   }
 }
 
-export async function getAdminArticleList(
-  params: GetArticlePaginatedRequest
-): Promise<GetArticlePaginatedResponse> {
+export async function getAdminPaginatedArticles(
+  params: GetAdminArticlePaginatedRequest
+): Promise<GetAdminArticlePaginatedResponse> {
   try {
     const response = await serviceAxios({
       url: "/admin/article",

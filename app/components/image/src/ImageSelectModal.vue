@@ -156,7 +156,7 @@ const handleConfirm = () => {
   if (props.multiple) {
     emits("confirm", unref(selectedList.value));
   } else {
-    emits("confirm", unref(selectedList.value)[0]);
+    emits("confirm", unref(selectedList.value));
   }
   visible.value = false;
 };
