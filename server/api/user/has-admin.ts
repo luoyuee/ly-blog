@@ -6,11 +6,9 @@ export default defineEventHandler(async (event) => {
   const user = await prisma.user.findFirst({
     where: {
       status: 1,
-      role: UserRoleEnum.ADMIN,
-    },
+      role: UserRoleEnum.ADMIN
+    }
   });
-
-  console.log(user)
 
   if (user) {
     return getOKResponse(event, { has_admin: true });

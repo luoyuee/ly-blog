@@ -183,7 +183,7 @@ const initData = async () => {
     } else if (note.value) {
       const ast = await parseMarkdown(note.value.content);
       formData.title = ast.data.title;
-      formData.author = userStore.userInfo?.username || "";
+      formData.author = userStore.profile?.nickname || "";
     }
   } catch (error) {
     $notify.error({
@@ -300,7 +300,7 @@ const handleChangePinned = () => {
           </div>
           <div class="flex-1">
             <UFormField label="封面图片" name="cover">
-              <ImageSelect v-model="formData.cover" multiple :limit="3" size="sm"/>
+              <ImageSelect v-model="formData.cover" multiple :limit="3" size="sm" />
             </UFormField>
             <Descriptions v-if="note" title="笔记信息" class="w-full">
               <DescriptionsItem label="文件名">

@@ -9,7 +9,7 @@ const noticeStore = useNoticeStore();
 const route = useRoute();
 
 await configStore.fetch();
-await userStore.fetchUserInfo();
+await userStore.fetchProfile();
 
 const meta = [{ name: "description", content: configStore.basic.description }];
 if (configStore.basic.keywords) {

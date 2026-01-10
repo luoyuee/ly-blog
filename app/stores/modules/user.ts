@@ -1,33 +1,33 @@
 import { defineStore } from "pinia";
-import type { UserInfo } from "#shared/types/user";
-import { UserRoleEnum } from "#shared/enums";
+import type { Profile } from "#shared/types/user";
 
 export interface UserStoreModel {
-  userInfo?: UserInfo;
-  isAdmin: boolean;
+  profile?: Profile;
 }
 
 export const userStore = defineStore("user", {
   state: (): UserStoreModel => ({
-    userInfo: undefined,
-    isAdmin: false
+    profile: undefined
   }),
   actions: {
-    async fetchUserInfo() {
+    async fetchProfile() {
       const auth = useCookie("Authorization", {
         readonly: true,
         watch: false
       });
-      if (auth) {
-        try {
-          const { data } = await useFetch<UserInfo>("/api/user/info");
-          if (data.value) {
-            this.userInfo = data.value;
-            this.isAdmin = data.value.role === UserRoleEnum.ADMIN;
-          }
-        } catch (error) {
-          console.log(error);
+
+      if (!auth.value) return;
+
+      try {
+        const { data } = await useFetch<UserInfo>("/api/user/info", {
+          key: new Date().getTime().toString()
+        });
+
+        if (data.value) {
+          this.profile = data.value;
         }
+      } catch (error) {
+        console.log(error);
       }
     }
   }

@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { PropType } from "vue";
+
 const props = defineProps({
   accept: {
     type: String,
@@ -7,6 +9,10 @@ const props = defineProps({
   placeholderImage: {
     type: String,
     default: "/images/blank_avatar.webp"
+  },
+  size: {
+    type: String as PropType<"xs" | "sm" | "md" | "lg" | "xl">,
+    default: "md"
   }
 });
 
@@ -16,6 +22,11 @@ const emits = defineEmits<{
 }>();
 
 const previewUrl = ref<string>(props.placeholderImage);
+
+const sizeClass = computed(() => {
+  const size = props.size || "md";
+  return `avatar-select--${size}`;
+});
 
 const inputFileRef = ref<HTMLInputElement | null>(null);
 const clickInputFile = () => {
@@ -46,7 +57,7 @@ const handleDelete = (): void => {
 </script>
 
 <template>
-  <div class="avatar-select">
+  <div class="avatar-select" :class="sizeClass">
     <input
       ref="inputFileRef"
       class="hidden"
@@ -70,8 +81,42 @@ const handleDelete = (): void => {
 </template>
 <style scoped lang="scss">
 .avatar-select {
-  width: 80px;
-  height: 80px;
+  --avatar-size: 80px;
+  --avatar-delete-height: 24px;
+  --avatar-delete-font-size: 16px;
+
+  &--xs {
+    --avatar-size: 40px;
+    --avatar-delete-height: 16px;
+    --avatar-delete-font-size: 12px;
+  }
+
+  &--sm {
+    --avatar-size: 60px;
+    --avatar-delete-height: 20px;
+    --avatar-delete-font-size: 14px;
+  }
+
+  &--md {
+    --avatar-size: 80px;
+    --avatar-delete-height: 24px;
+    --avatar-delete-font-size: 16px;
+  }
+
+  &--lg {
+    --avatar-size: 100px;
+    --avatar-delete-height: 28px;
+    --avatar-delete-font-size: 18px;
+  }
+
+  &--xl {
+    --avatar-size: 120px;
+    --avatar-delete-height: 32px;
+    --avatar-delete-font-size: 20px;
+  }
+
+  width: var(--avatar-size);
+  height: var(--avatar-size);
   border-radius: 50%;
   display: flex;
   justify-content: center;
@@ -81,18 +126,18 @@ const handleDelete = (): void => {
   cursor: pointer;
 
   .preview {
-    width: 80px;
-    height: 80px;
+    width: 100%;
+    height: 100%;
     display: block;
     object-fit: cover;
   }
 
   .delete-btn {
     user-select: none;
-    font-size: 16px;
+    font-size: var(--avatar-delete-font-size);
     position: absolute;
     width: 100%;
-    height: 24px;
+    height: var(--avatar-delete-height);
     display: flex;
     align-items: center;
     justify-content: center;

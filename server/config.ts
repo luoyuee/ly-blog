@@ -16,6 +16,7 @@ const STATIC_PATH = path.join(BASE_DIR, "/static");
 const PUBLIC_PATH = path.join(BASE_DIR, "/public");
 
 const IMAGE_FOLDER_PATH = path.join(STATIC_PATH, "/images");
+const IMAGE_PREVIEW_FOLDER_PATH = path.join(STATIC_PATH, "/images/preview");
 
 const CZDB_PATH = process.env.LY_CZDB_PATH || "/database";
 
@@ -53,6 +54,7 @@ export default {
   STATIC_PATH,
   PUBLIC_PATH,
   IMAGE_FOLDER_PATH,
+  IMAGE_PREVIEW_FOLDER_PATH,
 
   // 数据库连接字符串
   DATABASE_URL,

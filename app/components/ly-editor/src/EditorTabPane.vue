@@ -1,23 +1,33 @@
 <script setup lang="ts">
 import ArticlePaneContent from "./components/article-manager/ArticlePaneContent.vue";
-import ImageFolderPane from "./components/image-manager/ImageFolderPane.vue";
+import ImageFolderPanel from "./components/image-manager/ImageFolderPanel.vue";
 import HitokotoPaneContent from "./components/hitokoto-manager/HitokotoPaneContent.vue";
-import SettingPlane from "./components/SettingPlane.vue";
-import { useLyEditorStore } from "@/stores";
+import SettingPanel from "./components/SettingPanel.vue";
+import UserPanel from "./components/UserPanel.vue";
 import EditorCore from "./components/core/EditorCore.vue";
+import { useLyEditorStore } from "@/stores";
+import { LyEditorTabPanelEnum } from "@@/shared/enums";
 
 const lyEditorStore = useLyEditorStore();
 
 const ImageFolderPanes = computed(() => {
-  return lyEditorStore.tabs.filter((item) => item.type === "image-manager");
+  return lyEditorStore.tabs.filter((item) => item.type === LyEditorTabPanelEnum.ImagePanel);
+});
+
+const hasArticlePane = computed(() => {
+  return !!lyEditorStore.tabs.find((item) => item.type === LyEditorTabPanelEnum.ArticlePanel);
 });
 
 const hasHitokotoPane = computed(() => {
-  return !!lyEditorStore.tabs.find((item) => item.type === "hitokoto-manager");
+  return !!lyEditorStore.tabs.find((item) => item.type === LyEditorTabPanelEnum.HitokotoPanel);
 });
 
 const hasSettingPane = computed(() => {
-  return !!lyEditorStore.tabs.find((item) => item.type === "setting-pane");
+  return !!lyEditorStore.tabs.find((item) => item.type === LyEditorTabPanelEnum.SettingPanel);
+});
+
+const hasUserPane = computed(() => {
+  return !!lyEditorStore.tabs.find((item) => item.type === LyEditorTabPanelEnum.UserPanel);
 });
 
 const showEditorCore = computed(() => {
@@ -37,9 +47,12 @@ const showEditorCore = computed(() => {
   <div class="overflow-hidden">
     <EditorCore v-show="showEditorCore" />
 
-    <ArticlePaneContent v-show="lyEditorStore.currentTab === 'article-manager'" />
+    <ArticlePaneContent
+      v-if="hasArticlePane"
+      v-show="lyEditorStore.currentTab === LyEditorTabPanelEnum.ArticlePanel"
+    />
 
-    <ImageFolderPane
+    <ImageFolderPanel
       v-for="item in ImageFolderPanes"
       v-show="lyEditorStore.currentTab === item.key"
       :key="item.key"
@@ -48,9 +61,16 @@ const showEditorCore = computed(() => {
 
     <HitokotoPaneContent
       v-if="hasHitokotoPane"
-      v-show="lyEditorStore.currentTab === 'hitokoto-manager'"
+      v-show="lyEditorStore.currentTab === LyEditorTabPanelEnum.HitokotoPanel"
     />
 
-    <SettingPlane v-if="hasSettingPane" v-show="lyEditorStore.currentTab === 'setting-pane'" />
+    <SettingPanel
+      v-if="hasSettingPane"
+      v-show="lyEditorStore.currentTab === LyEditorTabPanelEnum.SettingPanel"
+    />
+    <UserPanel
+      v-if="hasUserPane"
+      v-show="lyEditorStore.currentTab === LyEditorTabPanelEnum.UserPanel"
+    />
   </div>
 </template>

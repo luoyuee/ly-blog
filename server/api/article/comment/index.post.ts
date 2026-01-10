@@ -17,7 +17,7 @@ export default defineEventHandler(async (event) => {
     article_id: z.number().int(),
     avatar: z.string().max(255).optional(),
     nickname: z.string().max(100),
-    email: z.string().email(),
+    email: z.email(),
     website: z.string().optional(),
     content: z.string().min(1),
     parent_id: z.number().int().optional(),

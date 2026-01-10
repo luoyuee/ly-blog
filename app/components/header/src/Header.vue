@@ -44,11 +44,13 @@ const switchSearch = () => {
 };
 
 const logout = () => {
-  const auth = useCookie("Authorization");
-  auth.value = null;
-  userStore.userInfo = undefined;
   $message.success("已退出登录，3秒后将刷新页面");
   setTimeout(() => {
+    const auth = useCookie("Authorization");
+    auth.value = null;
+
+    userStore.profile = undefined;
+
     window.location.reload();
   }, 3000);
 };
@@ -137,13 +139,13 @@ const open = ref(false);
     </div>
 
     <UPopover
-      v-if="userStore.userInfo"
+      v-if="userStore.profile"
       v-model:open="open"
       mode="hover"
       arrow
       :ui="{ content: 'w-32 p-1' }"
     >
-      <div class="header__user">{{ userStore.userInfo.username }}</div>
+      <div class="header__user">{{ userStore.profile.nickname || userStore.profile.username }}</div>
 
       <template #content>
         <div class="text-neutral-200">

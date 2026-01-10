@@ -4,50 +4,62 @@ import { prisma } from "@@/server/db";
 
 const HitokotoTypeData = [
   {
+    id: 1,
     name: "动画",
     description: "Anime - 动画"
   },
   {
+    id: 2,
     name: "漫画",
     description: "Comic - 漫画"
   },
   {
+    id: 3,
     name: "游戏",
     description: "Game - 游戏"
   },
   {
+    id: 4,
     name: "文学",
     description: "Literature - 文学。主要收录现代文学：小说、散文、戏剧。"
   },
   {
+    id: 5,
     name: "原创",
     description: "Original - 原创"
   },
   {
+    id: 6,
     name: "网络",
     description: "Internet - 来自网络"
   },
   {
+    id: 7,
     name: "其他",
     description: "Other - 其他"
   },
   {
+    id: 8,
     name: "影视",
     description: "Video - 影视"
   },
   {
+    id: 9,
     name: "诗词",
     description: "Poem - 诗词。主要收录中国古代文学，如：诗、歌、词、赋、曲等。"
   },
   {
+    id: 10,
     name: "网易云",
     description: "NCM - 网易云。主要收录网易云音乐热评。"
   },
   {
+    id: 11,
     name: "哲学",
     description: "Philosophy - 哲学"
   },
   {
+    id: 12,
     name: "抖机灵",
     description: "Funny - 抖机灵"
   }

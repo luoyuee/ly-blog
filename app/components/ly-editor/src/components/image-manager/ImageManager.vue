@@ -4,6 +4,7 @@ import IndeterminateProgressBar from "../progress/IndeterminateProgressBar.vue";
 import Scrollbar from "@/components/scrollbar";
 import { getAllImageFolder } from "@/apis/image";
 import ImageFolderFormModal from "./ImageFolderFormModal.vue";
+import { LyEditorTabPanelEnum } from "@@/shared/enums";
 import { useLyEditorStore } from "@/stores";
 
 const lyEditorStore = useLyEditorStore();
@@ -39,10 +40,8 @@ const handleOpenImageFolder = (e: ImageFolder) => {
   lyEditorStore.pushTabItem({
     key,
     label: e.name,
-    openTime: new Date().getTime(),
-    type: "image-manager",
-    data: e,
-    isChange: true
+    type: LyEditorTabPanelEnum.ImagePanel,
+    data: e
   });
 
   lyEditorStore.currentTab = key;

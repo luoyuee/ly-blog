@@ -3,8 +3,11 @@ onlyBuiltDependencies:
   - '@prisma/client'
   - '@prisma/engines'
   - '@tailwindcss/oxide'
+  - cn-font-split
   - esbuild
+  - koffi
   - prisma
+  - protobufjs
   - sharp
   - unrs-resolver
   - vue-demi

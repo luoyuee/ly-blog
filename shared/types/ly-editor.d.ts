@@ -1,5 +1,4 @@
 import type { ImageFolder } from "./image";
-export type EditorTabPaneType = "markdown" | "image-preview" | "image-manager";
 
 export interface NoteData {
   id?: number;
@@ -18,7 +17,7 @@ export type EditorTabItem = {
   key: string;
   label: string;
   isChange?: boolean;
-  openTime: number;
+  openTime?: number;
   lastEditTime?: number;
 } & (
   | {
@@ -26,7 +25,7 @@ export type EditorTabItem = {
       data: NoteData;
     }
   | {
-      type: "article-manager";
+      type: "article-panel";
       data: object;
     }
   | {
@@ -34,15 +33,19 @@ export type EditorTabItem = {
       data: object;
     }
   | {
-      type: "image-manager";
+      type: "image-panel";
       data: ImageManagerData;
     }
   | {
-      type: "hitokoto-manager";
+      type: "hitokoto-panel";
       data: object;
     }
   | {
-      type: "setting-pane";
+      type: "setting-panel";
+      data: object;
+    }
+  | {
+      type: "user-panel";
       data: object;
     }
 );

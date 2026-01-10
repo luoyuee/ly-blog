@@ -19,6 +19,7 @@ await useFetch<{ has_admin: boolean }>("/api/user/has-admin", {
 });
 
 const schema = z.object({
+  nickname: z.string({ message: "请输入昵称" }).min(1, "请输入昵称"),
   username: z.string({ message: "请输入用户名" }).min(1, "请输入用户名"),
   email: z.email({ message: "邮箱格式有误" }),
   password: z.string({ message: "请输入密码" }).min(6, "请至少输入6位密码"),
@@ -31,12 +32,14 @@ const schema = z.object({
 });
 
 const formData = reactive<{
+  nickname?: string;
   username?: string;
   password?: string;
   confirmPassword?: string;
   email?: string;
   avatar?: File;
 }>({
+  nickname: undefined,
   username: undefined,
   password: undefined,
   confirmPassword: undefined,
@@ -55,6 +58,7 @@ const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => 
     state.submitting = true;
 
     await adminRegister({
+      nickname: event.data.nickname!,
       username: event.data.username!,
       password: event.data.password!,
       email: event.data.email!,
@@ -95,12 +99,21 @@ const handleAvatarChange = (file: File | null) => {
           <AvatarUpload @change="handleAvatarChange" />
         </div>
 
-        <UFormField name="username" label="用户名" required>
+        <UFormField name="nickname" label="昵称" required>
+          <UInput
+            v-model="formData.nickname"
+            class="w-full"
+            icon="ep:edit-pen"
+            placeholder="请输入管理员昵称"
+          />
+        </UFormField>
+
+        <UFormField name="username" label="账号" required>
           <UInput
             v-model="formData.username"
             class="w-full"
-            icon="i-ep-user"
-            placeholder="请输入管理员用户名"
+            icon="ep:user"
+            placeholder="请输入管理员账号"
           />
         </UFormField>
 
@@ -108,7 +121,7 @@ const handleAvatarChange = (file: File | null) => {
           <UInput
             v-model="formData.email"
             class="w-full"
-            icon="i-ep-message"
+            icon="ep:message"
             placeholder="请输入管理员邮箱"
           />
         </UFormField>
@@ -117,7 +130,7 @@ const handleAvatarChange = (file: File | null) => {
           <UInput
             v-model="formData.password"
             class="w-full"
-            icon="i-ep-lock"
+            icon="ep:lock"
             type="password"
             placeholder="请输入管理员密码"
           />
@@ -127,7 +140,7 @@ const handleAvatarChange = (file: File | null) => {
           <UInput
             v-model="formData.confirmPassword"
             class="w-full"
-            icon="i-ep-lock"
+            icon="ep:lock"
             type="password"
             placeholder="请再次输入密码"
           />

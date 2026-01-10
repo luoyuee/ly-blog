@@ -2,6 +2,7 @@
 import type { ActivityMenuItem } from "./types";
 import { useLyEditorStore } from "@/stores";
 import { LyEditorActivityMenu } from "#shared/constants";
+import { LyEditorTabPanelEnum } from "@@/shared/enums";
 
 const lyEditorStore = useLyEditorStore();
 
@@ -55,13 +56,11 @@ const handleClickAction = (e: ActivityMenuItem) => {
   lyEditorStore.pushTabItem({
     key: "setting-pane",
     label: "设置",
-    openTime: new Date().getTime(),
-    type: "setting-pane",
-    data: e,
-    isChange: true
+    type: LyEditorTabPanelEnum.SettingPanel,
+    data: e
   });
 
-  lyEditorStore.currentTab = "setting-pane";
+  lyEditorStore.currentTab = LyEditorTabPanelEnum.SettingPanel;
 };
 </script>
 <template>

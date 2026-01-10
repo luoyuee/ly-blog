@@ -3,6 +3,7 @@ import type { DropdownMenuItem } from "@nuxt/ui";
 import { useFullscreen } from "@vueuse/core";
 import { useLyEditorStore, useUserStore } from "@/stores";
 import NoticeManagerModal from "./components/notice-manager/NoticeManagerModal.vue";
+import { LyEditorTabPanelEnum } from "@@/shared/enums";
 
 const lyEditorStore = useLyEditorStore();
 const userStore = useUserStore();
@@ -56,13 +57,24 @@ const userDropdownMenuItem = ref<DropdownMenuItem[]>([
   [
     {
       label: "用户信息",
-      icon: "i-lucide-user"
+      icon: "i-lucide-user",
+      onSelect: () => {
+        lyEditorStore.pushTabItem({
+          key: LyEditorTabPanelEnum.UserPanel,
+          label: "用户信息",
+          type: LyEditorTabPanelEnum.UserPanel,
+          data: {}
+        });
+
+        lyEditorStore.currentTab = LyEditorTabPanelEnum.UserPanel;
+      }
     }
   ],
   [
     {
       label: "退出登录",
-      icon: "i-lucide-log-out"
+      icon: "i-lucide-log-out",
+      onSelect: () => {}
     }
   ]
 ]);
@@ -136,7 +148,7 @@ const openNoticeManagerModal = () => {
         }"
       >
         <UAvatar
-          :src="userStore.userInfo?.avatar ?? '/images/avatar.webp'"
+          :src="userStore.profile?.avatar ?? '/images/avatar.webp'"
           size="xs"
           class="cursor-pointer"
         />

@@ -9,9 +9,9 @@ import Scrollbar from "@/components/scrollbar";
 
 const props = defineProps({
   tab: {
-    type: Object as PropType<EditorTabItem & { type: "image-manager"; data: ImageManagerData }>,
+    type: Object as PropType<EditorTabItem & { type: "image-panel"; data: ImageManagerData }>,
     required: true,
-    validator: (value: EditorTabItem) => value.type === "image-manager"
+    validator: (value: EditorTabItem) => value.type === "image-panel"
   }
 });
 

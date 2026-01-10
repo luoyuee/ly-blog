@@ -6,11 +6,7 @@ import { existsSync, mkdirSync } from "fs";
 import { readFormData } from "h3";
 import { prisma } from "@@/server/db";
 import { z } from "zod";
-import {
-  getOKResponse,
-  getBadResponse,
-  getForbiddenResponse,
-} from "@@/server/utils/response";
+import { getOKResponse, getBadResponse, getForbiddenResponse } from "@@/server/utils/response";
 import config from "@@/server/config";
 import CryptoJS from "crypto-js";
 import sharp from "sharp";
@@ -23,9 +19,7 @@ const handleUserAvatar = async (file: File): Promise<string> => {
   const rawBuffer = await file.arrayBuffer();
 
   // 判断文件类型
-  const fileType: FileTypeResult | undefined = await fileTypeFromBuffer(
-    rawBuffer
-  );
+  const fileType: FileTypeResult | undefined = await fileTypeFromBuffer(rawBuffer);
 
   if (fileType === undefined) {
     return Promise.reject("不支持此格式");
@@ -41,21 +35,19 @@ const handleUserAvatar = async (file: File): Promise<string> => {
     case "webp":
       transformer = transformer
         .webp({
-          quality: 100,
+          quality: 100
         })
         .resize({
           width: avatarWidth,
           height: avatarHeight,
-          fit: "fill",
+          fit: "fill"
         });
       break;
     default:
       return Promise.reject("不支持此格式");
   }
 
-  const hash = CryptoJS.MD5(
-    CryptoJS.lib.WordArray.create(await transformer.toBuffer())
-  ).toString();
+  const hash = CryptoJS.MD5(CryptoJS.lib.WordArray.create(await transformer.toBuffer())).toString();
 
   // 检查图片目录文件夹是否存在
   const imageFolder = `${config.IMAGE_FOLDER_PATH}`;
@@ -66,7 +58,7 @@ const handleUserAvatar = async (file: File): Promise<string> => {
 
   // 查询图片是否已经存在
   const exist = await prisma.image.findFirst({
-    where: { hash: hash, folder_id: ImageFolderEnum.SYSTEM },
+    where: { hash, folder_id: ImageFolderEnum.SYSTEM }
   });
 
   if (exist === null) {
@@ -93,12 +85,12 @@ const handleUserAvatar = async (file: File): Promise<string> => {
         height: avatarHeight,
         size: metadata.size ?? 0,
         format,
-        hash,
-      },
+        hash
+      }
     });
 
     const folder = await prisma.imageFolder.findUnique({
-      where: { id: ImageFolderEnum.SYSTEM },
+      where: { id: ImageFolderEnum.SYSTEM }
     });
 
     if (folder === null) {
@@ -110,8 +102,8 @@ const handleUserAvatar = async (file: File): Promise<string> => {
       data: {
         size: folder.size + (metadata.size ?? 0),
         count: folder.count + 1,
-        cover: `${hash}.${format}`,
-      },
+        cover: `${hash}.${format}`
+      }
     });
   }
 
@@ -123,28 +115,31 @@ export default defineEventHandler(async (event) => {
     const admin = await prisma.user.findFirst({
       where: {
         status: 1,
-        role: UserRoleEnum.ADMIN,
-      },
+        role: UserRoleEnum.ADMIN
+      }
     });
 
     if (admin !== null) return getForbiddenResponse(event);
 
     const formData = await readFormData(event);
     const avatar = formData.get("avatar");
+    const nickname = formData.get("nickname");
     const username = formData.get("username");
     const email = formData.get("email");
     const password = formData.get("password");
 
     const schema = z.object({
+      nickname: z.string(),
       username: z.string(),
-      email: z.string().email(),
-      password: z.string().min(6),
+      email: z.email(),
+      password: z.string().min(6)
     });
 
-    const { error, data: validatedForm } = schema.safeParse({
+    const { error, data: validForm } = schema.safeParse({
+      nickname,
       username,
       email,
-      password,
+      password
     });
 
     if (error) return getBadResponse(event, error.message);
@@ -160,12 +155,13 @@ export default defineEventHandler(async (event) => {
     await prisma.user.create({
       data: {
         created_at: new Date(),
-        username: validatedForm.username,
-        email: validatedForm.email,
-        password: CryptoJS.MD5(validatedForm.password).toString(),
+        nickname: validForm.nickname,
+        username: validForm.username,
+        email: validForm.email,
+        password: CryptoJS.MD5(validForm.password).toString(),
         role: UserRoleEnum.ADMIN,
-        avatar: userAvatar,
-      },
+        avatar: userAvatar
+      }
     });
 
     return getOKResponse(event);

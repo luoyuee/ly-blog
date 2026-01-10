@@ -6,6 +6,7 @@ import { useLyEditorStore } from "@/stores";
 import HitokotoTypeFormModal from "./HitokotoTypeFormModal.vue";
 import HitokotoTypeDetailsModal from "./HitokotoTypeDetailsModal.vue";
 import Scrollbar from "@/components/scrollbar";
+import { LyEditorTabPanelEnum } from "@@/shared/enums";
 
 const $notify = useNotification();
 const $msgBox = useMessageBox();
@@ -44,13 +45,11 @@ const handleOpenHitokoto = (e: HitokotoTypeItem) => {
   lyEditorStore.pushTabItem({
     key: "hitokoto-manager",
     label: "一言管理",
-    openTime: new Date().getTime(),
-    type: "hitokoto-manager",
-    data: e,
-    isChange: true
+    type: LyEditorTabPanelEnum.HitokotoPanel,
+    data: e
   });
 
-  lyEditorStore.currentTab = "hitokoto-manager";
+  lyEditorStore.currentTab = LyEditorTabPanelEnum.HitokotoPanel;
 };
 
 const handleDelete = (e: HitokotoTypeItem) => {
