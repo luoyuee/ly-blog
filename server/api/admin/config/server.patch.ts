@@ -18,20 +18,20 @@ export default defineEventHandler(async (event) => {
       notif_email: z.string().optional().nullable(),
       enable_comment_notif: z.boolean().optional().nullable(),
       enable: z.boolean()
-    }),
-
-    storage: z.object({
-      type: z.string().optional().nullable(),
-      base_path: z.string().optional().nullable(),
-      end_point: z.string().optional().nullable(),
-      url_format: z.string().optional().nullable(),
-      port: z.number().optional().nullable(),
-      region: z.string().optional().nullable(),
-      bucket: z.string().optional().nullable(),
-      use_ssl: z.boolean().optional().nullable(),
-      access_key: z.string().optional().nullable(),
-      secret_key: z.string().optional().nullable()
     })
+
+    // storage: z.object({
+    //   type: z.string().optional().nullable(),
+    //   base_path: z.string().optional().nullable(),
+    //   end_point: z.string().optional().nullable(),
+    //   url_format: z.string().optional().nullable(),
+    //   port: z.number().optional().nullable(),
+    //   region: z.string().optional().nullable(),
+    //   bucket: z.string().optional().nullable(),
+    //   use_ssl: z.boolean().optional().nullable(),
+    //   access_key: z.string().optional().nullable(),
+    //   secret_key: z.string().optional().nullable()
+    // })
   });
 
   const { error, data: body } = schema.safeParse(await readBody(event));

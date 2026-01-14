@@ -98,7 +98,7 @@ export interface IServerConfigMailer {
   pass?: string;
   notif_email?: string;
   enable_comment_notif?: boolean;
-  enable: boolean;
+  enable?: boolean;
 }
 
 export interface IServerConfigStorage {

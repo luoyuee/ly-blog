@@ -8,7 +8,7 @@ import { watch } from "vue";
 import { z } from "zod";
 import type { FormSubmitEvent } from "@nuxt/ui";
 
-const notif = useNotification();
+const $notify = useNotification();
 
 const serverConfigStore = useServerConfigStore();
 
@@ -86,7 +86,10 @@ const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => 
       });
     }
   } catch (error) {
-    notif.error("验证失败", error);
+    $notify.error({
+      title: "验证失败",
+      error
+    });
     state.submitting = false;
     return;
   }
@@ -97,11 +100,41 @@ const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => 
     });
     await serverConfigStore.fetch();
     handleReset();
-    notif.success("更新成功");
+    $notify.success({
+      title: "更新成功"
+    });
   } catch (error) {
-    notif.error("更新失败", error);
+    $notify.error({
+      title: "更新失败",
+      error
+    });
   } finally {
     state.submitting = false;
+  }
+};
+
+const sendLoading = ref(false);
+const handleTestEmail = async () => {
+  try {
+    sendLoading.value = true;
+    await verifyEmailConfig({
+      host: formData.host,
+      port: formData.port,
+      tls: formData.tls,
+      user: formData.user,
+      pass: formData.pass,
+      notif_email: formData.notif_email
+    });
+    $notify.success({
+      title: "测试邮件发送成功"
+    });
+  } catch (error) {
+    $notify.error({
+      title: "测试邮件发送失败",
+      error
+    });
+  } finally {
+    sendLoading.value = false;
   }
 };
 </script>
@@ -215,12 +248,17 @@ const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => 
           container: 'mt-2'
         }"
       >
-        <UInput
-          v-model="formData.notif_email"
-          class="w-full"
-          icon="i-lucide-mail"
-          placeholder="请输入通知邮箱"
-        />
+        <UFieldGroup class="w-full">
+          <UInput
+            v-model="formData.notif_email"
+            class="w-full"
+            icon="i-lucide-mail"
+            placeholder="请输入通知邮箱"
+          />
+          <UButton class="shrink-0" :loading="sendLoading" @click="handleTestEmail">
+            发送测试邮件
+          </UButton>
+        </UFieldGroup>
       </UFormField>
       <UFormField
         name="enable_comment_notif"

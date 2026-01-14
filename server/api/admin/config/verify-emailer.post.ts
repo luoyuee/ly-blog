@@ -1,7 +1,7 @@
 import { getBadResponse, getOKResponse } from "@@/server/utils/response";
+import { useEmail } from "@@/server/utils/email";
 import { readBody } from "h3";
 import { z } from "zod";
-import nodemailer from "nodemailer";
 
 export default defineEventHandler(async (event) => {
   const schema = z.object({
@@ -17,37 +17,25 @@ export default defineEventHandler(async (event) => {
 
   if (error) return getBadResponse(event, error.message);
 
-  const transporter = nodemailer.createTransport({
-    host: body.host,
-    port: body.port,
-    secure: body.tls,
-    auth: {
+  const { initTransporter, sendEmail } = useEmail({
+    mailer: {
+      host: body.host,
+      port: body.port,
+      tls: body.tls,
       user: body.user,
       pass: body.pass
     }
   });
 
-  const mailOptions = {
-    from: `"LY-Blog" <${body.user}>`,
-    to: body.notif_email,
-    subject: "测试邮件",
-    html: "<b>这是一条测试邮件系统的通知信息</b>"
-  };
-
-  const sendMail = () => {
-    return new Promise((resolve, reject) => {
-      transporter.sendMail(mailOptions, (error) => {
-        if (error) {
-          reject(error);
-        } else {
-          resolve("ok");
-        }
-      });
-    });
-  };
-
   try {
-    await sendMail();
+    await initTransporter();
+
+    await sendEmail({
+      to: body.notif_email,
+      subject: "测试邮件",
+      content: "这是一条测试邮件系统的通知信息"
+    });
+
     return getOKResponse(event);
   } catch (error) {
     return getBadResponse(event, (error as Error).message);
