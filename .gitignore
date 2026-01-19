@@ -28,9 +28,9 @@ prisma/migrations
 prisma/generated
 
 # db
-database
+/database
 
 # static
-static
+/static
 
 .VSCodeCounter
