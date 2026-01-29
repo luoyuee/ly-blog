@@ -34,7 +34,7 @@ export class MinioStorageProvider implements StorageProvider {
       useSSL: this.useSSL,
       accessKey: this.accessKey,
       secretKey: this.secretKey,
-      pathStyle: false,
+      pathStyle: false
     });
   }
 
@@ -45,17 +45,15 @@ export class MinioStorageProvider implements StorageProvider {
 
     const basePath = this.basePath.replace(/^\/|\/$/g, "");
 
-    return `${basePath}/${filename.slice(0, 2)}/${filename.slice(
-      2,
-      4
-    )}/${filename}`;
+    return `${basePath}/${filename.slice(0, 2)}/${filename.slice(2, 4)}/${filename}`;
   };
 
+  async createReadStream(filename: string) {
+    return await this.client.getObject(this.bucket, this.getFilePath(filename));
+  }
+
   async read(filename: string) {
-    const stream = await this.client.getObject(
-      this.bucket,
-      this.getFilePath(filename)
-    );
+    const stream = await this.client.getObject(this.bucket, this.getFilePath(filename));
 
     const chunks = [];
     for await (const chunk of stream) {
@@ -75,11 +73,7 @@ export class MinioStorageProvider implements StorageProvider {
   }
 
   async save(buffer: Buffer, filename: string) {
-    await this.client.putObject(
-      this.bucket,
-      this.getFilePath(filename),
-      buffer
-    );
+    await this.client.putObject(this.bucket, this.getFilePath(filename), buffer);
     return this.getUrl(filename);
   }
 
@@ -94,11 +88,7 @@ export class MinioStorageProvider implements StorageProvider {
         .replace("${region}", this.region)
         .replace("${filename}", this.getFilePath(filename)));
     } else {
-      return await this.client.presignedUrl(
-        "GET",
-        this.bucket,
-        this.getFilePath(filename)
-      );
+      return await this.client.presignedUrl("GET", this.bucket, this.getFilePath(filename));
     }
   }
 

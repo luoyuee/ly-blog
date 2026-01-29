@@ -1,7 +1,7 @@
-import { existsSync, readFileSync } from "fs";
+import { useFileStorage } from "@@/server/utils/useFileStorage";
+import { createReadStream } from "fs";
 import { ImageFolderEnum } from "#shared/enums";
 import { prisma } from "@@/server/db";
-import config from "@@/server/config";
 import mime from "mime/lite";
 
 const getImages = defineCachedFunction(
@@ -11,18 +11,18 @@ const getImages = defineCachedFunction(
       select: {
         id: true,
         hash: true,
-        format: true,
-      },
+        format: true
+      }
     });
 
     return images.map((item) => ({
       id: item.id,
       hash: item.hash,
-      format: item.format,
+      format: item.format
     }));
   },
   {
-    maxAge: 60, // 缓存60秒
+    maxAge: 60 // 缓存60秒
   }
 );
 
@@ -35,19 +35,20 @@ export default defineEventHandler(async (event) => {
     const index = Math.floor(Math.random() * images.length);
     const img = images[index];
 
-    const filePath = `${config.IMAGE_FOLDER_PATH}/${ImageFolderEnum.BACKGROUND}/${img.hash}.${img.format}`;
+    const fileStorage = useFileStorage();
+    const filename = `${img.hash}.${img.format}`;
 
-    if (existsSync(filePath)) {
-      event.node.res.setHeader(
-        "Content-Type",
-        mime.getType(img.format) ?? "image/webp"
-      );
+    const filePath = await fileStorage.getPath(filename);
 
-      return readFileSync(filePath);
+    if (await fileStorage.exists(filename)) {
+      event.node.res.setHeader("Content-Type", mime.getType(img.format) ?? "image/webp");
+
+      return createReadStream(filePath);
     }
   }
 
   // 默认背景图片
   event.node.res.setHeader("Content-Type", "image/webp");
-  return readFileSync("./public/images/default_bg.webp");
+  // 重定向到默认背景图片
+  sendRedirect(event, "/images/default_bg.webp", 302);
 });

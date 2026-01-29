@@ -27,10 +27,7 @@ logs
 prisma/migrations
 prisma/generated
 
-# db
-/database
-
-# static
-/static
+# 数据目录
+/data
 
 .VSCodeCounter

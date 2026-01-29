@@ -2,6 +2,7 @@
 import ArticlePaneContent from "./components/article-manager/ArticlePaneContent.vue";
 import ImageFolderPanel from "./components/image-manager/ImageFolderPanel.vue";
 import HitokotoPaneContent from "./components/hitokoto-manager/HitokotoPaneContent.vue";
+import DashboardPanel from "./components/DashboardPanel.vue";
 import SettingPanel from "./components/SettingPanel.vue";
 import UserPanel from "./components/UserPanel.vue";
 import EditorCore from "./components/core/EditorCore.vue";
@@ -24,6 +25,10 @@ const hasHitokotoPane = computed(() => {
 
 const hasSettingPane = computed(() => {
   return !!lyEditorStore.tabs.find((item) => item.type === LyEditorTabPanelEnum.SettingPanel);
+});
+
+const hasDashboardPane = computed(() => {
+  return !!lyEditorStore.tabs.find((item) => item.type === LyEditorTabPanelEnum.DashboardPanel);
 });
 
 const hasUserPane = computed(() => {
@@ -64,10 +69,16 @@ const showEditorCore = computed(() => {
       v-show="lyEditorStore.currentTab === LyEditorTabPanelEnum.HitokotoPanel"
     />
 
+    <DashboardPanel
+      v-if="hasDashboardPane"
+      v-show="lyEditorStore.currentTab === LyEditorTabPanelEnum.DashboardPanel"
+    />
+
     <SettingPanel
       v-if="hasSettingPane"
       v-show="lyEditorStore.currentTab === LyEditorTabPanelEnum.SettingPanel"
     />
+
     <UserPanel
       v-if="hasUserPane"
       v-show="lyEditorStore.currentTab === LyEditorTabPanelEnum.UserPanel"

@@ -41,9 +41,16 @@ const activityMenu = ref<ActivityMenuItem[]>([
 
 const actionMenu = ref<ActivityMenuItem[]>([
   {
+    key: LyEditorActivityMenu.DashboardPanel,
+    label: "仪表盘",
+    icon: "ep:histogram",
+    panel: LyEditorTabPanelEnum.DashboardPanel
+  },
+  {
     key: LyEditorActivityMenu.SettingPanel,
     label: "设置",
-    icon: "custom:setting"
+    icon: "custom:setting",
+    panel: LyEditorTabPanelEnum.SettingPanel
   }
 ]);
 
@@ -54,13 +61,13 @@ const handleClickMenu = (e: ActivityMenuItem) => {
 
 const handleClickAction = (e: ActivityMenuItem) => {
   lyEditorStore.pushTabItem({
-    key: "setting-pane",
-    label: "设置",
-    type: LyEditorTabPanelEnum.SettingPanel,
+    key: "pane-" + e.key,
+    label: e.label,
+    type: e.panel as any,
     data: e
   });
 
-  lyEditorStore.currentTab = LyEditorTabPanelEnum.SettingPanel;
+  lyEditorStore.currentTab = e.panel;
 };
 </script>
 <template>

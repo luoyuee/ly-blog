@@ -1,5 +1,5 @@
 import { getOKResponse, getBadResponse, getNotAuthResponse } from "@@/server/utils/response";
-import { handleUserAvatar } from "@@/server/utils/user";
+import { handleUserAvatar } from "@@/server/utils/image";
 import { prisma } from "@@/server/db";
 import { readFormData } from "h3";
 import { z } from "zod";

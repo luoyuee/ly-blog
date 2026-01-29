@@ -1,6 +1,7 @@
 import { ImageFolderEnum, ConfigNameEnum } from "#shared/constants";
 import { mkdirSync, existsSync } from "fs";
 import { prisma } from "@@/server/db";
+import config from "@@/server/config";
 
 const HitokotoTypeData = [
   {
@@ -101,7 +102,7 @@ export default defineNitroPlugin(async () => {
 
   try {
     // 创建必要的目录
-    const directories = ["./logs", "./static/images", "./static/images/preview", "./database"];
+    const directories = [config.FILE_PATH, config.CZDB_PATH, config.LOG_PATH, config.BACKUP_PATH];
 
     for (const dir of directories) {
       if (!existsSync(dir)) {

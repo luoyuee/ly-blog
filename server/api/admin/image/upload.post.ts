@@ -1,20 +1,18 @@
-import type { ImageFormat } from "#shared/types";
 import { getBadResponse, getOKResponse } from "@@/server/utils/response";
-import { fileTypeFromBuffer } from "file-type";
+import { useFileStorage } from "@@/server/utils/useFileStorage";
+import { optimizeImage } from "@@/server/utils/image";
 import { prisma } from "@@/server/db";
 import { readFormData } from "h3";
-import { useFileStorage } from "@@/server/utils/useFileStorage";
-import sharp from "sharp";
 
 /**
  * 上传图片
  * 1. 检查图片格式
- * 2. 同一文件只保存一次（可有多条记录）,第二次上传时合并tag
+ * 2. 同一文件只保存一次（可有多条记录）
  * 3. 需要生成预览图，以优化性能
  */
 
 export default defineEventHandler(async (event) => {
-  const storage = useFileStorage();
+  const fileStorage = useFileStorage();
 
   const formData = await readFormData(event);
 
@@ -25,7 +23,7 @@ export default defineEventHandler(async (event) => {
   }
 
   const folder = await prisma.imageFolder.findUnique({
-    where: { id: Number(folderID) },
+    where: { id: Number(folderID) }
   });
   if (!folder) {
     return getBadResponse(event, "目录不存在");
@@ -42,56 +40,31 @@ export default defineEventHandler(async (event) => {
   // 原始数据
   const rawBuffer = await file.arrayBuffer();
 
-  // 判断文件类型
-  const fileType = await fileTypeFromBuffer(rawBuffer);
-  if (!fileType) {
-    return getBadResponse(event, "不支持此格式");
-  }
+  const optimized = await optimizeImage(rawBuffer);
 
-  let transformer = sharp(rawBuffer);
-  let format: ImageFormat = "webp";
-
-  switch (fileType.ext) {
-    case "png":
-    case "jpg":
-    case "jpeg":
-    case "webp":
-      transformer = transformer.webp({
-        quality: 100,
-      });
-      break;
-    case "gif":
-      format = "gif";
-      break;
-    case "xml":
-      format = "svg";
-      break;
-    default:
-      return getBadResponse(event, "不支持此格式");
-  }
-
-  const imageBuffer = await transformer.toBuffer();
-  const imageHash = storage.getHash(imageBuffer);
-  console.log(imageHash);
+  const imageHash = fileStorage.getHash(optimized.content);
 
   // 查询图片是否已经存在
   const exist = await prisma.image.findFirst({
-    where: { hash: imageHash, folder_id: folder.id },
+    where: { hash: imageHash, folder_id: folder.id }
   });
 
   if (!exist) {
     // 保存原始图片
-    await storage.save(imageBuffer, format);
+    await fileStorage.save(optimized.content, optimized.format);
 
     // 生成并保存预览图
-    const previewBuffer = await transformer.webp({ quality: 20 }).toBuffer();
-    const previewHash = storage.getHash(previewBuffer);
+    const preview = await optimizeImage(optimized.content, {
+      quality: 20
+    });
 
-    await storage.save(previewBuffer, format);
+    const previewHash = fileStorage.getHash(preview.content);
 
-    // 获取图片元数据
-    const metadata = await transformer.metadata();
+    await fileStorage.save(preview.content, preview.format);
+
     const now = new Date();
+
+    const optimizedSize = fileStorage.getSize(optimized.content);
 
     // 更新数据库
     const [data] = await prisma.$transaction([
@@ -101,22 +74,23 @@ export default defineEventHandler(async (event) => {
           created_by: event.context.user.id,
           tags: tagArray,
           folder_id: folder.id,
-          width: metadata.width ?? 100,
-          height: metadata.height ?? 100,
-          size: metadata.size ?? 0,
-          format,
+          width: optimized.metadata.width ?? 100,
+          height: optimized.metadata.height ?? 100,
+          size: optimizedSize,
+          format: optimized.format,
           hash: imageHash,
-          preview: previewHash,
-        },
+          preview: previewHash
+        }
       }),
+
       prisma.imageFolder.update({
         where: { id: folder.id },
         data: {
-          size: folder.size + (metadata.size ?? 0),
+          size: folder.size + optimizedSize,
           count: folder.count + 1,
-          cover: `${imageHash}.${format}`,
-        },
-      }),
+          cover: `${imageHash}.${optimized.format}`
+        }
+      })
     ]);
 
     return getOKResponse(event, data);

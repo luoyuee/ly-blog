@@ -233,20 +233,39 @@ model Image {
   created_by Int?
   updated_at DateTime?
   updated_by Int?
-  folder_id  Int
+  folder_id  Int?
+  filename   String?   @db.VarChar(512)
+  hash       String    @db.VarChar(128)
+  preview    String?   @db.VarChar(128)
+  format     String    @db.VarChar(64)
+  size       Int
   tags       Json?
   width      Int
   height     Int
-  size       Int
-  format     String    @db.VarChar(64)
-  preview    String?   @db.VarChar(128)
-  hash       String    @db.VarChar(128)
   status     Int       @default(1) // 0:已删除，1:正常状态
 
   ImageFolder ImageFolder? @relation(fields: [folder_id], references: [id])
 
-  @@index([folder_id, hash])
+  @@index([folder_id, filename, hash])
   @@map("image")
+}
+
+model FileFolder {
+  id          Int       @id @default(autoincrement())
+  created_at  DateTime? @default(now())
+  created_by  Int?
+  updated_at  DateTime?
+  updated_by  Int?
+  name        String    @db.VarChar(255)
+  description String?   @db.VarChar(1024)
+  cover       String?   @db.VarChar(512)
+  count       Int       @default(0)
+  size        Int       @default(0)
+  status      Int       @default(1)
+
+  files File[]
+
+  @@map("file_folder")
 }
 
 model File {
@@ -255,17 +274,19 @@ model File {
   created_by     Int?
   updated_at     DateTime?
   updated_by     Int?
-  hash           String    @unique
-  original_name  String?
-  ext            String
-  mime_type      String?
+  folder_id      Int?
+  filename       String?   @db.VarChar(512)
+  hash           String    @db.VarChar(128)
+  metadata       Json? // 通用元数据存储
+  ext            String    @db.VarChar(64)
   size           Int
   download_count Int       @default(0)
   password       String?
-  metadata       Json? // 通用元数据存储
   status         Int       @default(1) // 0:已删除，1:正常状态
 
-  @@index([hash])
+  FileFolder FileFolder? @relation(fields: [folder_id], references: [id])
+
+  @@index([folder_id, filename, hash])
   @@map("file")
 }
 
@@ -344,15 +365,13 @@ model SystemRuntimeData {
   @@map("system_runtime_data")
 }
 
-model RequestStats {
+model Dashboard {
   id         Int       @id @default(autoincrement())
   created_at DateTime? @default(now())
-  created_by Int?
   updated_at DateTime?
-  updated_by Int?
   time       DateTime  @unique
   data       Json
 
   @@index([time])
-  @@map("request_stats")
+  @@map("dashboard")
 }

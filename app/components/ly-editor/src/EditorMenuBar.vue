@@ -128,13 +128,23 @@ const openNoticeManagerModal = () => {
           <UIcon :name="isFullscreen ? 'custom:off-screen' : 'custom:full-screen'" />
         </div>
       </UTooltip>
+      <UTooltip text="消息" :content="{ side: 'bottom' }">
+        <div @click="openNoticeManagerModal">
+          <UIcon name="lucide:bell" />
+        </div>
+      </UTooltip>
       <UTooltip text="公告" :content="{ side: 'bottom' }">
         <div @click="openNoticeManagerModal">
           <UIcon name="lucide:bell" />
         </div>
       </UTooltip>
+      <UTooltip text="邮件" :content="{ side: 'bottom' }">
+        <div @click="openNoticeManagerModal">
+          <UIcon name="lucide:mail" />
+        </div>
+      </UTooltip>
       <UTooltip text="首页" :content="{ side: 'bottom' }">
-        <div v-navigate-to="'/'">
+        <div v-navigate-to._blank="'/'">
           <UIcon name="custom:home" />
         </div>
       </UTooltip>

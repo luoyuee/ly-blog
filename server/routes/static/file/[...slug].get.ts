@@ -1,20 +1,26 @@
+import { useFileStorage } from "@@/server/utils/useFileStorage";
 import { getNotFoundResponse } from "@@/server/utils/response";
-import { existsSync, createReadStream } from "fs";
+import { createReadStream } from "fs";
 import { getRouterParam, appendHeader } from "h3";
-import config from "@@/server/config";
 import mime from "mime";
-import path from "path";
+
 
 export default defineEventHandler(async (event) => {
   const slug = getRouterParam(event, "slug");
 
-  if (!slug) return getNotFoundResponse(event);
+  if (!slug) {
+    return getNotFoundResponse(event);
+  }
 
-  const url = decodeURI(slug);
+  const storage = useFileStorage();
 
-  const filePath = path.join(config.STATIC_PATH, url);
+  const exist = await storage.exists(slug);
 
-  if (!existsSync(filePath)) return getNotFoundResponse(event);
+  if (!exist) {
+    return getNotFoundResponse(event);
+  }
+
+  const filePath = await storage.getPath(slug);
 
   appendHeader(
     event,

@@ -41,6 +41,10 @@ export type EditorTabItem = {
       data: object;
     }
   | {
+      type: "dashboard-panel";
+      data: object;
+    }
+  | {
       type: "setting-panel";
       data: object;
     }

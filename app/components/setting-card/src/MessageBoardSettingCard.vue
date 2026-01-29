@@ -7,7 +7,7 @@ import { useConfigStore } from "@/stores";
 import { watch } from "vue";
 import { z } from "zod";
 
-const notif = useNotification();
+const $notify = useNotification();
 
 const configStore = useConfigStore();
 
@@ -51,9 +51,13 @@ const handleSubmit = async () => {
     });
     await configStore.fetch();
     handleReset();
-    notif.success("更新成功");
+    $notify.success({
+      title: "更新成功"
+    });
   } catch {
-    notif.error("更新失败");
+    $notify.error({
+      title: "更新失败"
+    });
   } finally {
     state.submitting = false;
   }

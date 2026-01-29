@@ -2,6 +2,4 @@
 .nuxt
 .output
 node_modules
-/static
-database
-logs
+/data

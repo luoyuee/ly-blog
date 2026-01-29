@@ -1,7 +1,12 @@
+import type { ReadStream } from "fs";
+
+export type BinaryLike = Buffer | ArrayBuffer | ArrayBufferView;
+
 export interface StorageProvider {
   read(filename: string): Promise<Buffer>;
+  createReadStream(filename: string): Promise<Stream.Readable | ReadStream>;
   exists(filename: string): Promise<boolean>;
-  save(buffer: Buffer, hash: string): Promise<string>;
+  save(buffer: BinaryLike, hash: string): Promise<string>;
   getPath(filename: string): Promise<string>;
   getUrl(filename: string): Promise<string>;
   delete(filename: string): Promise<void>;

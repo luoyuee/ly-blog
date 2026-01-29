@@ -9,7 +9,7 @@ import { FakeAvatar } from "@/components/avatar";
 const $notify = useNotification();
 const $msgBox = useMessageBox();
 
-const { primary, success, warning, info, error, closeAllMessage } = useMessage({
+const { primary, success, warning, info, error } = useMessage({
   // duration: 0,
   showClose: true
 });
@@ -103,6 +103,8 @@ const d = ref("2025-10-12");
 const d2 = ref([]);
 
 const img = ref([]);
+
+const loading = ref(true);
 </script>
 <template>
   <div>
@@ -176,6 +178,13 @@ const img = ref([]);
         <UButton label="确认" color="primary" variant="solid" />
       </template>
     </UPopover>
+
+    <div
+      v-loading="loading"
+      custom-loading-text="自定义加载中文案"
+      class="m-6 w-100 h-50 bg-red-500"
+    >
+    </div>
   </div>
 </template>
 

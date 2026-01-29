@@ -12,14 +12,15 @@ export class LocalStorageProvider implements StorageProvider {
   }
 
   private getFilePath = (filename: string) => {
-    return path.join(
-      this.basePath,
-      `${filename.slice(0, 2)}/${filename.slice(2, 4)}/${filename}`
-    );
+    return path.join(this.basePath, `${filename.slice(0, 2)}/${filename.slice(2, 4)}/${filename}`);
   };
 
   async read(filename: string) {
     return await fs.promises.readFile(this.getFilePath(filename));
+  }
+
+  async createReadStream(filename: string) {
+    return fs.createReadStream(this.getFilePath(filename));
   }
 
   async exists(filename: string) {
@@ -44,10 +45,7 @@ export class LocalStorageProvider implements StorageProvider {
   }
 
   async getUrl(filename: string) {
-    const hashPath = `${filename.slice(0, 2)}/${filename.slice(
-      2,
-      4
-    )}/${filename}`;
+    const hashPath = `${filename.slice(0, 2)}/${filename.slice(2, 4)}/${filename}`;
 
     return this.urlFormat.replace("${filename}", hashPath);
   }

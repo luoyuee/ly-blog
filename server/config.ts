@@ -9,21 +9,18 @@ const getCurrentWorkingDirectory = (): string => {
   return process.cwd();
 };
 
-const BASE_DIR = getCurrentWorkingDirectory();
+const WORK_DIR = getCurrentWorkingDirectory();
 
-const STATIC_PATH = path.join(BASE_DIR, "/static");
+const FILE_PATH = path.join(WORK_DIR, "/data/files");
 
-const PUBLIC_PATH = path.join(BASE_DIR, "/public");
-
-const IMAGE_FOLDER_PATH = path.join(STATIC_PATH, "/images");
-const IMAGE_PREVIEW_FOLDER_PATH = path.join(STATIC_PATH, "/images/preview");
-
-const CZDB_PATH = process.env.LY_CZDB_PATH || "/database";
+const CZDB_PATH = process.env.LY_CZDB_PATH || path.join(WORK_DIR, "/data/czdb");
 
 const CZDB_IPV4_PATH = path.join(CZDB_PATH, "/v4.czdb");
 const CZDB_IPV6_PATH = path.join(CZDB_PATH, "/v6.czdb");
 
-const LOG_PATH = path.join(BASE_DIR, "/log");
+const LOG_PATH = path.join(WORK_DIR, "/data/logs");
+
+const BACKUP_PATH = path.join(WORK_DIR, "/data/backup");
 
 /**
  * 校验环境变量是否存在且非空
@@ -49,13 +46,6 @@ export default {
   JWT_EXP: "3 h",
   JWT_EXP_7D: "7 d",
 
-  // 目录相关配置
-  BASE_DIR,
-  STATIC_PATH,
-  PUBLIC_PATH,
-  IMAGE_FOLDER_PATH,
-  IMAGE_PREVIEW_FOLDER_PATH,
-
   // 数据库连接字符串
   DATABASE_URL,
 
@@ -65,6 +55,13 @@ export default {
   CZDB_IPV4_PATH,
   CZDB_IPV6_PATH,
 
+  // 目录相关配置
+  WORK_DIR,
+  FILE_PATH,
+
   // 日志目录
-  LOG_PATH
+  LOG_PATH,
+
+  // 备份目录
+  BACKUP_PATH
 };

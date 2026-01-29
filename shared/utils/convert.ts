@@ -120,3 +120,16 @@ export function mapTree<
 
   return data.map((item) => mapNode(item));
 }
+
+export function toArrayBuffer(bufferLike: ArrayBufferLike): ArrayBuffer {
+  let arrayBuffer: ArrayBuffer;
+
+  if (bufferLike instanceof ArrayBuffer) {
+    arrayBuffer = bufferLike;
+  } else {
+    // SharedArrayBuffer 需要复制
+    arrayBuffer = new ArrayBuffer(bufferLike.byteLength);
+    new Uint8Array(arrayBuffer).set(new Uint8Array(bufferLike));
+  }
+  return arrayBuffer;
+}

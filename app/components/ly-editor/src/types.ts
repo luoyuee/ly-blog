@@ -24,6 +24,7 @@ export interface ActivityMenuItem {
   key: number;
   label: string;
   icon: string;
+  panel?: string;
   onClick?: () => void;
 }
 
