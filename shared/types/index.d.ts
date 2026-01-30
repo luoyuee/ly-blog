@@ -22,3 +22,10 @@ export interface ArticleListItem {
   comments_count: number;
   likes_count: number;
 }
+
+interface RecipientOption {
+  avatar?: string | null;
+  nickname: string;
+  email: string;
+  website?: string | null;
+}

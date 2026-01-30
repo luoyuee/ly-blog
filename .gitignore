@@ -31,3 +31,8 @@ prisma/generated
 /data
 
 .VSCodeCounter
+
+# 图标处理目录
+/scripts/new-icons
+/scripts/old-icons
+/scripts/old-color-icons

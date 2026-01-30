@@ -3,6 +3,7 @@ import type { DropdownMenuItem } from "@nuxt/ui";
 import { useFullscreen } from "@vueuse/core";
 import { useLyEditorStore, useUserStore } from "@/stores";
 import NoticeManagerModal from "./components/notice-manager/NoticeManagerModal.vue";
+import SendEmailModal from "./components/notice-manager/SendEmailModal.vue";
 import { LyEditorTabPanelEnum } from "@@/shared/enums";
 
 const lyEditorStore = useLyEditorStore();
@@ -80,9 +81,14 @@ const userDropdownMenuItem = ref<DropdownMenuItem[]>([
 ]);
 
 const noticeManagerModalRef = useTemplateRef("noticeManagerModalRef");
+const sendEmailModalRef = useTemplateRef("sendEmailModalRef");
 
 const openNoticeManagerModal = () => {
   noticeManagerModalRef.value?.open();
+};
+
+const openSendEmailModal = () => {
+  sendEmailModalRef.value?.open();
 };
 </script>
 <template>
@@ -135,11 +141,11 @@ const openNoticeManagerModal = () => {
       </UTooltip>
       <UTooltip text="公告" :content="{ side: 'bottom' }">
         <div @click="openNoticeManagerModal">
-          <UIcon name="lucide:bell" />
+          <UIcon name="custom:notice" />
         </div>
       </UTooltip>
       <UTooltip text="邮件" :content="{ side: 'bottom' }">
-        <div @click="openNoticeManagerModal">
+        <div @click="openSendEmailModal">
           <UIcon name="lucide:mail" />
         </div>
       </UTooltip>
@@ -166,6 +172,7 @@ const openNoticeManagerModal = () => {
     </div>
 
     <NoticeManagerModal ref="noticeManagerModalRef" />
+    <SendEmailModal ref="sendEmailModalRef" />
   </nav>
 </template>
 <style scoped lang="scss">
