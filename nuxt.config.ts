@@ -12,6 +12,12 @@ export default defineNuxtConfig({
   nitro: {
     rollupConfig: {
       external: [/^@prisma\//, /\.wasm$/]
+    },
+    experimental: {
+      tasks: true
+    },
+    scheduledTasks: {
+      "0 2 * * *": ["backup:full"]
     }
   },
   vite: {

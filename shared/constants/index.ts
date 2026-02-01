@@ -33,7 +33,8 @@ export const LyEditorActivityMenu = {
   ImageManager: 4,
   HitokotoManager: 5,
   WorkManager: 6,
-  DashboardPanel: 98,
+  DashboardPanel: 97,
+  CronJobPanel: 98,
   SettingPanel: 99
 } as const;
 

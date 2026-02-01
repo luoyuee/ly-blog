@@ -47,6 +47,12 @@ const actionMenu = ref<ActivityMenuItem[]>([
     panel: LyEditorTabPanelEnum.DashboardPanel
   },
   {
+    key: LyEditorActivityMenu.CronJobPanel,
+    label: "定时任务",
+    icon: "ep:timer",
+    panel: LyEditorTabPanelEnum.CronJobPanel
+  },
+  {
     key: LyEditorActivityMenu.SettingPanel,
     label: "设置",
     icon: "custom:setting",

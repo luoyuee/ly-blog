@@ -4,7 +4,7 @@ import config from "@@/server/config";
 import * as jose from "jose";
 import dayjs from "dayjs";
 
-const adminRouteRegexp = new RegExp("(^/admin.*)|(^/api/admin.*)");
+const adminRouteRegexp = new RegExp("(^/admin.*)|(^/api/admin.*)|(^/_nitro/tasks)");
 const ignoreRoute = [
   "^/admin/(login|register)", // 管理员登录注册页
   "^/api/admin/(login|register)",

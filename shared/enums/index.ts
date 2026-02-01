@@ -32,5 +32,6 @@ export const LyEditorTabPanelEnum = {
   HitokotoPanel: "hitokoto-panel",
   UserPanel: "user-panel",
   DashboardPanel: "dashboard-panel",
+  CronJobPanel: "cron-job-panel",
   SettingPanel: "setting-panel"
 } as const;

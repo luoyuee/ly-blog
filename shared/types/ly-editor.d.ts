@@ -45,6 +45,10 @@ export type EditorTabItem = {
       data: object;
     }
   | {
+      type: "cron-job-panel";
+      data: object;
+    }
+  | {
       type: "setting-panel";
       data: object;
     }
