@@ -109,7 +109,7 @@ const open = ref(false);
       <template v-for="item in configStore.nav_menu" :key="item.id">
         <div v-if="item.children && item.children.length > 0 && item.show" class="item-dropdown">
           <span>
-            <UIcon :name="item.icon ?? ''" :size="16" />
+            <UIcon :name="item.icon ?? 'custom-color:link'" :size="16" />
             {{ item.title }}
             <UIcon class="arrow" name="custom:down" :size="18" />
           </span>
@@ -117,7 +117,7 @@ const open = ref(false);
             <template v-for="sub in item.children" :key="sub.id">
               <a v-if="sub.show" :href="sub.href ?? '#'">
                 <span>
-                  <UIcon :name="sub.icon ?? ''" :size="16" />
+                  <UIcon :name="sub.icon ?? 'custom-color:link'" :size="16" />
                   {{ sub.title }}
                 </span>
               </a>
@@ -126,7 +126,7 @@ const open = ref(false);
         </div>
         <a v-else-if="item.show" class="item" :href="item.href ?? '#'">
           <span>
-            <UIcon :name="item.icon ?? ''" :size="16" />
+            <UIcon :name="item.icon ?? 'custom-color:link'" :size="16" />
             {{ item.title }}
           </span>
         </a>
