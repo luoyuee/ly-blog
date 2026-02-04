@@ -35,7 +35,8 @@ export const configStore = defineStore("config", {
     async fetch() {
       try {
         const { data } = await useFetch<IClientConfig>("/api/config/client", {
-          method: "get"
+          method: "get",
+          key: new Date().getTime().toString()
         });
         if (data.value) this.$patch(data.value);
       } catch (error) {

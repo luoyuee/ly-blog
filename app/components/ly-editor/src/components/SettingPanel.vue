@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import {
+  AuthorCardSetting,
   BasicSettingCard,
   BeianSettingCard,
   FleetingThoughtSettingCard,
@@ -28,6 +29,7 @@ onMounted(() => {
       <UIcon name="i-lucide-loader-circle" :size="32" class="text-primary animate-spin" />
     </div>
     <template v-else>
+      <AuthorCardSetting class="bg-black/30" />
       <BasicSettingCard class="bg-black/30" />
       <BeianSettingCard class="bg-black/30" />
       <FleetingThoughtSettingCard class="bg-black/30" />

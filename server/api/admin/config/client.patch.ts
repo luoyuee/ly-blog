@@ -36,10 +36,10 @@ export default defineEventHandler(async (event) => {
       links: z
         .object({
           title: z.string(),
-          href: z.string()
+          href: z.string(),
+          icon: z.string().optional().nullable()
         })
-        .array(),
-      link_icon: z.string().optional().nullable()
+        .array()
     }),
 
     external_link_card: z

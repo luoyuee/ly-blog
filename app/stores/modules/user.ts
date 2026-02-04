@@ -19,7 +19,7 @@ export const userStore = defineStore("user", {
       if (!auth.value) return;
 
       try {
-        const { data } = await useFetch<UserInfo>("/api/user/info", {
+        const { data } = await useFetch<Profile>("/api/user/info", {
           key: new Date().getTime().toString()
         });
 

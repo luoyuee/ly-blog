@@ -8,7 +8,7 @@ const selected = defineModel<string>();
 const props = defineProps({
   options: {
     type: Array as PropType<string[]>,
-    default: () => ["custom-color:home", "custom-color:folder"]
+    default: () => ["custom-color:home", "custom-color:folder", "custom-color:link"]
   },
   placeholder: {
     type: String

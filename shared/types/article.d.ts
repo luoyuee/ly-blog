@@ -21,6 +21,8 @@ export type ArticleCategoryOption = Pick<
   "id" | "parent_id" | "icon" | "name" | "description"
 >;
 
+export type ArticleCategoryRootItem = Pick<ArticleCategory, "id" | "icon" | "name">;
+
 export interface ArticleCategoryTreeItem extends ArticleCategory {
   children?: ArticleCategoryTreeItem[];
 }

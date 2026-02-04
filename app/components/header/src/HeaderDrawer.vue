@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { CategoryItem } from "./types";
+import type { ArticleCategoryRootItem } from "@@/shared/types/article";
 import { useAppStore, useConfigStore } from "@/stores";
 import { useDebounceFn } from "@vueuse/core";
 
@@ -22,7 +22,7 @@ watch(visible, (newVal) => {
   }
 });
 
-const { data: categories } = useFetch<CategoryItem[]>("/api/article/category/root", {
+const { data: categories } = useFetch<ArticleCategoryRootItem[]>("/api/article/category/root", {
   method: "get"
 });
 
@@ -246,120 +246,5 @@ const handleActive = (e: Event) => {
   </USlideover>
 </template>
 <style scoped lang="scss">
-.header-drawer {
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-
-  &__author-bg {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 120px;
-    object-fit: cover;
-    z-index: 1;
-  }
-
-  &__user {
-    position: relative;
-    margin-top: 60px;
-    z-index: 2;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding-bottom: 24px;
-
-    &-avatar {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      overflow: hidden;
-      margin-bottom: 16px;
-      object-fit: cover;
-      transition: transform 0.75s;
-      box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-    }
-
-    &-name {
-      color: var(--theme-color);
-      text-decoration: none;
-      margin-bottom: 16px;
-      font-size: 1.125rem;
-      font-weight: 500;
-    }
-
-    &-motto {
-      font-size: 0.875rem;
-      color: #909399;
-      text-align: center;
-      word-break: break-word;
-    }
-  }
-
-  &__nav-menu {
-    list-style: none;
-    flex: 1;
-    overflow-y: auto;
-    overflow-x: hidden;
-    padding: 20px;
-  }
-
-  &__nav-item {
-    line-height: 28px;
-  }
-
-  &__nav-item-arrow {
-    transform: rotate(-90deg);
-    // transition: all 0.35s;
-  }
-
-  &__sub-menu-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  &__sub-menu-title {
-    display: flex;
-    align-items: center;
-  }
-
-  &__sub-menu-item-icon {
-    margin-right: 4px;
-  }
-
-  &__nav-link {
-    display: flex;
-    text-decoration: none;
-    font-size: 1rem;
-    align-items: center;
-  }
-
-  &__nav-link-icon {
-    margin-right: 4px;
-  }
-
-  &__sub-menu {
-    list-style: none;
-    padding-left: 0;
-    height: 0;
-    width: 0;
-    overflow: hidden;
-    white-space: nowrap;
-    // transition: all 0.35s;
-  }
-
-  &__nav-item.active {
-    .header-drawer__sub-menu {
-      width: 100%;
-      padding-left: 25px;
-    }
-
-    .header-drawer__nav-item-arrow {
-      float: right;
-      transform: rotate(0deg);
-    }
-  }
-}
+@import url("../style/header-drawer.scss");
 </style>

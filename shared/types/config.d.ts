@@ -5,16 +5,18 @@ export interface IClientConfigBasic {
   keywords?: string[];
 }
 
+export interface IClientConfigAuthorCardLink {
+  title: string;
+  href: string;
+  icon?: string;
+}
+
 export interface IClientConfigAuthorCard {
   name: string;
   name_link?: string;
   avatar?: string;
   motto?: string;
-  links?: {
-    title: string;
-    href: string;
-  }[];
-  link_icon?: string;
+  links?: IClientConfigAuthorCardLink[];
 }
 
 export interface IClientConfigExternalLink {
