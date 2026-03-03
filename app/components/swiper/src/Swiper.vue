@@ -1,15 +1,10 @@
 <script setup lang="ts">
 import type { PropType } from "vue";
-
-interface SwiperItem {
-  src: string;
-  title?: string;
-  [key: string]: unknown;
-}
+import type { IClientConfigSwiperItem } from "@@/shared/types/config";
 
 const props = defineProps({
   items: {
-    type: Array as PropType<SwiperItem[]>,
+    type: Array as PropType<IClientConfigSwiperItem[]>,
     default: () => []
   }
 });
@@ -22,22 +17,25 @@ const props = defineProps({
     arrows
     orientation="horizontal"
     class="rounded-lg swiper"
+    prev-icon="ep:arrow-left-bold"
+    next-icon="ep:arrow-right-bold"
     :items="props.items"
     :ui="{
-      dot: 'size-2 opacity-20',
-      prev: 'transition-all duration-300 shadow-[none] bg-black/40 hover:bg-black/50 cursor-pointer',
-      next: 'transition-all duration-300 shadow-[none] bg-black/40 hover:bg-black/50 cursor-pointer'
+      dot: 'size-2 opacity-40 bg-black',
+      prev: 'transition-all duration-300 shadow-[none] cursor-pointer opacity-60 hover:opacity-80',
+      next: 'transition-all duration-300 shadow-[none] cursor-pointer opacity-60 hover:opacity-80',
     }"
   >
-    <img :src="item.src" class="w-full h-full object-cover" />
+    <img :src="item.image" class="block w-full h-full object-cover" />
   </UCarousel>
 </template>
 <style scoped lang="scss">
 .swiper {
   overflow: hidden;
 
-  :deep(.container) {
+  :deep([data-slot="container"]) {
     margin-inline-start: unset;
+    max-width: unset;
     .item {
       padding-inline-start: unset;
     }
@@ -53,14 +51,16 @@ const props = defineProps({
     }
   }
 
-  :deep(.dots) {
+  :deep([data-slot="dots"]) {
     top: 16px;
     right: 16px;
     bottom: unset;
     inset-inline-start: unset;
     inset-inline-end: 16px;
-    .dot.active {
-      opacity: 1;
+
+    [data-slot="dot"][data-state="active"] {
+      opacity: 0.8;
+      background-color: white;
     }
   }
 }

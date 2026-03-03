@@ -94,7 +94,7 @@ const { data: tags } = await useFetch<string[]>("/api/article/tags", { method: "
         <Swiper
           v-if="configStore.swiper && configStore.swiper.length > 0"
           class="mb-4"
-          :data="configStore.swiper"
+          :items="configStore.swiper"
         />
         <ArticleList :data="articleList" />
         <ArticleListDivider ref="dividerRef" :loading="state.loading" text="我也是有底线的" />
@@ -111,4 +111,3 @@ const { data: tags } = await useFetch<string[]>("/api/article/tags", { method: "
     <PageFooter class="mt-4" />
   </main>
 </template>
-<style scoped lang="scss"></style>

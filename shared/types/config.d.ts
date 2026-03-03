@@ -43,10 +43,10 @@ export interface IClientConfigSwiperItem {
 export interface IClientConfigNavMenuItem {
   id: number;
   title: string;
-  href?: string | null;
-  icon?: string | null;
+  href?: string;
+  icon?: string;
   show: boolean;
-  children?: IClientConfigNavMenuItem[] | null;
+  children?: IClientConfigNavMenuItem[];
 }
 
 export interface IClientConfigBeian {

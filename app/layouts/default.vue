@@ -47,12 +47,12 @@ onMounted(() => {
 </template>
 <style scoped lang="scss">
 .default-layout {
-  --content-padding-left: 16px;
-  --content-padding-right: 16px;
+  // --content-padding-left: 16px;
+  // --content-padding-right: 16px;
 
   color: var(--text-color);
 
-  :deep(.container) {
+  :deep(main .container.mx-auto) {
     padding-top: 24px;
     padding-left: var(--content-padding-left);
     padding-right: var(--content-padding-right);
@@ -76,7 +76,7 @@ onMounted(() => {
 
 @media screen and (max-width: 1024px) {
   .default-layout {
-    :deep(.container) {
+    :deep(main .container.mx-auto) {
       .content {
         max-width: calc(100vw - var(--content-padding-left) - var(--content-padding-right));
       }

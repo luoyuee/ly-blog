@@ -1,12 +1,16 @@
 <script setup lang="ts">
 import {
+  ArticleSetting,
   AuthorCardSetting,
   BasicSettingCard,
   BeianSettingCard,
   FleetingThoughtSettingCard,
   MessageBoardSettingCard,
+  HeroSetting,
+  NavMenuSetting,
   HitokotoSettingCard,
-  MailerSettingCard
+  MailerSettingCard,
+  SwiperSettingCard
 } from "@/components/setting-card";
 import { useConfigStore, useServerConfigStore } from "@/stores";
 
@@ -29,9 +33,13 @@ onMounted(() => {
       <UIcon name="i-lucide-loader-circle" :size="32" class="text-primary animate-spin" />
     </div>
     <template v-else>
+      <ArticleSetting class="bg-black/30" />
       <AuthorCardSetting class="bg-black/30" />
       <BasicSettingCard class="bg-black/30" />
       <BeianSettingCard class="bg-black/30" />
+      <HeroSetting class="bg-black/30" />
+      <NavMenuSetting class="bg-black/30" />
+      <SwiperSettingCard class="bg-black/30" />
       <FleetingThoughtSettingCard class="bg-black/30" />
       <MessageBoardSettingCard class="bg-black/30" />
       <HitokotoSettingCard class="bg-black/30" />
