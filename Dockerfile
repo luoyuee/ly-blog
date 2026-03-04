@@ -1,9 +1,9 @@
 #################################################################
-# 基于最新 Node.js 官方镜像的生产环境 Dockerfile
+# 基于最新 LTS Node.js 官方镜像的生产环境 Dockerfile
 #################################################################
 
-# 使用官方最新 Node.js 镜像
-FROM node:latest
+# 使用官方最新 LTS Node.js 镜像（固定 major，避免 latest 漂移）
+FROM node:24-bookworm
 
 #################################################################
 # 基本目录与环境变量设置
@@ -15,7 +15,7 @@ WORKDIR /ly-blog
 # 配置应用运行所需的环境变量（提供占位默认值，运行容器时请覆盖）
 # 注意：这些值仅用于构建阶段通过 Prisma 的 env 校验，不是真实敏感信息
 ENV LY_DATABASE_URL="postgresql://user:pass@localhost:5432/dbname?schema=public"
-ENV LY_CZDB_PATH="/ly-blog/database"
+ENV LY_CZDB_PATH="/ly-blog/data/czdb"
 ENV LY_CZDB_KEY="change-me-czdb-key"
 ENV LY_JWT_SECRET="change-me-jwt-secret"
 
@@ -29,7 +29,7 @@ RUN if [ -f package-lock.json ]; then npm ci; else npm install; fi
 
 COPY . .
 
-RUN npm run prisma-generate && npm run build
+RUN npm run prisma:generate && npm run build
 
 #################################################################
 # 运行配置
@@ -53,9 +53,7 @@ CMD ["./run-prod.sh"]
 # 2. 运行容器（示例，将宿主机 9005 映射到容器 3000）：
 #    docker run -d \
 #      -p 9005:3000 \
-#      -v /你的本地路径/ly-blog/static:/ly-blog/static \
-#      -v /你的本地路径/ly-blog/database:/ly-blog/database \
-#      -v /你的本地路径/ly-blog/logs:/ly-blog/logs \
+#      -v /你的本地路径/ly-blog/data:/ly-blog/data \
 #      -e LY_DATABASE_URL="你的数据库连接串" \
 #      -e LY_CZDB_PATH="/ly-blog/database" \
 #      -e LY_CZDB_KEY="你的 CZDB KEY" \
@@ -65,7 +63,7 @@ CMD ["./run-prod.sh"]
 #
 # 说明：
 # - -p 9005:3000 将宿主机 9005 端口映射到容器 3000
-# - static、database、logs 目录通过挂载实现数据持久化
+# - data 目录通过挂载实现数据持久化
 # - 这些目录已在 .dockerignore 中忽略，不会被打包进镜像
 # - 其他代码和依赖由镜像在构建阶段通过 npm 安装和构建
 #################################################################
