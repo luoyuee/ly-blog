@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>502 - 服务暂时不可用</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 24px;
+      }
+
+      .error-container {
+        max-width: 600px;
+        width: 100%;
+        padding: 40px;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      }
+
+      .error-code {
+        font-size: clamp(3.5rem, 10vw, 6rem);
+        font-weight: bold;
+        line-height: 1;
+        margin-bottom: 20px;
+        text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.2);
+      }
+
+      .error-title {
+        font-size: clamp(1.5rem, 4.5vw, 2rem);
+        margin-bottom: 20px;
+      }
+
+      .error-message {
+        font-size: 1.2em;
+        line-height: 1.6;
+        opacity: 0.9;
+        margin-bottom: 30px;
+      }
+
+      .status-info {
+        background: rgba(255, 255, 255, 0.2);
+        padding: 20px;
+        border-radius: 10px;
+        margin: 30px 0;
+      }
+
+      .actions {
+        margin-top: 30px;
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      .btn {
+        display: inline-block;
+        padding: 12px 30px;
+        background: white;
+        color: #667eea;
+        text-decoration: none;
+        border-radius: 50px;
+        font-weight: bold;
+        transition: all 0.3s;
+        border: 2px solid transparent;
+      }
+
+      .btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+      }
+
+      .btn:focus-visible {
+        outline: 3px solid rgba(255, 255, 255, 0.7);
+        outline-offset: 3px;
+      }
+
+      .btn--outline {
+        background: transparent;
+        border-color: white;
+        color: white;
+      }
+
+      .footer {
+        margin-top: 40px;
+        font-size: 0.9em;
+        opacity: 0.7;
+      }
+
+      .beian {
+        margin-top: 10px;
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+
+      .footer a {
+        color: rgba(255, 255, 255, 0.9);
+        text-decoration: none;
+        border-bottom: 1px dashed rgba(255, 255, 255, 0.55);
+      }
+
+      .footer a:hover {
+        border-bottom-style: solid;
+      }
+
+      @media (max-width: 768px) {
+        .error-container {
+          padding: 20px;
+        }
+        .actions {
+          flex-direction: column;
+          align-items: stretch;
+        }
+        .btn {
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="error-container">
+      <div class="error-code">502</div>
+      <h1 class="error-title">服务暂时不可用</h1>
+
+      <div class="error-message">
+        <p>我们正在对系统进行维护升级，以提供更好的服务体验。</p>
+        <p>请您稍后再试，或者联系技术支持获取帮助。</p>
+      </div>
+
+      <div class="status-info">
+        <p><strong>错误类型：</strong>Bad Gateway</p>
+        <p><strong>发生时间：</strong><span id="current-time">正在获取时间...</span></p>
+        <p><strong>建议操作：</strong>等待几分钟后刷新页面</p>
+      </div>
+
+      <div class="actions">
+        <a href="javascript:location.reload()" class="btn">刷新页面</a>
+        <a href="https://github.com/luoyuee/ly-blog" target="_self" class="btn btn--outline"
+          >源码仓库</a
+        >
+      </div>
+
+      <div class="footer">
+        <p>© <span id="current-year">2024</span> LY Blog. 所有权利保留。</p>
+        <p>如果您需要紧急帮助，请发送邮件至：2870093961@qq.com</p>
+        <p class="beian">
+          <a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener noreferrer"
+            >蜀ICP备20007243号-1</a
+          >
+          <span aria-hidden="true">|</span>
+          <a
+            href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=51012402000448"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            川公网安备51012402000448号
+          </a>
+        </p>
+      </div>
+    </div>
+
+    <script>
+      const timeEl = document.getElementById("current-time");
+      const yearEl = document.getElementById("current-year");
+
+      if (yearEl) {
+        yearEl.textContent = String(new Date().getFullYear());
+      }
+
+      const updateTime = () => {
+        if (!timeEl) {
+          return;
+        }
+        const now = new Date();
+        const options = {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+          hour12: false
+        };
+        timeEl.textContent = now.toLocaleString("zh-CN", options);
+      };
+      updateTime();
+      setInterval(updateTime, 1000);
+    </script>
+  </body>
+</html>
