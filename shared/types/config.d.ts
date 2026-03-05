@@ -1,3 +1,5 @@
+import type { BadgeProps } from "@nuxt/ui";
+
 export interface IClientConfigBasic {
   title: string;
   site_url?: string;
@@ -73,6 +75,79 @@ export interface IClientConfigFleetingThought {
   intro?: string;
 }
 
+export interface IClientConfigMePageBaseInfoItem {
+  label: string;
+  value: string;
+  icon: string;
+  href?: string;
+}
+
+export interface IClientConfigMePageSkillGridItem {
+  title: string;
+  icon: string;
+  href?: string;
+}
+
+export interface IClientConfigMePageProfileTagItem {
+  label: string;
+  color: BadgeProps["color"];
+}
+
+export interface IClientConfigMePageLinkItem {
+  title: string;
+  desc: string;
+  href: string;
+  icon: string;
+}
+
+export interface IClientConfigMePageTabItem {
+  label: string;
+  slot: string;
+}
+
+export interface IClientConfigMePageAuthor {
+  name: string;
+  location: string;
+  dev_role: string;
+  dev_direction: string;
+  quote: string;
+  tags: IClientConfigMePageProfileTagItem[];
+}
+
+export interface IClientConfigMePageSocialLinkItem {
+  title: string;
+  href: string;
+  icon: string;
+  hover_bg?: string;
+  target?: string;
+}
+
+export interface IClientConfigMePageFaqItem {
+  label: string;
+  content: string;
+}
+
+export interface IClientConfigMePageIntro {
+  base_info: IClientConfigMePageBaseInfoItem[];
+  skills: string[];
+  interest_tags: string[];
+  language_proficiency: string[];
+}
+
+export interface IClientConfigMePage {
+  author: IClientConfigMePageAuthor;
+  github_snake: {
+    light?: string;
+    dark?: string;
+  };
+  intro: IClientConfigMePageIntro;
+  skills_grid: IClientConfigMePageSkillGridItem[];
+  website_list: IClientConfigMePageLinkItem[];
+  project_list: IClientConfigMePageLinkItem[];
+  social_links: IClientConfigMePageSocialLinkItem[];
+  faq_items: IClientConfigMePageFaqItem[];
+}
+
 export interface IClientConfig {
   created_at?: number;
   updated_at?: number;
@@ -88,6 +163,7 @@ export interface IClientConfig {
   article: IClientConfigArticle;
   message_board: IClientConfigMessageBoard;
   fleeting_thought: IClientConfigFleetingThought;
+  me_page: IClientConfigMePage;
 }
 
 //========== 系统设置 ==========

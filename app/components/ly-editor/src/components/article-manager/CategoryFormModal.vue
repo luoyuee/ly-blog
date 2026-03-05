@@ -144,7 +144,7 @@ onMounted(async () => {
       </UFormField>
 
       <UFormField name="icon" label="分类图标">
-        <SelectIcon v-model="formData.icon" prefix="custom-color:" placeholder="请选择分类图标" />
+        <SelectIcon v-model="formData.icon" prefix="colorful:" placeholder="请选择分类图标" />
       </UFormField>
 
       <UFormField name="description" label="分类描述">

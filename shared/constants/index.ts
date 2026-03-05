@@ -14,16 +14,16 @@ export const TagColors: string[] = [
 ] as const;
 
 export const PlatformIcon: Record<string, string> = {
-  "Windows 11": "custom-color:win11",
-  "Windows 10": "custom-color:win10",
-  unknown: "custom-color:unknown-system"
+  "Windows 11": "colorful:win11",
+  "Windows 10": "colorful:win10",
+  unknown: "colorful:unknown-system"
 } as const;
 
 export const BrowserIcon: Record<string, string> = {
-  Chrome: "custom-color:chrome",
-  Edge: "custom-color:edge",
-  Firefox: "custom-color:firefox",
-  unknown: "custom-color:browser"
+  Chrome: "colorful:chrome",
+  Edge: "colorful:edge",
+  Firefox: "colorful:firefox",
+  unknown: "colorful:browser"
 } as const;
 
 export const LyEditorActivityMenu = {

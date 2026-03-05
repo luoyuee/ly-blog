@@ -64,7 +64,7 @@ const breadcrumb = computed(() => {
     {
       name: "首页",
       href: "/",
-      icon: "custom-color:home"
+      icon: "colorful:home"
     },
     ...items,
     {

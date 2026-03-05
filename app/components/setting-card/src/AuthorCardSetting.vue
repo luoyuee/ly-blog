@@ -140,7 +140,7 @@ const linkColumns: TableColumn<IClientConfigAuthorCardLink>[] = [
     cell: ({ row }) => {
       const { icon } = row.original;
       return h(UIcon, {
-        name: icon || "custom-color:link"
+        name: icon || "colorful:link"
       });
     }
   },

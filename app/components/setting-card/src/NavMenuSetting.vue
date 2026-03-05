@@ -3,7 +3,6 @@ import type { IClientConfigNavMenuItem } from "@@/shared/types/config";
 import type { WatchStopHandle } from "vue";
 import type { FormSubmitEvent } from "@nuxt/ui";
 import { SelectIcon } from "@/components/form/select";
-import { updateClientConfig } from "@/apis/config";
 import { BasicModal } from "@/components/basic-modal";
 import { useConfigStore } from "@/stores";
 import { cloneDeep, isEqual } from "lodash-es";
@@ -44,19 +43,7 @@ const stopWatch = () => {
 };
 
 onMounted(() => {
-  // data.value = cloneDeep(configStore.nav_menu);
-  data.value = [
-    {
-      id: 1770555959992,
-      title: "123",
-      icon: "custom-color:home",
-      href: "1231",
-      show: true,
-      children: [
-        { id: 1770555959992, title: "123", icon: "custom-color:home", href: "1231", show: true }
-      ]
-    }
-  ];
+  data.value = cloneDeep(configStore.nav_menu);
   startWatch();
 });
 

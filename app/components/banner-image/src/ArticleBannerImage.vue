@@ -19,7 +19,7 @@ const props = defineProps({
 
       <div class="article-banner__meta">
         <div class="article-banner__date">
-          <UIcon name="custom-color:calendar-round-fill" />
+          <UIcon name="colorful:calendar-round-fill" />
           <span>
             {{ dayjs(props.article.content_updated_at).format("YYYY年MM月DD日 HH时mm分") }}
           </span>
@@ -27,17 +27,17 @@ const props = defineProps({
 
         <div class="article-banner__stats">
           <div class="article-banner__stat">
-            <UIcon name="custom-color:hot-round-fill" />
+            <UIcon name="colorful:hot-round-fill" />
             <span>{{ props.article.view_count }} 阅读</span>
           </div>
 
           <div class="article-banner__stat">
-            <UIcon name="custom-color:message-round-fill" />
+            <UIcon name="colorful:message-round-fill" />
             <span>{{ props.article.comment_count }} 评论</span>
           </div>
 
           <div class="article-banner__stat">
-            <UIcon name="custom-color:like-round-fill" />
+            <UIcon name="colorful:like-round-fill" />
             <span>{{ props.article.like_count }} 点赞</span>
           </div>
         </div>

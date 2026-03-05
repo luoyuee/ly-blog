@@ -63,8 +63,12 @@ export default defineNuxtConfig({
         dir: "./app/assets/icons"
       },
       {
-        prefix: "custom-color",
-        dir: "./app/assets/color-icons"
+        prefix: "colorful",
+        dir: "./app/assets/colorful-icons"
+      },
+      {
+        prefix: "skills",
+        dir: "./app/assets/skill-icons"
       }
     ]
   },

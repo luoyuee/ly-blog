@@ -105,7 +105,7 @@ const handlePublishNote = (data: FolderTreeItem) => {
           :style="{ 'padding-left': 20 * props.depth + 'px' }"
           @dblclick="handleOpenFile(item)"
         >
-          <UIcon class="mx-1 shrink-0" name="custom-color:markdown" />
+          <UIcon class="mx-1 shrink-0" name="colorful:markdown" />
           <span class="truncate flex-1">{{ `${item.name}${item.data?.extension ?? ""}` }}</span>
           <UIcon class="mx-1 shrink-0" name="material-icon-theme:label" />
         </div>

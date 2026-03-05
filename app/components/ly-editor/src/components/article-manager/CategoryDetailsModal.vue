@@ -44,7 +44,7 @@ const handleCancel = () => {
       <DescriptionsItem label="分类名称">{{ data.name }}</DescriptionsItem>
       <DescriptionsItem label="分类图标">
         <UIcon v-if="data.icon" :name="data.icon" />
-        <UIcon v-else name="custom-color:folder" />
+        <UIcon v-else name="colorful:folder" />
       </DescriptionsItem>
       <DescriptionsItem label="分类描述">{{ data.description }}</DescriptionsItem>
       <DescriptionsItem label="创建日期">

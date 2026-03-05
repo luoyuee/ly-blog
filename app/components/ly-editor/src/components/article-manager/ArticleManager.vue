@@ -93,7 +93,7 @@ lyEditorEmitter.on("cmd.article-manager:reload", () => {
           @click="handleOpenHitokoto(item)"
         >
           <div class="flex items-center">
-            <UIcon :name="item.icon ?? 'custom-color:folder'" class="mr-1 shrink-0" />
+            <UIcon :name="item.icon ?? 'colorful:folder'" class="mr-1 shrink-0" />
             <span class="truncate">
               {{ item.name }}
             </span>

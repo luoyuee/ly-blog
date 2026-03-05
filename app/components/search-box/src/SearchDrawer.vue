@@ -39,7 +39,7 @@ const formatNumber = (num: number): string => {
   <div class="search-box" :class="{ 'search-box--active': props.visible }">
     <div class="search-box__search">
       <div class="search-box__title">
-        <UIcon name="custom-color:record-outline" :size="18" />
+        <UIcon name="colorful:record-outline" :size="18" />
         关键词搜索
       </div>
       <form class="search-box__keyword-search" action="/search" method="get">
@@ -48,7 +48,7 @@ const formatNumber = (num: number): string => {
       </form>
 
       <div class="search-box__title">
-        <UIcon name="custom-color:label-outline" :size="18" />
+        <UIcon name="colorful:label-outline" :size="18" />
         标签搜索
       </div>
       <div class="search-box__tag-search">
@@ -65,7 +65,7 @@ const formatNumber = (num: number): string => {
 
     <div class="search-box__ranking">
       <div class="search-box__title">
-        <UIcon name="custom-color:hot-outline" :size="18" />
+        <UIcon name="colorful:hot-outline" :size="18" />
         热门文章
       </div>
       <ul v-if="rank">

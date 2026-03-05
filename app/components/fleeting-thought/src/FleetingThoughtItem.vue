@@ -23,7 +23,7 @@ const platform = computed(() => {
   const platformName = modelValue.value.platform ?? "unknown";
   return {
     name: platformName,
-    icon: PlatformIcon[platformName] ?? "custom-color:unknown-system"
+    icon: PlatformIcon[platformName] ?? "colorful:unknown-system"
   };
 });
 
@@ -31,7 +31,7 @@ const browser = computed(() => {
   const browserName = modelValue.value.browser ?? "unknown";
   return {
     name: browserName,
-    icon: BrowserIcon[browserName] ?? "custom-color:browser"
+    icon: BrowserIcon[browserName] ?? "colorful:browser"
   };
 });
 

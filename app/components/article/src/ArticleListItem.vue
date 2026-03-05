@@ -85,7 +85,7 @@ const props = defineProps({
         </ul>
 
         <div class="article-list-item__meta-category">
-          <UIcon :name="props.data.category_icon ?? 'custom-color:manage-outline'" :size="16" />
+          <UIcon :name="props.data.category_icon ?? 'colorful:manage-outline'" :size="16" />
           <span class="article-list-item__meta-category-text">
             {{ props.data.category_name ?? "未分类" }}
           </span>

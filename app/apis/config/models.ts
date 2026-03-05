@@ -9,9 +9,10 @@ import type {
   IClientConfigArticle,
   IClientConfigMessageBoard,
   IClientConfigFleetingThought,
+  IClientConfigMePage,
   IServerConfigMailer,
   IServerConfigStorage,
-  IClientConfigExternalLink,
+  IClientConfigExternalLink
 } from "#shared/types/config";
 
 export interface UpdateClientConfigRequest {
@@ -26,6 +27,7 @@ export interface UpdateClientConfigRequest {
   article?: IClientConfigArticle;
   message_board?: IClientConfigMessageBoard;
   fleeting_thought?: IClientConfigFleetingThought;
+  me_page?: IClientConfigMePage;
 }
 
 export interface UpdateServerConfigRequest {

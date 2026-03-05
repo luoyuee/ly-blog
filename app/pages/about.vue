@@ -75,7 +75,7 @@ const repoUrl = computed(() => {
             >
               <span class="text-sm text-gray-700">仓库主页</span>
               <span class="text-xs text-gray-500">
-                <ULink target="_blank" :href="repoUrl" active>{{ repoUrl }}</ULink>
+                <ULink class="break-all" target="_blank" :href="repoUrl" active>{{ repoUrl }}</ULink>
               </span>
             </div>
           </div>

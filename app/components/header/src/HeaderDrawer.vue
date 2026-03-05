@@ -39,7 +39,7 @@ const drawerNavItems = computed<HeaderDrawerNavItem[]>(() => {
   const categoryChildren: HeaderDrawerNavItem[] = (categories.value ?? []).map((category) => ({
     key: `category-${category.id}`,
     title: category.name,
-    icon: category.icon ?? "custom-color:folder",
+    icon: category.icon ?? "colorful:folder",
     href: `/category/${category.id}`,
     type: "link"
   }));
@@ -48,42 +48,49 @@ const drawerNavItems = computed<HeaderDrawerNavItem[]>(() => {
     {
       key: "home",
       title: "首页",
-      icon: "custom-color:home",
+      icon: "colorful:home",
       href: "/",
       type: "link"
     },
     {
       key: "category-group",
       title: "文档目录",
-      icon: "custom-color:folder",
+      icon: "colorful:folder",
       type: "group",
       children: categoryChildren
     },
     {
       key: "sn",
       title: "闪念笔记",
-      icon: "custom-color:execute-book",
+      icon: "colorful:execute-book",
       href: "/sn",
       type: "link"
     },
     {
       key: "message",
       title: "留言板",
-      icon: "custom-color:message",
+      icon: "colorful:message",
       href: "/message",
       type: "link"
     },
     {
       key: "work",
       title: "作品",
-      icon: "custom-color:recommend",
+      icon: "colorful:recommend",
       href: "/work",
+      type: "link"
+    },
+    {
+      key: "me",
+      title: "我的简介",
+      icon: "colorful:avatar",
+      href: "/me",
       type: "link"
     },
     {
       key: "about",
       title: "关于",
-      icon: "custom-color:config",
+      icon: "colorful:config",
       href: "/about",
       type: "link"
     }
@@ -99,7 +106,7 @@ const drawerNavItems = computed<HeaderDrawerNavItem[]>(() => {
               .map((child) => ({
                 key: `config-${item.id}-${child.id}`,
                 title: child.title,
-                icon: child.icon ?? "custom-color:link",
+                icon: child.icon ?? "colorful:link",
                 href: child.href ?? "#",
                 type: "link"
               }))
@@ -110,7 +117,7 @@ const drawerNavItems = computed<HeaderDrawerNavItem[]>(() => {
       return {
         key: `config-${item.id}`,
         title: item.title,
-        icon: item.icon ?? "custom-color:link",
+        icon: item.icon ?? "colorful:link",
         href: item.href ?? undefined,
         type: hasChildren ? "group" : "link",
         children
@@ -194,9 +201,18 @@ const handleActive = (e: Event) => {
 </script>
 <template>
   <USlideover v-model:open="visible" side="left">
-    <template #content>
+    <template #content="{ close }">
       <div class="header-drawer">
         <img class="header-drawer__author-bg" src="/images/author_bg.jpg" alt="author_bg" />
+        <div class="header-drawer__close">
+          <UButton
+            color="neutral"
+            variant="link"
+            aria-label="关闭"
+            icon="ep:close"
+            @click="close"
+          />
+        </div>
         <div class="header-drawer__user">
           <img
             class="header-drawer__user-avatar"

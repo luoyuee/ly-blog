@@ -14,7 +14,7 @@ const configStore = useConfigStore();
         target="_blank"
         :href="item.href"
       >
-        <UIcon name="custom-color:firefox" />
+        <UIcon name="colorful:firefox" />
         <span>{{ item.title }}</span>
       </a>
     </div>

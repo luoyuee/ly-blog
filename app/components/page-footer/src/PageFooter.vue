@@ -44,7 +44,7 @@ const configStore = useConfigStore();
         href="https://nuxt.com"
         target="_blank"
       >
-        <UIcon name="custom-color:nuxt" :size="20" />
+        <UIcon name="colorful:nuxt" :size="20" />
         Nuxt
       </a>
       强力驱动

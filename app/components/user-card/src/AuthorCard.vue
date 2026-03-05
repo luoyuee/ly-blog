@@ -26,7 +26,7 @@ const { data } = await useFetch<{
     <img class="author-card__cover" src="/images/author_bg.jpg" alt="author_bg" />
     <div class="author-card__profile">
       <img class="author-card__avatar" :src="avatar" alt="avatar" />
-      <a class="author-card__name" :href="configStore.author_card.name_link ?? '/'">
+      <a class="author-card__name" :href="configStore.author_card.name_link ?? '/me'">
         {{ configStore.author_card.name }}
       </a>
       <p v-if="configStore.author_card.motto" class="author-card__motto">

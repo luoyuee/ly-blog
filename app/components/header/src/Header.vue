@@ -9,6 +9,7 @@ const $message = useMessage();
 
 const configStore = useConfigStore();
 const userStore = useUserStore();
+const route = useRoute();
 
 /**
  * 顶部导航分类数据
@@ -21,6 +22,13 @@ const { data: categories } = useFetch<ArticleCategoryRootItem[]>("/api/article/c
  * 顶部导航滚动激活状态
  */
 const active = ref(false);
+
+const activeRoutes = ["/me"];
+
+const isHeaderActive = computed(() => {
+  if (activeRoutes.includes(route.path)) return true;
+  return active.value;
+});
 
 const handleScroll = () => {
   active.value = window.scrollY > 200;
@@ -58,7 +66,7 @@ const headerNavItems = computed<HeaderNavItem[]>(() => {
   const categoryChildren: HeaderNavItem[] = (categories.value ?? []).map((category) => ({
     key: `category-${category.id}`,
     title: category.name,
-    icon: category.icon ?? "custom-color:folder",
+    icon: category.icon ?? "colorful:folder",
     href: `/category/${category.id}`,
     type: "link"
   }));
@@ -67,42 +75,49 @@ const headerNavItems = computed<HeaderNavItem[]>(() => {
     {
       key: "home",
       title: "首页",
-      icon: "custom-color:home",
+      icon: "colorful:home",
       href: "/",
       type: "link"
     },
     {
       key: "category-group",
       title: "文档目录",
-      icon: "custom-color:folder",
+      icon: "colorful:folder",
       type: "group",
       children: categoryChildren
     },
     {
       key: "sn",
       title: "闪念笔记",
-      icon: "custom-color:execute-book",
+      icon: "colorful:execute-book",
       href: "/sn",
       type: "link"
     },
     {
       key: "message",
       title: "留言板",
-      icon: "custom-color:message",
+      icon: "colorful:message",
       href: "/message",
       type: "link"
     },
     {
       key: "work",
       title: "作品",
-      icon: "custom-color:recommend",
+      icon: "colorful:recommend",
       href: "/work",
+      type: "link"
+    },
+    {
+      key: "me",
+      title: "我的简介",
+      icon: "colorful:avatar",
+      href: "/me",
       type: "link"
     },
     {
       key: "about",
       title: "关于",
-      icon: "custom-color:config",
+      icon: "colorful:config",
       href: "/about",
       type: "link"
     }
@@ -118,7 +133,7 @@ const headerNavItems = computed<HeaderNavItem[]>(() => {
               .map((child) => ({
                 key: `config-${item.id}-${child.id}`,
                 title: child.title,
-                icon: child.icon ?? "custom-color:link",
+                icon: child.icon ?? "colorful:link",
                 href: child.href ?? "#",
                 type: "link"
               }))
@@ -129,7 +144,7 @@ const headerNavItems = computed<HeaderNavItem[]>(() => {
       return {
         key: `config-${item.id}`,
         title: item.title,
-        icon: item.icon ?? "custom-color:link",
+        icon: item.icon ?? "colorful:link",
         href: item.href ?? undefined,
         type: hasChildren ? "group" : "link",
         children
@@ -189,12 +204,12 @@ const showDrawer = () => {
 const open = ref(false);
 </script>
 <template>
-  <div class="header" :class="{ active }">
+  <div class="header" :class="{ active: isHeaderActive }">
     <div class="header__menu-btn" @click="showDrawer">
       <UIcon name="custom:menu-button" :size="22" />
     </div>
 
-    <a href="/" class="header__logo">
+    <a href="/me" class="header__logo">
       <img :src="configStore.author_card.avatar ?? '/images/avatar.webp'" alt="avatar" />
     </a>
 
