@@ -115,7 +115,7 @@ export interface IClientConfigMePageAuthor {
 }
 
 export interface IClientConfigMePageSocialLinkItem {
-  title: string;
+  title?: string;
   href: string;
   icon: string;
   hover_bg?: string;

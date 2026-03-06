@@ -157,7 +157,7 @@ export default defineEventHandler(async (event) => {
           .array(),
         social_links: z
           .object({
-            title: z.string(),
+            title: z.string().optional().nullable(),
             href: z.string(),
             icon: z.string(),
             hover_bg: z.string().optional().nullable(),
