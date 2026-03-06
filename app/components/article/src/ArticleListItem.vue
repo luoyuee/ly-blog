@@ -1,11 +1,7 @@
 <script setup lang="ts">
 import type { ArticleItem } from "#shared/types/article";
-import relativeTime from "dayjs/plugin/relativeTime";
-import dayjs from "dayjs";
-import "dayjs/locale/zh-cn";
 
-dayjs.locale("zh-cn");
-dayjs.extend(relativeTime);
+const { $dayjs } = useNuxtApp();
 
 const props = defineProps({
   data: {
@@ -58,7 +54,7 @@ const props = defineProps({
           <li class="article-list-item__meta-item">
             <UIcon name="custom:time" />
             <span class="article-list-item__meta-item-text">
-              {{ dayjs().to(dayjs.unix(props.data.content_updated_at)) }}
+              {{ $dayjs().to($dayjs.unix(props.data.content_updated_at)) }}
             </span>
           </li>
 

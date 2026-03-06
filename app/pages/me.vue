@@ -1,13 +1,12 @@
 <script setup lang="ts">
 import type { AccordionItem } from "@nuxt/ui";
+import type { Dayjs } from "dayjs";
 import { NoticeCard, LifeCountdownCard, HitokotoCard } from "@/components/mac-card";
 import { PageFooter } from "@/components/page-footer";
 import { useConfigStore } from "@/stores";
 import { SocialBtn, Skills, LinkCards, BaseInfoGrid, GitHubSnake } from "@/components/me";
-import dayjs from "dayjs";
-import customParseFormat from "dayjs/plugin/customParseFormat";
 
-dayjs.extend(customParseFormat);
+const { $dayjs } = useNuxtApp();
 
 const configStore = useConfigStore();
 
@@ -21,10 +20,10 @@ const authorDirection = computed(() => mePage.value.author.dev_direction);
 const authorQuote = computed(() => mePage.value.author.quote);
 const authorName = computed(() => mePage.value.author.name);
 
-const parseStartDate = (value: string): dayjs.Dayjs | null => {
+const parseStartDate = (value: string): Dayjs | null => {
   const text = value.trim();
 
-  const parsed = dayjs(text, ["YYYY-MM-DD", "YYYY-MM", "YYYY"], true);
+  const parsed = $dayjs(text, ["YYYY-MM-DD", "YYYY-MM", "YYYY"], true);
   if (!parsed.isValid()) return null;
 
   return parsed;
@@ -34,7 +33,7 @@ const getAgeTextFromBirth = (birthText: string): string => {
   const birthDate = parseStartDate(birthText);
   if (!birthDate) return birthText;
 
-  const years = dayjs().diff(birthDate, "year");
+  const years = $dayjs().diff(birthDate, "year");
   return String(Math.max(0, years));
 };
 
@@ -42,7 +41,7 @@ const getWorkExperienceTextFromStart = (startText: string): string => {
   const startDate = parseStartDate(startText);
   if (!startDate) return startText;
 
-  const years = Math.max(0, dayjs().diff(startDate, "year"));
+  const years = Math.max(0, $dayjs().diff(startDate, "year"));
   return `${years}年`;
 };
 

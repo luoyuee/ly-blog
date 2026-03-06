@@ -3,12 +3,6 @@ import type { IClientConfig } from "#shared/types/config";
 import { updateClientConfig } from "@/apis/config";
 import { defineStore } from "pinia";
 import { AxiosError } from "axios";
-import relativeTime from "dayjs/plugin/relativeTime";
-import dayjs from "dayjs";
-import "dayjs/locale/zh-cn";
-
-dayjs.locale("zh-cn");
-dayjs.extend(relativeTime);
 
 export const configStore = defineStore("config", {
   state: (): IClientConfig => ({

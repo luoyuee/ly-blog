@@ -6,7 +6,7 @@ const noticeStore = useNoticeStore();
 </script>
 <template>
   <MacCard :title="$t('components.noticeCard.title')">
-    <div class="whitespace-pre text-sm">
+    <div class="text-sm">
       {{ noticeStore.card.content }}
     </div>
   </MacCard>

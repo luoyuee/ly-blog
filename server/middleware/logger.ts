@@ -6,7 +6,7 @@ import type {
 import type { InputJsonValue } from "@prisma/client/runtime/client";
 import { useIPLocation } from "@@/server/utils/ip";
 import { prisma } from "@@/server/db";
-import customParseFormat from "dayjs/plugin/customParseFormat";
+import customParseFormat from "dayjs/plugin/customParseFormat.js";
 import DailyRotateFile from "winston-daily-rotate-file";
 import config from "@@/server/config";
 import process from "node:process";
