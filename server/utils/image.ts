@@ -5,6 +5,7 @@ import { ImageFolderEnum } from "#shared/enums";
 import { fileTypeFromBuffer } from "file-type";
 import { prisma } from "@@/server/db";
 import { optimize } from "svgo";
+import chroma from "chroma-js";
 import sharp from "sharp";
 
 export interface OptimizeOptions {
@@ -192,4 +193,70 @@ export const handleUserAvatar = async (file: File): Promise<string> => {
   }
 
   return `/api/image/${hash}`;
+};
+
+export const createPlaceholderImage = async (options?: {
+  width?: number;
+  height?: number;
+  text?: string;
+  bgColor?: string;
+  fontColor?: string;
+  fontSize?: number;
+}): Promise<Buffer> => {
+  const width = options?.width ?? 400;
+  const height = options?.height ?? 200;
+  const text = options?.text ?? "图片已被删除";
+  const fallbackBgColor = "#f5f5f5";
+  const fallbackFontColor = "#666";
+
+  const resolveColor = (color: string | undefined, fallback: string): string => {
+    const v = color?.trim();
+    if (!v) return fallback;
+    return chroma.valid(v) ? v : fallback;
+  };
+
+  const bgColor = resolveColor(options?.bgColor, fallbackBgColor);
+  const fontColor = resolveColor(options?.fontColor, fallbackFontColor);
+
+  const [bgR, bgG, bgB, bgAlpha] = chroma(bgColor).rgba();
+  const channels = bgAlpha < 1 ? 4 : 3;
+  const svgFill = chroma(fontColor).hex();
+
+  return await sharp({
+    create: {
+      width,
+      height,
+      channels,
+      background:
+        channels === 4
+          ? {
+              r: bgR,
+              g: bgG,
+              b: bgB,
+              alpha: bgAlpha
+            }
+          : { r: bgR, g: bgG, b: bgB }
+    }
+  })
+    .composite([
+      {
+        input: Buffer.from(`
+          <svg width="${width}" height="${height}">
+            <text
+              x="50%"
+              y="50%"
+              font-size="${options?.fontSize ?? 24}"
+              fill="${svgFill}"
+              text-anchor="middle"
+              dy=".3em"
+            >
+              ${text}
+            </text>
+          </svg>
+        `),
+        gravity: "center"
+      }
+    ])
+    .png()
+    .toBuffer();
 };
