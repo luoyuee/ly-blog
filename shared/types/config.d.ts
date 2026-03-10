@@ -192,11 +192,16 @@ export interface IServerConfigStorage {
   secret_key?: string;
 }
 
+export interface IServerConfigCzdb {
+  download_url?: string;
+}
+
 export interface IServerConfig {
   created_at?: number;
   updated_at?: number;
   mailer: IServerConfigMailer;
   storage: IServerConfigStorage;
+  czdb?: IServerConfigCzdb;
 }
 
 //========== 作品 ==========

@@ -17,7 +17,8 @@ export default defineNuxtConfig({
       tasks: true
     },
     scheduledTasks: {
-      "0 2 * * *": ["backup:full"]
+      "0 2 * * *": ["backup:full"],
+      "0 1 * * 1": ["czdb:update"]
     }
   },
   vite: {

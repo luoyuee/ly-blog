@@ -4,6 +4,7 @@ import {
   AuthorCardSetting,
   BasicSettingCard,
   BeianSettingCard,
+  CzdbSettingCard,
   FleetingThoughtSettingCard,
   MessageBoardSettingCard,
   HeroSetting,
@@ -44,6 +45,7 @@ onMounted(() => {
       <MessageBoardSettingCard class="bg-black/30" />
       <HitokotoSettingCard class="bg-black/30" />
       <MailerSettingCard class="bg-black/30" />
+      <CzdbSettingCard class="bg-black/30" />
     </template>
   </div>
 </template>

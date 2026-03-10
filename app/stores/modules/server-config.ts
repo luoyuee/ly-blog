@@ -5,12 +5,18 @@ import { defineStore } from "pinia";
 import { AxiosError } from "axios";
 
 export const serverConfigStore = defineStore("server-config", {
+  /**
+   * 需要在初始 state 中显式声明 key：
+   * - 否则即使 fetch 后通过 $patch 写入了对应的字段，依然可能出现 $state 有值但 serverConfigStore.XXX 为 undefined
+   * - 显式声明可确保对应的字段始终作为响应式字段对外暴露，供设置页等场景直接访问
+   */
   state: (): IServerConfig => ({
     mailer: {
       tls: true,
       enable: false
     },
-    storage: {}
+    storage: {},
+    czdb: {}
   }),
   actions: {
     async fetch() {

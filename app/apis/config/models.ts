@@ -12,6 +12,7 @@ import type {
   IClientConfigMePage,
   IServerConfigMailer,
   IServerConfigStorage,
+  IServerConfigCzdb,
   IClientConfigExternalLink
 } from "#shared/types/config";
 
@@ -33,4 +34,5 @@ export interface UpdateClientConfigRequest {
 export interface UpdateServerConfigRequest {
   mailer?: IServerConfigMailer;
   storage?: IServerConfigStorage;
+  czdb?: IServerConfigCzdb;
 }

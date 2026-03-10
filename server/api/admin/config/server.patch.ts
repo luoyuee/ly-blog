@@ -18,7 +18,14 @@ export default defineEventHandler(async (event) => {
       notif_email: z.string().optional().nullable(),
       enable_comment_notif: z.boolean().optional().nullable(),
       enable: z.boolean()
-    })
+    }),
+
+    czdb: z
+      .object({
+        download_url: z.string().optional().nullable()
+      })
+      .optional()
+      .nullable()
 
     // storage: z.object({
     //   type: z.string().optional().nullable(),

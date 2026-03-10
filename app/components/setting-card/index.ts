@@ -1,3 +1,4 @@
+import SettingCard from "./src/SettingCard.vue";
 import ArticleSetting from "./src/ArticleSetting.vue";
 import AuthorCardSetting from "./src/AuthorCardSetting.vue";
 import BasicSettingCard from "./src/BasicSettingCard.vue";
@@ -10,8 +11,10 @@ import HitokotoSettingCard from "./src/HitokotoSettingCard.vue";
 import StorageSettingCard from "./src/StorageSettingCard.vue";
 import SwiperSettingCard from "./src/SwiperSetting.vue";
 import MailerSettingCard from "./src/MailerSettingCard.vue";
+import CzdbSettingCard from "./src/CzdbSettingCard.vue";
 
 export {
+  SettingCard,
   ArticleSetting,
   AuthorCardSetting,
   BasicSettingCard,
@@ -23,5 +26,6 @@ export {
   HitokotoSettingCard,
   StorageSettingCard,
   SwiperSettingCard,
-  MailerSettingCard
+  MailerSettingCard,
+  CzdbSettingCard
 };

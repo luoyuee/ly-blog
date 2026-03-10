@@ -11,16 +11,19 @@ const getCurrentWorkingDirectory = (): string => {
 
 const WORK_DIR = getCurrentWorkingDirectory();
 
-const FILE_PATH = path.join(WORK_DIR, "/data/files");
+const FILE_PATH = path.join(WORK_DIR, "data/files");
 
-const CZDB_PATH = process.env.LY_CZDB_PATH || path.join(WORK_DIR, "/data/czdb");
+const CZDB_PATH = process.env.LY_CZDB_PATH || path.join(WORK_DIR, "data/czdb");
 
-const CZDB_IPV4_PATH = path.join(CZDB_PATH, "/v4.czdb");
-const CZDB_IPV6_PATH = path.join(CZDB_PATH, "/v6.czdb");
+const CZDB_IPV4_FILE_NAME = "v4.czdb";
+const CZDB_IPV6_FILE_NAME = "v6.czdb";
 
-const LOG_PATH = path.join(WORK_DIR, "/data/logs");
+const CZDB_IPV4_PATH = path.join(CZDB_PATH, CZDB_IPV4_FILE_NAME);
+const CZDB_IPV6_PATH = path.join(CZDB_PATH, CZDB_IPV6_FILE_NAME);
 
-const BACKUP_PATH = path.join(WORK_DIR, "/data/backup");
+const LOG_PATH = path.join(WORK_DIR, "data/logs");
+
+const BACKUP_PATH = path.join(WORK_DIR, "data/backup");
 
 /**
  * 校验环境变量是否存在且非空
@@ -51,6 +54,8 @@ export default {
 
   // 纯真数据库配置
   CZDB_KEY,
+  CZDB_IPV4_FILE_NAME,
+  CZDB_IPV6_FILE_NAME,
   CZDB_PATH,
   CZDB_IPV4_PATH,
   CZDB_IPV6_PATH,

@@ -1,4 +1,4 @@
-import { AuditTrailKeys } from "./common";
+import type { AuditTrailKeys } from "./common";
 
 export interface HitokotoTypeItem {
   id: number;

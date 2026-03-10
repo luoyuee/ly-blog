@@ -11,6 +11,11 @@ const CZDB_KEY = config.CZDB_KEY;
 let searcherV4: DbSearcher | null = null;
 let searcherV6: DbSearcher | null = null;
 
+export const resetIPLocationSearcher = () => {
+  searcherV4 = null;
+  searcherV6 = null;
+};
+
 /**
  * 使用IP地址获取地理位置
  */
