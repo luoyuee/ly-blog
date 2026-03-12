@@ -12,11 +12,13 @@ import StorageSettingCard from "./src/StorageSettingCard.vue";
 import SwiperSettingCard from "./src/SwiperSetting.vue";
 import MailerSettingCard from "./src/MailerSettingCard.vue";
 import CzdbSettingCard from "./src/CzdbSettingCard.vue";
+import MePageSettingCard from "./src/MePageSettingCard.vue";
 
 export {
   SettingCard,
   ArticleSetting,
   AuthorCardSetting,
+  MePageSettingCard,
   BasicSettingCard,
   BeianSettingCard,
   FleetingThoughtSettingCard,

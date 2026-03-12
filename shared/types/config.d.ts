@@ -107,6 +107,7 @@ export interface IClientConfigMePageTabItem {
 
 export interface IClientConfigMePageAuthor {
   name: string;
+  avatar?: string;
   location: string;
   dev_role: string;
   dev_direction: string;

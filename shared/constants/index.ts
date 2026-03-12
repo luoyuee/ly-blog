@@ -52,3 +52,10 @@ export const ConfigNameEnum = {
   WORK: "work",
   NOTICE: "notice"
 } as const;
+
+export {
+  CustomIconNames,
+  ColorfulIconNames,
+  SkillIconNames,
+  SelectIconDefaultOptions
+} from "./icons";

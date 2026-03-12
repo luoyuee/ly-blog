@@ -27,6 +27,7 @@ export const configStore = defineStore("config", {
     me_page: {
       author: {
         name: "",
+        avatar: "",
         location: "",
         dev_role: "",
         dev_direction: "",
