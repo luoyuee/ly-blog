@@ -11,6 +11,8 @@ export const serverConfigStore = defineStore("server-config", {
    * - 显式声明可确保对应的字段始终作为响应式字段对外暴露，供设置页等场景直接访问
    */
   state: (): IServerConfig => ({
+    created_at: "",
+    updated_at: "",
     mailer: {
       tls: true,
       enable: false

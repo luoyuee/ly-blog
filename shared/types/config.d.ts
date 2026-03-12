@@ -7,6 +7,8 @@ export interface IClientConfigBasic {
   keywords?: string[];
 }
 
+export type IClientConfigLocale = "zh-CN";
+
 export interface IClientConfigAuthorCardLink {
   title: string;
   href: string;
@@ -149,9 +151,9 @@ export interface IClientConfigMePage {
 }
 
 export interface IClientConfig {
-  created_at?: number;
-  updated_at?: number;
-  locale: string;
+  created_at?: string;
+  updated_at?: string;
+  locale: IClientConfigLocale;
   basic: IClientConfigBasic;
   author_card: IClientConfigAuthorCard;
   external_link_card: IClientConfigExternalLink[];
@@ -169,6 +171,8 @@ export interface IClientConfig {
 //========== 系统设置 ==========
 
 export interface IServerConfigMailer {
+  created_at?: string;
+  updated_at?: string;
   host?: string;
   port?: number;
   tls?: boolean;
@@ -197,8 +201,8 @@ export interface IServerConfigCzdb {
 }
 
 export interface IServerConfig {
-  created_at?: number;
-  updated_at?: number;
+  created_at?: string;
+  updated_at?: string;
   mailer: IServerConfigMailer;
   storage: IServerConfigStorage;
   czdb?: IServerConfigCzdb;

@@ -2,6 +2,7 @@ import { ImageFolderEnum, ConfigNameEnum } from "#shared/constants";
 import { mkdirSync, existsSync } from "fs";
 import { prisma } from "@@/server/db";
 import config from "@@/server/config";
+import dayjs from "dayjs";
 
 const HitokotoTypeData = [
   {
@@ -113,6 +114,7 @@ export default defineNitroPlugin(async () => {
 
     // 初始化数据
     const now = new Date();
+    const nowStr = dayjs(now).format("YYYY-MM-DD HH:mm:ss");
 
     // 创建配置项
     console.log("开始初始化数据...");
@@ -122,7 +124,7 @@ export default defineNitroPlugin(async () => {
           created_at: now,
           name: ConfigNameEnum.CLIENT,
           data: {
-            created_at: now.getTime(),
+            created_at: nowStr,
             locale: "zh-CN",
             basic: {
               title: "洛月的博客",
@@ -183,6 +185,7 @@ export default defineNitroPlugin(async () => {
           created_at: now,
           name: ConfigNameEnum.SERVER,
           data: {
+            created_at: nowStr,
             mailer: {
               enable: false
             },
