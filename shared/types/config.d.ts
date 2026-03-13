@@ -120,7 +120,6 @@ export interface IClientConfigMePageSocialLinkItem {
   href: string;
   icon: string;
   hover_bg?: string;
-  target?: string;
 }
 
 export interface IClientConfigMePageFaqItem {
