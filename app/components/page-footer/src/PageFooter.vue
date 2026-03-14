@@ -1,16 +1,25 @@
 <script setup lang="ts">
+import type { VisitsStats } from "@/apis/stats/models";
 import { useConfigStore } from "@/stores";
 import numeral from "numeral";
 import dayjs from "dayjs";
 
 const configStore = useConfigStore();
+
+const { data: visitsStats } = await useFetch<VisitsStats>("/api/stats/visits", {
+  method: "get"
+});
+
+const copyright = computed(() => {
+  return `Copyright © ${
+    configStore.created_at ? dayjs(configStore.created_at).format("YYYY") : dayjs().format("YYYY")
+  } ~ ${dayjs().year()} 版权所有 `;
+});
 </script>
 <template>
   <footer class="page-footer space-y-1">
     <div>
-      {{
-        `Copyright © ${dayjs(configStore.created_at).format("YYYY")} - ${dayjs().year()} 版权所有 `
-      }}
+      {{ copyright }}
       <a v-if="configStore.author_card.name" class="hover:text-primary-400" href="/me">
         {{ configStore.author_card.name }}
       </a>
@@ -49,8 +58,8 @@ const configStore = useConfigStore();
       </a>
       强力驱动
     </div>
-    <div class="flex items-center">
-      {{ `总访问：${numeral(12345).format("0,0")} 次` }}
+    <div class="flex items-center" title="每小时更新">
+      {{ `总访问：${numeral(visitsStats?.page || 0).format("0,0")} 次` }}
     </div>
   </footer>
 </template>

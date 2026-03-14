@@ -3,12 +3,10 @@ import { ConfigNameEnum } from "@@/shared/constants";
 import { prisma } from "@@/server/db";
 import { readBody } from "h3";
 import { z } from "zod";
+import dayjs from "dayjs";
 
 export default defineEventHandler(async (event) => {
   const schema = z.object({
-    created_at: z.number().optional().nullable(),
-    updated_at: z.number().optional().nullable(),
-
     mailer: z.object({
       host: z.string().optional().nullable(),
       port: z.number().optional().nullable(),
@@ -53,16 +51,16 @@ export default defineEventHandler(async (event) => {
 
   const now = new Date();
 
-  body.created_at = Math.floor((config.created_at ?? new Date()).getTime() / 1000);
-
-  body.updated_at = Math.floor(now.getTime() / 1000);
-
   await prisma.config.update({
     where: { name: ConfigNameEnum.SERVER },
     data: {
       updated_at: now,
       updated_by: event.context.user.id,
-      data: body
+      data: {
+        ...(config.data as object),
+        ...(body as object),
+        updated_at: dayjs(now).format("YYYY-MM-DD HH:mm:ss")
+      }
     }
   });
 

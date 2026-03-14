@@ -1,13 +1,14 @@
 import type { UpdateClientConfigRequest } from "@/apis/config/models";
-import type { IClientConfig } from "#shared/types/config";
+import type { IClientConfig, IClientConfigLocale } from "#shared/types/config";
 import { updateClientConfig } from "@/apis/config";
 import { defineStore } from "pinia";
 import { AxiosError } from "axios";
 
 export const configStore = defineStore("config", {
   state: (): IClientConfig => ({
-    locale: "zh-cn",
-    created_at: 0,
+    locale: "zh-CN",
+    created_at: "",
+    updated_at: "",
     basic: {
       title: "",
       description: ""
@@ -103,9 +104,9 @@ export const configStore = defineStore("config", {
         });
       }
     },
-    async switchLocale(locale: string) {
+    async switchLocale(locale: IClientConfigLocale) {
       const switchLocalePath = useSwitchLocalePath();
-      switchLocalePath(locale as any);
+      switchLocalePath(locale);
     }
   }
 });
