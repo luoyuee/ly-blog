@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { SelectMenuItem } from "@nuxt/ui";
 import type { PropType } from "vue";
-import { SelectIconDefaultOptions } from "#shared/constants";
+import { SelectIconDefaultOptions } from "#shared/constants/icons";
 import { watch } from "vue";
 
 const selected = defineModel<string>();

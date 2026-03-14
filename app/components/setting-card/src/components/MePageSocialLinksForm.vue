@@ -3,7 +3,7 @@ import type { IClientConfigMePageSocialLinkItem } from "#shared/types/config";
 import type { FormSubmitEvent, TableColumn } from "@nuxt/ui";
 import { computed, h, reactive, ref, resolveComponent, watch } from "vue";
 import { useSortable } from "@vueuse/integrations/useSortable";
-import { SocialIconNames } from "@@/shared/constants";
+import { SocialIconNames } from "@@/shared/constants/icons";
 import { BasicModal } from "@/components/basic-modal";
 import { SelectIcon } from "@/components/form/select";
 import { z } from "zod";

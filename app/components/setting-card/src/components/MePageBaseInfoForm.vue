@@ -3,7 +3,7 @@ import type { IClientConfigMePageBaseInfoItem } from "#shared/types/config";
 import type { FormSubmitEvent, TableColumn } from "@nuxt/ui";
 import { computed, h, onBeforeUnmount, reactive, ref, resolveComponent, watch } from "vue";
 import { useSortable } from "@vueuse/integrations/useSortable";
-import { CustomIconNames } from "@@/shared/constants/icons";
+import { CustomIconNames } from "@@/shared/constants/icon-sets";
 import { BasicModal } from "@/components/basic-modal";
 import { SelectIcon } from "@/components/form/select";
 import { z } from "zod";

@@ -20,9 +20,6 @@ const assetsDirs = [
   { dir: "app/assets/skill-icons", prefix: "skills", exportName: "SkillIconNames" }
 ];
 
-const defaultOptionsName = "SelectIconDefaultOptions";
-const defaultOptions = ["colorful:home", "colorful:folder", "colorful:link"];
-
 /**
  * @param {string} absoluteDir
  * @returns {Promise<string[]>} 返回不带扩展名的文件名列表
@@ -71,12 +68,7 @@ const generateIconsTs = (groups) => {
  * - 修改图标资源后，请重新运行脚本更新本文件
  */`;
 
-  const footer = `/**
- * SelectIcon 组件默认展示的少量常用图标（避免下拉列表过大）
- */
-export const ${defaultOptionsName}: string[] = ${formatStringArray(defaultOptions)};`;
-
-  return `${header}\n\n${sections}\n\n${footer}\n`;
+  return `${header}\n\n${sections}\n`;
 };
 
 const main = async () => {
@@ -91,7 +83,7 @@ const main = async () => {
   }
 
   const content = generateIconsTs(groups);
-  const outFile = path.resolve(projectRoot, "shared/constants/icons.ts");
+  const outFile = path.resolve(projectRoot, "shared/constants/icon-sets.ts");
   await fs.writeFile(outFile, content, "utf8");
   console.log(`[write] ${path.relative(projectRoot, outFile)}`);
 };

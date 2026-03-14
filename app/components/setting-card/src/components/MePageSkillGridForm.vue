@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import type { FormSubmitEvent, TableColumn } from "@nuxt/ui";
 import type { IClientConfigMePageSkillGridItem } from "#shared/types/config";
+import { computed, h, onBeforeUnmount, reactive, ref, resolveComponent, watch } from "vue";
+import { SkillIconNames } from "@@/shared/constants/icon-sets";
 import { useSortable } from "@vueuse/integrations/useSortable";
 import { BasicModal } from "@/components/basic-modal";
 import { SelectIcon } from "@/components/form/select";
-import { computed, h, onBeforeUnmount, reactive, ref, resolveComponent, watch } from "vue";
 import { z } from "zod";
-import { SkillIconNames } from "@@/shared/constants/icons";
 
 const handleClass = "me-page-skill-grid-form__handle";
 const tbodyClass = "me-page-skill-grid-form__tbody";
