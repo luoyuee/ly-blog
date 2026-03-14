@@ -10,9 +10,9 @@ const { $dayjs } = useNuxtApp();
 
 const configStore = useConfigStore();
 
-const authorAvatar = computed(() => configStore.author_card.avatar || "/images/avatar.webp");
-
 const mePage = computed(() => configStore.me_page);
+
+const authorAvatar = computed(() => mePage.value.author.avatar || "/images/avatar.webp");
 
 const authorLocation = computed(() => mePage.value.author.location);
 const authorRole = computed(() => mePage.value.author.dev_role);

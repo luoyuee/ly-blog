@@ -159,8 +159,7 @@ export default defineEventHandler(async (event) => {
             title: z.string().optional().nullable(),
             href: z.string(),
             icon: z.string(),
-            hover_bg: z.string().optional().nullable(),
-            target: z.string().optional().nullable()
+            hover_bg: z.string().optional().nullable()
           })
           .array(),
         faq_items: z

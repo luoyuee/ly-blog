@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { SelectMenuItem } from "@nuxt/ui";
 import type { PropType } from "vue";
+import { SelectIconDefaultOptions } from "#shared/constants/icons";
 import { watch } from "vue";
 
 const selected = defineModel<string>();
@@ -8,7 +9,7 @@ const selected = defineModel<string>();
 const props = defineProps({
   options: {
     type: Array as PropType<string[]>,
-    default: () => ["colorful:home", "colorful:folder", "colorful:link"]
+    default: () => SelectIconDefaultOptions
   },
   placeholder: {
     type: String
@@ -48,15 +49,18 @@ onMounted(() => {
   }
 });
 
-// eslint-disable-next-line
-const handleChange = (e: any) => {
-  selected.value = e.icon;
+const handleChange = (value: SelectMenuItem) => {
+  if (!value) return;
+
+  if (typeof value !== "object") return;
+
+  selected.value = value.icon;
 };
 </script>
 <template>
   <USelectMenu
     v-model="currentValue"
-    v-bing="$attrs"
+    v-bind="$attrs"
     class="w-full"
     :search-input="{
       placeholder: '搜索...',

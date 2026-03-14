@@ -2,6 +2,7 @@
 import {
   ArticleSetting,
   AuthorCardSetting,
+  MePageSettingCard,
   BasicSettingCard,
   BeianSettingCard,
   CzdbSettingCard,
@@ -36,6 +37,7 @@ onMounted(() => {
     <template v-else>
       <ArticleSetting class="bg-black/30" />
       <AuthorCardSetting class="bg-black/30" />
+      <MePageSettingCard class="bg-black/30" />
       <BasicSettingCard class="bg-black/30" />
       <BeianSettingCard class="bg-black/30" />
       <HeroSetting class="bg-black/30" />
