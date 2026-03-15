@@ -18,6 +18,7 @@ ENV LY_DATABASE_URL="postgresql://user:pass@localhost:5432/dbname?schema=public"
 ENV LY_CZDB_PATH="/ly-blog/data/czdb"
 ENV LY_CZDB_KEY="change-me-czdb-key"
 ENV LY_JWT_SECRET="change-me-jwt-secret"
+ENV NODE_OPTIONS="--max-old-space-size=8192"
 
 #################################################################
 # 依赖安装与构建
@@ -29,7 +30,8 @@ RUN if [ -f package-lock.json ]; then npm ci; else npm install; fi
 
 COPY . .
 
-RUN npm run prisma:generate && npm run build
+RUN npm run prisma:generate
+RUN npm run build
 
 #################################################################
 # 运行配置
