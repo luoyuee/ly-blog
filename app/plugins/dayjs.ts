@@ -25,12 +25,7 @@ import objectSupport from "dayjs/plugin/objectSupport";
 
 import "dayjs/locale/zh-cn.js";
 
-let isSetup = false;
-
 export default defineNuxtPlugin(() => {
-  if (isSetup) return;
-  isSetup = true;
-
   // 统一注册常用插件
   dayjs.extend(localizedFormat);
   dayjs.extend(customParseFormat);
