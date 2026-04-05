@@ -1,3 +1,4 @@
+import { cloneDeep } from "lodash-es";
 import { isObject } from "./typed";
 
 /**
@@ -19,6 +20,33 @@ export function recursiveDelete<T extends object>(object: T, deleteValue: unknow
     .filter(([_, value]) => value !== deleteValue);
 
   return Object.fromEntries(cleanedEntries) as T;
+}
+
+/**
+ * 递归替换对象中等于指定值的键
+ * @param object 输入对象
+ * @param targetValue 要查找的值
+ * @param replaceValue 要替换成的值
+ * @returns 深拷贝后的新对象（已替换匹配值）
+ */
+export function recursiveReplace<T extends object>(
+  object: T,
+  targetValue: unknown,
+  replaceValue: unknown
+): T {
+  if (!isObject(object)) return object as T;
+
+  const replacedEntries = Object.entries(object).map(([key, value]) => {
+    if (isObject(value)) {
+      return [key, recursiveReplace(value, targetValue, replaceValue)];
+    }
+    if (value === targetValue) {
+      return [key, replaceValue];
+    }
+    return [key, value];
+  });
+
+  return Object.fromEntries(replacedEntries) as T;
 }
 
 type PropertyKeyGeneric = string | number | symbol;
@@ -45,14 +73,15 @@ export function toTree<
   const childrenKey = options?.childrenKey ?? ("children" as ChildrenKey);
 
   const map = new Map<T[IdKey], WithChildren<T, ChildrenKey>>();
+  const cloneData = cloneDeep(data);
 
-  for (const item of data) {
+  for (const item of cloneData) {
     map.set(item[idKey], item as WithChildren<T, ChildrenKey>);
   }
 
   const tree: Array<WithChildren<T, ChildrenKey>> = [];
 
-  for (const item of data) {
+  for (const item of cloneData) {
     const parentValue = item[parentKey] as T[IdKey] | null | undefined;
 
     if (parentValue !== null && parentValue !== undefined) {

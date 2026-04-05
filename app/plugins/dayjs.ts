@@ -11,17 +11,41 @@
  * - 因此即使你在页面/组件中继续 `import dayjs from "dayjs"`，也能直接使用这里注册的插件能力。
  */
 import dayjs from "dayjs";
-import customParseFormat from "dayjs/plugin/customParseFormat.js";
-import relativeTime from "dayjs/plugin/relativeTime.js";
+import advancedFormat from "dayjs/plugin/advancedFormat";
+import customParseFormat from "dayjs/plugin/customParseFormat";
+import duration from "dayjs/plugin/duration";
+import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
+import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
+import localizedFormat from "dayjs/plugin/localizedFormat";
+import relativeTime from "dayjs/plugin/relativeTime";
+import updateLocale from "dayjs/plugin/updateLocale";
+import weekday from "dayjs/plugin/weekday";
+import weekOfYear from "dayjs/plugin/weekOfYear";
+import objectSupport from "dayjs/plugin/objectSupport";
+
 import "dayjs/locale/zh-cn.js";
 
+let isSetup = false;
+
 export default defineNuxtPlugin(() => {
-  // 设置默认语言（影响 format、fromNow 等展示）
-  dayjs.locale("zh-cn");
+  if (isSetup) return;
+  isSetup = true;
 
   // 统一注册常用插件
+  dayjs.extend(localizedFormat);
   dayjs.extend(customParseFormat);
   dayjs.extend(relativeTime);
+  dayjs.extend(advancedFormat);
+  dayjs.extend(duration);
+  dayjs.extend(isSameOrAfter);
+  dayjs.extend(isSameOrBefore);
+  dayjs.extend(weekday);
+  dayjs.extend(weekOfYear);
+  dayjs.extend(updateLocale);
+  dayjs.extend(objectSupport);
+
+  // 设置默认语言（影响 format、fromNow 等展示）
+  dayjs.locale("zh-cn");
 
   // 注入到 Nuxt App（可选用法：useNuxtApp().$dayjs）
   return {
