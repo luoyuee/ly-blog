@@ -10,7 +10,7 @@ export default defineEventHandler(async (event) => {
     tls: z.boolean(),
     user: z.email(),
     pass: z.string(),
-    notif_email: z.email()
+    notify_email: z.email()
   });
 
   const { error, data: body } = schema.safeParse(await readBody(event));
@@ -31,7 +31,7 @@ export default defineEventHandler(async (event) => {
     await initTransporter();
 
     await sendEmail({
-      to: body.notif_email,
+      to: body.notify_email,
       subject: "测试邮件",
       content: "这是一条测试邮件系统的通知信息"
     });

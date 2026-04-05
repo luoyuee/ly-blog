@@ -375,3 +375,19 @@ model Dashboard {
   @@index([time])
   @@map("dashboard")
 }
+
+model NavigationWebsite {
+  id          Int       @id @default(autoincrement())
+  created_at  DateTime? @default(now())
+  created_by  Int?
+  updated_at  DateTime?
+  updated_by  Int?
+  name        String    @db.VarChar(255)
+  url         String    @db.VarChar(512)
+  icon        String?   @db.VarChar(512)
+  tags        Json?
+  description String?   @db.VarChar(1024)
+  status      Int       @default(1)
+
+  @@map("navigation_website")
+}

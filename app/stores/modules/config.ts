@@ -50,7 +50,8 @@ export const configStore = defineStore("config", {
       project_list: [],
       social_links: [],
       faq_items: []
-    }
+    },
+    live2d: {}
   }),
   actions: {
     async fetch() {

@@ -66,7 +66,7 @@ export enum HttpCode {
   StatusInsufficientStorage = 507,
   StatusLoopDetected = 508,
   StatusNotExtended = 510,
-  StatusNetworkAuthenticationRequired = 511,
+  StatusNetworkAuthenticationRequired = 511
 }
 
 export function statusText(code: number): string {
@@ -203,14 +203,14 @@ export function statusText(code: number): string {
 export interface ResponseData {
   statusCode?: number;
   message?: string;
-  data?: any;
+  data?: unknown;
 }
 
 export function getResponse<T>(
   event: H3Event<EventHandlerRequest>,
   httpCode?: HttpCode,
   data?: T
-): T | void {
+): T | undefined {
   if (httpCode) event.node.res.statusCode = httpCode;
   return data;
 }
@@ -218,7 +218,7 @@ export function getResponse<T>(
 export function getOKResponse<T>(
   event: H3Event<EventHandlerRequest>,
   data?: T
-): T | Record<string, any> {
+): T | Record<string, unknown> {
   event.node.res.statusCode = HttpCode.StatusOK;
   if (data === undefined) {
     return { message: statusText(HttpCode.StatusOK) };
@@ -229,39 +229,39 @@ export function getOKResponse<T>(
 export function getBadResponse(
   event: H3Event<EventHandlerRequest>,
   message?: string
-): ResponseData | void {
+): ResponseData {
   event.node.res.statusCode = HttpCode.StatusBadRequest;
   return {
-    message: message ?? statusText(HttpCode.StatusBadRequest),
+    message: message ?? statusText(HttpCode.StatusBadRequest)
   };
 }
 
 export function getNotAuthResponse(
   event: H3Event<EventHandlerRequest>,
   message?: string
-): ResponseData | void {
+): ResponseData {
   event.node.res.statusCode = HttpCode.StatusUnauthorized;
   return {
-    message: message ?? statusText(HttpCode.StatusUnauthorized),
+    message: message ?? statusText(HttpCode.StatusUnauthorized)
   };
 }
 
 export function getNotFoundResponse(
   event: H3Event<EventHandlerRequest>,
   message?: string
-): ResponseData | void {
+): ResponseData {
   event.node.res.statusCode = HttpCode.StatusNotFound;
   return {
-    message: message ?? statusText(HttpCode.StatusNotFound),
+    message: message ?? statusText(HttpCode.StatusNotFound)
   };
 }
 
 export function getForbiddenResponse(
   event: H3Event<EventHandlerRequest>,
   message?: string
-): ResponseData | void {
+): ResponseData {
   event.node.res.statusCode = HttpCode.StatusForbidden;
   return {
-    message: message ?? statusText(HttpCode.StatusForbidden),
+    message: message ?? statusText(HttpCode.StatusForbidden)
   };
 }

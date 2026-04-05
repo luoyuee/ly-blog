@@ -29,6 +29,9 @@ export default defineNuxtConfig({
     },
     define: {
       ...injectMetadata()
+    },
+    optimizeDeps: {
+      exclude: ["oh-my-live2d"] // 排除预构建，让其作为独立 chunk
     }
   },
   vue: {

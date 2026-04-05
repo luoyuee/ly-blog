@@ -1,3 +1,4 @@
+import type { ModelOptions } from "oh-my-live2d";
 import type { BadgeProps } from "@nuxt/ui";
 
 export interface IClientConfigBasic {
@@ -150,6 +151,11 @@ export interface IClientConfigMePage {
   faq_items: IClientConfigMePageFaqItem[];
 }
 
+export interface IClientConfigLive2d {
+  enabled?: boolean;
+  models?: ModelOptions[];
+}
+
 export interface IClientConfig {
   created_at?: string;
   updated_at?: string;
@@ -166,6 +172,7 @@ export interface IClientConfig {
   message_board: IClientConfigMessageBoard;
   fleeting_thought: IClientConfigFleetingThought;
   me_page: IClientConfigMePage;
+  live2d: IClientConfigLive2d;
 }
 
 //========== 系统设置 ==========
@@ -178,9 +185,9 @@ export interface IServerConfigMailer {
   tls?: boolean;
   user?: string;
   pass?: string;
-  notif_email?: string;
-  enable_comment_notif?: boolean;
-  enable?: boolean;
+  notify_email?: string;
+  comment_notify_enabled?: boolean;
+  enabled?: boolean;
 }
 
 export interface IServerConfigStorage {

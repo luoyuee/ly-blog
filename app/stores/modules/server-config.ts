@@ -15,7 +15,7 @@ export const serverConfigStore = defineStore("server-config", {
     updated_at: "",
     mailer: {
       tls: true,
-      enable: false
+      enabled: false
     },
     storage: {},
     czdb: {}

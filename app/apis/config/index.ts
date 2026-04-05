@@ -58,7 +58,7 @@ export async function verifyEmailConfig(data: {
   tls?: boolean;
   user?: string;
   pass?: string;
-  notif_email?: string;
+  notify_email?: string;
 }): Promise<void> {
   try {
     await serviceAxios({

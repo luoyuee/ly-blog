@@ -151,9 +151,9 @@ const mailerConfigSchema = z.object({
   tls: z.boolean().optional(),
   user: z.string(),
   pass: z.string(),
-  notif_email: z.email().optional(),
-  enable_comment_notif: z.boolean().optional(),
-  enable: z.boolean().optional()
+  notify_email: z.email().optional(),
+  comment_notify_enabled: z.boolean().optional(),
+  enabled: z.boolean().optional()
 });
 
 export const useEmail = (config?: { mailer?: MailerConfig }) => {
@@ -257,7 +257,7 @@ export const useEmail = (config?: { mailer?: MailerConfig }) => {
     subject: string;
     content: string;
   }) => {
-    if (mailerConfig?.enable) {
+    if (mailerConfig?.enabled) {
       await sendEmail({
         to: options.to,
         subject: options.subject,
@@ -271,7 +271,7 @@ export const useEmail = (config?: { mailer?: MailerConfig }) => {
     subject: string;
     content: string;
   }) => {
-    if (mailerConfig?.enable_comment_notif) {
+    if (mailerConfig?.comment_notify_enabled) {
       await sendEmail({
         to: options.to,
         subject: options.subject,

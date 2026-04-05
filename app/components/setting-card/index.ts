@@ -13,6 +13,7 @@ import SwiperSettingCard from "./src/SwiperSetting.vue";
 import MailerSettingCard from "./src/MailerSettingCard.vue";
 import CzdbSettingCard from "./src/CzdbSettingCard.vue";
 import MePageSettingCard from "./src/MePageSettingCard.vue";
+import Live2dSettingCard from "./src/Live2dSettingCard.vue";
 
 export {
   SettingCard,
@@ -29,5 +30,6 @@ export {
   StorageSettingCard,
   SwiperSettingCard,
   MailerSettingCard,
-  CzdbSettingCard
+  CzdbSettingCard,
+  Live2dSettingCard
 };

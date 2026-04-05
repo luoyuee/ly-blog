@@ -13,7 +13,7 @@ const $notify = useNotification();
 const serverConfigStore = useServerConfigStore();
 
 const formData = reactive<IServerConfigMailer>({
-  enable: false,
+  enabled: false,
   tls: true
 });
 
@@ -23,9 +23,9 @@ const schema = z.object({
   tls: z.boolean().optional(),
   user: z.email(),
   pass: z.string(),
-  notif_email: z.string({ message: "请输入内容" }).email(),
-  enable_comment_notif: z.boolean().optional(),
-  enable: z.boolean().optional()
+  notify_email: z.email({ message: "请输入内容" }),
+  comment_notify_enabled: z.boolean().optional(),
+  enabled: z.boolean().optional()
 });
 
 const state = reactive({
@@ -56,9 +56,9 @@ const handleReset = () => {
   // formData.tls = serverConfigStore.mailer.tls;
   // formData.user = serverConfigStore.mailer.user;
   // formData.pass = serverConfigStore.mailer.pass;
-  // formData.notif_email = serverConfigStore.mailer.notif_email;
-  // formData.enable_comment_notif = serverConfigStore.mailer.enable_comment_notif;
-  // formData.enable = serverConfigStore.mailer.enable;
+  // formData.notify_email = serverConfigStore.mailer.notify_email;
+  // formData.comment_notify_enabled = serverConfigStore.mailer.comment_notify_enabled;
+  // formData.enabled = serverConfigStore.mailer.enabled;
 
   Object.assign(formData, cloneDeep(serverConfigStore.mailer));
 
@@ -75,14 +75,14 @@ const handleSave = () => {
 const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => {
   state.submitting = true;
   try {
-    if (formData.enable) {
+    if (formData.enabled) {
       await verifyEmailConfig({
         host: event.data.host,
         port: event.data.port,
         tls: event.data.tls,
         user: event.data.user,
         pass: event.data.pass,
-        notif_email: event.data.notif_email
+        notify_email: event.data.notify_email
       });
     }
   } catch (error) {
@@ -123,7 +123,7 @@ const handleTestEmail = async () => {
       tls: formData.tls,
       user: formData.user,
       pass: formData.pass,
-      notif_email: formData.notif_email
+      notify_email: formData.notify_email
     });
     $notify.success({
       title: "测试邮件发送成功"
@@ -159,7 +159,7 @@ const handleTestEmail = async () => {
       @submit="handleSubmit"
     >
       <UFormField
-        name="enable"
+        name="enabled"
         label="开启邮件通知"
         description="开启邮件通知后将向指定邮箱发送网站事件通知."
         :ui="{
@@ -168,8 +168,8 @@ const handleTestEmail = async () => {
         }"
       >
         <USwitch
-          v-model="formData.enable"
-          :disabled="!(formData.user && formData.pass && formData.notif_email)"
+          v-model="formData.enabled"
+          :disabled="!(formData.user && formData.pass && formData.notify_email)"
         />
       </UFormField>
       <UFormField
@@ -240,7 +240,7 @@ const handleTestEmail = async () => {
         />
       </UFormField>
       <UFormField
-        name="notif_email"
+        name="notify_email"
         label="通知邮箱"
         description="用于接收系统通知的邮箱"
         :ui="{
@@ -250,7 +250,7 @@ const handleTestEmail = async () => {
       >
         <UFieldGroup class="w-full">
           <UInput
-            v-model="formData.notif_email"
+            v-model="formData.notify_email"
             class="w-full"
             icon="i-lucide-mail"
             placeholder="请输入通知邮箱"
@@ -261,7 +261,7 @@ const handleTestEmail = async () => {
         </UFieldGroup>
       </UFormField>
       <UFormField
-        name="enable_comment_notif"
+        name="comment_notify_enabled"
         label="评论通知"
         description="开启评论通知后，评论被回复时，将通过评论邮箱通知用户"
         :ui="{
@@ -269,7 +269,7 @@ const handleTestEmail = async () => {
           container: 'mt-2'
         }"
       >
-        <USwitch v-model="formData.enable_comment_notif" />
+        <USwitch v-model="formData.comment_notify_enabled" />
       </UFormField>
     </UForm>
   </div>

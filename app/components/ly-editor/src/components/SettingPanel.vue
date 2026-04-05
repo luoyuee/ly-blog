@@ -12,7 +12,8 @@ import {
   NavMenuSetting,
   HitokotoSettingCard,
   MailerSettingCard,
-  SwiperSettingCard
+  SwiperSettingCard,
+  Live2dSettingCard
 } from "@/components/setting-card";
 import { useConfigStore, useServerConfigStore } from "@/stores";
 
@@ -48,6 +49,7 @@ onMounted(() => {
       <HitokotoSettingCard class="bg-black/30" />
       <MailerSettingCard class="bg-black/30" />
       <CzdbSettingCard class="bg-black/30" />
+      <Live2dSettingCard class="bg-black/30" />
     </template>
   </div>
 </template>

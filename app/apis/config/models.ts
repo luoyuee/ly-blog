@@ -13,7 +13,8 @@ import type {
   IServerConfigMailer,
   IServerConfigStorage,
   IServerConfigCzdb,
-  IClientConfigExternalLink
+  IClientConfigExternalLink,
+  IClientConfigLive2d
 } from "#shared/types/config";
 
 export interface UpdateClientConfigRequest {
@@ -29,6 +30,7 @@ export interface UpdateClientConfigRequest {
   message_board?: IClientConfigMessageBoard;
   fleeting_thought?: IClientConfigFleetingThought;
   me_page?: IClientConfigMePage;
+  live2d?: IClientConfigLive2d;
 }
 
 export interface UpdateServerConfigRequest {

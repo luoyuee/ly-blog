@@ -187,7 +187,7 @@ export default defineNitroPlugin(async () => {
           data: {
             created_at: nowStr,
             mailer: {
-              enable: false
+              enabled: false
             },
             storage: {
               port: 443,

@@ -13,9 +13,9 @@ export default defineEventHandler(async (event) => {
       tls: z.boolean().optional().nullable(),
       user: z.string().optional().nullable(),
       pass: z.string().optional().nullable(),
-      notif_email: z.string().optional().nullable(),
-      enable_comment_notif: z.boolean().optional().nullable(),
-      enable: z.boolean()
+      notify_email: z.string().optional().nullable(),
+      comment_notify_enabled: z.boolean().optional().nullable(),
+      enabled: z.boolean()
     }),
 
     czdb: z

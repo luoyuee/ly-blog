@@ -1,15 +1,23 @@
 <script setup lang="ts">
 import Lenis from "lenis";
 import { onMounted, watch } from "vue";
-import { useAppStore } from "@/stores";
+import { useAppStore, useConfigStore } from "@/stores";
 import Header from "@/components/header";
 import { WebsiteNotice } from "@/components/notice";
 import { useParticleAnimation } from "@/composables/useParticleAnimation";
+import { useLive2d } from "@/composables/useLive2d";
 
 const appStore = useAppStore();
+const configStore = useConfigStore();
 
 const particleCanvasRef = useTemplateRef("particleCanvasRef");
 const layoutRef = useTemplateRef("layoutRef");
+
+/**
+ * 初始化 Live2D composable
+ */
+const { init: initLive2d } = useLive2d();
+
 onMounted(() => {
   const lenis = new Lenis({
     smoothWheel: true,
@@ -31,6 +39,33 @@ onMounted(() => {
   if (particleCanvasRef.value) {
     useParticleAnimation(particleCanvasRef.value);
   }
+
+  if (configStore.live2d.enabled && configStore.live2d.models?.length) {
+    /**
+     * 初始化 Live2D，只有主动调用才会加载
+     */
+
+    // [
+    //   {
+    //     path: "https://live2d-1259037473.cos.ap-chengdu.myqcloud.com/models/Pio/model.json",
+    //     scale: 0.4,
+    //     position: [0, 50],
+    //     stageStyle: {
+    //       height: 300
+    //     }
+    //   }
+    // ]
+    initLive2d({
+      models: configStore.live2d.models,
+      hideRoutes: ["^/about$"],
+      scrollShow: [
+        {
+          threshold: window.innerHeight / 2,
+          routes: ["^/$"]
+        }
+      ]
+    });
+  }
 });
 </script>
 <template>
@@ -38,7 +73,7 @@ onMounted(() => {
     <Header />
     <canvas
       ref="particleCanvasRef"
-      class="fixed top-0 left-0 -z-0 select-none pointer-events-none"
+      class="fixed top-0 left-0 z-0 select-none pointer-events-none"
     ></canvas>
     <slot></slot>
 

@@ -169,7 +169,21 @@ export default defineEventHandler(async (event) => {
           })
           .array()
       })
-      .optional()
+      .optional(),
+
+    live2d: z.object({
+      enabled: z.boolean().optional().nullable(),
+      models: z
+        .array(
+          z
+            .object({
+              path: z.string()
+            })
+            .loose()
+        )
+        .optional()
+        .nullable()
+    })
   });
 
   const { error, data: body } = schema.safeParse(await readBody(event));
