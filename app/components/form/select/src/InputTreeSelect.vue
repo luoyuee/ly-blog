@@ -1,23 +1,28 @@
 <script setup lang="ts">
 /**
- * TreeSelect 树形选择器组件
+ * InputTreeSelect 可输入树形选择器组件
+ *
+ * 在 TreeSelect 基础上扩展了自定义输入功能：
+ * - 单选模式：支持从下拉框选择或手动输入值
+ * - 多选模式：支持从下拉框多选 + 自定义输入标签
  *
  * 功能特性：
  * - 支持单选/多选模式
+ * - 支持自定义输入（非下拉框选项）
  * - 支持父子节点联动选择（关联模式）
  * - 支持自定义字段名映射
  * - 支持只选择叶子节点
  * - 支持三种父节点输出模式：auto/always/never
  *
  * @example
- * // 基础用法
- * <TreeSelect v-model="value" :items="treeData" />
+ * // 单选 + 自定义输入
+ * <InputTreeSelect v-model="value" :items="treeData" />
  *
- * // 多选模式
- * <TreeSelect v-model="values" :items="treeData" multiple />
+ * // 多选 + 自定义输入
+ * <InputTreeSelect v-model="values" :items="treeData" multiple />
  *
- * // 父子联动选择
- * <TreeSelect v-model="values" :items="treeData" multiple :check-strictly="false" />
+ * // 多选 + 父子联动
+ * <InputTreeSelect v-model="values" :items="treeData" multiple :check-strictly="false" />
  */
 import type { TreeItemSelectEvent } from "reka-ui";
 import type { TreeItem } from "@nuxt/ui";
@@ -55,6 +60,19 @@ type FieldNames = {
   value?: string;
   children?: string;
   parent?: string;
+};
+
+/**
+ * 自定义输入项类型
+ * 多选模式下，用户手动输入的标签数据结构
+ */
+type InputItem = {
+  /** 显示文本 */
+  label: string;
+  /** 值，与 modelValue 中的值对应 */
+  value: string;
+  /** 是否为自定义输入项 */
+  isCustom?: boolean;
 };
 
 // ============================================================
@@ -304,32 +322,6 @@ const hasSelected = computed(() => {
   return isArray(modelValue.value) ? modelValue.value.length > 0 : true;
 });
 
-/**
- * 获取所有选中项的标签
- * 用于在触发按钮中显示选中内容
- */
-const selectedLabels = computed(() => {
-  if (isNil(modelValue.value) || (isArray(modelValue.value) && modelValue.value.length === 0)) {
-    return [];
-  }
-
-  // 多选模式
-  if (props.multiple) {
-    if (isArray(modelValue.value)) {
-      return modelValue.value.map((item) => normalizedMap.value.get(item)?.label || "");
-    }
-    return [];
-  }
-
-  // 单选模式
-  if (isArray(modelValue.value) && modelValue.value.length > 0) {
-    // TODO: 正常情况下不会出现这种情况，但是为了兼容，这里保留了
-    return [normalizedMap.value.get(modelValue.value[0] as string | number)?.label || ""];
-  }
-
-  return [normalizedMap.value.get(modelValue.value as string | number)?.label || ""];
-});
-
 // ============================================================
 // 值转换函数
 // ============================================================
@@ -488,7 +480,51 @@ const internalValue = ref<InternalValue>(undefined);
 const expanded = ref<string[]>([]);
 
 // ============================================================
-// 事件处理函数
+// 自定义输入相关状态
+// ============================================================
+
+/** 单选模式下输入框的值（手动输入时使用） */
+const inputValue = ref<string | undefined>(undefined);
+
+/** 多选模式下自定义输入的标签列表 */
+const inputItems = ref<InputItem[]>([]);
+
+/** 多选模式下是否显示标签输入框 */
+const showInput = ref(false);
+
+// ============================================================
+// 计算属性 - 标签展示
+// ============================================================
+
+/**
+ * 多选模式下显示的标签列表
+ * 合并下拉框选中项和自定义输入项
+ */
+const showTags = computed(() => {
+  const tags: InputItem[] = [];
+
+  if (isArray(modelValue.value)) {
+    modelValue.value.forEach((val) => {
+      // 优先从下拉框数据中查找
+      const item = normalizedMap.value.get(val);
+      if (item) {
+        tags.push({ label: item.label || "", value: item.value });
+        return;
+      }
+
+      // 从自定义输入项中查找
+      const customItem = inputItems.value.find((tag) => tag.value === val);
+      if (customItem) {
+        tags.push({ label: customItem.label || "", value: customItem.value, isCustom: true });
+      }
+    });
+  }
+
+  return tags;
+});
+
+// ============================================================
+// 事件处理函数 - 通用
 // ============================================================
 
 /**
@@ -505,15 +541,31 @@ const onSelect = (e: TreeItemSelectEvent<TreeItem>) => {
  * 更新选中值
  * 当 UTree 组件选中状态变化时调用
  *
- * 处理流程：
- * 1. 更新内部值
- * 2. 转换为外部值并更新 modelValue
- * 3. 单选模式下自动关闭下拉面板
+ * 多选模式：
+ * 1. 将下拉框选中值转换为外部值
+ * 2. 合并自定义输入的值
+ * 3. 去重后赋值给 modelValue
+ *
+ * 单选模式：
+ * 1. 更新输入框显示文本
+ * 2. 转换为外部值赋值给 modelValue
+ * 3. 自动关闭下拉面板
  */
 const updateModelValue = (val: TreeItem | TreeItem[] | undefined) => {
   internalValue.value = val || emptyVal.value.internal;
 
-  modelValue.value = convertToExternalValue(internalValue.value) || emptyVal.value.external;
+  if (props.multiple) {
+    // 将下拉框选中值转换为外部值
+    const treeResult = convertToExternalValue(internalValue.value);
+    const treeArray = isArray(treeResult) ? treeResult : [];
+    // 合并自定义输入的值，去重
+    const customValues = inputItems.value.map((item) => item.value);
+    modelValue.value = [...new Set([...treeArray, ...customValues])];
+  } else {
+    const item = isArray(internalValue.value) ? internalValue.value[0] : internalValue.value;
+    inputValue.value = item?.label || "";
+    modelValue.value = convertToExternalValue(internalValue.value) || emptyVal.value.external;
+  }
 
   // 单选模式下选中后自动关闭下拉面板
   if (!props.multiple && val) {
@@ -562,8 +614,8 @@ const handlePopover = () => {
 };
 
 /**
- * 清除选中值
- * 重置内部值和外部值，关闭下拉面板
+ * 清除所有选中值
+ * 重置内部值、外部值、自定义输入项，关闭下拉面板
  */
 const handleClear = (e?: MouseEvent) => {
   e?.stopPropagation();
@@ -574,6 +626,9 @@ const handleClear = (e?: MouseEvent) => {
   modelValue.value = emptyVal.value.external;
   popoverOpen.value = false;
   expanded.value = [];
+  inputItems.value = [];
+  showInput.value = false;
+  inputValue.value = undefined;
 };
 
 /**
@@ -585,17 +640,119 @@ const showCheckbox = (item: TreeItem) => {
 };
 
 // ============================================================
+// 事件处理函数 - 自定义输入
+// ============================================================
+
+/**
+ * 单选模式下输入框值变化处理
+ * 用户手动输入时，清空内部选中值，将输入值直接赋给 modelValue
+ */
+const handleInputChange = () => {
+  internalValue.value = undefined;
+  modelValue.value = inputValue.value || null;
+};
+
+/**
+ * 多选模式下标签输入框失焦处理
+ * 清空输入框并隐藏
+ */
+const blurTagInput = () => {
+  inputValue.value = undefined;
+  showInput.value = false;
+};
+
+/**
+ * 多选模式下标签输入回车处理
+ * 将输入值添加到自定义输入项列表，并更新外部值
+ * 已存在的值不会重复添加
+ */
+const handleTagEnter = () => {
+  if (inputValue.value) {
+    // 检查是否已存在（同时在 modelValue 和 inputItems 中检查）
+    const existingValues = isArray(modelValue.value) ? modelValue.value : [];
+    if (existingValues.includes(inputValue.value)) {
+      blurTagInput();
+      return;
+    }
+
+    inputItems.value.push({
+      label: inputValue.value,
+      value: inputValue.value
+    });
+
+    blurTagInput();
+
+    updateModelValue(internalValue.value);
+  }
+};
+
+/**
+ * 多选模式下删除自定义标签
+ * 从自定义输入项和 modelValue 中同时移除
+ */
+const handleDelete = (e: InputItem) => {
+  inputItems.value = inputItems.value.filter((item) => item.value !== e.value);
+
+  if (isArray(modelValue.value)) {
+    modelValue.value = modelValue.value.filter((item) => item !== e.value);
+  }
+};
+
+// ============================================================
 // 监听器 - 双向绑定同步
 // ============================================================
 
 /**
  * 监听外部值变化，同步到内部值
- * 实现双向绑定的核心逻辑
+ *
+ * 多选模式：
+ * 1. 将外部值分为下拉框值和自定义值
+ * 2. 下拉框值通过 convertToInternalValue 转换
+ * 3. 自定义值直接赋值给 inputItems
+ *
+ * 单选模式：
+ * 1. 下拉框值通过 convertToInternalValue 转换
+ * 2. 非下拉框值直接显示在输入框中
  */
 watch(
   modelValue,
   (newValue) => {
-    internalValue.value = convertToInternalValue(newValue) || emptyVal.value.internal;
+    if (props.multiple) {
+      if (isArray(newValue) && newValue.length > 0) {
+        // 将外部值分为下拉框值和自定义值
+        const treeValues: Array<string | number> = [];
+        const customItems: InputItem[] = [];
+
+        newValue.forEach((val) => {
+          if (normalizedMap.value.has(val as string | number)) {
+            treeValues.push(val as string | number);
+          } else {
+            const cVal = val.toString();
+            customItems.push({
+              value: cVal,
+              label: cVal
+            });
+          }
+        });
+
+        // 下拉框值使用 convertToInternalValue 处理
+        internalValue.value = convertToInternalValue(treeValues) || emptyVal.value.internal;
+        // 自定义值直接赋值给 inputItems
+        inputItems.value = customItems;
+      } else {
+        internalValue.value = emptyVal.value.internal;
+        inputValue.value = undefined;
+        inputItems.value = [];
+      }
+    } else {
+      const has = normalizedMap.value.has(newValue as string | number);
+      if (has) {
+        internalValue.value = convertToInternalValue(newValue) || emptyVal.value.internal;
+      } else {
+        internalValue.value = emptyVal.value.internal;
+        inputValue.value = newValue as string;
+      }
+    }
   },
   { immediate: true, deep: true }
 );
@@ -610,54 +767,99 @@ watch(
       collisionPadding: {
         left: 0,
         right: 0
-      }
+      },
+      onOpenAutoFocus: (e) => e.preventDefault()
     }"
     :ui="{ content: 'w-(--reka-popper-anchor-width)' }"
   >
-    <!-- 触发器：选择按钮 -->
+    <!-- 触发器 -->
     <template #anchor>
+      <!-- 多选模式：标签输入区域 -->
       <UButton
+        v-if="props.multiple"
+        class="flex items-center flex-wrap gap-2 w-full"
         color="neutral"
         variant="outline"
-        class="w-full justify-between focus:ring-2 focus:ring-inset focus:ring-primary"
-        :disabled="props.disabled"
         @click="handlePopover"
       >
-        <!-- 显示区域 -->
-        <div class="truncate pointer-events-none">
-          <!-- 多选模式：显示标签列表 -->
-          <template v-if="props.multiple && selectedLabels.length > 0">
-            <div class="flex flex-wrap gap-1 overflow-hidden">
-              <UBadge
-                v-for="(label, index) in selectedLabels.slice(0, props.maxTagCount)"
-                :key="`${label}${index}`"
-                color="neutral"
-                variant="outline"
-                size="sm"
-                :ui="{
-                  base: 'py-0 text-sm'
-                }"
-              >
-                {{ label }}
-              </UBadge>
-              <!-- 超出最大显示数量的标签 -->
-              <div v-if="selectedLabels.length > props.maxTagCount" class="opacity-50">
-                +{{ selectedLabels.length - props.maxTagCount }}
-              </div>
-            </div>
-          </template>
+        <!-- 已选中标签列表 -->
+        <UBadge
+          v-for="tag in showTags"
+          :key="tag.value"
+          :color="tag.isCustom ? 'primary' : 'neutral'"
+          :variant="tag.isCustom ? 'subtle' : 'outline'"
+          size="sm"
+          :ui="{
+            base: 'py-0 text-sm'
+          }"
+        >
+          {{ tag.label }}
 
-          <!-- 单选模式：显示单个标签 -->
-          <template v-else-if="selectedLabels.length > 0">
-            {{ selectedLabels[0] }}
+          <!-- 自定义标签显示删除按钮 -->
+          <template #trailing v-if="tag.isCustom">
+            <UIcon
+              name="mdi:close-thick"
+              class="cursor-pointer text-blue-400 hover:text-blue-600"
+              @click.stop="handleDelete(tag)"
+            />
           </template>
+        </UBadge>
 
-          <!-- 无选中值：显示占位符 -->
-          <template v-else>
-            <span class="text-dimmed">{{ placeholder }}</span>
-          </template>
+        <!-- 占位文本：无选中项时显示 -->
+        <span v-if="!showTags || showTags.length === 0" class="text-dimmed">
+          {{ placeholder }}
+        </span>
+
+        <!-- 自定义输入框：回车添加自定义标签 -->
+        <UInput
+          v-if="showInput"
+          ref="inputRef"
+          v-model.trim="inputValue"
+          size="xs"
+          autofocus
+          class="w-32 h-5"
+          @blur="blurTagInput"
+          @keyup.enter="handleTagEnter"
+        />
+        <!-- 添加标签按钮 -->
+        <UBadge
+          v-else
+          icon="ep:plus"
+          size="sm"
+          color="primary"
+          variant="subtle"
+          class="shrink-0 justify-center"
+          @click.stop="showInput = true"
+        />
+
+        <!-- 右侧图标区域 -->
+        <div class="ml-auto flex items-center shrink-0">
+          <!-- 清除按钮：有选中值且可清除时显示 -->
+          <UIcon
+            v-if="hasSelected && props.clearable && !props.disabled"
+            name="lucide:x"
+            class="cursor-pointer shrink-0 text-muted size-5"
+            @click.stop="handleClear"
+          />
+          <!-- 展开/收起箭头：无选中值时显示 -->
+          <UIcon
+            v-else-if="!hasSelected"
+            class="shrink-0 text-dimmed size-5"
+            :name="popoverOpen ? 'lucide:chevron-up' : 'lucide:chevron-down'"
+            :class="{ 'opacity-50': props.disabled }"
+          />
         </div>
+      </UButton>
 
+      <!-- 单选模式：输入框 -->
+      <UInput
+        v-else
+        v-model.trim="inputValue"
+        :placeholder="props.placeholder"
+        @click="handlePopover"
+        @change="handleInputChange"
+        @keyup.enter="popoverOpen = false"
+      >
         <!-- 后缀图标 -->
         <template #trailing>
           <!-- 清除按钮：有选中值且可清除时显示 -->
@@ -675,7 +877,7 @@ watch(
             :class="{ 'opacity-50': props.disabled }"
           />
         </template>
-      </UButton>
+      </UInput>
     </template>
 
     <!-- 下拉内容：树形选择器 -->

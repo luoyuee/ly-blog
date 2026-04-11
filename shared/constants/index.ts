@@ -32,7 +32,8 @@ export const LyEditorActivityMenu = {
   SearchPanel: 3,
   ImageManager: 4,
   HitokotoManager: 5,
-  WorkManager: 6,
+  NavigationWebsiteManager: 6,
+  WorkManager: 7,
   DashboardPanel: 97,
   CronJobPanel: 98,
   SettingPanel: 99
