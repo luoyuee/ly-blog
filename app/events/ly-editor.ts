@@ -91,6 +91,18 @@ type Events = {
   // 弹窗管理器
   "cmd.modal-manager:open:category-form": ArticleCategoryForm | undefined;
   "cmd.modal-manager:open:category-details": ArticleCategory;
+  "cmd.modal-manager:open:shortcut-form": ShortcutItem | undefined;
+  "cmd.modal-manager:open:search-engine-form": SearchEngineItem | undefined;
+  "cmd.modal-manager:open:navigation-website-form": NavigationWebsiteItem | undefined;
+
+  "state.shortcut-form:cancel": undefined;
+  "notify.shortcut-form:submitted": undefined;
+
+  "state.search-engine-form:cancel": undefined;
+  "notify.search-engine-form:submitted": undefined;
+
+  "state.navigation-website-form:cancel": undefined;
+  "notify.navigation-website-form:submitted": undefined;
 };
 
 const emitter = mitt<Events>();

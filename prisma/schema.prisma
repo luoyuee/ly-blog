@@ -391,3 +391,33 @@ model NavigationWebsite {
 
   @@map("navigation_website")
 }
+
+model NavigationSearchEngine {
+  id          Int       @id @default(autoincrement())
+  created_at  DateTime? @default(now())
+  created_by  Int?
+  updated_at  DateTime?
+  updated_by  Int?
+  name        String    @db.VarChar(255)
+  description String?   @db.VarChar(1024)
+  url         String    @db.VarChar(512)
+  icon        String    @db.VarChar(512)
+  status      Int       @default(1)
+
+  @@map("navigation_search_engine")
+}
+
+model NavigationShortcut {
+  id          Int       @id @default(autoincrement())
+  created_at  DateTime? @default(now())
+  created_by  Int?
+  updated_at  DateTime?
+  updated_by  Int?
+  name        String    @db.VarChar(255)
+  description String?   @db.VarChar(1024)
+  url         String    @db.VarChar(512)
+  icon        String    @db.VarChar(512)
+  status      Int       @default(1)
+
+  @@map("navigation_shortcut")
+}

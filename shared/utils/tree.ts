@@ -741,3 +741,88 @@ export function findNodeDepth<T extends object>(
 
   return chain.length;
 }
+
+/**
+ * 按深度排序配置选项
+ */
+export interface SortByDepthOptions<T = object> {
+  /**
+   * 节点ID字段名，默认为 'id'
+   */
+  idKey?: keyof T;
+
+  /**
+   * 父节点ID字段名，默认为 'parentId'
+   */
+  parentKey?: keyof T;
+
+  /**
+   * 排序顺序
+   * - 'asc': 从浅到深（根节点在前）
+   * - 'desc': 从深到浅（叶子节点在前）
+   * @default 'desc'
+   */
+  order?: "asc" | "desc";
+}
+
+/**
+ * 对扁平化的树形数据按节点深度排序
+ * @param data 扁平化的树形数据列表
+ * @param options 配置选项
+ * @returns 排序后的新数组（不修改原数组）
+ * @example
+ * const data = [
+ *   { id: '3', parentId: '2' },
+ *   { id: '1', parentId: null },
+ *   { id: '2', parentId: '1' }
+ * ];
+ *
+ * // 默认从深到浅排序
+ * sortByDepth(data);
+ * // 返回: [{ id: '3', parentId: '2' }, { id: '2', parentId: '1' }, { id: '1', parentId: null }]
+ *
+ * // 从浅到深排序
+ * sortByDepth(data, { order: 'asc' });
+ * // 返回: [{ id: '1', parentId: null }, { id: '2', parentId: '1' }, { id: '3', parentId: '2' }]
+ */
+export function sortByDepth<T extends object>(
+  data: T[],
+  options: SortByDepthOptions<T> = {}
+): T[] {
+  const { idKey = "id" as keyof T, parentKey = "parentId" as keyof T, order = "desc" } = options;
+
+  // 构建节点映射，用于快速查找
+  const nodeMap = new Map<unknown, T>();
+  data.forEach((node) => {
+    nodeMap.set(node[idKey], node);
+  });
+
+  /**
+   * 计算单个节点的深度
+   * 通过向上遍历父节点链来确定深度
+   */
+  const getDepth = (node: T): number => {
+    let depth = 0;
+    let current = node;
+    while (current[parentKey] !== null && current[parentKey] !== undefined) {
+      depth++;
+      current = nodeMap.get(current[parentKey]) as T;
+      if (!current) break;
+    }
+    return depth;
+  };
+
+  // 缓存每个节点的深度，避免重复计算
+  const depthCache = new Map<T, number>();
+
+  return [...data].sort((a, b) => {
+    const depthA = depthCache.get(a) ?? getDepth(a);
+    const depthB = depthCache.get(b) ?? getDepth(b);
+
+    // 缓存计算结果
+    depthCache.set(a, depthA);
+    depthCache.set(b, depthB);
+
+    return order === "asc" ? depthA - depthB : depthB - depthA;
+  });
+}

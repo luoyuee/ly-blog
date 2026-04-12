@@ -7,6 +7,7 @@ import ArticleManager from "./components/article-manager/ArticleManager.vue";
 import NoteManager from "./components/note-manager/NoteManager.vue";
 import ImageManager from "./components/image-manager/ImageManager.vue";
 import HitokotoManager from "./components/hitokoto-manager/HitokotoManager.vue";
+import NavigationWebsiteManager from "./components/navigation-website-manager/NavigationWebsiteManager.vue";
 import WorkManager from "./components/work-manager/WorkManager.vue";
 
 const lyEditorStore = useLyEditorStore();
@@ -28,6 +29,9 @@ const lyEditorStore = useLyEditorStore();
       />
       <HitokotoManager
         v-else-if="lyEditorStore.sidebar.active === LyEditorActivityMenu.HitokotoManager"
+      />
+      <NavigationWebsiteManager
+        v-else-if="lyEditorStore.sidebar.active === LyEditorActivityMenu.NavigationWebsiteManager"
       />
       <WorkManager v-else-if="lyEditorStore.sidebar.active === LyEditorActivityMenu.WorkManager" />
     </ResizeArea>

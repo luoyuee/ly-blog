@@ -56,6 +56,10 @@ export type EditorTabItem = {
       type: "user-panel";
       data: object;
     }
+  | {
+      type: "navigation-website-panel";
+      data?: object;
+    }
 );
 
 export type FolderTreeItem = {

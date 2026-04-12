@@ -2,6 +2,7 @@
 import ArticlePaneContent from "./components/article-manager/ArticlePaneContent.vue";
 import ImageFolderPanel from "./components/image-manager/ImageFolderPanel.vue";
 import HitokotoPaneContent from "./components/hitokoto-manager/HitokotoPaneContent.vue";
+import NavigationWebsitePaneContent from "./components/navigation-website-manager/NavigationWebsitePaneContent.vue";
 import DashboardPanel from "./components/DashboardPanel.vue";
 import CronJobPanel from "./components/CronJobPanel.vue";
 import SettingPanel from "./components/SettingPanel.vue";
@@ -22,6 +23,10 @@ const hasArticlePane = computed(() => {
 
 const hasHitokotoPane = computed(() => {
   return !!lyEditorStore.tabs.find((item) => item.type === LyEditorTabPanelEnum.HitokotoPanel);
+});
+
+const hasNavigationWebsitePane = computed(() => {
+  return !!lyEditorStore.tabs.find((item) => item.type === LyEditorTabPanelEnum.NavigationWebsitePanel);
 });
 
 const hasSettingPane = computed(() => {
@@ -72,6 +77,11 @@ const showEditorCore = computed(() => {
     <HitokotoPaneContent
       v-if="hasHitokotoPane"
       v-show="lyEditorStore.currentTab === LyEditorTabPanelEnum.HitokotoPanel"
+    />
+
+    <NavigationWebsitePaneContent
+      v-if="hasNavigationWebsitePane"
+      v-show="lyEditorStore.currentTab === LyEditorTabPanelEnum.NavigationWebsitePanel"
     />
 
     <DashboardPanel

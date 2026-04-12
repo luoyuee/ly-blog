@@ -33,6 +33,20 @@ const activityMenu = ref<ActivityMenuItem[]>([
     icon: "custom:hitokoto"
   },
   {
+    key: LyEditorActivityMenu.NavigationWebsiteManager,
+    label: "导航网站",
+    icon: "ep:link",
+    onClick: () => {
+      lyEditorStore.pushTabItem({
+        key: LyEditorTabPanelEnum.NavigationWebsitePanel,
+        label: "导航网站",
+        type: "navigation-website-panel"
+      });
+
+      lyEditorStore.currentTab = LyEditorTabPanelEnum.NavigationWebsitePanel;
+    }
+  },
+  {
     key: LyEditorActivityMenu.WorkManager,
     label: "项目管理",
     icon: "ep:briefcase"
