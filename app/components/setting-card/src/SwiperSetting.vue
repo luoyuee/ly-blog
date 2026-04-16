@@ -5,7 +5,7 @@ import { BasicModal } from "@/components/basic-modal";
 import { Swiper } from "@/components/swiper";
 import { h, resolveComponent } from "vue";
 import { useConfigStore } from "@/stores";
-import { cloneDeep } from "lodash-es";
+import { cloneDeep } from "es-toolkit";
 import { z } from "zod";
 
 const configStore = useConfigStore();

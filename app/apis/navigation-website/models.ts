@@ -7,6 +7,7 @@ import type {
 
 export interface GetNavigationWebsitePaginatedRequest extends GetPaginatedRequest {
   keyword?: string;
+  type?: number;
   status?: number;
 }
 
@@ -18,6 +19,9 @@ export interface CreateNavigationWebsiteRequest {
   icon?: string;
   tags?: string[] | null;
   description?: string;
+  type?: number | null;
+  hot?: number;
+  is_favorite?: boolean;
   status?: number;
 }
 
@@ -32,9 +36,7 @@ export interface SearchNavigationWebsiteRequest {
 }
 
 /** 搜索导航网站响应 */
-export interface SearchNavigationWebsiteResponse {
-  data: NavigationWebsiteItem[];
-}
+export type SearchNavigationWebsiteResponse = NavigationWebsiteItem[];
 
 /** 获取全部搜索引擎响应 */
 export interface GetSearchEngineListResponse {

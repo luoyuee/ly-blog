@@ -1,4 +1,4 @@
-import { cloneDeep, isEqual, isPlainObject } from "lodash-es";
+import { cloneDeep, isEqual, isPlainObject } from "es-toolkit";
 import { ref, shallowRef, computed, reactive } from "vue";
 
 /** 字段变更信息 */

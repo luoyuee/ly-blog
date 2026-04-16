@@ -4,7 +4,7 @@ import type { IClientConfigHitokoto } from "#shared/types/config";
 import type { WatchStopHandle } from "vue";
 import { getHitokotoTypeOptions } from "@/apis/hitokoto";
 import { updateClientConfig } from "@/apis/config";
-import { cloneDeep, isEqual } from "lodash-es";
+import { cloneDeep, isEqual } from "es-toolkit";
 import { useConfigStore } from "@/stores";
 import { watch } from "vue";
 import { z } from "zod";

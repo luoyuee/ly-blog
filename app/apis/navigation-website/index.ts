@@ -74,7 +74,7 @@ export async function searchNavigationWebsites(
 ): Promise<SearchNavigationWebsiteResponse> {
   try {
     const response = await serviceAxios({
-      url: "/admin/navigation/website/search",
+      url: "/navigation/website/search",
       method: "get",
       params
     });

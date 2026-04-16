@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { IServerConfigStorage } from "#shared/types/config";
 import type { WatchStopHandle } from "vue";
-import { assign, cloneDeep, isEqual } from "lodash-es";
+import { cloneDeep, isEqual } from "es-toolkit";
 import { useServerConfigStore } from "@/stores";
 import { watch } from "vue";
 import { z } from "zod";
@@ -45,7 +45,7 @@ const stopWatch = () => {
 };
 
 onMounted(() => {
-  assign(formData, cloneDeep(serverConfigStore.storage));
+  Object.assign(formData, cloneDeep(serverConfigStore.storage));
   startWatch();
 });
 

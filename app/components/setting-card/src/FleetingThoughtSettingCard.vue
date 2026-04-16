@@ -1,13 +1,12 @@
 <script setup lang="ts">
 import type { IClientConfigFleetingThought } from "#shared/types/config";
 import type { WatchStopHandle } from "vue";
-import { assign, cloneDeep, isEqual } from "lodash-es";
+import { cloneDeep, isEqual } from "es-toolkit";
 import { updateClientConfig } from "@/apis/config";
 import { useConfigStore } from "@/stores";
 import { watch } from "vue";
 import { z } from "zod";
 
-const notif = useNotification();
 const configStore = useConfigStore();
 
 const schema = z.object({
@@ -32,7 +31,7 @@ const stopWatch = () => {
 };
 
 onMounted(() => {
-  assign(formData, cloneDeep(configStore.fleeting_thought));
+  Object.assign(formData, cloneDeep(configStore.fleeting_thought));
   startWatch();
 });
 
@@ -49,9 +48,6 @@ const handleSubmit = async () => {
     });
     await configStore.fetch();
     handleReset();
-    notif.success("更新成功");
-  } catch {
-    notif.error("更新失败");
   } finally {
     state.submitting = false;
   }

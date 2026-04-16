@@ -10,6 +10,9 @@ const schema = z.object({
   icon: z.string().optional(),
   tags: z.array(z.string()).optional().nullable(),
   description: z.string().optional(),
+  type: z.union([z.literal(1), z.literal(2), z.null()]),
+  hot: z.number().int().min(0),
+  is_favorite: z.boolean(),
   status: z.number().int()
 });
 
@@ -28,6 +31,9 @@ export default defineEventHandler(async (event) => {
       icon: body.icon,
       tags: body.tags || undefined,
       description: body.description,
+      type: body.type,
+      hot: body.hot,
+      is_favorite: body.is_favorite,
       status: body.status
     }
   });

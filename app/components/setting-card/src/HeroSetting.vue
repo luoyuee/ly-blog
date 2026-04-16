@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { IClientConfigBackground } from "@@/shared/types/config";
 import type { WatchStopHandle } from "vue";
-import { assign, cloneDeep, isEqual } from "lodash-es";
+import { cloneDeep, isEqual } from "es-toolkit";
 import { updateClientConfig } from "@/apis/config";
 import { useConfigStore } from "@/stores";
 import { watch } from "vue";
@@ -38,7 +38,7 @@ const stopWatch = () => {
 };
 
 onMounted(() => {
-  assign(formData, cloneDeep(configStore.background));
+  Object.assign(formData, cloneDeep(configStore.background));
   startWatch();
 });
 

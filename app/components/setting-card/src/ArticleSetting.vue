@@ -3,7 +3,7 @@ import type { IClientConfigArticle } from "@@/shared/types/config";
 import type { FormSubmitEvent } from "@nuxt/ui";
 import type { WatchStopHandle } from "vue";
 import { BasicModal } from "@/components/basic-modal";
-import { cloneDeep, isEqual } from "lodash-es";
+import { cloneDeep, isEqual } from "es-toolkit";
 import { useConfigStore } from "@/stores";
 import { watch } from "vue";
 import { z } from "zod";

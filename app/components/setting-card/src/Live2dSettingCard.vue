@@ -4,7 +4,7 @@ import { useConfigStore } from "@/stores";
 import { watch } from "vue";
 import { z } from "zod";
 import SettingCard from "./SettingCard.vue";
-import { isEqual } from "lodash-es";
+import { isEqual } from "es-toolkit";
 
 const $notify = useNotification();
 

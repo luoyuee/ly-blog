@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { IClientConfigBeian } from "#shared/types/config";
 import type { WatchStopHandle } from "vue";
-import { assign, cloneDeep, isEqual } from "lodash-es";
+import { cloneDeep, isEqual } from "es-toolkit";
 import { useConfigStore } from "@/stores";
 import { watch } from "vue";
 import { z } from "zod";
@@ -34,7 +34,7 @@ const stopWatch = () => {
 };
 
 onMounted(() => {
-  assign(formData, cloneDeep(configStore.beian));
+  Object.assign(formData, cloneDeep(configStore.beian));
   startWatch();
 });
 

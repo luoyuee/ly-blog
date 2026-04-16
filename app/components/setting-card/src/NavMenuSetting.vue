@@ -5,7 +5,7 @@ import type { FormSubmitEvent } from "@nuxt/ui";
 import { SelectIcon } from "@/components/form/select";
 import { BasicModal } from "@/components/basic-modal";
 import { useConfigStore } from "@/stores";
-import { cloneDeep, isEqual } from "lodash-es";
+import { cloneDeep, isEqual } from "es-toolkit";
 import { watch } from "vue";
 import { z } from "zod";
 import dayjs from "dayjs";

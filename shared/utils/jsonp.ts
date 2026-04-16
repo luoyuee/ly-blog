@@ -1,8 +1,5 @@
 /**
  * @description 用于解决GET类型请求跨域的jsonp插件
- * @param url 请求接口地址
- * @param query 请求入参
- * @returns Promise<T> jsonp响应数据
  */
 
 /** JSONP查询参数类型 */
@@ -10,6 +7,16 @@ type QueryType = Record<string, string | number | boolean>;
 
 /** JSONP回调函数类型 */
 type JsonpCallback<T> = (res: T | null) => void;
+
+/** JSONP选项类型 */
+interface JsonpOptions {
+  /** 请求接口地址（必填） */
+  url: string;
+  /** 请求入参（可选） */
+  query?: QueryType;
+  /** 回调参数名，默认 'callback' */
+  callbackParamName?: string;
+}
 
 /** Window扩展，用于存储jsonp回调 */
 interface JsonpWindow {
@@ -29,11 +36,12 @@ const serializeQuery = (query: QueryType): string => {
 
 /**
  * 发起JSONP跨域请求
- * @param url 请求接口地址
- * @param query 请求入参
+ * @param options JSONP选项
  * @returns Promise<T> jsonp响应数据
  */
-export default function jsonp<T = unknown>(url: string, query: QueryType = {}): Promise<T> {
+export default function jsonp<T = unknown>(options: JsonpOptions): Promise<T> {
+  const { url, query = {}, callbackParamName = "callback" } = options;
+
   return new Promise<T>((resolve, reject) => {
     // 根据时间戳 + 随机数生成唯一的callback回调名
     const callbackName = `jsonp_${Date.now()}_${Math.random().toString().replace(/\D/g, "")}`;
@@ -41,10 +49,10 @@ export default function jsonp<T = unknown>(url: string, query: QueryType = {}): 
     // 创建script标签
     const script = document.createElement("script");
 
-    // 拼接callback参数
+    // 拼接URL
     const separator = url.includes("?") ? "&" : "?";
     const queryString = serializeQuery(query);
-    const fullUrl = `${url}${separator}callback=${callbackName}${queryString ? `&${queryString}` : ""}`;
+    const fullUrl = `${url}${separator}${callbackParamName}=${callbackName}${queryString ? `&${queryString}` : ""}`;
 
     // jsonp核心：通过script的跨域特性发出请求
     script.src = fullUrl;

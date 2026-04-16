@@ -1,8 +1,9 @@
 import type { ArticleCategory } from "@@/prisma/generated/client";
+import { getOKResponse, getBadResponse, getNotFoundResponse } from "@@/server/utils/response";
+import { findParentChain } from "@@/shared/utils/tree";
 import { prisma } from "@@/server/db";
 import { readBody } from "h3";
 import { z } from "zod";
-import { getOKResponse, getBadResponse, getNotFoundResponse } from "@@/server/utils/response";
 
 export default defineEventHandler(async (event) => {
   const schema = z.object({
@@ -53,14 +54,21 @@ export default defineEventHandler(async (event) => {
     }
   }
 
-  let category: ArticleCategory | null = null;
+  let category: Pick<ArticleCategory, "id" | "name" | "icon" | "parent_id"> | undefined = undefined;
+  let categoryLevels: Pick<ArticleCategory, "id" | "name" | "icon" | "parent_id">[] = [];
 
   if (article.category_id) {
-    category = await prisma.articleCategory.findUnique({
-      where: {
-        id: article.category_id,
-        status: 1
-      }
+    const categories = await prisma.articleCategory.findMany({
+      where: { status: 1 },
+      select: { id: true, parent_id: true, name: true, icon: true }
+    });
+
+    category = categories.find((item) => item.id === article.category_id);
+
+    categoryLevels = findParentChain(categories, article.category_id, {
+      idKey: "id",
+      parentKey: "parent_id",
+      includeSelf: true
     });
   }
 
@@ -73,6 +81,7 @@ export default defineEventHandler(async (event) => {
     content_updated_at: article.content_updated_at,
     category_id: category ? category.id : undefined,
     category_name: category ? category.name : undefined,
+    category_levels: categoryLevels,
     title: article.title,
     content: article.content,
     chars: article.chars,

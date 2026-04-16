@@ -3,7 +3,7 @@ import type { IClientConfigMePage } from "#shared/types/config";
 import type { WatchStopHandle } from "vue";
 import { InputTagArea } from "@/components/form/input";
 import { useConfigStore } from "@/stores";
-import { cloneDeep, isEqual } from "lodash-es";
+import { cloneDeep, isEqual } from "es-toolkit";
 import { watch } from "vue";
 import { z } from "zod";
 import SettingCard from "./SettingCard.vue";

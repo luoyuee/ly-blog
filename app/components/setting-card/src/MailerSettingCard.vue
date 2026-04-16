@@ -2,7 +2,7 @@
 import type { IServerConfigMailer } from "#shared/types/config";
 import type { WatchStopHandle } from "vue";
 import { updateServerConfig, verifyEmailConfig } from "@/apis/config";
-import { cloneDeep, isEqual } from "lodash-es";
+import { cloneDeep, isEqual } from "es-toolkit";
 import { useServerConfigStore } from "@/stores";
 import { watch } from "vue";
 import { z } from "zod";

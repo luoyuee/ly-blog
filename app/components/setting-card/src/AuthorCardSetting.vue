@@ -5,7 +5,7 @@ import type { WatchStopHandle } from "vue";
 import { BasicModal } from "@/components/basic-modal";
 import { SelectIcon } from "@/components/form/select";
 import { h, resolveComponent, watch } from "vue";
-import { isEqual, cloneDeep } from "lodash-es";
+import { cloneDeep, isEqual } from "es-toolkit";
 import { useConfigStore } from "@/stores";
 import { z } from "zod";
 

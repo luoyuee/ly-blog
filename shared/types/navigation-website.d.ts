@@ -41,6 +41,9 @@ export interface NavigationWebsiteItem {
   icon?: string;
   tags?: string[];
   description?: string;
+  type?: number | null;
+  hot: number;
+  is_favorite: boolean;
   status: number;
 }
 

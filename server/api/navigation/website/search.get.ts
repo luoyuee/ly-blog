@@ -14,15 +14,23 @@ export default defineEventHandler(async (event) => {
 
   const results = await prisma.navigationWebsite.findMany({
     where: {
-      OR: [
-        { name: { contains: params.keyword } },
-        { url: { contains: params.keyword } },
-        { description: { contains: params.keyword } },
-        { tags: { path: [], string_contains: params.keyword } }
+      status: 1,
+      AND: [
+        {
+          OR: [{ type: 1 }, { type: null }]
+        },
+        {
+          OR: [
+            { name: { contains: params.keyword } },
+            { url: { contains: params.keyword } },
+            { description: { contains: params.keyword } },
+            { tags: { path: [], string_contains: params.keyword } }
+          ]
+        }
       ]
     },
     take: params.limit,
-    orderBy: { id: "desc" }
+    orderBy: [{ is_favorite: "desc" }, { hot: "desc" }, { id: "desc" }]
   });
 
   return getOKResponse(event, results);
