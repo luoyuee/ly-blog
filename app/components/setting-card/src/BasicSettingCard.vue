@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import type { IClientConfigBasic } from "#shared/types/config";
-import type { WatchStopHandle } from "vue";
 import { InputTagArea } from "@/components/form/input";
-import { cloneDeep, isEqual } from "es-toolkit";
+import { useForm } from "@/composables/useForm";
 import { useConfigStore } from "@/stores";
-import { watch } from "vue";
+import { cloneDeep } from "es-toolkit";
 import { z } from "zod";
+import SettingCard from "./SettingCard.vue";
 
 const configStore = useConfigStore();
 
@@ -16,71 +16,52 @@ const schema = z.object({
   keywords: z.string().array()
 });
 
-const formData = reactive<IClientConfigBasic>({
-  title: "",
-  description: "",
-  site_url: undefined,
-  keywords: []
-});
-
-const state = reactive({
-  isChange: false,
-  submitting: false
-});
-
-let formWatcher: WatchStopHandle;
-const startWatch = () => {
-  formWatcher = watch(formData, (newVal) => {
-    state.isChange = !isEqual(newVal, configStore.basic);
-  });
-};
-const stopWatch = () => {
-  if (formWatcher) formWatcher();
+const createInitialFormData = (): IClientConfigBasic => {
+  return cloneDeep(configStore.basic);
 };
 
-onMounted(() => {
-  Object.assign(formData, cloneDeep(configStore.basic));
-  startWatch();
-});
+const { formData, formState, isDirty, setForm, setInitial, resetForm } =
+  useForm<IClientConfigBasic>(createInitialFormData());
+
+const syncFormData = () => {
+  const nextFormData = createInitialFormData();
+  setInitial(nextFormData);
+  setForm(nextFormData);
+};
 
 const formRef = useTemplateRef("formRef");
+
 const handleSave = () => {
   formRef.value?.submit();
 };
 
 const handleSubmit = async () => {
-  state.submitting = true;
+  formState.submitting = true;
+
   try {
     await configStore.update({
-      basic: unref(formData)
+      basic: cloneDeep(formData)
     });
-    handleReset();
+
+    syncFormData();
   } finally {
-    state.submitting = false;
+    formState.submitting = false;
   }
 };
 
 const handleReset = () => {
-  stopWatch();
-
-  Object.assign(formData, cloneDeep(configStore.basic));
-
-  state.isChange = false;
-
-  startWatch();
+  resetForm();
 };
 </script>
 <template>
-  <div class="p-4 shadow-md rounded">
-    <div class="mb-4 flex justify-between items-center min-h-8">
-      <h3 class="pl-2 border-l-4 border-primary leading-none">基本信息</h3>
-      <div v-if="state.isChange" class="space-x-2">
-        <UButton variant="outline" size="sm" :disabled="state.submitting" @click="handleReset">
-          取消
-        </UButton>
-        <UButton size="sm" :loading="state.submitting" @click="handleSave"> 保存 </UButton>
-      </div>
-    </div>
+  <SettingCard
+    id="basic-setting"
+    title="基本信息"
+    :is-change="isDirty"
+    :submitting="formState.submitting"
+    @reset="handleReset"
+    @save="handleSave"
+  >
     <UForm
       ref="formRef"
       class="space-y-2"
@@ -142,5 +123,5 @@ const handleReset = () => {
         <InputTagArea v-model="formData.keywords" class="w-full" />
       </UFormField>
     </UForm>
-  </div>
+  </SettingCard>
 </template>

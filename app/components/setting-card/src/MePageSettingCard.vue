@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import type { IClientConfigMePage } from "#shared/types/config";
-import type { WatchStopHandle } from "vue";
 import { InputTagArea } from "@/components/form/input";
+import { useForm } from "@/composables/useForm";
 import { useConfigStore } from "@/stores";
-import { cloneDeep, isEqual } from "es-toolkit";
-import { watch } from "vue";
+import { cloneDeep } from "es-toolkit";
 import { z } from "zod";
 import SettingCard from "./SettingCard.vue";
 import MePageBaseInfoForm from "./components/MePageBaseInfoForm.vue";
@@ -22,37 +21,12 @@ const configStore = useConfigStore();
  * - configStore.me_page：个人页大部分内容
  * - 头像来源：me_page.author.avatar（/me 页面使用该字段）
  */
-const formData = reactive<IClientConfigMePage>({
-  author: {
-    name: "",
-    avatar: "",
-    location: "",
-    dev_role: "",
-    dev_direction: "",
-    quote: "",
-    tags: []
-  },
-  github_snake: {
-    light: "",
-    dark: ""
-  },
-  intro: {
-    base_info: [],
-    skills: [],
-    interest_tags: [],
-    language_proficiency: []
-  },
-  skills_grid: [],
-  website_list: [],
-  project_list: [],
-  social_links: [],
-  faq_items: []
-});
+const createInitialFormData = (): IClientConfigMePage => {
+  return cloneDeep(configStore.me_page);
+};
 
-const state = reactive({
-  isChange: false,
-  submitting: false
-});
+const { formData, formState, isDirty, setForm, setInitial, resetForm } =
+  useForm<IClientConfigMePage>(createInitialFormData());
 
 /**
  * 顶层表单校验：只做最基础的必填/URL 检查。
@@ -73,24 +47,11 @@ const schema = z.object({
   })
 });
 
-let formWatcher: WatchStopHandle;
-/**
- * 监听表单状态变化，用于显示“取消/保存”按钮。
- * watch(reactiveObject) 在 Vue 3 中默认是 deep 监听，能覆盖嵌套对象/数组修改。
- */
-const startWatch = () => {
-  formWatcher = watch(formData, (newVal) => {
-    state.isChange = !isEqual(newVal, configStore.me_page);
-  });
+const syncFormData = () => {
+  const nextFormData = createInitialFormData();
+  setInitial(nextFormData);
+  setForm(nextFormData);
 };
-const stopWatch = () => {
-  if (formWatcher) formWatcher();
-};
-
-onMounted(() => {
-  Object.assign(formData, cloneDeep(configStore.me_page));
-  startWatch();
-});
 
 const formRef = useTemplateRef("formRef");
 const handleSave = () => {
@@ -98,30 +59,29 @@ const handleSave = () => {
 };
 
 const handleSubmit = async () => {
-  state.submitting = true;
+  formState.submitting = true;
   try {
     await configStore.update({
-      me_page: unref(formData)
+      me_page: cloneDeep(formData)
     });
-    handleReset();
+
+    syncFormData();
   } finally {
-    state.submitting = false;
+    formState.submitting = false;
   }
 };
 
 const handleReset = () => {
-  stopWatch();
-  Object.assign(formData, cloneDeep(configStore.me_page));
-  state.isChange = false;
-  startWatch();
+  resetForm();
 };
 </script>
 
 <template>
   <SettingCard
+    id="me-page-setting"
     title="个人页（Me）配置"
-    :is-change="state.isChange"
-    :submitting="state.submitting"
+    :is-change="isDirty"
+    :submitting="formState.submitting"
     @reset="handleReset"
     @save="handleSave"
   >

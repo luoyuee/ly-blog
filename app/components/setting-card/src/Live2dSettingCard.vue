@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import type { WatchStopHandle } from "vue";
+import { useForm } from "@/composables/useForm";
 import { useConfigStore } from "@/stores";
-import { watch } from "vue";
+import { isEqual } from "es-toolkit";
 import { z } from "zod";
 import SettingCard from "./SettingCard.vue";
-import { isEqual } from "es-toolkit";
 
 const $notify = useNotification();
 
@@ -69,46 +68,61 @@ const schema = z.object({
 
 type FormData = z.output<typeof schema>;
 
-const formData = reactive<FormData>({
-  enabled: undefined,
-  modelsJsonText: ""
-});
-
-const state = reactive({
-  isChange: false,
-  submitting: false
-});
-
-let formWatcher: WatchStopHandle;
-const startWatch = () => {
-  formWatcher = watch(
-    formData,
-    () => {
-      const originalModels = configStore.live2d?.models;
-      const currentModels = formData.modelsJsonText?.trim()
-        ? JSON.parse(formData.modelsJsonText)
-        : undefined;
-
-      state.isChange =
-        formData.enabled !== configStore.live2d?.enabled || !isEqual(currentModels, originalModels);
-    },
-    { deep: true }
-  );
-};
-const stopWatch = () => {
-  if (formWatcher) formWatcher();
+const createInitialFormData = (): FormData => {
+  return {
+    enabled: configStore.live2d?.enabled,
+    modelsJsonText:
+      configStore.live2d?.models && configStore.live2d.models.length > 0
+        ? JSON.stringify(configStore.live2d.models, null, 2)
+        : ""
+  };
 };
 
-onMounted(() => {
-  formData.enabled = configStore.live2d?.enabled;
+const { formData, formState, setForm, setInitial, resetForm } =
+  useForm<FormData>(createInitialFormData());
 
-  const models = configStore.live2d?.models;
-  if (models && models.length > 0) {
-    formData.modelsJsonText = JSON.stringify(models, null, 2);
+const tryParseModels = () => {
+  const modelsJsonText = formData.modelsJsonText?.trim();
+
+  if (!modelsJsonText) {
+    return {
+      success: true,
+      value: undefined
+    } as const;
   }
 
-  startWatch();
+  try {
+    return {
+      success: true,
+      value: JSON.parse(modelsJsonText)
+    } as const;
+  } catch {
+    return {
+      success: false,
+      value: undefined
+    } as const;
+  }
+};
+
+const isLive2dDirty = computed(() => {
+  if (formData.enabled !== configStore.live2d?.enabled) {
+    return true;
+  }
+
+  const parsedModelsResult = tryParseModels();
+
+  if (!parsedModelsResult.success) {
+    return true;
+  }
+
+  return !isEqual(parsedModelsResult.value, configStore.live2d?.models);
 });
+
+const syncFormData = () => {
+  const nextFormData = createInitialFormData();
+  setInitial(nextFormData);
+  setForm(nextFormData);
+};
 
 const formRef = useTemplateRef("formRef");
 const handleSave = () => {
@@ -119,14 +133,17 @@ const handleSave = () => {
  * 解析 JSON 字符串为 models 数组
  */
 const parseModels = () => {
-  if (!formData.modelsJsonText?.trim()) {
-    return undefined;
+  const parsedModelsResult = tryParseModels();
+
+  if (!parsedModelsResult.success) {
+    throw new Error("模型配置 JSON 解析失败");
   }
-  return JSON.parse(formData.modelsJsonText);
+
+  return parsedModelsResult.value;
 };
 
 const handleSubmit = async () => {
-  state.submitting = true;
+  formState.submitting = true;
   try {
     await configStore.update({
       live2d: {
@@ -134,7 +151,7 @@ const handleSubmit = async () => {
         models: parseModels()
       }
     });
-    handleReset();
+    syncFormData();
     $notify.success({
       title: "更新成功"
     });
@@ -144,25 +161,12 @@ const handleSubmit = async () => {
       error
     });
   } finally {
-    state.submitting = false;
+    formState.submitting = false;
   }
 };
 
 const handleReset = () => {
-  stopWatch();
-
-  formData.enabled = configStore.live2d?.enabled;
-
-  const models = configStore.live2d?.models;
-  if (models && models.length > 0) {
-    formData.modelsJsonText = JSON.stringify(models, null, 2);
-  } else {
-    formData.modelsJsonText = "";
-  }
-
-  state.isChange = false;
-
-  startWatch();
+  resetForm();
 };
 
 const modelsPlaceholder = `[
@@ -179,9 +183,10 @@ const modelsPlaceholder = `[
 </script>
 <template>
   <SettingCard
+    id="live2d-setting"
     title="Live2D 看板娘"
-    :is-change="state.isChange"
-    :submitting="state.submitting"
+    :is-change="isLive2dDirty"
+    :submitting="formState.submitting"
     @reset="handleReset"
     @save="handleSave"
   >

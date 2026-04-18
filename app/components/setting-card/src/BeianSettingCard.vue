@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import type { IClientConfigBeian } from "#shared/types/config";
-import type { WatchStopHandle } from "vue";
-import { cloneDeep, isEqual } from "es-toolkit";
+import { cloneDeep } from "es-toolkit";
+import { useForm } from "@/composables/useForm";
 import { useConfigStore } from "@/stores";
-import { watch } from "vue";
 import { z } from "zod";
+import SettingCard from "./SettingCard.vue";
 
 const configStore = useConfigStore();
 
@@ -13,72 +13,52 @@ const schema = z.object({
   icp_code: z.string().optional()
 });
 
-const formData = reactive<IClientConfigBeian>({
-  beian_code: undefined,
-  icp_code: undefined
-});
-
-const state = reactive({
-  isChange: false,
-  submitting: false
-});
-
-let formWatcher: WatchStopHandle;
-const startWatch = () => {
-  formWatcher = watch(formData, (newVal) => {
-    state.isChange = !isEqual(newVal, configStore.author_card);
-  });
-};
-const stopWatch = () => {
-  if (formWatcher) formWatcher();
+const createInitialFormData = (): IClientConfigBeian => {
+  return cloneDeep(configStore.beian);
 };
 
-onMounted(() => {
-  Object.assign(formData, cloneDeep(configStore.beian));
-  startWatch();
-});
+const { formData, formState, isDirty, setForm, setInitial, resetForm } =
+  useForm<IClientConfigBeian>(createInitialFormData());
+
+const syncFormData = () => {
+  const nextFormData = createInitialFormData();
+  setInitial(nextFormData);
+  setForm(nextFormData);
+};
 
 const formRef = useTemplateRef("formRef");
+
 const handleSave = () => {
   formRef.value?.submit();
 };
 
 const handleSubmit = async () => {
-  state.submitting = true;
+  formState.submitting = true;
+
   try {
     await configStore.update({
-      beian: unref(formData)
+      beian: cloneDeep(formData)
     });
-    handleReset();
-  } catch (error) {
-    console.error(error);
+
+    syncFormData();
   } finally {
-    state.submitting = false;
+    formState.submitting = false;
   }
 };
 
 const handleReset = () => {
-  stopWatch();
-
-  formData.beian_code = configStore.beian.beian_code;
-  formData.icp_code = configStore.beian.icp_code;
-
-  state.isChange = false;
-
-  startWatch();
+  resetForm();
 };
 </script>
 <template>
-  <div class="p-4 shadow-md rounded">
-    <div class="mb-4 flex justify-between items-center min-h-8">
-      <h3 class="pl-2 border-l-4 border-primary leading-none">备案信息</h3>
-      <div v-if="state.isChange" class="space-x-2">
-        <UButton variant="outline" size="sm" :disabled="state.submitting" @click="handleReset">
-          取消
-        </UButton>
-        <UButton size="sm" :loading="state.submitting" @click="handleSave"> 保存 </UButton>
-      </div>
-    </div>
+  <SettingCard
+    id="beian-setting"
+    title="备案信息"
+    :is-change="isDirty"
+    :submitting="formState.submitting"
+    @reset="handleReset"
+    @save="handleSave"
+  >
     <UForm
       ref="formRef"
       class="space-y-2"
@@ -110,5 +90,5 @@ const handleReset = () => {
         <UInput v-model="formData.icp_code" class="w-full" placeholder="请输入ICP备案号" />
       </UFormField>
     </UForm>
-  </div>
+  </SettingCard>
 </template>

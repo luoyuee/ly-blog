@@ -1,79 +1,84 @@
 <script setup lang="ts">
 import type { IClientConfigNavMenuItem } from "@@/shared/types/config";
-import type { WatchStopHandle } from "vue";
 import type { FormSubmitEvent } from "@nuxt/ui";
 import { SelectIcon } from "@/components/form/select";
 import { BasicModal } from "@/components/basic-modal";
+import { useForm } from "@/composables/useForm";
 import { useConfigStore } from "@/stores";
-import { cloneDeep, isEqual } from "es-toolkit";
-import { watch } from "vue";
+import { cloneDeep } from "es-toolkit";
 import { z } from "zod";
 import dayjs from "dayjs";
+import SettingCard from "./SettingCard.vue";
 
 const configStore = useConfigStore();
 
-const data = ref<IClientConfigNavMenuItem[]>([]);
+type NavMenuFormData = {
+  items: IClientConfigNavMenuItem[];
+};
+
+const createInitialFormData = (): NavMenuFormData => {
+  return {
+    items: cloneDeep(configStore.nav_menu)
+  };
+};
+
+const {
+  formData: navMenuFormData,
+  formState,
+  isDirty,
+  setForm,
+  setInitial,
+  resetForm: resetNavMenuForm
+} = useForm<NavMenuFormData>(createInitialFormData());
 
 const state = reactive<{
-  isChange: boolean;
-  submitting: boolean;
   modalVisible: boolean;
-  current: IClientConfigNavMenuItem | null;
+  currentParentId: number | null;
+  currentEditId: number | null;
   isEdit: boolean;
 }>({
-  isChange: false,
-  submitting: false,
   modalVisible: false,
-  current: null,
+  currentParentId: null,
+  currentEditId: null,
   isEdit: false
 });
 
-let formWatcher: WatchStopHandle;
-const startWatch = () => {
-  formWatcher = watch(
-    data.value,
-    (newVal) => {
-      state.isChange = !isEqual(newVal, configStore.nav_menu);
-    },
-    { deep: true }
-  );
+const syncFormData = () => {
+  const nextFormData = createInitialFormData();
+  setInitial(nextFormData);
+  setForm(nextFormData);
 };
-const stopWatch = () => {
-  if (formWatcher) formWatcher();
-};
-
-onMounted(() => {
-  data.value = cloneDeep(configStore.nav_menu);
-  startWatch();
-});
 
 const handleSave = async () => {
-  state.submitting = true;
+  formState.submitting = true;
   try {
     await configStore.update({
-      nav_menu: unref(data)
+      nav_menu: cloneDeep(navMenuFormData.items)
     });
 
-    handleReset();
+    syncFormData();
   } finally {
-    state.submitting = false;
+    formState.submitting = false;
   }
 };
 
 const handleReset = () => {
-  stopWatch();
-
-  data.value = cloneDeep(configStore.nav_menu);
-  state.isChange = false;
-
-  startWatch();
+  resetNavMenuForm();
 };
 
-const formData = reactive<IClientConfigNavMenuItem>({
-  id: 0,
-  title: "",
-  show: true
-});
+const createModalInitialFormData = (): IClientConfigNavMenuItem => {
+  return {
+    id: 0,
+    title: "",
+    show: true
+  };
+};
+
+const {
+  formData: modalFormData,
+  setForm: setModalForm,
+  resetForm: resetModalForm
+} = useForm<IClientConfigNavMenuItem>(createModalInitialFormData());
 
 const modalSchema = z.object({
   id: z.number().int(),
@@ -85,56 +90,90 @@ const modalSchema = z.object({
 
 const modalFormRef = useTemplateRef("modalFormRef");
 
-const resetForm = () => {
-  formData.id = 0;
-  formData.title = "";
-  formData.href = undefined;
-  formData.icon = undefined;
-  formData.show = true;
+const findMenuItemById = (
+  list: IClientConfigNavMenuItem[],
+  id: number
+): IClientConfigNavMenuItem | null => {
+  for (const item of list) {
+    if (item.id === id) {
+      return item;
+    }
+
+    if (item.children) {
+      const target = findMenuItemById(item.children, id);
+
+      if (target) {
+        return target;
+      }
+    }
+  }
+
+  return null;
+};
+
+const closeModal = () => {
+  state.modalVisible = false;
+  state.currentParentId = null;
+  state.currentEditId = null;
+  state.isEdit = false;
+  resetModalForm();
+};
+
+const createNewMenuItem = (id: number): IClientConfigNavMenuItem => {
+  return {
+    id,
+    title: "",
+    href: undefined,
+    icon: undefined,
+    show: true
+  };
 };
 
 const handleAddItem = () => {
-  formData.id = new Date().getTime();
-  state.current = null;
+  setModalForm(createNewMenuItem(new Date().getTime()));
+
+  state.currentParentId = null;
+  state.currentEditId = null;
   state.isEdit = false;
   state.modalVisible = true;
 };
 
-const handleEdit = (e: IClientConfigNavMenuItem) => {
-  formData.id = e.id;
-  formData.title = e.title;
-  formData.href = e.href;
-  formData.icon = e.icon;
-  formData.show = e.show;
+const handleEdit = (item: IClientConfigNavMenuItem) => {
+  setModalForm(cloneDeep(item));
 
-  state.current = e;
-
+  state.currentEditId = item.id;
+  state.currentParentId = null;
   state.isEdit = true;
   state.modalVisible = true;
 };
 
 const handleModalSubmit = (event: FormSubmitEvent<z.output<typeof modalSchema>>) => {
-  if (state.isEdit && state.current) {
-    state.current.title = event.data.title;
-    state.current.href = event.data.href;
-    state.current.icon = event.data.icon;
-    state.current.show = event.data.show;
+  if (state.isEdit && state.currentEditId !== null) {
+    const currentItem = findMenuItemById(navMenuFormData.items, state.currentEditId);
+
+    if (currentItem) {
+      currentItem.title = event.data.title;
+      currentItem.href = event.data.href;
+      currentItem.icon = event.data.icon;
+      currentItem.show = event.data.show;
+    }
   } else {
-    if (state.current) {
-      if (state.current.children) {
-        state.current.children.push(cloneDeep(formData));
+    if (state.currentParentId !== null) {
+      const currentParent = findMenuItemById(navMenuFormData.items, state.currentParentId);
+
+      if (currentParent?.children) {
+        currentParent.children.push(cloneDeep(event.data));
       } else {
-        state.current.children = [cloneDeep(formData)];
+        if (currentParent) {
+          currentParent.children = [cloneDeep(event.data)];
+        }
       }
     } else {
-      data.value.push(event.data);
+      navMenuFormData.items.push(event.data);
     }
   }
 
-  state.isChange = true;
-  state.current = null;
-  state.modalVisible = false;
-  resetForm();
+  closeModal();
 };
 
 const handleModalConfirm = () => {
@@ -143,47 +182,54 @@ const handleModalConfirm = () => {
 
 const recursionDelete = (list: IClientConfigNavMenuItem[], id: number) => {
   for (let i = 0; i < list.length; i++) {
-    if (list[i].id === id) {
+    const currentItem = list[i];
+
+    if (!currentItem) {
+      continue;
+    }
+
+    if (currentItem.id === id) {
       list.splice(i, 1);
       return;
-    } else if (list[i].children) {
-      recursionDelete(list[i].children!, id);
+    }
+
+    const children = currentItem.children;
+
+    if (Array.isArray(children) && children.length > 0) {
+      recursionDelete(children, id);
     }
   }
 };
 
 const handleDelete = (id: number) => {
-  recursionDelete(data.value, id);
-  state.isChange = true;
+  recursionDelete(navMenuFormData.items, id);
 };
 
-const handleAddSub = (e: IClientConfigNavMenuItem) => {
-  formData.id = dayjs().unix();
+const handleAddSub = (item: IClientConfigNavMenuItem) => {
+  setModalForm(createNewMenuItem(dayjs().unix()));
 
-  state.current = e;
+  state.currentParentId = item.id;
+  state.currentEditId = null;
   state.isEdit = false;
   state.modalVisible = true;
 };
 </script>
 <template>
-  <div id="nav-menu-setting" class="p-4 shadow-md rounded">
-    <div class="mb-4 flex justify-between items-center min-h-8">
-      <h3 class="pl-2 border-l-4 border-primary leading-none">导航菜单</h3>
-      <div v-if="state.isChange" class="space-x-2">
-        <UButton variant="outline" size="sm" :disabled="state.submitting" @click="handleReset">
-          取消
-        </UButton>
-        <UButton size="sm" :loading="state.submitting" @click="handleSave"> 保存 </UButton>
-      </div>
-    </div>
-
+  <SettingCard
+    id="nav-menu-setting"
+    title="导航菜单"
+    :is-change="isDirty"
+    :submitting="formState.submitting"
+    @reset="handleReset"
+    @save="handleSave"
+  >
     <div>
       <UButton icon="ep:plus" @click="handleAddItem"> 添加导航菜单 </UButton>
     </div>
 
     <USeparator type="dashed" class="my-4" />
 
-    <UTree :items="data" label-key="title">
+    <UTree :items="navMenuFormData.items" label-key="title">
       <template #item-trailing="{ item, level, expanded }">
         <div class="flex items-center gap-x-1">
           <UButton
@@ -212,16 +258,16 @@ const handleAddSub = (e: IClientConfigNavMenuItem) => {
     >
       <UForm
         ref="modalFormRef"
-        :state="formData"
+        :state="modalFormData"
         :schema="modalSchema"
         :validate-on-input-delay="100"
         @submit="handleModalSubmit"
       >
         <UFormField name="title" label="名称">
-          <UInput v-model="formData.title" placeholder="请输入菜单名称" />
+          <UInput v-model="modalFormData.title" placeholder="请输入菜单名称" />
         </UFormField>
         <UFormField name="icon" label="菜单图标">
-          <SelectIcon v-model="formData.icon" placeholder="请选择菜单图标" />
+          <SelectIcon v-model="modalFormData.icon" placeholder="请选择菜单图标" />
         </UFormField>
         <UFormField
           name="href"
@@ -233,7 +279,7 @@ const handleAddSub = (e: IClientConfigNavMenuItem) => {
           }"
         >
           <UInput
-            v-model="formData.href"
+            v-model="modalFormData.href"
             icon="ep:link"
             :disabled="state.isEdit"
             placeholder="请输入链接"
@@ -248,9 +294,9 @@ const handleAddSub = (e: IClientConfigNavMenuItem) => {
             description: 'text-xs text-gray-400'
           }"
         >
-          <USwitch v-model="formData.show" />
+          <USwitch v-model="modalFormData.show" />
         </UFormField>
       </UForm>
     </BasicModal>
-  </div>
+  </SettingCard>
 </template>

@@ -1,16 +1,21 @@
 <script setup lang="ts">
 import type { IClientConfigArticle } from "@@/shared/types/config";
 import type { FormSubmitEvent } from "@nuxt/ui";
-import type { WatchStopHandle } from "vue";
 import { BasicModal } from "@/components/basic-modal";
-import { cloneDeep, isEqual } from "es-toolkit";
+import { useForm } from "@/composables/useForm";
 import { useConfigStore } from "@/stores";
-import { watch } from "vue";
+import { cloneDeep } from "es-toolkit";
 import { z } from "zod";
+import SettingCard from "./SettingCard.vue";
 
 const configStore = useConfigStore();
 
-const formData = reactive<IClientConfigArticle>({});
+const createInitialFormData = (): IClientConfigArticle => {
+  return cloneDeep(configStore.article);
+};
+
+const { formData, formState, isDirty, setForm, setInitial, resetForm } =
+  useForm<IClientConfigArticle>(createInitialFormData());
 
 const schema = z.object({
   comment_max_length: z
@@ -28,25 +33,11 @@ const schema = z.object({
     .optional()
 });
 
-const state = reactive({
-  isChange: false,
-  submitting: false
-});
-
-let formWatcher: WatchStopHandle;
-const startWatch = () => {
-  formWatcher = watch(formData, (newVal) => {
-    state.isChange = !isEqual(newVal, configStore.article);
-  });
+const syncFormData = () => {
+  const nextFormData = createInitialFormData();
+  setInitial(nextFormData);
+  setForm(nextFormData);
 };
-const stopWatch = () => {
-  if (formWatcher) formWatcher();
-};
-
-onMounted(() => {
-  Object.assign(formData, cloneDeep(configStore.article));
-  startWatch();
-});
 
 const formRef = useTemplateRef("formRef");
 
@@ -61,25 +52,20 @@ const handleSave = () => {
  * 文章设置表单提交处理
  */
 const handleSubmit = async () => {
-  state.submitting = true;
+  formState.submitting = true;
   try {
     await configStore.update({
-      article: unref(formData)
+      article: cloneDeep(formData)
     });
 
-    handleReset();
+    syncFormData();
   } finally {
-    state.submitting = false;
+    formState.submitting = false;
   }
 };
 
 const handleReset = () => {
-  formData.comment_max_length = configStore.article.comment_max_length;
-  formData.payment_qr_code = configStore.article.payment_qr_code;
-
-  stopWatch();
-  state.isChange = false;
-  startWatch();
+  resetForm();
 };
 
 const modalState = reactive({
@@ -117,7 +103,6 @@ const handleModalSubmit = (event: FormSubmitEvent<z.output<typeof modalSchema>>)
     formData.payment_qr_code = [{ name, image }];
   }
 
-  state.isChange = true;
   modalState.visible = false;
 };
 
@@ -129,21 +114,17 @@ const handleDelete = (index: number) => {
   if (formData.payment_qr_code) {
     formData.payment_qr_code.splice(index, 1);
   }
-  state.isChange = true;
 };
 </script>
 <template>
-  <div class="p-4 shadow-md rounded">
-    <div class="mb-4 flex justify-between items-center min-h-8">
-      <h3 class="pl-2 border-l-4 border-primary leading-none">文章设置</h3>
-      <div v-if="state.isChange" class="space-x-2">
-        <UButton variant="outline" size="sm" :disabled="state.submitting" @click="handleReset">
-          取消
-        </UButton>
-        <UButton size="sm" :loading="state.submitting" @click="handleSave"> 保存 </UButton>
-      </div>
-    </div>
-
+  <SettingCard
+    id="article-setting"
+    title="文章设置"
+    :is-change="isDirty"
+    :submitting="formState.submitting"
+    @reset="handleReset"
+    @save="handleSave"
+  >
     <UForm
       ref="formRef"
       class="space-y-4"
@@ -211,7 +192,7 @@ const handleDelete = (index: number) => {
         </UFormField>
       </UForm>
     </BasicModal>
-  </div>
+  </SettingCard>
 </template>
 <style scoped lang="scss">
 .qr-list {

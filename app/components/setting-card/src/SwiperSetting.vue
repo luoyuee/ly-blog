@@ -2,29 +2,43 @@
 import type { IClientConfigSwiperItem } from "@@/shared/types/config";
 import type { FormSubmitEvent, TableColumn } from "@nuxt/ui";
 import { BasicModal } from "@/components/basic-modal";
+import { useForm } from "@/composables/useForm";
 import { Swiper } from "@/components/swiper";
 import { h, resolveComponent } from "vue";
 import { useConfigStore } from "@/stores";
 import { cloneDeep } from "es-toolkit";
 import { z } from "zod";
+import SettingCard from "./SettingCard.vue";
 
 const configStore = useConfigStore();
 
 const UButton = resolveComponent("UButton");
 
-const formData = ref<IClientConfigSwiperItem[]>([]);
+type SwiperFormData = {
+  items: IClientConfigSwiperItem[];
+};
 
-const state = reactive({
-  isChange: false,
-  submitting: false
-});
+const createInitialFormData = (): SwiperFormData => {
+  return {
+    items: cloneDeep(configStore.swiper)
+  };
+};
+
+const { formData, formState, isDirty, setForm, setInitial, resetForm } =
+  useForm<SwiperFormData>(createInitialFormData());
+
+const syncFormData = () => {
+  const nextFormData = createInitialFormData();
+  setInitial(nextFormData);
+  setForm(nextFormData);
+};
 
 const modalSchema = z.object({
   title: z.string({ message: "请输入标题" }).min(1, "请输入标题"),
   href: z.url("请输入链接").superRefine((value, ctx) => {
     if (modalState.isEdit) return;
 
-    if (formData.value.find((item) => item.href === value)) {
+    if (formData.items.find((item) => item.href === value)) {
       ctx.addIssue({
         code: "custom",
         message: "链接重复"
@@ -34,26 +48,21 @@ const modalSchema = z.object({
   image: z.string({ message: "请输入图片链接" }).min(1, "请输入图片链接")
 });
 
-onMounted(() => {
-  formData.value = cloneDeep(configStore.swiper);
-});
-
 const handleSave = async () => {
-  state.submitting = true;
+  formState.submitting = true;
   try {
     await configStore.update({
-      swiper: unref(formData)
+      swiper: cloneDeep(formData.items)
     });
 
-    handleReset();
+    syncFormData();
   } finally {
-    state.submitting = false;
+    formState.submitting = false;
   }
 };
 
 const handleReset = () => {
-  formData.value = cloneDeep(configStore.swiper);
-  state.isChange = false;
+  resetForm();
 };
 
 const modalState = reactive({
@@ -82,16 +91,15 @@ const handleModalSubmit = (event: FormSubmitEvent<z.output<typeof modalSchema>>)
   const { title, href, image } = event.data;
 
   if (modalState.isEdit) {
-    const item = formData.value.find((item) => item.href === href);
+    const item = formData.items.find((item) => item.href === href);
     if (item) {
       item.title = title;
       item.image = image;
     }
   } else {
-    formData.value.push({ title, href, image });
+    formData.items.push({ title, href, image });
   }
 
-  state.isChange = true;
   modalState.visible = false;
 };
 
@@ -170,8 +178,7 @@ const columns: TableColumn<IClientConfigSwiperItem>[] = [
           variant: "ghost",
           icon: "ep:delete",
           onClick: () => {
-            formData.value = formData.value.filter((item) => item.href !== href);
-            state.isChange = true;
+            formData.items = formData.items.filter((item) => item.href !== href);
           }
         })
       ]);
@@ -180,18 +187,15 @@ const columns: TableColumn<IClientConfigSwiperItem>[] = [
 ];
 </script>
 <template>
-  <div id="swiper-setting" class="swiper-setting p-4 shadow-md rounded">
-    <div class="mb-4 flex justify-between items-center min-h-8">
-      <h3 class="pl-2 border-l-4 border-primary leading-none">轮播图</h3>
-      <div v-if="state.isChange" class="space-x-2">
-        <UButton variant="outline" size="sm" :disabled="state.submitting" @click="handleReset">
-          取消
-        </UButton>
-        <UButton size="sm" :loading="state.submitting" @click="handleSave"> 保存 </UButton>
-      </div>
-    </div>
-
-    <Swiper v-if="formData && formData.length > 0" :items="formData" class="mb-4 w-[320px]" />
+  <SettingCard
+    id="swiper-setting"
+    title="轮播图"
+    :is-change="isDirty"
+    :submitting="formState.submitting"
+    @reset="handleReset"
+    @save="handleSave"
+  >
+    <Swiper v-if="formData.items.length > 0" :items="formData.items" class="mb-4 w-[320px]" />
 
     <div class="space-y-2">
       <div class="flex justify-between items-center py-2">
@@ -199,7 +203,7 @@ const columns: TableColumn<IClientConfigSwiperItem>[] = [
         <UButton size="xs" icon="ep:plus" @click="handleAdd"> 添加 </UButton>
       </div>
       <div class="border border-muted rounded-md overflow-hidden">
-        <UTable :data="formData" :columns="columns" sticky class="max-h-64" />
+        <UTable :data="formData.items" :columns="columns" sticky class="max-h-64" />
       </div>
     </div>
 
@@ -231,5 +235,5 @@ const columns: TableColumn<IClientConfigSwiperItem>[] = [
         </UFormField>
       </UForm>
     </BasicModal>
-  </div>
+  </SettingCard>
 </template>

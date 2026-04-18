@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import type { IServerConfigCzdb } from "#shared/types/config";
-import type { WatchStopHandle } from "vue";
 import SettingCard from "./SettingCard.vue";
-import { cloneDeep, isEqual } from "es-toolkit";
+import { cloneDeep } from "es-toolkit";
+import { useForm } from "@/composables/useForm";
 import { useServerConfigStore } from "@/stores";
-import { watch } from "vue";
 import { z } from "zod";
 
 const serverConfigStore = useServerConfigStore();
@@ -13,63 +12,50 @@ const schema = z.object({
   download_url: z.union([z.url("请输入正确的下载链接"), z.literal("")]).optional()
 });
 
-const formData = reactive<IServerConfigCzdb>({
-  download_url: undefined
-});
-
-const state = reactive({
-  isChange: false,
-  submitting: false
-});
-
-let formWatcher: WatchStopHandle;
-const startWatch = () => {
-  formWatcher = watch(formData, (newVal) => {
-    state.isChange = !isEqual(newVal, serverConfigStore.czdb || {});
-  });
-};
-const stopWatch = () => {
-  if (formWatcher) formWatcher();
+const createInitialFormData = (): IServerConfigCzdb => {
+  return cloneDeep(serverConfigStore.czdb || {});
 };
 
-onMounted(() => {
-  Object.assign(formData, cloneDeep(serverConfigStore.czdb || {}));
-  startWatch();
-});
+const { formData, formState, isDirty, setForm, setInitial, resetForm } =
+  useForm<IServerConfigCzdb>(createInitialFormData());
+
+const syncFormData = () => {
+  const nextFormData = createInitialFormData();
+  setInitial(nextFormData);
+  setForm(nextFormData);
+};
 
 const formRef = useTemplateRef("formRef");
+
 const handleSave = () => {
   formRef.value?.submit();
 };
 
 const handleSubmit = async () => {
-  state.submitting = true;
+  formState.submitting = true;
+
   try {
     await serverConfigStore.update({
-      czdb: unref(formData)
+      czdb: cloneDeep(formData)
     });
-    handleReset();
+
+    syncFormData();
   } finally {
-    state.submitting = false;
+    formState.submitting = false;
   }
 };
 
 const handleReset = () => {
-  stopWatch();
-
-  Object.assign(formData, cloneDeep(serverConfigStore.czdb || {}));
-
-  state.isChange = false;
-
-  startWatch();
+  resetForm();
 };
 </script>
 
 <template>
   <SettingCard
+    id="czdb-setting"
     title="CZDB 设置"
-    :is-change="state.isChange"
-    :submitting="state.submitting"
+    :is-change="isDirty"
+    :submitting="formState.submitting"
     @reset="handleReset"
     @save="handleSave"
   >

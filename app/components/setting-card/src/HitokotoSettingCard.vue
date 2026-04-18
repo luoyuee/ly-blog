@@ -1,15 +1,14 @@
 <script setup lang="ts">
 import type { HitokotoTypeSelectOption } from "#shared/types/hitokoto";
 import type { IClientConfigHitokoto } from "#shared/types/config";
-import type { WatchStopHandle } from "vue";
 import { getHitokotoTypeOptions } from "@/apis/hitokoto";
-import { updateClientConfig } from "@/apis/config";
-import { cloneDeep, isEqual } from "es-toolkit";
+import { useForm } from "@/composables/useForm";
 import { useConfigStore } from "@/stores";
-import { watch } from "vue";
+import { cloneDeep } from "es-toolkit";
 import { z } from "zod";
+import SettingCard from "./SettingCard.vue";
 
-const notif = useNotification();
+const $notify = useNotification();
 
 const configStore = useConfigStore();
 
@@ -19,7 +18,10 @@ const loadHitokotoTypes = async () => {
   try {
     typeOptions.value = await getHitokotoTypeOptions();
   } catch (error) {
-    notif.error("获取分类失败", error);
+    $notify.error({
+      title: "获取分类失败",
+      error
+    });
   }
 };
 
@@ -28,75 +30,56 @@ const schema = z.object({
   type: z.number().array().optional()
 });
 
-const formData = reactive<IClientConfigHitokoto>({
-  max_length: undefined,
-  type: undefined
-});
-
-const state = reactive({
-  isChange: false,
-  submitting: false
-});
-
-let formWatcher: WatchStopHandle;
-const startWatch = () => {
-  formWatcher = watch(formData, (newVal) => {
-    state.isChange = !isEqual(newVal, configStore.hitokoto);
-  });
+const createInitialFormData = (): IClientConfigHitokoto => {
+  return cloneDeep(configStore.hitokoto);
 };
-const stopWatch = () => {
-  if (formWatcher) formWatcher();
+
+const { formData, formState, isDirty, setForm, setInitial, resetForm } =
+  useForm<IClientConfigHitokoto>(createInitialFormData());
+
+const syncFormData = () => {
+  const nextFormData = createInitialFormData();
+  setInitial(nextFormData);
+  setForm(nextFormData);
 };
 
 onMounted(() => {
   loadHitokotoTypes();
-  console.log(configStore.hitokoto);
-  Object.assign(formData, cloneDeep(configStore.hitokoto));
-  startWatch();
 });
 
 const formRef = useTemplateRef("formRef");
+
 const handleSave = () => {
   formRef.value?.submit();
 };
 
 const handleSubmit = async () => {
-  state.submitting = true;
+  formState.submitting = true;
+
   try {
-    await updateClientConfig({
-      hitokoto: unref(formData)
+    await configStore.update({
+      hitokoto: cloneDeep(formData)
     });
-    await configStore.fetch();
-    handleReset();
-    notif.success("更新成功");
-  } catch (error) {
-    notif.error("更新失败", error);
+
+    syncFormData();
   } finally {
-    state.submitting = false;
+    formState.submitting = false;
   }
 };
 
 const handleReset = () => {
-  stopWatch();
-
-  Object.assign(formData, cloneDeep(configStore.hitokoto));
-
-  state.isChange = false;
-
-  startWatch();
+  resetForm();
 };
 </script>
 <template>
-  <div class="p-4 shadow-md rounded">
-    <div class="mb-4 flex justify-between items-center min-h-8">
-      <h3 class="pl-2 border-l-4 border-primary leading-none">一言</h3>
-      <div v-if="state.isChange" class="space-x-2">
-        <UButton variant="outline" size="sm" :disabled="state.submitting" @click="handleReset">
-          取消
-        </UButton>
-        <UButton size="sm" :loading="state.submitting" @click="handleSave"> 保存 </UButton>
-      </div>
-    </div>
+  <SettingCard
+    id="hitokoto-setting"
+    title="一言"
+    :is-change="isDirty"
+    :submitting="formState.submitting"
+    @reset="handleReset"
+    @save="handleSave"
+  >
     <UForm
       ref="formRef"
       class="space-y-2"
@@ -136,5 +119,5 @@ const handleReset = () => {
         <UInputNumber v-model="formData.max_length" placeholder="请输入文本长度" />
       </UFormField>
     </UForm>
-  </div>
+  </SettingCard>
 </template>

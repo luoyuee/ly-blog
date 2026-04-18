@@ -1,48 +1,36 @@
 <script setup lang="ts">
 import type { IClientConfigAuthorCard, IClientConfigAuthorCardLink } from "@@/shared/types/config";
 import type { FormSubmitEvent, TableColumn } from "@nuxt/ui";
-import type { WatchStopHandle } from "vue";
 import { BasicModal } from "@/components/basic-modal";
 import { SelectIcon } from "@/components/form/select";
-import { h, resolveComponent, watch } from "vue";
-import { cloneDeep, isEqual } from "es-toolkit";
+import { useForm } from "@/composables/useForm";
+import { h, resolveComponent } from "vue";
+import { cloneDeep } from "es-toolkit";
 import { useConfigStore } from "@/stores";
 import { z } from "zod";
+import SettingCard from "./SettingCard.vue";
 
 const configStore = useConfigStore();
 
 const UButton = resolveComponent("UButton");
 const UIcon = resolveComponent("UIcon");
 
-const state = reactive({
-  isChange: false,
-  submitting: false
-});
+const createInitialFormData = (): IClientConfigAuthorCard => {
+  return cloneDeep(configStore.author_card);
+};
 
-const formData = reactive<IClientConfigAuthorCard>({
-  name: "",
-  motto: undefined,
-  links: undefined
-});
+const { formData, formState, isDirty, setForm, setInitial, resetForm } =
+  useForm<IClientConfigAuthorCard>(createInitialFormData());
 
 const schema = z.object({
   name: z.string().min(1, "请输入名称")
 });
 
-let formWatcher: WatchStopHandle;
-const startWatch = () => {
-  formWatcher = watch(formData, (newVal) => {
-    state.isChange = !isEqual(newVal, configStore.author_card);
-  });
+const syncFormData = () => {
+  const nextFormData = createInitialFormData();
+  setInitial(nextFormData);
+  setForm(nextFormData);
 };
-const stopWatch = () => {
-  if (formWatcher) formWatcher();
-};
-
-onMounted(() => {
-  Object.assign(formData, cloneDeep(configStore.author_card));
-  startWatch();
-});
 
 const formRef = useTemplateRef("formRef");
 const handleSave = () => {
@@ -50,30 +38,20 @@ const handleSave = () => {
 };
 
 const handleSubmit = async () => {
-  state.submitting = true;
+  formState.submitting = true;
   try {
     await configStore.update({
-      author_card: unref(formData)
+      author_card: cloneDeep(formData)
     });
 
-    handleReset();
+    syncFormData();
   } finally {
-    state.submitting = false;
+    formState.submitting = false;
   }
 };
 
 const handleReset = () => {
-  stopWatch();
-
-  formData.name = configStore.author_card.name;
-  formData.name_link = configStore.author_card.name_link;
-  formData.avatar = configStore.author_card.avatar;
-  formData.motto = configStore.author_card.motto;
-  formData.links = configStore.author_card.links;
-
-  state.isChange = false;
-
-  startWatch();
+  resetForm();
 };
 
 const modalState = reactive({
@@ -196,17 +174,14 @@ const linkColumns: TableColumn<IClientConfigAuthorCardLink>[] = [
 ];
 </script>
 <template>
-  <div class="p-4 shadow-md rounded">
-    <div class="mb-4 flex justify-between items-center min-h-8">
-      <h3 class="pl-2 border-l-4 border-primary leading-none">作者卡片</h3>
-      <div v-if="state.isChange" class="space-x-2">
-        <UButton variant="outline" size="sm" :disabled="state.submitting" @click="handleReset">
-          取消
-        </UButton>
-        <UButton size="sm" :loading="state.submitting" @click="handleSave"> 保存 </UButton>
-      </div>
-    </div>
-
+  <SettingCard
+    id="author-card-setting"
+    title="作者卡片"
+    :is-change="isDirty"
+    :submitting="formState.submitting"
+    @reset="handleReset"
+    @save="handleSave"
+  >
     <UForm
       ref="formRef"
       class="space-y-2"
@@ -275,5 +250,5 @@ const linkColumns: TableColumn<IClientConfigAuthorCardLink>[] = [
         </UFormField>
       </UForm>
     </BasicModal>
-  </div>
+  </SettingCard>
 </template>

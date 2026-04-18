@@ -1,13 +1,10 @@
 <script setup lang="ts">
 import type { IClientConfigMessageBoard } from "#shared/types/config";
-import type { WatchStopHandle } from "vue";
-import { cloneDeep, isEqual } from "es-toolkit";
-import { updateClientConfig } from "@/apis/config";
+import { useForm } from "@/composables/useForm";
 import { useConfigStore } from "@/stores";
-import { watch } from "vue";
+import { cloneDeep } from "es-toolkit";
 import { z } from "zod";
-
-const $notify = useNotification();
+import SettingCard from "./SettingCard.vue";
 
 const configStore = useConfigStore();
 
@@ -16,73 +13,52 @@ const schema = z.object({
   message_max_length: z.number().optional()
 });
 
-const formData = reactive<IClientConfigMessageBoard>({});
-
-const state = reactive({
-  isChange: false,
-  submitting: false
-});
-
-let formWatcher: WatchStopHandle;
-const startWatch = () => {
-  formWatcher = watch(formData, (newVal) => {
-    state.isChange = !isEqual(newVal, configStore.message_board);
-  });
-};
-const stopWatch = () => {
-  if (formWatcher) formWatcher();
+const createInitialFormData = (): IClientConfigMessageBoard => {
+  return cloneDeep(configStore.message_board);
 };
 
-onMounted(() => {
-  Object.assign(formData, cloneDeep(configStore.message_board));
-  startWatch();
-});
+const { formData, formState, isDirty, setForm, setInitial, resetForm } =
+  useForm<IClientConfigMessageBoard>(createInitialFormData());
+
+const syncFormData = () => {
+  const nextFormData = createInitialFormData();
+  setInitial(nextFormData);
+  setForm(nextFormData);
+};
 
 const formRef = useTemplateRef("formRef");
+
 const handleSave = () => {
   formRef.value?.submit();
 };
 
 const handleSubmit = async () => {
-  state.submitting = true;
+  formState.submitting = true;
+
   try {
-    await updateClientConfig({
-      message_board: unref(formData)
+    await configStore.update({
+      message_board: cloneDeep(formData)
     });
-    await configStore.fetch();
-    handleReset();
-    $notify.success({
-      title: "更新成功"
-    });
-  } catch {
-    $notify.error({
-      title: "更新失败"
-    });
+
+    syncFormData();
   } finally {
-    state.submitting = false;
+    formState.submitting = false;
   }
 };
 
 const handleReset = () => {
-  formData.intro = configStore.message_board.intro;
-  formData.message_max_length = configStore.message_board.message_max_length;
-
-  stopWatch();
-  state.isChange = false;
-  startWatch();
+  resetForm();
 };
 </script>
 <template>
-  <div class="p-4 shadow-md rounded">
-    <div class="mb-4 flex justify-between items-center min-h-8">
-      <h3 class="pl-2 border-l-4 border-primary leading-none">留言板设置</h3>
-      <div v-if="state.isChange" class="space-x-2">
-        <UButton variant="outline" size="sm" :disabled="state.submitting" @click="handleReset">
-          取消
-        </UButton>
-        <UButton size="sm" :loading="state.submitting" @click="handleSave"> 保存 </UButton>
-      </div>
-    </div>
+  <SettingCard
+    id="message-board-setting"
+    title="留言板设置"
+    :is-change="isDirty"
+    :submitting="formState.submitting"
+    @reset="handleReset"
+    @save="handleSave"
+  >
     <UForm
       ref="formRef"
       class="space-y-2"
@@ -119,5 +95,5 @@ const handleReset = () => {
         />
       </UFormField>
     </UForm>
-  </div>
+  </SettingCard>
 </template>

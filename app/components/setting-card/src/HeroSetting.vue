@@ -1,20 +1,19 @@
 <script setup lang="ts">
 import type { IClientConfigBackground } from "@@/shared/types/config";
-import type { WatchStopHandle } from "vue";
-import { cloneDeep, isEqual } from "es-toolkit";
-import { updateClientConfig } from "@/apis/config";
+import { useForm } from "@/composables/useForm";
 import { useConfigStore } from "@/stores";
-import { watch } from "vue";
+import { cloneDeep } from "es-toolkit";
 import { z } from "zod";
+import SettingCard from "./SettingCard.vue";
 
 const configStore = useConfigStore();
 
-const formData = reactive<IClientConfigBackground>({});
+const createInitialFormData = (): IClientConfigBackground => {
+  return cloneDeep(configStore.background);
+};
 
-const state = reactive({
-  isChange: false,
-  submitting: false
-});
+const { formData, formState, isDirty, setForm, setInitial, resetForm } =
+  useForm<IClientConfigBackground>(createInitialFormData());
 
 const schema = z.object({
   home_page_bg: z.string().optional(),
@@ -25,22 +24,11 @@ const schema = z.object({
   article_page_bg: z.string().optional()
 });
 
-let formWatcher: WatchStopHandle;
-const startWatch = () => {
-  formWatcher = watch(formData, (newVal) => {
-    console.log(newVal, configStore.background);
-
-    state.isChange = !isEqual(newVal, configStore.background);
-  });
+const syncFormData = () => {
+  const nextFormData = createInitialFormData();
+  setInitial(nextFormData);
+  setForm(nextFormData);
 };
-const stopWatch = () => {
-  if (formWatcher) formWatcher();
-};
-
-onMounted(() => {
-  Object.assign(formData, cloneDeep(configStore.background));
-  startWatch();
-});
 
 const formRef = useTemplateRef("formRef");
 
@@ -55,42 +43,31 @@ const handleSave = () => {
  * 顶部背景设置表单提交处理
  */
 const handleSubmit = async () => {
-  state.submitting = true;
+  formState.submitting = true;
   try {
-    await updateClientConfig({
-      background: unref(formData)
+    await configStore.update({
+      background: cloneDeep(formData)
     });
-    await configStore.fetch();
-    handleReset();
+
+    syncFormData();
   } finally {
-    state.submitting = false;
+    formState.submitting = false;
   }
 };
 
 const handleReset = () => {
-  formData.home_page_bg = configStore.background.home_page_bg;
-  formData.home_title = configStore.background.home_title;
-  formData.home_sub_title = configStore.background.home_sub_title;
-  formData.catalog_page_bg = configStore.background.catalog_page_bg;
-  formData.tag_page_bg = configStore.background.tag_page_bg;
-  formData.article_page_bg = configStore.background.article_page_bg;
-
-  stopWatch();
-  state.isChange = false;
-  startWatch();
+  resetForm();
 };
 </script>
 <template>
-  <div class="background-setting p-4 shadow-md rounded">
-    <div class="mb-4 flex justify-between items-center min-h-8">
-      <h3 class="pl-2 border-l-4 border-primary leading-none">顶部背景设置</h3>
-      <div v-if="state.isChange" class="space-x-2">
-        <UButton variant="outline" size="sm" :disabled="state.submitting" @click="handleReset">
-          取消
-        </UButton>
-        <UButton size="sm" :loading="state.submitting" @click="handleSave"> 保存 </UButton>
-      </div>
-    </div>
+  <SettingCard
+    id="hero-setting"
+    title="顶部背景设置"
+    :is-change="isDirty"
+    :submitting="formState.submitting"
+    @reset="handleReset"
+    @save="handleSave"
+  >
     <UForm
       ref="formRef"
       class="space-y-3"
@@ -163,5 +140,5 @@ const handleReset = () => {
         <UInput v-model="formData.article_page_bg" placeholder="随机图片" icon="ep:link" />
       </UFormField>
     </UForm>
-  </div>
+  </SettingCard>
 </template>

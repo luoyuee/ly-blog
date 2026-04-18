@@ -1,21 +1,23 @@
 <script setup lang="ts">
 import type { IServerConfigMailer } from "#shared/types/config";
-import type { WatchStopHandle } from "vue";
-import { updateServerConfig, verifyEmailConfig } from "@/apis/config";
-import { cloneDeep, isEqual } from "es-toolkit";
-import { useServerConfigStore } from "@/stores";
-import { watch } from "vue";
-import { z } from "zod";
 import type { FormSubmitEvent } from "@nuxt/ui";
+import { verifyEmailConfig } from "@/apis/config";
+import { useForm } from "@/composables/useForm";
+import { useServerConfigStore } from "@/stores";
+import { cloneDeep } from "es-toolkit";
+import { z } from "zod";
+import SettingCard from "./SettingCard.vue";
 
 const $notify = useNotification();
 
 const serverConfigStore = useServerConfigStore();
 
-const formData = reactive<IServerConfigMailer>({
-  enabled: false,
-  tls: true
-});
+const createInitialFormData = (): IServerConfigMailer => {
+  return cloneDeep(serverConfigStore.mailer);
+};
+
+const { formData, formState, isDirty, setForm, setInitial, resetForm } =
+  useForm<IServerConfigMailer>(createInitialFormData());
 
 const schema = z.object({
   host: z.string(),
@@ -28,52 +30,25 @@ const schema = z.object({
   enabled: z.boolean().optional()
 });
 
-const state = reactive({
-  isChange: false,
-  submitting: false
-});
-
-let formWatcher: WatchStopHandle;
-const startWatch = () => {
-  formWatcher = watch(formData, (newVal) => {
-    state.isChange = !isEqual(newVal, serverConfigStore.mailer);
-  });
+const syncFormData = () => {
+  const nextFormData = createInitialFormData();
+  setInitial(nextFormData);
+  setForm(nextFormData);
 };
-const stopWatch = () => {
-  if (formWatcher) formWatcher();
-};
-
-onMounted(() => {
-  Object.assign(formData, cloneDeep(serverConfigStore.mailer));
-  startWatch();
-});
 
 const handleReset = () => {
-  stopWatch();
-
-  // formData.host = serverConfigStore.mailer.host;
-  // formData.port = serverConfigStore.mailer.port;
-  // formData.tls = serverConfigStore.mailer.tls;
-  // formData.user = serverConfigStore.mailer.user;
-  // formData.pass = serverConfigStore.mailer.pass;
-  // formData.notify_email = serverConfigStore.mailer.notify_email;
-  // formData.comment_notify_enabled = serverConfigStore.mailer.comment_notify_enabled;
-  // formData.enabled = serverConfigStore.mailer.enabled;
-
-  Object.assign(formData, cloneDeep(serverConfigStore.mailer));
-
-  state.isChange = false;
-
-  startWatch();
+  resetForm();
 };
 
 const formRef = useTemplateRef("formRef");
+
 const handleSave = () => {
   formRef.value?.submit();
 };
 
 const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => {
-  state.submitting = true;
+  formState.submitting = true;
+
   try {
     if (formData.enabled) {
       await verifyEmailConfig({
@@ -90,26 +65,18 @@ const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => 
       title: "验证失败",
       error
     });
-    state.submitting = false;
+    formState.submitting = false;
     return;
   }
 
   try {
-    await updateServerConfig({
-      mailer: unref(formData)
+    await serverConfigStore.update({
+      mailer: cloneDeep(formData)
     });
-    await serverConfigStore.fetch();
-    handleReset();
-    $notify.success({
-      title: "更新成功"
-    });
-  } catch (error) {
-    $notify.error({
-      title: "更新失败",
-      error
-    });
+
+    syncFormData();
   } finally {
-    state.submitting = false;
+    formState.submitting = false;
   }
 };
 
@@ -139,17 +106,14 @@ const handleTestEmail = async () => {
 };
 </script>
 <template>
-  <div class="p-4 shadow-md rounded">
-    <div class="mb-4 flex justify-between items-center min-h-8">
-      <h3 class="pl-2 border-l-4 border-primary leading-none">邮件设置</h3>
-      <div v-if="state.isChange" class="space-x-2">
-        <UButton variant="outline" size="sm" :disabled="state.submitting" @click="handleReset">
-          取消
-        </UButton>
-        <UButton size="sm" :loading="state.submitting" @click="handleSave"> 保存 </UButton>
-      </div>
-    </div>
-
+  <SettingCard
+    id="mailer-setting"
+    title="邮件设置"
+    :is-change="isDirty"
+    :submitting="formState.submitting"
+    @reset="handleReset"
+    @save="handleSave"
+  >
     <UForm
       ref="formRef"
       class="space-y-2"
@@ -272,5 +236,5 @@ const handleTestEmail = async () => {
         <USwitch v-model="formData.comment_notify_enabled" />
       </UFormField>
     </UForm>
-  </div>
+  </SettingCard>
 </template>

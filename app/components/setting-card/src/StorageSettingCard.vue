@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import type { IServerConfigStorage } from "#shared/types/config";
-import type { WatchStopHandle } from "vue";
-import { cloneDeep, isEqual } from "es-toolkit";
+import { useForm } from "@/composables/useForm";
 import { useServerConfigStore } from "@/stores";
-import { watch } from "vue";
+import { cloneDeep } from "es-toolkit";
 import { z } from "zod";
+import SettingCard from "./SettingCard.vue";
 
 const { t } = useI18n();
 
@@ -25,72 +25,52 @@ const schema = z.object({
   secret_key: z.string()
 });
 
-const formData = reactive<IServerConfigStorage>({});
+const createInitialFormData = (): IServerConfigStorage => {
+  return cloneDeep(serverConfigStore.storage);
+};
+
+const { formData, formState, isDirty, setForm, setInitial, resetForm } =
+  useForm<IServerConfigStorage>(createInitialFormData());
 
 const isLocal = computed(() => formData.type === "local");
 
-const state = reactive({
-  isChange: false,
-  submitting: false
-});
-
-let formWatcher: WatchStopHandle;
-const startWatch = () => {
-  formWatcher = watch(formData, (newVal) => {
-    state.isChange = !isEqual(newVal, serverConfigStore.storage);
-  });
+const syncFormData = () => {
+  const nextFormData = createInitialFormData();
+  setInitial(nextFormData);
+  setForm(nextFormData);
 };
-const stopWatch = () => {
-  if (formWatcher) formWatcher();
-};
-
-onMounted(() => {
-  Object.assign(formData, cloneDeep(serverConfigStore.storage));
-  startWatch();
-});
 
 const handleSubmit = async () => {
   try {
-    state.submitting = true;
+    formState.submitting = true;
     await serverConfigStore.update({
-      storage: unref(formData)
+      storage: cloneDeep(formData)
     });
-    handleReset();
+
+    syncFormData();
   } finally {
-    state.submitting = false;
+    formState.submitting = false;
   }
 };
+
 const formRef = useTemplateRef("formRef");
+
 const handleSave = () => {
   formRef.value?.submit();
 };
 
 const handleReset = () => {
-  stopWatch();
-
-  Object.assign(formData, cloneDeep(serverConfigStore.storage));
-
-  state.isChange = false;
-
-  startWatch();
+  resetForm();
 };
 </script>
 <template>
-  <div class="p-4 shadow-md rounded">
-    <div class="mb-4 flex justify-between items-center min-h-8">
-      <h3 class="pl-2 border-l-4 border-primary leading-none">
-        {{ t("components.settingCard.storage.title") }}
-      </h3>
-      <div v-if="state.isChange" class="space-x-2">
-        <UButton variant="outline" size="sm" :disabled="state.submitting" @click="handleReset">
-          {{ t("common.cancel") }}
-        </UButton>
-        <UButton size="sm" :loading="state.submitting" @click="handleSave">
-          {{ t("common.save") }}
-        </UButton>
-      </div>
-    </div>
-
+  <SettingCard
+    :title="t('components.settingCard.storage.title')"
+    :is-change="isDirty"
+    :submitting="formState.submitting"
+    @reset="handleReset"
+    @save="handleSave"
+  >
     <UForm
       ref="formRef"
       class="space-y-2"
@@ -293,5 +273,5 @@ const handleReset = () => {
         />
       </UFormField>
     </UForm>
-  </div>
+  </SettingCard>
 </template>
