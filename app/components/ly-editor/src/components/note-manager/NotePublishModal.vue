@@ -26,6 +26,17 @@ const userStore = useUserStore();
 
 const $notify = useNotification();
 
+/**
+ * 计算属性：自定义 URL 的固定访问前缀。
+ */
+const customUrlPrefix = computed(() => {
+  if (import.meta.client) {
+    return `${window.location.origin}/a/`;
+  }
+
+  return "/a/";
+});
+
 const state = reactive<{
   visible: boolean;
   path?: string;
@@ -206,9 +217,24 @@ lyEditorEmitter.on("cmd.note-manager:publish:article", async (e: FolderTreeItem)
   initData();
 });
 
-const handleInputCustomUrl = () => {
+/**
+ * 复制完整的自定义访问链接。
+ */
+const handleCopyCustomUrl = async () => {
   if (!formData.custom_url) {
-    formData.custom_url_access_only = false;
+    return;
+  }
+
+  try {
+    await navigator.clipboard.writeText(`${customUrlPrefix.value}${formData.custom_url}`);
+    $notify.success({
+      title: "复制成功"
+    });
+  } catch (error) {
+    $notify.error({
+      title: "复制失败",
+      error
+    });
   }
 };
 
@@ -271,7 +297,21 @@ const handleChangePinned = () => {
               <UInput v-model="formData.password" />
             </UFormField>
             <UFormField label="自定义URL访问" name="custom_url">
-              <UInput v-model="formData.custom_url" icon="ep:link" @input="handleInputCustomUrl" />
+              <UFieldGroup class="w-full">
+                <UBadge variant="outline" color="neutral" :label="customUrlPrefix" />
+                <UInput v-model="formData.custom_url">
+                  <template #trailing>
+                    <UButton
+                      color="neutral"
+                      variant="ghost"
+                      size="xs"
+                      icon="i-lucide-copy"
+                      :disabled="!formData.custom_url"
+                      @click="handleCopyCustomUrl"
+                    />
+                  </template>
+                </UInput>
+              </UFieldGroup>
             </UFormField>
 
             <div class="flex gap-4 items-center pb-4">
