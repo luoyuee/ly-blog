@@ -1,6 +1,7 @@
 import type { Prisma } from "@@/prisma/generated/client";
 import { getBadResponse, getOKResponse } from "@@/server/utils/response";
 import { prisma } from "@@/server/db";
+import { isNil } from "es-toolkit";
 import { z } from "zod";
 
 const schema = z.object({
@@ -16,7 +17,11 @@ export default defineEventHandler(async (event) => {
 
   if (error) return getBadResponse(event, error.message);
 
-  const where: Prisma.NavigationWebsiteWhereInput = {};
+  const where: Prisma.NavigationWebsiteWhereInput = {
+    status: {
+      not: 0
+    }
+  };
   const andConditions: Prisma.NavigationWebsiteWhereInput[] = [];
 
   if (params.keyword) {
@@ -30,18 +35,12 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  if (params.status !== undefined) {
+  if (!isNil(params.status) && params.status !== 0) {
     where.status = params.status;
   }
 
-  if (params.type !== undefined) {
-    if (params.type === 1) {
-      andConditions.push({
-        OR: [{ type: 1 }, { type: null }]
-      });
-    } else {
-      where.type = params.type;
-    }
+  if (!isNil(params.type)) {
+    where.type = params.type;
   }
 
   if (andConditions.length > 0) {

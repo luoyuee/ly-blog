@@ -19,7 +19,7 @@ export interface CreateNavigationWebsiteRequest {
   icon?: string;
   tags?: string[] | null;
   description?: string;
-  type?: number | null;
+  type?: number;
   hot?: number;
   is_favorite?: boolean;
   status?: number;

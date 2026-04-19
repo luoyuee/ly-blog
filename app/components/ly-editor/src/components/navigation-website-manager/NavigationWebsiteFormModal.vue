@@ -21,10 +21,16 @@ const schema = z.object({
   icon: z.url("请输入有效的图标URL地址").optional(),
   tags: z.array(z.string()).optional().nullable(),
   description: z.string().optional(),
+  type: z.number().int().default(1),
+  hot: z.number().int().default(0),
+  is_favorite: z.boolean().default(false),
   status: z.number().int().default(1)
 });
 
 const { formData, resetForm, setForm } = useForm<NavigationWebsiteForm>({
+  type: 1,
+  hot: 0,
+  is_favorite: false,
   status: 1
 });
 
@@ -44,6 +50,7 @@ lyEditorEmitter.on("cmd.modal-manager:open:navigation-website-form", handleOpen)
 
 const submitting = ref(false);
 const formRef = useTemplateRef("formRef");
+
 const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => {
   try {
     submitting.value = true;
@@ -56,6 +63,9 @@ const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => 
         icon: event.data.icon,
         tags: event.data.tags,
         description: event.data.description,
+        type: event.data.type,
+        hot: event.data.hot,
+        is_favorite: event.data.is_favorite,
         status: event.data.status
       });
 
@@ -69,6 +79,9 @@ const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => 
         icon: event.data.icon,
         tags: event.data.tags,
         description: event.data.description,
+        type: event.data.type,
+        hot: event.data.hot,
+        is_favorite: event.data.is_favorite,
         status: event.data.status
       });
 
@@ -136,12 +149,30 @@ const handleCancel = () => {
         <UTextarea v-model="formData.description" placeholder="请输入网站描述" />
       </UFormField>
 
+      <UFormField name="type" label="类型">
+        <USelect
+          v-model="formData.type"
+          :items="[
+            { label: '网站', value: 1 },
+            { label: '书签', value: 2 }
+          ]"
+        />
+      </UFormField>
+
+      <UFormField name="hot" label="热度">
+        <UInputNumber v-model="formData.hot" :min="0" placeholder="请输入热度，默认 0" />
+      </UFormField>
+
+      <UFormField name="is_favorite" label="收藏">
+        <USwitch v-model="formData.is_favorite" />
+      </UFormField>
+
       <UFormField name="status" label="状态">
         <USelect
           v-model="formData.status"
           :items="[
             { label: '启用', value: 1 },
-            { label: '禁用', value: 0 }
+            { label: '禁用', value: 2 }
           ]"
         />
       </UFormField>

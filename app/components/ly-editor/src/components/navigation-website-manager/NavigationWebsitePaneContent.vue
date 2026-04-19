@@ -22,6 +22,7 @@ const state = reactive<{
   total: number;
   keyword?: string;
   highlightKeyword?: string;
+  type: number;
   status: number;
   loading: boolean;
 }>({
@@ -30,6 +31,7 @@ const state = reactive<{
   total: 0,
   keyword: undefined,
   highlightKeyword: undefined,
+  type: -1,
   status: -1,
   loading: false
 });
@@ -38,7 +40,37 @@ const state = reactive<{
 const statusOptions = [
   { label: "全部", value: -1 },
   { label: "启用", value: 1 },
-  { label: "禁用", value: 0 }
+  { label: "禁用", value: 2 }
+];
+
+/**
+ * 获取状态展示信息。
+ */
+const getStatusMeta = (status: number) => {
+  switch (status) {
+    case 1:
+      return {
+        label: "启用",
+        className: "text-green-400"
+      };
+    case 2:
+      return {
+        label: "禁用",
+        className: "text-amber-400"
+      };
+    default:
+      return {
+        label: "未知",
+        className: "text-red-400"
+      };
+  }
+};
+
+/** 类型筛选选项 */
+const typeOptions = [
+  { label: "全部", value: -1 },
+  { label: "网站", value: 1 },
+  { label: "书签", value: 2 }
 ];
 
 /** 表格列定义 */
@@ -115,16 +147,51 @@ const columns: TableColumn<NavigationWebsiteItem>[] = [
     cell: ({ row }) => h("div", { class: "max-w-48 truncate" }, row.getValue("description") ?? "-")
   },
   {
+    accessorKey: "type",
+    header: "类型",
+    cell: ({ row }) => {
+      const type = row.original.type;
+      return h(
+        "span",
+        {
+          class: type === 2 ? "text-sky-400" : "text-emerald-400"
+        },
+        type === 2 ? "书签" : "网站"
+      );
+    }
+  },
+  {
+    accessorKey: "hot",
+    header: "热度",
+    cell: ({ row }) => h("div", row.getValue("hot") ?? 0)
+  },
+  {
+    accessorKey: "is_favorite",
+    header: "收藏",
+    cell: ({ row }) => {
+      const isFavorite = row.getValue<boolean>("is_favorite");
+      return h(
+        "span",
+        {
+          class: isFavorite ? "text-yellow-400" : "text-gray-400"
+        },
+        isFavorite ? "已收藏" : "未收藏"
+      );
+    }
+  },
+  {
     accessorKey: "status",
     header: "状态",
     cell: ({ row }) => {
       const status = row.getValue<number>("status");
+      const meta = getStatusMeta(status);
+
       return h(
         "span",
         {
-          class: status === 1 ? "text-green-400" : "text-red-400"
+          class: meta.className
         },
-        status === 1 ? "启用" : "禁用"
+        meta.label
       );
     }
   },
@@ -195,6 +262,7 @@ const loadData = async () => {
       page: state.page,
       per_page: state.per_page,
       keyword,
+      type: state.type === -1 ? undefined : state.type,
       status: state.status === -1 ? undefined : state.status
     });
 
@@ -229,7 +297,7 @@ lyEditorEmitter.on("notify.navigation-website-form:submitted", loadData);
 const handleDelete = (e: NavigationWebsiteItem) => {
   $msgBox.error({
     title: "确认删除?",
-    message: `即将删除「${e.name}」，删除后将无法恢复，是否继续？`,
+    message: `即将删除「${e.name}」，是否继续？`,
     confirmButtonText: "删除",
     confirmButtonProps: {
       color: "error"
@@ -259,6 +327,8 @@ const handleDelete = (e: NavigationWebsiteItem) => {
       </div>
 
       <UFieldGroup>
+        <USelect v-model="state.type" :items="typeOptions" class="w-24" />
+
         <USelect v-model="state.status" :items="statusOptions" class="w-24" />
 
         <UInput v-model.trim="state.keyword" class="w-48" placeholder="请输入关键词" />

@@ -15,18 +15,11 @@ export default defineEventHandler(async (event) => {
   const results = await prisma.navigationWebsite.findMany({
     where: {
       status: 1,
-      AND: [
-        {
-          OR: [{ type: 1 }, { type: null }]
-        },
-        {
-          OR: [
-            { name: { contains: params.keyword } },
-            { url: { contains: params.keyword } },
-            { description: { contains: params.keyword } },
-            { tags: { path: [], string_contains: params.keyword } }
-          ]
-        }
+      OR: [
+        { name: { contains: params.keyword } },
+        { url: { contains: params.keyword } },
+        { description: { contains: params.keyword } },
+        { tags: { path: [], string_contains: params.keyword } }
       ]
     },
     take: params.limit,

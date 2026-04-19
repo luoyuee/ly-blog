@@ -16,7 +16,7 @@ const schema = z.object({
   url: z.url("请输入有效的URL地址"),
   icon: z.string({ message: "请输入图标" }).min(1, "请输入图标"),
   description: z.string().optional(),
-  status: z.number().default(1)
+  status: z.number().int().default(1)
 });
 
 const { formData, formState, resetForm, setForm } = useForm<SearchEngineForm>({
@@ -126,8 +126,14 @@ const handleCancel = () => {
         <UTextarea v-model="formData.description" placeholder="搜索引擎描述（可选）" />
       </UFormField>
 
-      <UFormField name="status" label="是否启用">
-        <USwitch v-model="formData.status" :true-value="1" :false-value="0" />
+      <UFormField name="status" label="状态">
+        <USelect
+          v-model="formData.status"
+          :items="[
+            { label: '启用', value: 1 },
+            { label: '禁用', value: 2 }
+          ]"
+        />
       </UFormField>
     </UForm>
   </BasicModal>

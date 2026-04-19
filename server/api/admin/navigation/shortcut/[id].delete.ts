@@ -8,8 +8,13 @@ export default defineEventHandler(async (event) => {
 
   if (error) return getBadResponse(event, error.message);
 
-  await prisma.navigationShortcut.delete({
-    where: { id }
+  await prisma.navigationShortcut.update({
+    where: { id },
+    data: {
+      updated_at: new Date(),
+      updated_by: event.context.user.id,
+      status: 0
+    }
   });
 
   return getOKResponse(event);

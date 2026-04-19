@@ -10,7 +10,7 @@ const schema = z.object({
   icon: z.string().optional(),
   tags: z.array(z.string()).optional().nullable(),
   description: z.string().optional(),
-  type: z.union([z.literal(1), z.literal(2), z.null()]),
+  type: z.number().int(),
   hot: z.number().int().min(0),
   is_favorite: z.boolean(),
   status: z.number().int()

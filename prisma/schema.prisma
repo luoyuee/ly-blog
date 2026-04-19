@@ -387,10 +387,10 @@ model NavigationWebsite {
   icon        String?   @db.VarChar(512)
   tags        Json?
   description String?   @db.VarChar(1024)
-  type        Int? // 1: 网站 2: 书签 null: 按网站处理
+  type        Int       @default(1) // 1: 网站 2: 书签
   hot         Int       @default(0)
   is_favorite Boolean   @default(false)
-  status      Int       @default(1)
+  status      Int       @default(1) // 0:已删除，1:正常状态，2:禁用状态
 
   @@map("navigation_website")
 }
@@ -405,7 +405,7 @@ model NavigationSearchEngine {
   description String?   @db.VarChar(1024)
   url         String    @db.VarChar(512)
   icon        String    @db.VarChar(512)
-  status      Int       @default(1)
+  status      Int       @default(1) // 0:已删除，1:正常状态，2:禁用状态
 
   @@map("navigation_search_engine")
 }
@@ -420,7 +420,7 @@ model NavigationShortcut {
   description String?   @db.VarChar(1024)
   url         String    @db.VarChar(512)
   icon        String    @db.VarChar(512)
-  status      Int       @default(1)
+  status      Int       @default(1) // 0:已删除，1:正常状态，2:禁用状态
 
   @@map("navigation_shortcut")
 }

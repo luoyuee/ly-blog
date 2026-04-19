@@ -16,9 +16,13 @@ export default defineEventHandler(async (event) => {
 
   if (error) return getBadResponse(event, error.message);
 
-  const where: Prisma.NavigationShortcutWhereInput = {};
+  const where: Prisma.NavigationShortcutWhereInput = {
+    status: {
+      not: 0
+    }
+  };
 
-  if (!isNil(params.status)) {
+  if (!isNil(params.status) && params.status !== 0) {
     where.status = params.status;
   }
 

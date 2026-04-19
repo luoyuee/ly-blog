@@ -3,6 +3,11 @@ import { prisma } from "@@/server/db";
 
 export default defineEventHandler(async (event) => {
   const results = await prisma.navigationSearchEngine.findMany({
+    where: {
+      status: {
+        not: 0
+      }
+    },
     orderBy: { id: "desc" }
   });
 
