@@ -1,5 +1,5 @@
 import type { ComputedRef, Reactive, VNode } from "vue";
-import { computed, reactive, useSlots } from "vue";
+import { Comment, computed, reactive, Text, useSlots } from "vue";
 
 type SlotsExistResult<T extends string | string[]> = T extends string
   ? ComputedRef<boolean>

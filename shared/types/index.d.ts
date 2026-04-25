@@ -1,5 +1,13 @@
 import type { HTTPMethod } from "h3";
 
+export type UISize = "xs" | "sm" | "md" | "lg" | "xl";
+
+export type JsonValue = string | number | boolean | null | JsonObject | JsonValue[];
+
+export type JsonObject = {
+  [key: string]: JsonValue;
+};
+
 export interface LogMessage {
   ip: string;
   path: string;

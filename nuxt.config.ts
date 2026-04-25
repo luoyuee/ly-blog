@@ -1,4 +1,5 @@
 import tailwindcss from "@tailwindcss/vite";
+import { devPages } from "./app/dev-pages";
 import injectMetadata from "./vite-config/inject-metadata";
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
@@ -90,6 +91,18 @@ export default defineNuxtConfig({
       compilerOptions: {
         lib: ["DOM", "ESNext"]
       }
+    }
+  },
+  hooks: {
+    /**
+     * 仅在开发环境下注册组件示例页，避免测试路由进入生产构建的页面清单。
+     */
+    "pages:extend"(pages) {
+      if (process.env.NODE_ENV !== "development") {
+        return;
+      }
+
+      pages.push(...devPages);
     }
   }
 });
