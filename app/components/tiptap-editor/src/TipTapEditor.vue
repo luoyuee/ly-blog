@@ -1,37 +1,13 @@
-<template>
-  <client-only>
-    <template #fallback>
-      <div class="h-[200px]"></div>
-    </template>
-    <div class="tiptap-editor">
-      <div v-if="!readonly" class="tiptap-editor__toolbar">
-        <template v-for="(item, index) in toolbarItems" :key="index">
-          <div v-if="item.type === 'divider'" class="tiptap-editor__toolbar-divider"></div>
-          <button
-            v-else
-            class="tiptap-editor__toolbar-btn"
-            :class="{ 'is-active': item.isActive ? item.isActive() : false }"
-            :title="item.title"
-            :disabled="disabled"
-            @click="item.action"
-          >
-            <UIcon :name="item.icon" :size="16" />
-          </button>
-        </template>
-      </div>
-
-      <div class="tiptap-editor__container" @click.self="focusEditor">
-        <editor-content class="tiptap-editor__container-content" :editor="editor" />
-      </div>
-    </div>
-  </client-only>
-</template>
-
 <script setup lang="ts">
-import { useEditor, EditorContent } from "@tiptap/vue-3";
-import { useToolbar } from "./hooks/useToolbar";
-import { useLowlight } from "./hooks/useLowlight";
-import { useExtensions } from "./hooks/useExtensions";
+import type { Editor } from "@tiptap/vue-3";
+import type { PropType } from "vue";
+import { bubbleToolbarItems, fixedToolbarItems } from "./config/toolbarItems";
+import { computed } from "vue";
+import EditorLinkPopover from "./components/EditorLinkPopover.vue";
+import EditorTextColorPopover from "./components/EditorTextColorPopover.vue";
+import EditorHighlightPopover from "./components/EditorHighlightPopover.vue";
+import EditorCharacterCount from "./components/EditorCharacterCount.vue";
+import { createExtensions } from "./config/createExtensions";
 
 const modelValue = defineModel<string>({ default: "" });
 
@@ -47,59 +23,81 @@ const props = defineProps({
   placeholder: {
     type: String,
     default: "开始输入内容..."
+  },
+  contentType: {
+    type: String as PropType<"html" | "markdown">,
+    default: "html"
   }
 });
 
 const isEditable = computed(() => !props.readonly && !props.disabled);
 
-const lowlight = useLowlight();
-
-const extensions = useExtensions({
-  placeholder: props.placeholder,
-  lowlight
-});
-
-const editor = useEditor({
-  content: unref(modelValue),
-  extensions,
-  editable: unref(isEditable),
-  onUpdate: ({ editor }) => {
-    if (isEditable.value) {
-      modelValue.value = editor.getHTML();
-    }
-  }
-});
-
-watch(
-  () => [props.readonly, props.disabled],
-  () => {
-    if (editor.value) {
-      editor.value.setEditable(isEditable.value);
-    }
-  }
-);
-
-watch(modelValue, (newVal) => {
-  if (!editor.value) return;
-  const isSame = editor.value.getHTML() === newVal;
-
-  if (isSame) return;
-
-  editor.value.commands.setContent(newVal);
-});
-
-// 聚焦编辑器
-const focusEditor = () => {
-  if (!editor.value || !isEditable.value) return;
-
-  editor.value.commands.focus("end");
-};
-
-const { toolbarItems } = useToolbar(editor);
+const extensions = createExtensions();
 </script>
 
+<template>
+  <UEditor
+    v-slot="{ editor }"
+    v-model="modelValue"
+    :content-type="props.contentType"
+    :starter-kit="{ code: {}, codeBlock: false }"
+    :extensions="extensions"
+    :placeholder="{ placeholder: props.placeholder, mode: 'firstLine' }"
+    :editable="isEditable"
+    :ui="{
+      root: [
+        'w-full min-h-[200px] relative isolate flex flex-col rounded-md overflow-hidden',
+        'before:pointer-events-none before:absolute before:inset-0 before:z-10',
+        'before:rounded-[inherit] before:content-[\'\']',
+        'before:ring-1 before:ring-inset before:ring-accented',
+        'focus-within:before:ring-2 focus-within:before:ring-primary'
+      ].join(' '),
+      base: 'px-4 sm:px-6 py-3',
+      content: 'overflow-y-auto'
+    }"
+  >
+    <UEditorToolbar
+      v-if="isEditable"
+      :editor="editor"
+      :items="fixedToolbarItems"
+      :ui="{
+        base: 'shrink-0 px-2 py-1.5 overflow-x-auto rounded-t-md bg-gray-50'
+      }"
+    >
+      <template #textColor>
+        <EditorTextColorPopover :editor="editor as unknown as Editor" />
+      </template>
+
+      <template #link>
+        <EditorLinkPopover :editor="editor as unknown as Editor" auto-open />
+      </template>
+    </UEditorToolbar>
+
+    <UEditorToolbar
+      v-if="isEditable"
+      :editor="editor"
+      :items="bubbleToolbarItems"
+      layout="bubble"
+      :should-show="
+        ({ view, state }) => view.hasFocus() && !state.selection.empty
+      "
+    >
+      <template #highlight>
+        <EditorHighlightPopover :editor="editor as unknown as Editor" />
+      </template>
+
+      <template #link>
+        <EditorLinkPopover :editor="editor as unknown as Editor" />
+      </template>
+    </UEditorToolbar>
+
+    <EditorCharacterCount
+      v-if="isEditable"
+      :editor="editor as unknown as Editor"
+    />
+  </UEditor>
+</template>
+
 <style lang="scss">
-@import url("./styles/tiptap-editor.scss");
-// 导入 highlight.js 样式
 @import url("highlight.js/styles/atom-one-dark.css");
 </style>

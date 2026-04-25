@@ -1,11 +1,20 @@
 <script setup lang="ts">
 import type { SearchEngineItem, SearchTips } from "#shared/types/navigation-website";
-import { ref, reactive, nextTick, onMounted, onUnmounted } from "vue";
+import { useStorage } from "@vueuse/core";
+import { computed, ref, reactive, nextTick, onMounted, onUnmounted, watch } from "vue";
 import { searchNavigationWebsites, getSearchEngineList } from "~/apis/navigation-website";
 import jsonp from "#shared/utils/jsonp";
 import { debounce } from "es-toolkit";
 
 type SearchEngineOption = Pick<SearchEngineItem, "name" | "icon" | "url">;
+type SearchHistoryItem = {
+  text: string;
+  type: "history";
+};
+type SearchPanelItem = SearchTips | SearchHistoryItem;
+
+const SEARCH_HISTORY_KEY = "ly-blog:navigation-search-history";
+const SEARCH_HISTORY_LIMIT = 8;
 
 const emit = defineEmits<{
   open: [];
@@ -42,6 +51,54 @@ const loadEngines = async () => {
 const kw = ref("");
 const searchInputRef = ref<HTMLInputElement | null>(null);
 const showSearchInput = ref(false);
+const searchHistory = useStorage<string[]>(SEARCH_HISTORY_KEY, []);
+const kwTrimmed = computed(() => kw.value.trim());
+const historyList = computed<SearchHistoryItem[]>(() =>
+  searchHistory.value.map((item) => ({
+    text: item,
+    type: "history"
+  }))
+);
+const isHistoryMode = computed(() => kwTrimmed.value.length === 0);
+const displayedList = computed<SearchPanelItem[]>(() =>
+  isHistoryMode.value ? historyList.value : tips.list
+);
+const showSearchPanel = computed(() => showSearchInput.value && displayedList.value.length > 0);
+
+watch(isHistoryMode, () => {
+  tips.current = -1;
+});
+
+watch(
+  () => displayedList.value.length,
+  (length) => {
+    if (length === 0 || tips.current >= length) {
+      tips.current = -1;
+    }
+  }
+);
+
+/**
+ * 统一清洗关键词，避免历史记录因空白字符差异产生重复项。
+ */
+const normalizeKeyword = (value: string) => value.trim().replace(/\s+/g, " ");
+
+/**
+ * 仅在确认搜索后写入历史记录，并保持最近使用项置顶。
+ */
+const addSearchHistory = (value: string) => {
+  const keyword = normalizeKeyword(value);
+  if (keyword.length === 0) {
+    return;
+  }
+
+  const normalizedKeyword = keyword.toLowerCase();
+  const nextHistory = searchHistory.value.filter(
+    (item) => normalizeKeyword(item).toLowerCase() !== normalizedKeyword
+  );
+  nextHistory.unshift(keyword);
+  searchHistory.value = nextHistory.slice(0, SEARCH_HISTORY_LIMIT);
+};
 
 /**
  * 展开搜索框后等待 DOM 更新，再自动聚焦输入框。
@@ -101,7 +158,7 @@ const handleShowSearch = async () => {
  * 输入为空时立即清空联想结果，避免组件在按钮态和输入态之间切换时残留旧数据。
  */
 const handleInput = () => {
-  if (kw.value.length !== 0) {
+  if (kwTrimmed.value.length !== 0) {
     getSearchTips();
   } else {
     tips.list = [];
@@ -119,7 +176,7 @@ const tips = reactive<{
 });
 const tipsRef = ref<HTMLElement | null>(null);
 const getSearchTips = debounce(async () => {
-  const text = kw.value.trim();
+  const text = kwTrimmed.value;
   if (text.length !== 0) {
     const temp: SearchTips[] = [];
     try {
@@ -173,26 +230,26 @@ const getSearchTips = debounce(async () => {
  * 通过键盘上下键在联想项之间切换，并同步输入框光标位置。
  */
 const selectTip = (down: boolean) => {
-  if (kw.value.trim().length === 0) {
+  if (displayedList.value.length === 0) {
     return;
   }
 
   if (down) {
-    tips.current = tips.current === tips.list.length - 1 ? 0 : tips.current + 1;
+    tips.current = tips.current === displayedList.value.length - 1 ? 0 : tips.current + 1;
   } else {
     tips.current =
-      tips.current === 0 || tips.current === -1 ? tips.list.length - 1 : tips.current - 1;
+      tips.current === 0 || tips.current === -1 ? displayedList.value.length - 1 : tips.current - 1;
   }
-  if (tips.list[tips.current].type === "text") {
-    kw.value = tips.list[tips.current].text;
+
+  const currentItem = displayedList.value[tips.current];
+  if (!isHistoryMode.value && currentItem?.type === "text") {
+    kw.value = currentItem.text;
   }
   tipsRef.value?.children[tips.current].scrollIntoView(false);
 
   nextTick(() => {
-    searchInputRef.value?.setSelectionRange(
-      searchInputRef.value?.selectionEnd,
-      searchInputRef.value?.selectionEnd
-    );
+    const selectionEnd = searchInputRef.value?.selectionEnd ?? kw.value.length;
+    searchInputRef.value?.setSelectionRange(selectionEnd, selectionEnd);
   });
 };
 
@@ -231,23 +288,34 @@ onUnmounted(() => {
   document.removeEventListener("click", handleClickOutside);
 });
 
-const handleSearch = () => {
-  const item: SearchTips | undefined = tips.list[tips.current];
-  if (item && item.type === "link") {
+/**
+ * 根据当前交互上下文解析本次确认动作对应的目标项。
+ */
+const getActiveSearchItem = () => displayedList.value[tips.current];
+
+/**
+ * 执行搜索或跳转，并在真正发起关键词搜索后写入历史记录。
+ */
+const handleSearch = (selectedItem?: SearchPanelItem) => {
+  const item = selectedItem ?? getActiveSearchItem();
+  if (item?.type === "link") {
     window.open(item.url);
     return;
   }
-  kw.value = kw.value.trim();
-  if (kw.value.length > 0 && engine.list.length > 0) {
-    window.open(engine.list[engine.current].url.replace("${kw}", kw.value));
+
+  const keyword = normalizeKeyword(item?.text ?? kw.value);
+  kw.value = keyword;
+  if (keyword.length > 0 && engine.list.length > 0) {
+    addSearchHistory(keyword);
+    window.open(engine.list[engine.current].url.replace("${kw}", keyword));
   }
 };
 
-const handleClickTip = (e: SearchTips) => {
-  if (e.type === "text") {
+const handleClickTip = (e: SearchPanelItem) => {
+  if (e.type !== "link") {
     kw.value = e.text;
   }
-  handleSearch();
+  handleSearch(e);
 };
 
 /**
@@ -311,14 +379,14 @@ defineExpose({
       </div>
     </div>
 
-    <div v-show="showSearchInput && kw.length !== 0" ref="tipsRef" class="search-tips">
+    <div v-show="showSearchPanel" ref="tipsRef" class="search-tips">
       <div
-        v-for="(item, index) in tips.list"
+        v-for="(item, index) in displayedList"
         :key="index"
         class="search-tips-item"
         :class="{ active: index === tips.current }"
       >
-        <div v-if="item.type === 'text'" class="text" @click="handleClickTip(item)">
+        <div v-if="item.type === 'text' || item.type === 'history'" class="text" @click="handleClickTip(item)">
           {{ item.text }}
         </div>
         <div v-else-if="item.type === 'link'" class="link" @click="handleClickTip(item)">

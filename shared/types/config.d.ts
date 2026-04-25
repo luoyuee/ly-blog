@@ -78,77 +78,77 @@ export interface IClientConfigFleetingThought {
   intro?: string;
 }
 
-export interface IClientConfigMePageBaseInfoItem {
+export interface IMePageConfigBaseInfoItem {
   label: string;
   value: string;
   icon: string;
   href?: string;
 }
 
-export interface IClientConfigMePageSkillGridItem {
+export interface IMePageConfigSkillGridItem {
   title: string;
   icon: string;
   href?: string;
 }
 
-export interface IClientConfigMePageProfileTagItem {
+export interface IMePageConfigProfileTagItem {
   label: string;
   color: BadgeProps["color"];
 }
 
-export interface IClientConfigMePageLinkItem {
+export interface IMePageConfigLinkItem {
   title: string;
   desc: string;
   href: string;
   icon: string;
 }
 
-export interface IClientConfigMePageTabItem {
+export interface IMePageConfigTabItem {
   label: string;
   slot: string;
 }
 
-export interface IClientConfigMePageAuthor {
+export interface IMePageConfigAuthor {
   name: string;
   avatar?: string;
   location: string;
   dev_role: string;
   dev_direction: string;
   quote: string;
-  tags: IClientConfigMePageProfileTagItem[];
+  tags: IMePageConfigProfileTagItem[];
 }
 
-export interface IClientConfigMePageSocialLinkItem {
+export interface IMePageConfigSocialLinkItem {
   title?: string;
   href: string;
   icon: string;
   hover_bg?: string;
 }
 
-export interface IClientConfigMePageFaqItem {
+export interface IMePageConfigFaqItem {
   label: string;
   content: string;
 }
 
-export interface IClientConfigMePageIntro {
-  base_info: IClientConfigMePageBaseInfoItem[];
+export interface IMePageConfigIntro {
+  base_info: IMePageConfigBaseInfoItem[];
   skills: string[];
   interest_tags: string[];
   language_proficiency: string[];
 }
 
-export interface IClientConfigMePage {
-  author: IClientConfigMePageAuthor;
+export interface IMePageConfig {
+  author: IMePageConfigAuthor;
   github_snake: {
     light?: string;
     dark?: string;
   };
-  intro: IClientConfigMePageIntro;
-  skills_grid: IClientConfigMePageSkillGridItem[];
-  website_list: IClientConfigMePageLinkItem[];
-  project_list: IClientConfigMePageLinkItem[];
-  social_links: IClientConfigMePageSocialLinkItem[];
-  faq_items: IClientConfigMePageFaqItem[];
+  intro: IMePageConfigIntro;
+  skills_grid: IMePageConfigSkillGridItem[];
+  website_list: IMePageConfigLinkItem[];
+  project_list: IMePageConfigLinkItem[];
+  social_links: IMePageConfigSocialLinkItem[];
+  faq_items: IMePageConfigFaqItem[];
 }
 
 export interface IClientConfigLive2d {
@@ -171,7 +171,6 @@ export interface IClientConfig {
   article: IClientConfigArticle;
   message_board: IClientConfigMessageBoard;
   fleeting_thought: IClientConfigFleetingThought;
-  me_page: IClientConfigMePage;
   live2d: IClientConfigLive2d;
 }
 

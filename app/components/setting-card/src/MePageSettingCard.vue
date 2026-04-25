@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { IClientConfigMePage } from "#shared/types/config";
+import type { IMePageConfig } from "#shared/types/config";
 import { InputTagArea } from "@/components/form/input";
 import { useForm } from "@/composables/useForm";
-import { useConfigStore } from "@/stores";
+import { useMePageConfigStore } from "@/stores";
 import { cloneDeep } from "es-toolkit";
 import { z } from "zod";
 import SettingCard from "./SettingCard.vue";
@@ -14,19 +14,19 @@ import MePageSkillGridForm from "./components/MePageSkillGridForm.vue";
 import MePageSocialLinksForm from "./components/MePageSocialLinksForm.vue";
 import MePageSkillsSortableTable from "./components/MePageSkillsSortableTable.vue";
 
-const configStore = useConfigStore();
+const mePageConfigStore = useMePageConfigStore();
 
 /**
  * 个人页（/me）使用的配置项：
- * - configStore.me_page：个人页大部分内容
- * - 头像来源：me_page.author.avatar（/me 页面使用该字段）
+ * - 已独立为平级配置项，仅 `/me` 页面与设置面板会读取
+ * - 头像来源：author.avatar（/me 页面使用该字段）
  */
-const createInitialFormData = (): IClientConfigMePage => {
-  return cloneDeep(configStore.me_page);
+const createInitialFormData = (): IMePageConfig => {
+  return cloneDeep(mePageConfigStore.$state);
 };
 
 const { formData, formState, isDirty, setForm, setInitial, resetForm } =
-  useForm<IClientConfigMePage>(createInitialFormData());
+  useForm<IMePageConfig>(createInitialFormData());
 
 /**
  * 顶层表单校验：只做最基础的必填/URL 检查。
@@ -61,9 +61,7 @@ const handleSave = () => {
 const handleSubmit = async () => {
   formState.submitting = true;
   try {
-    await configStore.update({
-      me_page: cloneDeep(formData)
-    });
+    await mePageConfigStore.update(cloneDeep(formData));
 
     syncFormData();
   } finally {
@@ -95,7 +93,7 @@ const handleReset = () => {
     >
       <UFormField
         label="头像"
-        description="个人页头像（me_page.author.avatar）；留空将回退到默认头像"
+        description="个人页头像（author.avatar）；留空将回退到默认头像"
         :ui="{
           description: 'text-xs',
           container: 'mt-2'

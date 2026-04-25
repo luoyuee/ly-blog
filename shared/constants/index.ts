@@ -47,9 +47,12 @@ export const ImageFolderEnum = {
 
 export const MarkdownSupportURL = "https://markdown.com.cn/cheat-sheet.html" as const;
 
+export * from "./default-configs";
+
 export const ConfigNameEnum = {
   CLIENT: "client",
   SERVER: "server",
+  ME_PAGE: "me_page",
   WORK: "work",
   NOTICE: "notice"
 } as const;

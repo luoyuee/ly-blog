@@ -31,6 +31,13 @@ export default defineNuxtConfig({
       ...injectMetadata()
     },
     optimizeDeps: {
+      include: [
+        "@nuxt/ui > prosemirror-state",
+        "@nuxt/ui > prosemirror-transform",
+        "@nuxt/ui > prosemirror-model",
+        "@nuxt/ui > prosemirror-view",
+        "@nuxt/ui > prosemirror-gapcursor"
+      ],
       exclude: ["oh-my-live2d"] // 排除预构建，让其作为独立 chunk
     }
   },

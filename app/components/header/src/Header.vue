@@ -115,6 +115,13 @@ const headerNavItems = computed<HeaderNavItem[]>(() => {
       type: "link"
     },
     {
+      key: "navigation",
+      title: "导航",
+      icon: "colorful:submit",
+      href: "/navigation",
+      type: "link"
+    },
+    {
       key: "about",
       title: "关于",
       icon: "colorful:config",

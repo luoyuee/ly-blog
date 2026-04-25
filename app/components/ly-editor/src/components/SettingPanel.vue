@@ -16,9 +16,10 @@ import {
   SwiperSettingCard,
   Live2dSettingCard
 } from "@/components/setting-card";
-import { useConfigStore, useServerConfigStore } from "@/stores";
+import { useConfigStore, useMePageConfigStore, useServerConfigStore } from "@/stores";
 
 const configStore = useConfigStore();
+const mePageConfigStore = useMePageConfigStore();
 const serverConfigStore = useServerConfigStore();
 
 type SettingMenuItemConfig = {
@@ -204,7 +205,7 @@ const state = reactive({
 
 /** 初始化左右两侧依赖的数据源 */
 onMounted(() => {
-  Promise.all([configStore.fetch(), serverConfigStore.fetch()]).finally(() => {
+  Promise.all([configStore.fetch(), mePageConfigStore.fetch(), serverConfigStore.fetch()]).finally(() => {
     state.initializing = false;
   });
 });

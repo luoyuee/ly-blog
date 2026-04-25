@@ -19,60 +19,66 @@ const dockItems = ref<DockItem[]>([
   },
   {
     id: 2,
+    name: "首页",
+    style: "background-image: linear-gradient(135deg, #E2CCFF 0%, #7FB4FF 100%)",
+    icon: "mdi:home"
+  },
+  {
+    id: 3,
     name: "翻译",
     style: "background-image: linear-gradient(135deg, rgb(124, 214, 255), rgb(26, 135, 178));",
     icon: "mdi:translate"
   },
   {
-    id: 3,
+    id: 4,
     name: "AI工具",
     style: "background-image: linear-gradient(135deg, rgb(220, 227, 91), rgb(68, 128, 0));",
     icon: "hugeicons:chat-gpt"
   },
   {
-    id: 4,
+    id: 5,
     name: "图片",
     style: "background-image: linear-gradient(135deg, rgb(255, 173, 141), rgb(243, 82, 92));",
     icon: "mdi:image"
   },
   {
-    id: 5,
+    id: 6,
     name: "便签",
     style: "background-image: linear-gradient(135deg, rgb(255, 217, 118), rgb(221, 137, 0));",
     icon: "mdi:note-text"
   },
   {
-    id: 6,
+    id: 7,
     name: "空投快传",
     style: "background-image: linear-gradient(135deg, rgb(174, 210, 255), rgb(0, 85, 192));",
     icon: "mdi:cloud"
   },
   {
-    id: 7,
+    id: 8,
     name: "邮箱",
     style: "background-image: linear-gradient(135deg, rgb(255, 181, 151), rgb(215, 93, 43));",
     icon: "mdi:email"
   },
   {
-    id: 8,
+    id: 9,
     name: "音乐",
     style: "background-image: linear-gradient(135deg, rgb(255, 163, 170), rgb(242, 68, 82));",
     icon: "mdi:music-box"
   },
   {
-    id: 9,
+    id: 10,
     name: "哔哩哔哩",
     style: "background-image: linear-gradient(135deg, rgb(255, 162, 191), rgb(235, 71, 114));",
     icon: "ri:bilibili-fill"
   },
   {
-    id: 10,
+    id: 11,
     name: "壁纸",
     style: "background-image: linear-gradient(135deg, rgb(84, 174, 229), rgb(147, 106, 209));",
     icon: "mdi:folder-image"
   },
   {
-    id: 11,
+    id: 12,
     name: "主题",
     style: "background-image: linear-gradient(135deg, rgb(247, 206, 70), rgb(213, 104, 41));",
     icon: "mdi:lightbulb-on"

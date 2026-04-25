@@ -1,8 +1,14 @@
-import type { UpdateClientConfigRequest, UpdateServerConfigRequest } from "./models";
+import type {
+  GetClientConfigResponse,
+  GetMePageConfigResponse,
+  UpdateClientConfigRequest,
+  UpdateMePageConfigRequest,
+  UpdateServerConfigRequest
+} from "./models";
 import { serviceAxios } from "@/utils/request";
-import type { IServerConfig } from "#shared/types/config";
+import type { IServerConfig, NoticeConfig, WorkItem } from "#shared/types/config";
 
-export async function getClientConfig(): Promise<IServerConfig> {
+export async function getClientConfig(): Promise<GetClientConfigResponse> {
   try {
     const response = await serviceAxios({
       url: "/config/client",
@@ -22,6 +28,30 @@ export async function updateClientConfig(data: UpdateClientConfigRequest): Promi
       data
     });
     return response.data;
+  } catch (error) {
+    return Promise.reject(error);
+  }
+}
+
+export async function getMePageConfig(): Promise<GetMePageConfigResponse> {
+  try {
+    const response = await serviceAxios({
+      url: "/config/me-page",
+      method: "get"
+    });
+    return response.data;
+  } catch (error) {
+    return Promise.reject(error);
+  }
+}
+
+export async function updateMePageConfig(data: UpdateMePageConfigRequest): Promise<void> {
+  try {
+    await serviceAxios({
+      url: "/admin/config/me-page",
+      method: "put",
+      data
+    });
   } catch (error) {
     return Promise.reject(error);
   }

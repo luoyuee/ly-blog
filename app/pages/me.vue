@@ -3,14 +3,16 @@ import type { AccordionItem } from "@nuxt/ui";
 import type { Dayjs } from "dayjs";
 import { NoticeCard, LifeCountdownCard, HitokotoCard } from "@/components/mac-card";
 import { PageFooter } from "@/components/page-footer";
-import { useConfigStore } from "@/stores";
+import { useMePageConfigStore } from "@/stores";
 import { SocialBtn, Skills, LinkCards, BaseInfoGrid, GitHubSnake } from "@/components/me";
 
 const { $dayjs } = useNuxtApp();
 
-const configStore = useConfigStore();
+const mePageConfigStore = useMePageConfigStore();
 
-const mePage = computed(() => configStore.me_page);
+await mePageConfigStore.fetch();
+
+const mePage = computed(() => mePageConfigStore.$state);
 
 const authorAvatar = computed(() => mePage.value.author.avatar || "/images/avatar.webp");
 

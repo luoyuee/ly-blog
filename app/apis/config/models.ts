@@ -1,4 +1,5 @@
 import type {
+  IClientConfig,
   IClientConfigBasic,
   IClientConfigAuthorCard,
   IClientConfigBackground,
@@ -9,7 +10,7 @@ import type {
   IClientConfigArticle,
   IClientConfigMessageBoard,
   IClientConfigFleetingThought,
-  IClientConfigMePage,
+  IMePageConfig,
   IServerConfigMailer,
   IServerConfigStorage,
   IServerConfigCzdb,
@@ -29,9 +30,14 @@ export interface UpdateClientConfigRequest {
   article?: IClientConfigArticle;
   message_board?: IClientConfigMessageBoard;
   fleeting_thought?: IClientConfigFleetingThought;
-  me_page?: IClientConfigMePage;
   live2d?: IClientConfigLive2d;
 }
+
+export type GetClientConfigResponse = IClientConfig;
+
+export type GetMePageConfigResponse = IMePageConfig;
+
+export type UpdateMePageConfigRequest = IMePageConfig;
 
 export interface UpdateServerConfigRequest {
   mailer?: IServerConfigMailer;

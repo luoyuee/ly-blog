@@ -1,71 +1,19 @@
-import { ImageFolderEnum, ConfigNameEnum } from "#shared/constants";
+import { ConfigNameEnum } from "#shared/constants";
+import {
+  DefaultArticleCategoryData,
+  DefaultClientConfig,
+  DefaultImageFolderData,
+  DefaultMePageConfig,
+  DefaultNoteFolderData,
+  DefaultNoticeConfig,
+  DefaultServerConfig,
+  DefaultWorkConfig,
+  HitokotoTypeData
+} from "#shared/constants/default-configs";
 import { mkdirSync, existsSync } from "fs";
 import { prisma } from "@@/server/db";
 import config from "@@/server/config";
 import dayjs from "dayjs";
-
-const HitokotoTypeData = [
-  {
-    id: 1,
-    name: "动画",
-    description: "Anime - 动画"
-  },
-  {
-    id: 2,
-    name: "漫画",
-    description: "Comic - 漫画"
-  },
-  {
-    id: 3,
-    name: "游戏",
-    description: "Game - 游戏"
-  },
-  {
-    id: 4,
-    name: "文学",
-    description: "Literature - 文学。主要收录现代文学：小说、散文、戏剧。"
-  },
-  {
-    id: 5,
-    name: "原创",
-    description: "Original - 原创"
-  },
-  {
-    id: 6,
-    name: "网络",
-    description: "Internet - 来自网络"
-  },
-  {
-    id: 7,
-    name: "其他",
-    description: "Other - 其他"
-  },
-  {
-    id: 8,
-    name: "影视",
-    description: "Video - 影视"
-  },
-  {
-    id: 9,
-    name: "诗词",
-    description: "Poem - 诗词。主要收录中国古代文学，如：诗、歌、词、赋、曲等。"
-  },
-  {
-    id: 10,
-    name: "网易云",
-    description: "NCM - 网易云。主要收录网易云音乐热评。"
-  },
-  {
-    id: 11,
-    name: "哲学",
-    description: "Philosophy - 哲学"
-  },
-  {
-    id: 12,
-    name: "抖机灵",
-    description: "Funny - 抖机灵"
-  }
-];
 
 // 初始化状态枚举
 const InitState = {
@@ -124,141 +72,58 @@ export default defineNitroPlugin(async () => {
           created_at: now,
           name: ConfigNameEnum.CLIENT,
           data: {
+            ...DefaultClientConfig,
             created_at: nowStr,
-            locale: "zh-CN",
-            basic: {
-              title: "洛月的博客",
-              description: "洛月的博客",
-              keywords: ["nuxt", "博客"]
-            },
-            author_card: {
-              name: "洛月",
-              avatar: "/images/avatar.webp",
-              motto: "永远相信美好的事情即将发生",
-              links: []
-            },
-            external_link_card: [
-              {
-                title: "Nuxt官网",
-                href: "https://nuxt.com"
-              }
-            ],
-            background: {
-              home_title: "我在人间凑数的日子",
-              home_sub_title: "🍂总有人间一两风，填我十万八千梦🍂"
-            },
-            swiper: [],
-            nav_menu: [],
-            beian: {},
-            hitokoto: {},
-            article: {},
-            message_board: {},
-            fleeting_thought: {},
-            me_page: {
-              author: {
-                name: "",
-                location: "",
-                dev_role: "",
-                dev_direction: "",
-                quote: "",
-                tags: []
-              },
-              github_snake: {
-                light: "",
-                dark: ""
-              },
-              intro: {
-                base_info: [],
-                skills: [],
-                interest_tags: [],
-                language_proficiency: []
-              },
-              skills_grid: [],
-              website_list: [],
-              project_list: [],
-              social_links: [],
-              faq_items: []
-            }
+            updated_at: nowStr
           }
         },
         {
           created_at: now,
           name: ConfigNameEnum.SERVER,
           data: {
+            ...DefaultServerConfig,
             created_at: nowStr,
-            mailer: {
-              enabled: false
-            },
-            storage: {
-              port: 443,
-              use_ssl: true
-            }
+            updated_at: nowStr
           }
+        },
+        {
+          created_at: now,
+          name: ConfigNameEnum.ME_PAGE,
+          data: DefaultMePageConfig
         },
         {
           created_at: now,
           name: ConfigNameEnum.WORK,
-          data: []
+          data: DefaultWorkConfig
         },
         {
           created_at: now,
           name: ConfigNameEnum.NOTICE,
-          data: {
-            card: {
-              content: "网站初始化完毕！"
-            },
-            toast: {
-              content: "",
-              delay: 3000,
-              position: "top-right"
-            },
-            modal: {
-              content: "",
-              delay: 3000,
-              fullscreen: false
-            }
-          }
+          data: DefaultNoticeConfig
         }
       ]
     });
 
     await prisma.imageFolder.createMany({
-      data: [
-        {
-          id: ImageFolderEnum.SYSTEM,
-          created_at: now,
-          name: "系统图库",
-          description: ""
-        },
-        {
-          id: ImageFolderEnum.BACKGROUND,
-          created_at: now,
-          name: "博客随机图片",
-          description: "博客随机图片存储目录，用于背景，文章封面等……"
-        },
-        {
-          id: ImageFolderEnum.ARTICLE,
-          created_at: now,
-          name: "文章图库",
-          description: "存储文章中所使用的图片。"
-        }
-      ]
+      data: DefaultImageFolderData.map((item) => {
+        return {
+          ...item,
+          created_at: now
+        };
+      })
     });
 
     await prisma.articleCategory.create({
       data: {
-        id: 1,
-        created_at: now,
-        name: "默认分类",
-        description: "默认分类"
+        ...DefaultArticleCategoryData,
+        created_at: now
       }
     });
 
     await prisma.noteFolder.create({
       data: {
-        id: 1,
-        created_at: now,
-        name: "默认目录"
+        ...DefaultNoteFolderData,
+        created_at: now
       }
     });
 
@@ -275,7 +140,8 @@ export default defineNitroPlugin(async () => {
       data: [
         {
           name: "first_run_time",
-          data: { data: Math.floor(now.getTime() / 1000) }
+          created_at: now,
+          data: { date: nowStr }
         }
       ]
     });

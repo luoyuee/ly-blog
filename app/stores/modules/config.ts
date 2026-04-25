@@ -25,32 +25,6 @@ export const configStore = defineStore("config", {
     article: {},
     message_board: {},
     fleeting_thought: {},
-    me_page: {
-      author: {
-        name: "",
-        avatar: "",
-        location: "",
-        dev_role: "",
-        dev_direction: "",
-        quote: "",
-        tags: []
-      },
-      github_snake: {
-        light: "",
-        dark: ""
-      },
-      intro: {
-        base_info: [],
-        skills: [],
-        interest_tags: [],
-        language_proficiency: []
-      },
-      skills_grid: [],
-      website_list: [],
-      project_list: [],
-      social_links: [],
-      faq_items: []
-    },
     live2d: {}
   }),
   actions: {
