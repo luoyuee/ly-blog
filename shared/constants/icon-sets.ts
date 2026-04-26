@@ -1,17 +1,20 @@
 /**
  * 本文件由脚本自动生成：scripts/generate-icons-constants.js
- * 生成时间：2026-03-14T12:09:52.281Z
+ * 生成时间：2026-04-25T12:57:35.935Z
  *
  * 注意：
  * - 修改图标资源后，请重新运行脚本更新本文件
  */
 
 export const CustomIconNames: string[] = [
+  "custom:360so",
   "custom:alarm",
   "custom:archive",
   "custom:attention-fill",
   "custom:attention-outline",
   "custom:auto-theme",
+  "custom:baidu",
+  "custom:bing",
   "custom:calendar",
   "custom:check",
   "custom:check-one-fill",
@@ -23,6 +26,7 @@ export const CustomIconNames: string[] = [
   "custom:collect",
   "custom:comment",
   "custom:copy-file",
+  "custom:csdn",
   "custom:dark",
   "custom:database",
   "custom:delete",
@@ -31,6 +35,7 @@ export const CustomIconNames: string[] = [
   "custom:down",
   "custom:download",
   "custom:download-one",
+  "custom:duck",
   "custom:edit",
   "custom:edit-file",
   "custom:empty",
@@ -44,6 +49,8 @@ export const CustomIconNames: string[] = [
   "custom:full-screen",
   "custom:gitee-fill-round",
   "custom:github",
+  "custom:github-rect",
+  "custom:google",
   "custom:hard-disk",
   "custom:help",
   "custom:hitokoto",
@@ -75,19 +82,27 @@ export const CustomIconNames: string[] = [
   "custom:right-bar-fill",
   "custom:rocket-fill",
   "custom:search",
+  "custom:search-2",
   "custom:send",
   "custom:setting",
+  "custom:sogou",
+  "custom:soutushenqi",
+  "custom:stackoverflow",
   "custom:tag-outline",
   "custom:text",
   "custom:text-italic",
   "custom:time",
+  "custom:toutiao",
   "custom:unknown-system",
   "custom:up",
   "custom:upload",
   "custom:upload-picture",
   "custom:upload-web",
   "custom:upvote",
-  "custom:upvote-fill"
+  "custom:upvote-fill",
+  "custom:world",
+  "custom:yahoo",
+  "custom:yandex"
 ];
 
 export const ColorfulIconNames: string[] = [

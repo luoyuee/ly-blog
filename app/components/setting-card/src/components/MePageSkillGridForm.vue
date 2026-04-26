@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { FormSubmitEvent, TableColumn } from "@nuxt/ui";
-import type { IClientConfigMePageSkillGridItem } from "#shared/types/config";
+import type { IMePageConfigSkillGridItem } from "#shared/types/config";
 import { computed, h, onBeforeUnmount, reactive, ref, resolveComponent, watch } from "vue";
 import { SkillIconNames } from "@@/shared/constants/icon-sets";
 import { useSortable } from "@vueuse/integrations/useSortable";
@@ -11,11 +11,11 @@ import { z } from "zod";
 const handleClass = "me-page-skill-grid-form__handle";
 const tbodyClass = "me-page-skill-grid-form__tbody";
 
-type RowItem = IClientConfigMePageSkillGridItem & {
+type RowItem = IMePageConfigSkillGridItem & {
   id: string;
 };
 
-const modelValue = defineModel<IClientConfigMePageSkillGridItem[]>({
+const modelValue = defineModel<IMePageConfigSkillGridItem[]>({
   default: () => []
 });
 
@@ -51,7 +51,7 @@ const modalState = reactive<{
   editingIndex: null
 });
 
-const modalForm = reactive<IClientConfigMePageSkillGridItem>({
+const modalForm = reactive<IMePageConfigSkillGridItem>({
   title: "",
   icon: "",
   href: undefined
@@ -258,7 +258,7 @@ defineExpose({
           <UInput v-model="modalForm.title" placeholder="例如：Nuxt / Node.js" />
         </UFormField>
         <UFormField name="icon" label="图标" required>
-          <SelectIcon v-model="modalForm.icon" :options="SkillIconNames" />
+          <SelectIcon v-model="modalForm.icon" :items="SkillIconNames" />
         </UFormField>
         <UFormField name="href" label="链接（可选）">
           <UInput v-model="modalForm.href" icon="ep:link" placeholder="https://..." />

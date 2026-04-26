@@ -14,6 +14,7 @@ interface SearchBoxInstance {
   open: () => Promise<void>;
   close: () => void;
   reset: () => void;
+  closeFloatingPanel: () => boolean;
 }
 
 interface DockOverlayInstance {
@@ -97,6 +98,10 @@ const resetPageState = async () => {
       break;
     }
     case "search": {
+      if (searchPanelRef.value?.closeFloatingPanel()) {
+        break;
+      }
+
       searchPanelRef.value?.close();
       break;
     }

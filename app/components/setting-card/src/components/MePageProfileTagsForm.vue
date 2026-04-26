@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { IClientConfigMePageProfileTagItem } from "#shared/types/config";
+import type { IMePageConfigProfileTagItem } from "#shared/types/config";
 import type { FormSubmitEvent, TableColumn } from "@nuxt/ui";
 import { computed, h, onBeforeUnmount, reactive, ref, resolveComponent, watch } from "vue";
 import { useSortable } from "@vueuse/integrations/useSortable";
@@ -9,11 +9,11 @@ import { z } from "zod";
 const handleClass = "me-page-profile-tags-form__handle";
 const tbodyClass = "me-page-profile-tags-form__tbody";
 
-type RowItem = IClientConfigMePageProfileTagItem & {
+type RowItem = IMePageConfigProfileTagItem & {
   id: string;
 };
 
-const modelValue = defineModel<IClientConfigMePageProfileTagItem[]>({
+const modelValue = defineModel<IMePageConfigProfileTagItem[]>({
   default: () => []
 });
 
@@ -51,7 +51,7 @@ const modalState = reactive<{
   editingIndex: null
 });
 
-const modalForm = reactive<IClientConfigMePageProfileTagItem>({
+const modalForm = reactive<IMePageConfigProfileTagItem>({
   label: "",
   color: "neutral"
 });
@@ -94,7 +94,7 @@ const openEditModal = (index: number) => {
 const submitModal = (event: FormSubmitEvent<z.output<typeof modalSchema>>) => {
   const data = {
     label: event.data.label,
-    color: event.data.color as IClientConfigMePageProfileTagItem["color"]
+    color: event.data.color as IMePageConfigProfileTagItem["color"]
   };
 
   if (modalState.editingIndex === null) {

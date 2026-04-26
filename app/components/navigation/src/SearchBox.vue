@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import type { SearchEngineItem, SearchTips } from "#shared/types/navigation-website";
+import type { SearchTips } from "#shared/types/navigation-website";
 import { useStorage } from "@vueuse/core";
-import { computed, ref, reactive, nextTick, onMounted, onUnmounted, watch } from "vue";
+import { computed, nextTick, onMounted, onUnmounted, reactive, ref, watch } from "vue";
 import { searchNavigationWebsites, getSearchEngineList } from "~/apis/navigation-website";
 import jsonp from "#shared/utils/jsonp";
 import { debounce } from "es-toolkit";
+import { useSearchEngine } from "./composables/useSearchEngine";
 
-type SearchEngineOption = Pick<SearchEngineItem, "name" | "icon" | "url">;
 type SearchHistoryItem = {
   text: string;
   type: "history";
@@ -21,37 +21,38 @@ const emit = defineEmits<{
   close: [];
 }>();
 
-// 搜索引擎
-const engine = reactive<{
-  list: SearchEngineOption[];
+const {
+  engines,
+  currentIndex,
+  currentEngine,
+  currentEngineIcon,
+  isSearchEnabled,
+  showSelector: showEngineSelector,
+  showCurrentName: showCurrentEngineName,
+  setEngines,
+  setCurrentEngine,
+  selectRelativeEngine,
+  toggleSelector: toggleEngineSelector,
+  closeSelector: closeEngineSelector,
+  resetEngineUi
+} = useSearchEngine();
+
+const kw = ref("");
+const searchInputRef = ref<HTMLInputElement | null>(null);
+const tipsRef = ref<HTMLElement | null>(null);
+const engineSelectorRef = ref<HTMLElement | null>(null);
+const engineButtonRef = ref<HTMLElement | null>(null);
+const showSearchInput = ref(false);
+const searchHistory = useStorage<string[]>(SEARCH_HISTORY_KEY, []);
+
+const tips = reactive<{
+  list: SearchTips[];
   current: number;
 }>({
   list: [],
-  current: 0
+  current: -1
 });
 
-// 从后端接口读取搜索引擎列表，并映射为组件内部使用的数据结构
-const loadEngines = async () => {
-  try {
-    const res = await getSearchEngineList();
-    engine.list = (res.data ?? [])
-      .filter((item) => item.status === 1)
-      .map((item) => ({
-        name: item.name,
-        icon: item.icon,
-        url: item.url
-      }));
-    engine.current = 0;
-  } catch (error) {
-    console.error(error);
-  }
-};
-
-// 搜索关键词
-const kw = ref("");
-const searchInputRef = ref<HTMLInputElement | null>(null);
-const showSearchInput = ref(false);
-const searchHistory = useStorage<string[]>(SEARCH_HISTORY_KEY, []);
 const kwTrimmed = computed(() => kw.value.trim());
 const historyList = computed<SearchHistoryItem[]>(() =>
   searchHistory.value.map((item) => ({
@@ -101,11 +102,36 @@ const addSearchHistory = (value: string) => {
 };
 
 /**
+ * 从后端接口读取搜索引擎列表，并映射为组件内部使用的数据结构。
+ */
+const loadEngines = async () => {
+  try {
+    const res = await getSearchEngineList();
+    setEngines(
+      (res.data ?? [])
+        .filter((item) => item.status === 1)
+        .map((item) => ({
+          name: item.name,
+          icon: item.icon,
+          url: item.url
+        }))
+    );
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+/**
  * 展开搜索框后等待 DOM 更新，再自动聚焦输入框。
  */
 const focusSearchInput = async () => {
   await nextTick();
   searchInputRef.value?.focus();
+};
+
+const clearSuggestions = () => {
+  tips.list = [];
+  tips.current = -1;
 };
 
 /**
@@ -127,9 +153,8 @@ const open = async () => {
  */
 const reset = () => {
   kw.value = "";
-  tips.list = [];
-  tips.current = -1;
-  showEngineSelector.value = false;
+  clearSuggestions();
+  resetEngineUi();
 };
 
 /**
@@ -146,6 +171,11 @@ const close = () => {
   emit("close");
 };
 
+/**
+ * 供父级背景点击优先消费内部浮层关闭，避免同一次点击直接关闭整个搜索框。
+ */
+const closeFloatingPanel = () => closeEngineSelector();
+
 const handleShowSearch = async () => {
   if (showSearchInput.value) {
     return;
@@ -160,69 +190,63 @@ const handleShowSearch = async () => {
 const handleInput = () => {
   if (kwTrimmed.value.length !== 0) {
     getSearchTips();
-  } else {
-    tips.list = [];
-    tips.current = -1;
+    return;
   }
+
+  clearSuggestions();
 };
 
 // 搜索框关键词提示
-const tips = reactive<{
-  list: SearchTips[];
-  current: number;
-}>({
-  list: [],
-  current: -1
-});
-const tipsRef = ref<HTMLElement | null>(null);
 const getSearchTips = debounce(async () => {
   const text = kwTrimmed.value;
-  if (text.length !== 0) {
-    const temp: SearchTips[] = [];
-    try {
-      const textTips = await jsonp<{
-        s: string[];
-      }>({
-        url: "https://suggestion.baidu.com/su",
-        query: {
-          wd: text,
-          pre: "1",
-          p: "3",
-          ie: "utf-8",
-          json: "1",
-          prod: "pc",
-          from: "pc_web"
-        },
-        callbackParamName: "cb"
-      });
+  if (text.length === 0) {
+    return;
+  }
 
-      textTips["s"].forEach((item) => {
-        temp.push({
-          text: item,
-          type: "text"
-        });
-      });
+  const temp: SearchTips[] = [];
+  try {
+    const textTips = await jsonp<{
+      s: string[];
+    }>({
+      url: "https://suggestion.baidu.com/su",
+      query: {
+        wd: text,
+        pre: "1",
+        p: "3",
+        ie: "utf-8",
+        json: "1",
+        prod: "pc",
+        from: "pc_web"
+      },
+      callbackParamName: "cb"
+    });
 
-      const websites = await searchNavigationWebsites({
-        keyword: text
+    textTips.s.forEach((item) => {
+      temp.push({
+        text: item,
+        type: "text"
       });
+    });
 
-      websites.forEach((item) => {
-        temp.push({
-          id: item.id,
-          text: item.name,
-          url: item.url,
-          icon: item.icon,
-          type: "link"
-        });
+    const websites = await searchNavigationWebsites({
+      keyword: text
+    });
+
+    websites.forEach((item) => {
+      temp.push({
+        id: item.id,
+        text: item.name,
+        url: item.url,
+        icon: item.icon,
+        type: "link"
       });
+    });
 
-      tips.current = -1;
-      tips.list = temp;
-      tipsRef.value?.scrollTo(0, 0);
-    } catch (error) {
-      console.log(error);
-    }
+    tips.current = -1;
+    tips.list = temp;
+    tipsRef.value?.scrollTo(0, 0);
+  } catch (error) {
+    console.log(error);
   }
 }, 250);
 
@@ -234,18 +258,19 @@ const selectTip = (down: boolean) => {
     return;
   }
 
-  if (down) {
-    tips.current = tips.current === displayedList.value.length - 1 ? 0 : tips.current + 1;
-  } else {
-    tips.current =
-      tips.current === 0 || tips.current === -1 ? displayedList.value.length - 1 : tips.current - 1;
-  }
+  tips.current = down
+    ? tips.current === displayedList.value.length - 1
+      ? 0
+      : tips.current + 1
+    : tips.current === 0 || tips.current === -1
+      ? displayedList.value.length - 1
+      : tips.current - 1;
 
   const currentItem = displayedList.value[tips.current];
   if (!isHistoryMode.value && currentItem?.type === "text") {
     kw.value = currentItem.text;
   }
-  tipsRef.value?.children[tips.current].scrollIntoView(false);
+  tipsRef.value?.children[tips.current]?.scrollIntoView(false);
 
   nextTick(() => {
     const selectionEnd = searchInputRef.value?.selectionEnd ?? kw.value.length;
@@ -253,39 +278,68 @@ const selectTip = (down: boolean) => {
   });
 };
 
-// 搜索引擎选择器显示状态
-const showEngineSelector = ref(false);
-const engineSelectorRef = ref<HTMLElement | null>(null);
-const leftBtnRef = ref<HTMLElement | null>(null);
+/**
+ * 通过 Tab 在搜索引擎之间切换，并保持输入框焦点与光标位置不变。
+ */
+const selectEngine = async (forward: boolean) => {
+  if (engines.value.length === 0) {
+    return;
+  }
+
+  const selectionStart = searchInputRef.value?.selectionStart ?? kw.value.length;
+  const selectionEnd = searchInputRef.value?.selectionEnd ?? kw.value.length;
+  selectRelativeEngine(forward ? 1 : -1);
+
+  await nextTick();
+  searchInputRef.value?.focus();
+  searchInputRef.value?.setSelectionRange(selectionStart, selectionEnd);
+};
 
 /**
- * 切换搜索引擎面板显示状态。
+ * 输入框内按 Tab / Shift + Tab 时快速切换搜索引擎；无可用引擎时保留原生焦点切换。
  */
-const toggleEngineSelector = () => {
-  showEngineSelector.value = !showEngineSelector.value;
+const handleEngineKeydown = (event: KeyboardEvent) => {
+  if (engines.value.length === 0) {
+    return;
+  }
+
+  event.preventDefault();
+  void selectEngine(!event.shiftKey);
+};
+
+const handleSelectEngine = async (index: number) => {
+  setCurrentEngine(index);
+  closeEngineSelector();
+  await focusSearchInput();
 };
 
 /**
  * 点击搜索引擎面板外部区域时关闭选择器，避免面板悬挂在页面上。
  */
-const handleClickOutside = (e: MouseEvent) => {
-  if (
-    engineSelectorRef.value &&
-    !engineSelectorRef.value.contains(e.target as Node) &&
-    leftBtnRef.value &&
-    !leftBtnRef.value.contains(e.target as Node)
-  ) {
-    showEngineSelector.value = false;
+const handleDocumentClick = (event: MouseEvent) => {
+  if (!showEngineSelector.value) {
+    return;
   }
+
+  const target = event.target;
+  if (!(target instanceof Node)) {
+    return;
+  }
+
+  if (engineSelectorRef.value?.contains(target) || engineButtonRef.value?.contains(target)) {
+    return;
+  }
+
+  closeEngineSelector();
 };
 
 onMounted(() => {
-  document.addEventListener("click", handleClickOutside);
+  document.addEventListener("click", handleDocumentClick);
   loadEngines();
 });
 
 onUnmounted(() => {
-  document.removeEventListener("click", handleClickOutside);
+  document.removeEventListener("click", handleDocumentClick);
 });
 
 /**
@@ -299,34 +353,37 @@ const getActiveSearchItem = () => displayedList.value[tips.current];
 const handleSearch = (selectedItem?: SearchPanelItem) => {
   const item = selectedItem ?? getActiveSearchItem();
   if (item?.type === "link") {
-    window.open(item.url);
+    window.open(item.url, "_blank", "noopener,noreferrer");
     return;
   }
 
   const keyword = normalizeKeyword(item?.text ?? kw.value);
   kw.value = keyword;
-  if (keyword.length > 0 && engine.list.length > 0) {
-    addSearchHistory(keyword);
-    window.open(engine.list[engine.current].url.replace("${kw}", keyword));
+  if (keyword.length === 0 || !currentEngine.value) {
+    return;
   }
+
+  addSearchHistory(keyword);
+  const encodedKeyword = encodeURIComponent(keyword);
+  const searchUrl = currentEngine.value.url.replaceAll("${kw}", encodedKeyword);
+  window.open(searchUrl, "_blank", "noopener,noreferrer");
 };
 
-const handleClickTip = (e: SearchPanelItem) => {
-  if (e.type !== "link") {
-    kw.value = e.text;
+const handleClickTip = (item: SearchPanelItem) => {
+  if (item.type !== "link") {
+    kw.value = item.text;
   }
-  handleSearch(e);
+  handleSearch(item);
 };
 
-/**
- * 对外暴露统一的 open / close / reset 接口，页面层只通过这组 API 编排状态。
- */
 defineExpose({
   open,
   close,
-  reset
+  reset,
+  closeFloatingPanel
 });
 </script>
+
 <template>
   <div class="search-box" @click.stop>
     <button
@@ -339,57 +396,87 @@ defineExpose({
       <span>搜索</span>
     </button>
 
-    <div v-else class="search-input-box">
-      <div class="left">
-        <span ref="leftBtnRef" @click="toggleEngineSelector">
-          <UIcon name="mdi:internet" :size="24" />
-        </span>
+    <div v-else class="search-box__input">
+      <div class="search-box__engine">
+        <button
+          ref="engineButtonRef"
+          class="search-box__engine-button"
+          type="button"
+          :title="isSearchEnabled ? currentEngine?.name : '暂无可用搜索引擎'"
+          @click="toggleEngineSelector"
+        >
+          <UIcon :name="currentEngineIcon" :size="24" />
+        </button>
+
+        <Transition
+          enter-active-class="search-box__engine-name--enter"
+          leave-active-class="search-box__engine-name--leave"
+        >
+          <span v-if="showCurrentEngineName && currentEngine" class="search-box__engine-name">
+            {{ currentEngine.name }}
+          </span>
+        </Transition>
+
         <!-- 搜索引擎选择器 -->
-        <div v-show="showEngineSelector" ref="engineSelectorRef" class="engine-selector">
-          <div
-            v-for="(item, index) in engine.list"
-            :key="index"
-            class="engine-item"
-            :class="{ active: index === engine.current }"
-            @click="
-              engine.current = index;
-              showEngineSelector = false;
-            "
-          >
-            <span :class="item.icon"></span>
-            <span>{{ item.name }}</span>
+        <Transition
+          enter-active-class="search-box__engine-menu--enter"
+          leave-active-class="search-box__engine-menu--leave"
+        >
+          <div v-if="showEngineSelector" ref="engineSelectorRef" class="search-box__engine-menu">
+            <button
+              v-for="(item, index) in engines"
+              :key="item.name"
+              class="search-box__engine-option"
+              :class="{ 'search-box__engine-option--active': index === currentIndex }"
+              type="button"
+              @click="handleSelectEngine(index)"
+            >
+              <UIcon :name="item.icon" :size="24" />
+              <span>{{ item.name }}</span>
+            </button>
           </div>
-        </div>
+        </Transition>
       </div>
-      <div class="center">
+
+      <div class="search-box__field" @click="closeEngineSelector">
         <input
           ref="searchInputRef"
           v-model="kw"
+          class="search-box__control"
           type="text"
           @keydown.enter="handleSearch"
+          @keydown.tab="handleEngineKeydown"
           @keydown.up.prevent="selectTip(false)"
           @keydown.down.prevent="selectTip(true)"
           @input="handleInput"
         />
       </div>
-      <div class="right" @click="handleSearch">
-        <span>
-          <UIcon name="mdi:search" :size="24" class="text-blue-400" />
-        </span>
-      </div>
+
+      <button
+        class="search-box__submit"
+        type="button"
+        :title="isSearchEnabled ? '搜索' : '暂无可用搜索引擎'"
+        @click="handleSearch()"
+      >
+        <UIcon name="mdi:search" :size="24" class="text-blue-400" />
+      </button>
     </div>
 
-    <div v-show="showSearchPanel" ref="tipsRef" class="search-tips">
+    <div v-show="showSearchPanel" ref="tipsRef" class="search-box__tips">
       <div
         v-for="(item, index) in displayedList"
-        :key="index"
-        class="search-tips-item"
-        :class="{ active: index === tips.current }"
+        :key="`${item.type}-${item.text}-${index}`"
+        class="search-box__tip"
+        :class="{ 'search-box__tip--active': index === tips.current }"
       >
-        <div v-if="item.type === 'text' || item.type === 'history'" class="text" @click="handleClickTip(item)">
+        <div
+          v-if="item.type === 'text' || item.type === 'history'"
+          class="search-box__tip-text"
+          @click="handleClickTip(item)"
+        >
           {{ item.text }}
         </div>
-        <div v-else-if="item.type === 'link'" class="link" @click="handleClickTip(item)">
+        <div v-else-if="item.type === 'link'" class="search-box__tip-link" @click="handleClickTip(item)">
           <img :src="item.icon" :alt="item.text" />
           <div>
             <h5>{{ item.text }}</h5>
@@ -402,307 +489,5 @@ defineExpose({
 </template>
 
 <style scoped lang="scss">
-.search-box {
-  width: 640px;
-  background-repeat: no-repeat;
-  background-size: cover;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  position: relative;
-
-  &__trigger,
-  .search-input-box {
-    width: 640px;
-    height: 48px;
-    border-radius: 24px;
-    box-sizing: border-box;
-  }
-
-  &__trigger {
-    border: none;
-    background: rgba(0, 0, 0, 0.35);
-    color: #fff;
-    font-size: 14px;
-    letter-spacing: 2px;
-    cursor: pointer;
-    backdrop-filter: blur(8px);
-    transition: background 0.25s ease;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-
-    &:hover {
-      background: rgba(0, 0, 0, 0.5);
-    }
-  }
-
-  .search-engine {
-    width: 520px;
-    line-height: 30px;
-    height: 30px;
-    margin: 50px 0 30px 0;
-    display: flex;
-    justify-content: space-between;
-    color: #525252;
-    position: relative;
-
-    span {
-      position: relative;
-      cursor: pointer;
-      letter-spacing: 1px;
-      padding: 0 6px;
-    }
-
-    .marker {
-      position: absolute;
-      bottom: -8px;
-      left: 50%;
-      transform: translateX(-50%);
-      display: block;
-      width: 10px;
-      height: 5px;
-      border-radius: 3px;
-      background-color: #525252;
-      transition: all 0.2s;
-    }
-  }
-
-  .search-input-box {
-    display: flex;
-    justify-self: center;
-    align-items: center;
-    background-color: #1e1e1ee6;
-    color: #606265;
-    box-shadow: 0 6px 15px rgba(142, 142, 142, 0.2);
-    flex-shrink: 0;
-
-    .left,
-    .right {
-      width: 50px;
-      height: 100%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      cursor: pointer;
-    }
-
-    .left {
-      position: relative;
-
-      > span {
-        width: 35px;
-        height: 35px;
-        border-radius: 50%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-
-        &:hover {
-          background-color: #ffffff0d;
-        }
-      }
-
-      // 搜索引擎选择器
-      .engine-selector {
-        position: absolute;
-        top: calc(100% + 10px);
-        left: 0;
-        width: 150px;
-        background-color: #1e1e1ee6;
-        border-radius: 10px;
-        box-shadow: 0 6px 15px rgba(142, 142, 142, 0.2);
-        backdrop-filter: blur(8px);
-        padding: 6px;
-        z-index: 100;
-
-        .engine-item {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          padding: 8px 12px;
-          cursor: pointer;
-          border-radius: 8px;
-          color: #ffffffe6;
-          transition: background-color 0.2s;
-
-          &:hover {
-            background-color: #ffffff1a;
-          }
-
-          &.active {
-            background-color: #ffffff1a;
-          }
-
-          span:first-child {
-            width: 20px;
-            height: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-          }
-        }
-      }
-    }
-
-    .right {
-      > span {
-        width: 35px;
-        height: 35px;
-        border-radius: 50%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-
-        &:hover {
-          background-color: #ffffff0d;
-        }
-      }
-    }
-
-    .center {
-      height: 100%;
-      font-size: 15px;
-      flex: 1;
-      display: flex;
-      align-items: center;
-
-      input {
-        flex: 1;
-        background-color: transparent;
-        border: none;
-        outline: none;
-        height: 100%;
-        color: #ffffff;
-        text-align: center;
-
-        &::selection {
-          background: #59696e;
-          color: #ffffff;
-        }
-      }
-
-      .i-icon {
-        cursor: pointer;
-        user-select: none;
-      }
-    }
-  }
-
-  .search-tips {
-    width: 640px;
-    height: 300px;
-    background-color: #0000001a;
-    border-radius: 5px;
-    backdrop-filter: blur(30px) saturate(1.25);
-    margin-top: 10px;
-    color: #555;
-    box-shadow: 0 6px 15px rgba(142, 142, 142, 0.2);
-    backdrop-filter: blur(8px);
-    overflow-y: scroll;
-    border-radius: 14px;
-    padding: 6px;
-
-    &::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
-    }
-
-    &::-webkit-scrollbar-thumb {
-      border-radius: 3px;
-      background-color: rgba(0, 0, 0, 0.05);
-    }
-
-    .search-tips-item {
-      padding: 6px 10px;
-      cursor: pointer;
-      user-select: none;
-      border-radius: 3px;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      overflow: hidden;
-      color: #ffffffe6;
-      border-radius: 10px;
-
-      &:hover {
-        background-color: #ffffff1a;
-      }
-
-      .link {
-        display: flex;
-        align-items: center;
-
-        img {
-          height: 30px;
-          width: 30px;
-        }
-
-        div {
-          padding-left: 10px;
-          display: flex;
-          flex-direction: column;
-          justify-content: space-between;
-
-          h5 {
-            font-size: 14px;
-            margin: 0;
-          }
-
-          p {
-            font-size: 12px;
-            margin: 0;
-          }
-        }
-      }
-    }
-
-    .search-tips-item.active {
-      background-color: #ffffff1a;
-    }
-  }
-
-  .toolbar {
-    position: absolute;
-    right: 10px;
-    bottom: 10px;
-    color: rgba(0, 0, 0, 0.8);
-    font-size: 20px;
-    display: flex;
-    list-style: none;
-    margin: 0;
-
-    li {
-      width: 40px;
-      height: 40px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: background-color 0.2s;
-
-      &:hover {
-        background-color: rgba(255, 255, 255, 0.1);
-      }
-    }
-  }
-}
-
-@keyframes fade-in-scale {
-  0% {
-    opacity: 0;
-    transform: scale(0.5);
-  }
-
-  48% {
-    opacity: 1;
-    transform: scale(1.03);
-  }
-
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
+@import url("../style/search-box.scss");
 </style>

@@ -25,7 +25,7 @@ const colorIconConfig = {
         remove: true
       }
     },
-    "removeViewBox",
+    // "removeViewBox",
     "sortAttrs",
     {
       name: "setSize",
@@ -55,7 +55,7 @@ const normalIconConfig = {
         remove: true
       }
     },
-    "removeViewBox",
+    // "removeViewBox",
     "sortAttrs",
     {
       name: "setSize",

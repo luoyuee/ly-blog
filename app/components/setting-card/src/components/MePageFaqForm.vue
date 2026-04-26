@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { IClientConfigMePageFaqItem } from "#shared/types/config";
+import type { IMePageConfigFaqItem } from "#shared/types/config";
 import type { FormSubmitEvent, TableColumn } from "@nuxt/ui";
 import { computed, h, onBeforeUnmount, reactive, ref, resolveComponent, watch } from "vue";
 import { useSortable } from "@vueuse/integrations/useSortable";
@@ -9,11 +9,11 @@ import { z } from "zod";
 const handleClass = "me-page-faq-form__handle";
 const tbodyClass = "me-page-faq-form__tbody";
 
-type RowItem = IClientConfigMePageFaqItem & {
+type RowItem = IMePageConfigFaqItem & {
   id: string;
 };
 
-const modelValue = defineModel<IClientConfigMePageFaqItem[]>({
+const modelValue = defineModel<IMePageConfigFaqItem[]>({
   default: () => []
 });
 
@@ -48,7 +48,7 @@ const modalState = reactive<{
   editingIndex: null
 });
 
-const modalForm = reactive<IClientConfigMePageFaqItem>({
+const modalForm = reactive<IMePageConfigFaqItem>({
   label: "",
   content: ""
 });

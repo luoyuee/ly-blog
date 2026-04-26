@@ -14,13 +14,13 @@ const dockItems = ref<DockItem[]>([
   {
     id: 1,
     name: "所有捷径",
-    style: "background-image: linear-gradient(135deg, rgb(84, 174, 229), rgb(147, 106, 209));",
+    style: "background-image: linear-gradient(135deg, #E2CCFF 0%, #7FB4FF 100%)",
     icon: "mdi:apps"
   },
   {
     id: 2,
     name: "首页",
-    style: "background-image: linear-gradient(135deg, #E2CCFF 0%, #7FB4FF 100%)",
+    style: "background-image: linear-gradient(135deg, rgb(84, 174, 229), rgb(147, 106, 209));",
     icon: "mdi:home"
   },
   {

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { IClientConfigMePageLinkItem } from "#shared/types/config";
+import type { IMePageConfigLinkItem } from "#shared/types/config";
 import type { FormSubmitEvent, TableColumn } from "@nuxt/ui";
 import { BasicModal } from "@/components/basic-modal";
 import { computed, h, onBeforeUnmount, reactive, ref, resolveComponent, watch } from "vue";
@@ -9,7 +9,7 @@ import { z } from "zod";
 const handleClass = "me-page-link-list-form__handle";
 const tbodyClass = "me-page-link-list-form__tbody";
 
-type RowItem = IClientConfigMePageLinkItem & {
+type RowItem = IMePageConfigLinkItem & {
   id: string;
 };
 
@@ -20,7 +20,7 @@ const props = defineProps({
   }
 });
 
-const modelValue = defineModel<IClientConfigMePageLinkItem[]>({
+const modelValue = defineModel<IMePageConfigLinkItem[]>({
   default: () => []
 });
 
@@ -79,7 +79,7 @@ const modalState = reactive<{
   editingIndex: null
 });
 
-const modalForm = reactive<IClientConfigMePageLinkItem>({
+const modalForm = reactive<IMePageConfigLinkItem>({
   title: "",
   desc: "",
   href: "",

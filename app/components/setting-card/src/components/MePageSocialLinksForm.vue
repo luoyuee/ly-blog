@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { IClientConfigMePageSocialLinkItem } from "#shared/types/config";
+import type { IMePageConfigSocialLinkItem } from "#shared/types/config";
 import type { FormSubmitEvent, TableColumn } from "@nuxt/ui";
 import { computed, h, reactive, ref, resolveComponent, watch } from "vue";
 import { useSortable } from "@vueuse/integrations/useSortable";
@@ -11,11 +11,11 @@ import { z } from "zod";
 const handleClass = "me-page-social-links-form__handle";
 const tbodyClass = "me-page-social-links-form__tbody";
 
-type RowItem = IClientConfigMePageSocialLinkItem & {
+type RowItem = IMePageConfigSocialLinkItem & {
   id: string;
 };
 
-const modelValue = defineModel<IClientConfigMePageSocialLinkItem[]>({
+const modelValue = defineModel<IMePageConfigSocialLinkItem[]>({
   default: () => []
 });
 
@@ -52,7 +52,7 @@ const modalState = reactive<{
   editingIndex: null
 });
 
-const modalForm = reactive<IClientConfigMePageSocialLinkItem>({
+const modalForm = reactive<IMePageConfigSocialLinkItem>({
   title: undefined,
   href: "",
   icon: "",
@@ -264,7 +264,7 @@ onBeforeUnmount(() => {
           <UInput v-model="modalForm.href" icon="ep:link" placeholder="https://..." />
         </UFormField>
         <UFormField name="icon" label="图标" required>
-          <SelectIcon v-model="modalForm.icon" :options="SocialIconNames" />
+          <SelectIcon v-model="modalForm.icon" :items="SocialIconNames" />
         </UFormField>
         <UFormField name="hover_bg" label="Hover 背景（可选）">
           <UInput v-model="modalForm.hover_bg" placeholder="例如：#000 或 var(--color-gray-700)" />

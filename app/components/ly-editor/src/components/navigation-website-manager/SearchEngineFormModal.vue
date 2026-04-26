@@ -7,6 +7,7 @@ import { BasicModal } from "@/components/basic-modal";
 import { useForm } from "~/composables/useForm";
 import { lyEditorEmitter } from "~/events";
 import { z } from "zod";
+import { SearchEngineIconNames } from "#shared/constants/icons";
 
 const $notify = useNotification();
 
@@ -119,7 +120,12 @@ const handleCancel = () => {
       </UFormField>
 
       <UFormField name="icon" label="图标" required>
-        <SelectIcon v-model="formData.icon" placeholder="请选择图标" />
+        <UIcon name="custom:baidu" />
+        <SelectIcon
+          v-model="formData.icon"
+          placeholder="请选择图标"
+          :items="SearchEngineIconNames"
+        />
       </UFormField>
 
       <UFormField name="description" label="描述">

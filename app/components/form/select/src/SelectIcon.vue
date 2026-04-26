@@ -7,7 +7,7 @@ import { watch } from "vue";
 const selected = defineModel<string>();
 
 const props = defineProps({
-  options: {
+  items: {
     type: Array as PropType<string[]>,
     default: () => SelectIconDefaultOptions
   },
@@ -21,7 +21,7 @@ const props = defineProps({
 });
 
 const items = computed<SelectMenuItem[]>(() => {
-  return props.options.map((item) => ({
+  return props.items.map((item) => ({
     label: item,
     icon: item
   }));

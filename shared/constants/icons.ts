@@ -25,3 +25,21 @@ export const SocialIconNames = [
   "ri:youtube-fill",
   "ri:zhihu-line"
 ];
+
+export const SearchEngineIconNames = [
+  "custom:baidu",
+  "custom:bing",
+  "custom:sogou",
+  "custom:360so",
+  "custom:google",
+  "custom:duck",
+  "custom:yahoo",
+  "custom:yandex",
+  "custom:github-rect",
+  "custom:toutiao",
+  "custom:csdn",
+  "custom:soutushenqi",
+  "custom:stackoverflow",
+  "custom:search-2",
+  "custom:world"
+];

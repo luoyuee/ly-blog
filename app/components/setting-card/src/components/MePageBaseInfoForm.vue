@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { IClientConfigMePageBaseInfoItem } from "#shared/types/config";
+import type { IMePageConfigBaseInfoItem } from "#shared/types/config";
 import type { FormSubmitEvent, TableColumn } from "@nuxt/ui";
 import { computed, h, onBeforeUnmount, reactive, ref, resolveComponent, watch } from "vue";
 import { useSortable } from "@vueuse/integrations/useSortable";
@@ -11,11 +11,11 @@ import { z } from "zod";
 const handleClass = "me-page-base-info-form__handle";
 const tbodyClass = "me-page-base-info-form__tbody";
 
-type RowItem = IClientConfigMePageBaseInfoItem & {
+type RowItem = IMePageConfigBaseInfoItem & {
   id: string;
 };
 
-const modelValue = defineModel<IClientConfigMePageBaseInfoItem[]>({
+const modelValue = defineModel<IMePageConfigBaseInfoItem[]>({
   default: () => []
 });
 
@@ -52,7 +52,7 @@ const modalState = reactive<{
   editingIndex: null
 });
 
-const modalForm = reactive<IClientConfigMePageBaseInfoItem>({
+const modalForm = reactive<IMePageConfigBaseInfoItem>({
   label: "",
   value: "",
   icon: "",
@@ -270,7 +270,7 @@ defineExpose({
           <UInput v-model="modalForm.value" placeholder="例如：2000-01-01 / 2020-01" />
         </UFormField>
         <UFormField name="icon" label="图标" required>
-          <SelectIcon v-model="modalForm.icon" :options="CustomIconNames" />
+          <SelectIcon v-model="modalForm.icon" :items="CustomIconNames" />
         </UFormField>
         <UFormField name="href" label="链接（可选）">
           <UInput v-model="modalForm.href" icon="ep:link" placeholder="https://..." />

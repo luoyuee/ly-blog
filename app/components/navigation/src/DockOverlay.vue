@@ -7,9 +7,9 @@ const visible = ref(false);
 const dockItems = ref<DockItem[]>([
   {
     id: 1,
-    name: "所有捷径",
+    name: "首页",
     style: "background-image: linear-gradient(135deg, rgb(84, 174, 229), rgb(147, 106, 209));",
-    icon: "mdi:apps"
+    icon: "mdi:home"
   },
   {
     id: 2,
