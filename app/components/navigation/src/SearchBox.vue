@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { SearchEngineItem, SearchTips } from "#shared/types/navigation-website";
 import { ref, reactive, nextTick, onMounted, onUnmounted } from "vue";
-import { searchNavigationWebsites, getSearchEngineList } from "~/apis/navigation-website";
+import { searchNavigationWebsites, getPublicSearchEngineList } from "~/apis/navigation-website";
 import jsonp from "#shared/utils/jsonp";
 import { debounce } from "es-toolkit";
 
@@ -24,7 +24,7 @@ const engine = reactive<{
 // 从后端接口读取搜索引擎列表，并映射为组件内部使用的数据结构
 const loadEngines = async () => {
   try {
-    const res = await getSearchEngineList();
+    const res = await getPublicSearchEngineList();
     engine.list = (res.data ?? [])
       .filter((item) => item.status === 1)
       .map((item) => ({

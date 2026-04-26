@@ -73,6 +73,10 @@ const handleDeleteShortcut = (e: ShortcutItem) => {
 
         <div class="text-sm truncate flex-1">{{ item.name }}</div>
 
+        <UBadge :color="item.is_public ? 'success' : 'neutral'" variant="subtle" size="xs">
+          {{ item.is_public ? "公开" : "私有" }}
+        </UBadge>
+
         <div
           class="opacity-0 group-hover:opacity-100 flex items-center gap-1 transition-opacity shrink-0"
           @click.stop

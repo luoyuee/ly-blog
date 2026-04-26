@@ -13,6 +13,7 @@ const schema = z.object({
   type: z.number().int(),
   hot: z.number().int().min(0),
   is_favorite: z.boolean(),
+  is_public: z.boolean(),
   status: z.number().int()
 });
 
@@ -34,6 +35,7 @@ export default defineEventHandler(async (event) => {
       type: body.type,
       hot: body.hot,
       is_favorite: body.is_favorite,
+      is_public: body.is_public,
       status: body.status
     }
   });
