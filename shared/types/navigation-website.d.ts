@@ -10,6 +10,7 @@ export interface SearchEngineItem {
   description?: string;
   url: string;
   icon: string;
+  is_public: boolean;
   status: number;
 }
 
@@ -25,6 +26,7 @@ export interface ShortcutItem {
   description?: string;
   url: string;
   icon: string;
+  is_public: boolean;
   status: number;
 }
 
@@ -44,6 +46,7 @@ export interface NavigationWebsiteItem {
   type: number;
   hot: number;
   is_favorite: boolean;
+  is_public: boolean;
   status: number;
 }
 
@@ -55,4 +58,14 @@ export interface SearchTips {
   type: "text" | "link";
   url?: string;
   icon?: string;
+}
+
+export interface SearchHistoryItem {
+  id: number;
+  created_at?: Date;
+  created_by?: number;
+  search_engine_id: number;
+  keyword: string;
+  ip?: string;
+  NavigationSearchEngine?: SearchEngineItem;
 }

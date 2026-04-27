@@ -180,6 +180,20 @@ const columns: TableColumn<NavigationWebsiteItem>[] = [
     }
   },
   {
+    accessorKey: "is_public",
+    header: "公开",
+    cell: ({ row }) => {
+      const isPublic = row.getValue<boolean>("is_public");
+      return h(
+        "span",
+        {
+          class: isPublic ? "text-emerald-400" : "text-gray-400"
+        },
+        isPublic ? "公开" : "私有"
+      );
+    }
+  },
+  {
     accessorKey: "status",
     header: "状态",
     cell: ({ row }) => {

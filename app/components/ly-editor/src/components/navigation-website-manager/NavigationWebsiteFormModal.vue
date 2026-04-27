@@ -24,6 +24,7 @@ const schema = z.object({
   type: z.number().int().default(1),
   hot: z.number().int().default(0),
   is_favorite: z.boolean().default(false),
+  is_public: z.boolean().default(true),
   status: z.number().int().default(1)
 });
 
@@ -31,6 +32,7 @@ const { formData, resetForm, setForm } = useForm<NavigationWebsiteForm>({
   type: 1,
   hot: 0,
   is_favorite: false,
+  is_public: true,
   status: 1
 });
 
@@ -66,6 +68,7 @@ const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => 
         type: event.data.type,
         hot: event.data.hot,
         is_favorite: event.data.is_favorite,
+        is_public: event.data.is_public,
         status: event.data.status
       });
 
@@ -82,6 +85,7 @@ const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => 
         type: event.data.type,
         hot: event.data.hot,
         is_favorite: event.data.is_favorite,
+        is_public: event.data.is_public,
         status: event.data.status
       });
 
@@ -165,6 +169,10 @@ const handleCancel = () => {
 
       <UFormField name="is_favorite" label="收藏">
         <USwitch v-model="formData.is_favorite" />
+      </UFormField>
+
+      <UFormField name="is_public" label="公开">
+        <USwitch v-model="formData.is_public" />
       </UFormField>
 
       <UFormField name="status" label="状态">

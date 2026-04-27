@@ -14,7 +14,10 @@ import type {
   GetShortcutPaginatedRequest,
   GetShortcutPaginatedResponse,
   CreateShortcutRequest,
-  UpdateShortcutRequest
+  UpdateShortcutRequest,
+  CreateSearchHistoryRequest,
+  GetSearchHistoryPaginatedRequest,
+  GetSearchHistoryPaginatedResponse
 } from "./models";
 import { serviceAxios } from "@/utils/request";
 
@@ -97,6 +100,19 @@ export async function getSearchEngineList(): Promise<GetSearchEngineListResponse
   }
 }
 
+/** 获取前台可见搜索引擎 */
+export async function getPublicSearchEngineList(): Promise<GetSearchEngineListResponse> {
+  try {
+    const response = await serviceAxios({
+      url: "/navigation/search-engine/all",
+      method: "get"
+    });
+    return response.data;
+  } catch (error) {
+    return Promise.reject(error);
+  }
+}
+
 /** 获取分页搜索引擎 */
 export async function getPaginatedSearchEngines(
   params: GetSearchEnginePaginatedRequest
@@ -161,6 +177,19 @@ export async function getShortcutList(): Promise<GetShortcutListResponse> {
   }
 }
 
+/** 获取前台可见快捷方式 */
+export async function getPublicShortcutList(): Promise<GetShortcutListResponse> {
+  try {
+    const response = await serviceAxios({
+      url: "/navigation/shortcut/all",
+      method: "get"
+    });
+    return response.data;
+  } catch (error) {
+    return Promise.reject(error);
+  }
+}
+
 /** 获取分页快捷方式 */
 export async function getPaginatedShortcuts(
   params: GetShortcutPaginatedRequest
@@ -205,6 +234,44 @@ export async function deleteShortcut(id: number): Promise<void> {
   try {
     await serviceAxios({
       url: "/admin/navigation/shortcut/" + id,
+      method: "delete"
+    });
+  } catch (error) {
+    return Promise.reject(error);
+  }
+}
+
+export async function createSearchHistory(data: CreateSearchHistoryRequest): Promise<void> {
+  try {
+    await serviceAxios({
+      url: "/navigation/search-history",
+      method: "post",
+      data
+    });
+  } catch (error) {
+    return Promise.reject(error);
+  }
+}
+
+export async function getPaginatedSearchHistories(
+  params: GetSearchHistoryPaginatedRequest
+): Promise<GetSearchHistoryPaginatedResponse> {
+  try {
+    const response = await serviceAxios({
+      url: "/navigation/search-history",
+      method: "get",
+      params
+    });
+    return response.data;
+  } catch (error) {
+    return Promise.reject(error);
+  }
+}
+
+export async function deleteSearchHistory(id: number): Promise<void> {
+  try {
+    await serviceAxios({
+      url: "/navigation/search-history/" + id,
       method: "delete"
     });
   } catch (error) {

@@ -2,6 +2,7 @@ import type { GetPaginatedRequest, GetPaginatedResponse } from "#shared/types/co
 import type {
   NavigationWebsiteItem,
   SearchEngineItem,
+  SearchHistoryItem,
   ShortcutItem
 } from "#shared/types/navigation-website";
 
@@ -22,6 +23,7 @@ export interface CreateNavigationWebsiteRequest {
   type?: number;
   hot?: number;
   is_favorite?: boolean;
+  is_public?: boolean;
   status?: number;
 }
 
@@ -57,6 +59,7 @@ export interface CreateSearchEngineRequest {
   description?: string;
   url: string;
   icon: string;
+  is_public?: boolean;
   status?: number;
 }
 
@@ -83,9 +86,22 @@ export interface CreateShortcutRequest {
   description?: string;
   url: string;
   icon: string;
+  is_public?: boolean;
   status?: number;
 }
 
 export interface UpdateShortcutRequest extends CreateShortcutRequest {
   id: number;
 }
+
+export interface CreateSearchHistoryRequest {
+  search_engine_id: number;
+  keyword: string;
+}
+
+export interface GetSearchHistoryPaginatedRequest extends GetPaginatedRequest {
+  keyword?: string;
+  search_engine_id?: number;
+}
+
+export type GetSearchHistoryPaginatedResponse = GetPaginatedResponse<SearchHistoryItem>;

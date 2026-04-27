@@ -2,7 +2,7 @@
 import type { SearchTips } from "#shared/types/navigation-website";
 import { useStorage } from "@vueuse/core";
 import { computed, nextTick, onMounted, onUnmounted, reactive, ref, watch } from "vue";
-import { searchNavigationWebsites, getSearchEngineList } from "~/apis/navigation-website";
+import { searchNavigationWebsites, getPublicSearchEngineList } from "~/apis/navigation-website";
 import jsonp from "#shared/utils/jsonp";
 import { debounce } from "es-toolkit";
 import { useSearchEngine } from "./composables/useSearchEngine";
@@ -106,7 +106,7 @@ const addSearchHistory = (value: string) => {
  */
 const loadEngines = async () => {
   try {
-    const res = await getSearchEngineList();
+    const res = await getPublicSearchEngineList();
     setEngines(
       (res.data ?? [])
         .filter((item) => item.status === 1)

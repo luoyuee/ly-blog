@@ -390,6 +390,7 @@ model NavigationWebsite {
   type        Int       @default(1) // 1: 网站 2: 书签
   hot         Int       @default(0)
   is_favorite Boolean   @default(false)
+  is_public   Boolean   @default(true)
   status      Int       @default(1) // 0:已删除，1:正常状态，2:禁用状态
 
   @@map("navigation_website")
@@ -405,9 +406,27 @@ model NavigationSearchEngine {
   description String?   @db.VarChar(1024)
   url         String    @db.VarChar(512)
   icon        String    @db.VarChar(512)
+  is_public   Boolean   @default(true)
   status      Int       @default(1) // 0:已删除，1:正常状态，2:禁用状态
 
+  histories NavigationSearchHistory[]
+
   @@map("navigation_search_engine")
+}
+
+model NavigationSearchHistory {
+  id               Int       @id @default(autoincrement())
+  created_at       DateTime? @default(now())
+  created_by       Int?
+  search_engine_id Int
+  keyword          String    @db.VarChar(512)
+  ip               String?   @db.VarChar(64)
+
+  NavigationSearchEngine NavigationSearchEngine @relation(fields: [search_engine_id], references: [id])
+
+  @@index([created_by, created_at])
+  @@index([search_engine_id])
+  @@map("navigation_search_history")
 }
 
 model NavigationShortcut {
@@ -420,6 +439,7 @@ model NavigationShortcut {
   description String?   @db.VarChar(1024)
   url         String    @db.VarChar(512)
   icon        String    @db.VarChar(512)
+  is_public   Boolean   @default(true)
   status      Int       @default(1) // 0:已删除，1:正常状态，2:禁用状态
 
   @@map("navigation_shortcut")

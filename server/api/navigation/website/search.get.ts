@@ -1,3 +1,4 @@
+import type { Prisma } from "@@/prisma/generated/client";
 import { getBadResponse, getOKResponse } from "@@/server/utils/response";
 import { prisma } from "@@/server/db";
 import { z } from "zod";
@@ -12,16 +13,22 @@ export default defineEventHandler(async (event) => {
 
   if (error) return getBadResponse(event, error.message);
 
+  const where: Prisma.NavigationWebsiteWhereInput = {
+    status: 1,
+    OR: [
+      { name: { contains: params.keyword } },
+      { url: { contains: params.keyword } },
+      { description: { contains: params.keyword } },
+      { tags: { path: [], string_contains: params.keyword } }
+    ]
+  };
+
+  if (!event.context.user) {
+    where.is_public = true;
+  }
+
   const results = await prisma.navigationWebsite.findMany({
-    where: {
-      status: 1,
-      OR: [
-        { name: { contains: params.keyword } },
-        { url: { contains: params.keyword } },
-        { description: { contains: params.keyword } },
-        { tags: { path: [], string_contains: params.keyword } }
-      ]
-    },
+    where,
     take: params.limit,
     orderBy: [{ is_favorite: "desc" }, { hot: "desc" }, { id: "desc" }]
   });
