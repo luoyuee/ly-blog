@@ -62,7 +62,7 @@
     "monaco-editor": "^0.55.1",
     "nodemailer": "^7.0.12",
     "numeral": "^2.0.6",
-    "nuxt": "^4.2.2",
+    "nuxt": "^4.4.4",
     "oh-my-live2d": "^0.19.3",
     "pg": "^8.16.3",
     "pg-copy-streams": "^7.0.0",
