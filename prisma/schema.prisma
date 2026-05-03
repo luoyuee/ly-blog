@@ -21,7 +21,6 @@ model Config {
   name       String    @unique @db.VarChar(255)
   data       Json
 
-  @@index([name])
   @@map("config")
 }
 
@@ -111,6 +110,10 @@ model Article {
 
   articleComments ArticleComment[]
 
+  @@index([category_id])
+  @@index([note_id])
+  @@index([status, custom_url_access_only])
+  @@index([status, category_id])
   @@map("article")
 }
 
@@ -138,6 +141,9 @@ model ArticleComment {
 
   Article Article? @relation(fields: [article_id], references: [id])
 
+  @@index([article_id, status])
+  @@index([parent_id])
+  @@index([reply_id])
   @@map("article_comment")
 }
 
@@ -183,6 +189,7 @@ model Note {
   versions NoteVersion[]
   Article  Article[]
 
+  @@index([folder_id, status])
   @@map("note")
 }
 
@@ -205,6 +212,8 @@ model NoteVersion {
 
   Note Note? @relation(fields: [note_id], references: [id])
 
+  @@unique([note_id, version])
+  @@index([note_id, status])
   @@map("note_version")
 }
 
@@ -246,7 +255,8 @@ model Image {
 
   ImageFolder ImageFolder? @relation(fields: [folder_id], references: [id])
 
-  @@index([folder_id, filename, hash])
+  @@index([folder_id, hash])
+  @@index([folder_id, filename])
   @@map("image")
 }
 
@@ -286,7 +296,8 @@ model File {
 
   FileFolder FileFolder? @relation(fields: [folder_id], references: [id])
 
-  @@index([folder_id, filename, hash])
+  @@index([folder_id, hash])
+  @@index([folder_id, filename])
   @@map("file")
 }
 
@@ -307,7 +318,6 @@ model User {
   last_login_location String?   @db.VarChar(255)
   status              Int       @default(1) // 0:已删除，1:正常状态
 
-  @@index([username, email])
   @@map("user")
 }
 
@@ -361,7 +371,6 @@ model SystemRuntimeData {
   name       String    @unique @db.VarChar(255)
   data       Json?
 
-  @@index([name])
   @@map("system_runtime_data")
 }
 
@@ -372,7 +381,6 @@ model Dashboard {
   time       DateTime  @unique
   data       Json
 
-  @@index([time])
   @@map("dashboard")
 }
 

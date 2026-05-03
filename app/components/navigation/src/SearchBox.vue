@@ -1,17 +1,33 @@
 <script setup lang="ts">
-import type { SearchTips } from "#shared/types/navigation-website";
+import type { SearchHistoryItem as SearchHistoryRecord, SearchTips } from "#shared/types/navigation-website";
 import { useStorage } from "@vueuse/core";
 import { computed, nextTick, onMounted, onUnmounted, reactive, ref, watch } from "vue";
-import { searchNavigationWebsites, getPublicSearchEngineList } from "~/apis/navigation-website";
+import {
+  createSearchHistory,
+  getPaginatedSearchHistories,
+  getPublicSearchEngineList,
+  searchNavigationWebsites
+} from "~/apis/navigation-website";
 import jsonp from "#shared/utils/jsonp";
 import { debounce } from "es-toolkit";
+import { useUserStore } from "~/stores/modules/user";
 import { useSearchEngine } from "./composables/useSearchEngine";
 
-type SearchHistoryItem = {
+type SearchHistoryStorageItem = Pick<SearchHistoryRecord, "search_engine_id" | "keyword">;
+
+type SearchHistoryPanelItem = {
   text: string;
   type: "history";
 };
-type SearchPanelItem = SearchTips | SearchHistoryItem;
+
+type SearchPanelItem = SearchTips | SearchHistoryPanelItem;
+type SearchHistoryStorageValue = Array<SearchHistoryStorageItem | string>;
+type LocalSearchHistorySnapshot = {
+  normalizedItems: SearchHistoryStorageItem[];
+  legacyKeywords: string[];
+  shouldRewrite: boolean;
+  defaultSearchEngineId?: number;
+};
 
 const SEARCH_HISTORY_KEY = "ly-blog:navigation-search-history";
 const SEARCH_HISTORY_LIMIT = 8;
@@ -37,13 +53,15 @@ const {
   resetEngineUi
 } = useSearchEngine();
 
+const userStore = useUserStore();
+
 const kw = ref("");
 const searchInputRef = ref<HTMLInputElement | null>(null);
 const tipsRef = ref<HTMLElement | null>(null);
 const engineSelectorRef = ref<HTMLElement | null>(null);
 const engineButtonRef = ref<HTMLElement | null>(null);
 const showSearchInput = ref(false);
-const searchHistory = useStorage<string[]>(SEARCH_HISTORY_KEY, []);
+const searchHistory = useStorage<SearchHistoryStorageValue>(SEARCH_HISTORY_KEY, []);
 
 const tips = reactive<{
   list: SearchTips[];
@@ -53,18 +71,341 @@ const tips = reactive<{
   current: -1
 });
 
+const isSearchHistoryReady = ref(false);
+const isRemoteSearchHistoryLoading = ref(false);
+const remoteSearchHistory = ref<SearchHistoryStorageItem[]>([]);
+let searchHistorySyncToken = 0;
+
+const isLoggedIn = computed(() => !!userStore.profile);
 const kwTrimmed = computed(() => kw.value.trim());
-const historyList = computed<SearchHistoryItem[]>(() =>
-  searchHistory.value.map((item) => ({
-    text: item,
-    type: "history"
-  }))
-);
 const isHistoryMode = computed(() => kwTrimmed.value.length === 0);
+const showSearchPanel = computed(() => showSearchInput.value && displayedList.value.length > 0);
+
+/**
+ * 统一清洗关键词，避免历史记录因空白字符差异产生重复项。
+ */
+const normalizeKeyword = (value: string) => value.trim().replace(/\s+/g, " ");
+
+/**
+ * 获取当前可用于历史记录归档的默认搜索引擎 id。
+ */
+const getDefaultSearchEngineId = () => currentEngine.value?.id ?? engines.value[0]?.id;
+
+/**
+ * 判断本地历史项是否符合新版结构。
+ */
+const isSearchHistoryStorageItem = (
+  value: SearchHistoryStorageItem | string
+): value is SearchHistoryStorageItem =>
+  typeof value !== "string" && typeof value.search_engine_id === "number" && typeof value.keyword === "string";
+
+/**
+ * 解析本地历史项，兼容旧版 string[]。
+ */
+const normalizeSearchHistoryItem = (
+  value: SearchHistoryStorageItem | string,
+  fallbackSearchEngineId?: number
+): SearchHistoryStorageItem | null => {
+  if (typeof value === "string") {
+    if (typeof fallbackSearchEngineId !== "number") {
+      return null;
+    }
+
+    const keyword = normalizeKeyword(value);
+    return keyword.length === 0
+      ? null
+      : {
+          search_engine_id: fallbackSearchEngineId,
+          keyword
+        };
+  }
+
+  if (!isSearchHistoryStorageItem(value)) {
+    return null;
+  }
+
+  const keyword = normalizeKeyword(value.keyword);
+  return keyword.length === 0
+    ? null
+    : {
+        search_engine_id: value.search_engine_id,
+        keyword
+      };
+};
+
+/**
+ * 对历史记录去重并截断，保留最近使用项优先。
+ */
+const dedupeSearchHistory = (items: SearchHistoryStorageItem[]) => {
+  const seen = new Set<string>();
+  const nextHistory: SearchHistoryStorageItem[] = [];
+
+  for (const item of items) {
+    const keyword = normalizeKeyword(item.keyword);
+    if (keyword.length === 0) {
+      continue;
+    }
+
+    const key = item.search_engine_id + ":" + keyword.toLowerCase();
+    if (seen.has(key)) {
+      continue;
+    }
+
+    seen.add(key);
+    nextHistory.push({
+      search_engine_id: item.search_engine_id,
+      keyword
+    });
+
+    if (nextHistory.length >= SEARCH_HISTORY_LIMIT) {
+      break;
+    }
+  }
+
+  return nextHistory;
+};
+
+/**
+ * 将关键词列表去重并截断，保留最近使用项优先。
+ */
+const dedupeKeywords = (keywords: string[]) => {
+  const seen = new Set<string>();
+  const nextKeywords: string[] = [];
+
+  for (const item of keywords) {
+    const keyword = normalizeKeyword(item);
+    if (keyword.length === 0) {
+      continue;
+    }
+
+    const key = keyword.toLowerCase();
+    if (seen.has(key)) {
+      continue;
+    }
+
+    seen.add(key);
+    nextKeywords.push(keyword);
+
+    if (nextKeywords.length >= SEARCH_HISTORY_LIMIT) {
+      break;
+    }
+  }
+
+  return nextKeywords;
+};
+
+/**
+ * 读取本地历史快照，并在引擎可用时兼容旧版 string[] 数据。
+ */
+const getLocalSearchHistorySnapshot = (): LocalSearchHistorySnapshot => {
+  const defaultSearchEngineId = getDefaultSearchEngineId();
+  const normalizedItems: SearchHistoryStorageItem[] = [];
+  const legacyKeywords: string[] = [];
+  let shouldRewrite = false;
+
+  for (const item of searchHistory.value) {
+    if (typeof item === "string") {
+      const keyword = normalizeKeyword(item);
+      if (keyword.length === 0) {
+        shouldRewrite = true;
+        continue;
+      }
+
+      if (typeof defaultSearchEngineId === "number") {
+        normalizedItems.push({
+          search_engine_id: defaultSearchEngineId,
+          keyword
+        });
+        shouldRewrite = true;
+        continue;
+      }
+
+      legacyKeywords.push(keyword);
+      continue;
+    }
+
+    const normalizedItem = normalizeSearchHistoryItem(item);
+    if (!normalizedItem) {
+      shouldRewrite = true;
+      continue;
+    }
+
+    normalizedItems.push(normalizedItem);
+  }
+
+  const dedupedItems = dedupeSearchHistory(normalizedItems);
+  if (dedupedItems.length !== normalizedItems.length) {
+    shouldRewrite = true;
+  }
+
+  return {
+    normalizedItems: dedupedItems,
+    legacyKeywords: dedupeKeywords(legacyKeywords),
+    shouldRewrite,
+    defaultSearchEngineId
+  };
+};
+
+/**
+ * 读取本地搜索历史，兼容旧版 string[] 与新版对象数组。
+ */
+const readLocalSearchHistory = () => {
+  const snapshot = getLocalSearchHistorySnapshot();
+
+  if (typeof snapshot.defaultSearchEngineId === "number" && snapshot.shouldRewrite) {
+    searchHistory.value = snapshot.normalizedItems;
+  }
+
+  return snapshot.normalizedItems;
+};
+
+/**
+ * 为游客模式生成本地历史展示列表，避免旧版 string[] 在引擎未加载前丢失。
+ */
+const getLocalSearchHistoryKeywords = () => {
+  const snapshot = getLocalSearchHistorySnapshot();
+
+  return dedupeKeywords([
+    ...snapshot.normalizedItems.map((item) => item.keyword),
+    ...snapshot.legacyKeywords
+  ]);
+};
+
+/**
+ * 写回本地搜索历史。
+ */
+const writeLocalSearchHistory = (items: SearchHistoryStorageItem[]) => {
+  searchHistory.value = dedupeSearchHistory(items);
+};
+
+/**
+ * 仅在游客模式下写入本地历史。
+ */
+const addLocalSearchHistory = (keyword: string) => {
+  const searchEngineId = currentEngine.value?.id;
+  if (typeof searchEngineId !== "number") {
+    return;
+  }
+
+  const normalizedKeyword = normalizeKeyword(keyword);
+  if (normalizedKeyword.length === 0) {
+    return;
+  }
+
+  const nextHistory = readLocalSearchHistory().filter(
+    (item) => item.search_engine_id !== searchEngineId || item.keyword.toLowerCase() !== normalizedKeyword.toLowerCase()
+  );
+
+  writeLocalSearchHistory([
+    {
+      search_engine_id: searchEngineId,
+      keyword: normalizedKeyword
+    },
+    ...nextHistory
+  ]);
+};
+
+/**
+ * 将本地历史逐条迁移到后端，仅在全部成功后清空本地。
+ */
+const migrateLocalSearchHistory = async () => {
+  const snapshot = getLocalSearchHistorySnapshot();
+  if (snapshot.legacyKeywords.length > 0 && typeof snapshot.defaultSearchEngineId !== "number") {
+    return;
+  }
+
+  const localHistory = readLocalSearchHistory();
+  if (localHistory.length === 0) {
+    return;
+  }
+
+  const pendingHistory = [...localHistory];
+  for (const item of localHistory) {
+    await createSearchHistory(item);
+    pendingHistory.shift();
+    writeLocalSearchHistory(pendingHistory);
+  }
+
+  searchHistory.value = [];
+};
+
+/**
+ * 拉取远端搜索历史并映射到组件展示结构。
+ */
+const loadRemoteSearchHistory = async () => {
+  const response = await getPaginatedSearchHistories({
+    page: 1,
+    per_page: SEARCH_HISTORY_LIMIT
+  });
+
+  return dedupeSearchHistory(
+    (response.data ?? []).map((item) => ({
+      search_engine_id: item.search_engine_id,
+      keyword: item.keyword
+    }))
+  );
+};
+
+/**
+ * 根据登录态同步历史数据：游客看本地，登录后迁移并展示后端。
+ */
+const syncSearchHistory = async () => {
+  if (!isSearchHistoryReady.value) {
+    return;
+  }
+
+  const syncToken = ++searchHistorySyncToken;
+
+  if (!isLoggedIn.value) {
+    remoteSearchHistory.value = [];
+    isRemoteSearchHistoryLoading.value = false;
+    return;
+  }
+
+  isRemoteSearchHistoryLoading.value = true;
+
+  try {
+    await migrateLocalSearchHistory();
+  } catch (error) {
+    console.error(error);
+  }
+
+  if (syncToken !== searchHistorySyncToken || !isLoggedIn.value) {
+    return;
+  }
+
+  try {
+    const nextRemoteHistory = await loadRemoteSearchHistory();
+    if (syncToken !== searchHistorySyncToken || !isLoggedIn.value) {
+      return;
+    }
+
+    remoteSearchHistory.value = nextRemoteHistory;
+  } catch (error) {
+    console.error(error);
+  } finally {
+    if (syncToken === searchHistorySyncToken) {
+      isRemoteSearchHistoryLoading.value = false;
+    }
+  }
+};
+
+const historyList = computed<SearchHistoryPanelItem[]>(() => {
+  const guestHistories = getLocalSearchHistoryKeywords();
+  const histories =
+    isLoggedIn.value && !(isRemoteSearchHistoryLoading.value && remoteSearchHistory.value.length === 0)
+      ? remoteSearchHistory.value.map((item) => item.keyword)
+      : guestHistories;
+
+  return histories.map((keyword) => ({
+    text: keyword,
+    type: "history"
+  }));
+});
+
 const displayedList = computed<SearchPanelItem[]>(() =>
   isHistoryMode.value ? historyList.value : tips.list
 );
-const showSearchPanel = computed(() => showSearchInput.value && displayedList.value.length > 0);
 
 watch(isHistoryMode, () => {
   tips.current = -1;
@@ -80,28 +421,6 @@ watch(
 );
 
 /**
- * 统一清洗关键词，避免历史记录因空白字符差异产生重复项。
- */
-const normalizeKeyword = (value: string) => value.trim().replace(/\s+/g, " ");
-
-/**
- * 仅在确认搜索后写入历史记录，并保持最近使用项置顶。
- */
-const addSearchHistory = (value: string) => {
-  const keyword = normalizeKeyword(value);
-  if (keyword.length === 0) {
-    return;
-  }
-
-  const normalizedKeyword = keyword.toLowerCase();
-  const nextHistory = searchHistory.value.filter(
-    (item) => normalizeKeyword(item).toLowerCase() !== normalizedKeyword
-  );
-  nextHistory.unshift(keyword);
-  searchHistory.value = nextHistory.slice(0, SEARCH_HISTORY_LIMIT);
-};
-
-/**
  * 从后端接口读取搜索引擎列表，并映射为组件内部使用的数据结构。
  */
 const loadEngines = async () => {
@@ -111,6 +430,7 @@ const loadEngines = async () => {
       (res.data ?? [])
         .filter((item) => item.status === 1)
         .map((item) => ({
+          id: item.id,
           name: item.name,
           icon: item.icon,
           url: item.url
@@ -118,6 +438,9 @@ const loadEngines = async () => {
     );
   } catch (error) {
     console.error(error);
+  } finally {
+    isSearchHistoryReady.value = true;
+    void syncSearchHistory();
   }
 };
 
@@ -338,6 +661,20 @@ onMounted(() => {
   loadEngines();
 });
 
+watch(
+  () => userStore.profile,
+  () => {
+    if (!isSearchHistoryReady.value) {
+      return;
+    }
+
+    void syncSearchHistory();
+  },
+  {
+    immediate: true
+  }
+);
+
 onUnmounted(() => {
   document.removeEventListener("click", handleDocumentClick);
 });
@@ -363,9 +700,25 @@ const handleSearch = (selectedItem?: SearchPanelItem) => {
     return;
   }
 
-  addSearchHistory(keyword);
   const encodedKeyword = encodeURIComponent(keyword);
   const searchUrl = currentEngine.value.url.replaceAll("${kw}", encodedKeyword);
+
+  if (isLoggedIn.value) {
+    void (async () => {
+      try {
+        await createSearchHistory({
+          search_engine_id: currentEngine.value.id,
+          keyword
+        });
+        remoteSearchHistory.value = await loadRemoteSearchHistory();
+      } catch (error) {
+        console.error(error);
+      }
+    })();
+  } else {
+    addLocalSearchHistory(keyword);
+  }
+
   window.open(searchUrl, "_blank", "noopener,noreferrer");
 };
 

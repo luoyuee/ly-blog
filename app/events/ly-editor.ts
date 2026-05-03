@@ -59,9 +59,6 @@ type Events = {
   "cmd.note-manager:reload": undefined;
   "cmd.note-manager:publish:article": FolderTreeItem;
 
-  // 标签栏事件
-  "tab-bar:change": EditorTabItem;
-
   // 编辑器核心事件
   "intent.editor-core:save:file": EditorTabItem;
   "cmd.editor-core:insert:card": undefined;
@@ -70,20 +67,6 @@ type Events = {
   "cmd.editor-core:close:file": EditorTabItem;
   "cmd.editor-core:switch:file": EditorTabItem;
   "cmd.editor-core:update:file": EditorTabItem;
-  "cmd.editor-core:inster:card": undefined;
-
-  // 预览组件
-  "editor-preview:preview:content": string;
-
-  // Monaco编辑器事件
-  "monaco-editor:open:file": { path: string; content: string };
-  "monaco-editor:close:file": { path: string };
-  "monaco-editor:update:file": { path: string; content: string };
-  "monaco-editor:switch:file": string;
-  "monaco-editor:preview:content": string;
-
-  // 文件浏览器事件
-  "file-explorer:reload": undefined;
 
   // 文章管理器事件
   "cmd.article-manager:reload": undefined;

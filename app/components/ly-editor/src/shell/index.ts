@@ -1,0 +1,9 @@
+export { default as EditorActivityBar } from "./EditorActivityBar.vue";
+export { default as EditorMenuBar } from "./EditorMenuBar.vue";
+export { default as EditorModalManager } from "../modals/EditorModalManager.vue";
+export { default as EditorPreview } from "./EditorPreview.vue";
+export { default as EditorSidebar } from "./EditorSidebar.vue";
+export { default as EditorStatusBar } from "./EditorStatusBar.vue";
+export { default as EditorTabBar } from "./EditorTabBar.vue";
+export { default as EditorTabPane } from "./EditorTabPane.vue";
+export { default as EditorWorkspace } from "./EditorWorkspace.vue";
