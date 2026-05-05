@@ -1,43 +1,87 @@
 <script setup lang="ts">
+import type { Component } from "vue";
 import { useLyEditorStore } from "@/stores";
-import { ResizeArea } from "@/components/resize-area";
 import { LyEditorActivityMenu } from "#shared/constants";
 
 import {
+  NoteManager,
   ArticleManager,
   HitokotoManager,
   ImageManager,
   NavigationWebsiteManager,
-  NoteManager,
   WorkManager
 } from "../modules";
 
 const lyEditorStore = useLyEditorStore();
+
+type SidebarMenuKey =
+  | (typeof LyEditorActivityMenu)["NoteManager"]
+  | (typeof LyEditorActivityMenu)["ArticleManager"]
+  | (typeof LyEditorActivityMenu)["ImageManager"]
+  | (typeof LyEditorActivityMenu)["HitokotoManager"]
+  | (typeof LyEditorActivityMenu)["NavigationManager"]
+  | (typeof LyEditorActivityMenu)["WorkManager"];
+
+type SidebarPaneRegistryItem = {
+  key: SidebarMenuKey;
+  component: Component;
+};
+
+const sidebarPaneRegistry: SidebarPaneRegistryItem[] = [
+  {
+    key: LyEditorActivityMenu.NoteManager,
+    component: NoteManager
+  },
+  {
+    key: LyEditorActivityMenu.ArticleManager,
+    component: ArticleManager
+  },
+  {
+    key: LyEditorActivityMenu.ImageManager,
+    component: ImageManager
+  },
+  {
+    key: LyEditorActivityMenu.HitokotoManager,
+    component: HitokotoManager
+  },
+  {
+    key: LyEditorActivityMenu.NavigationManager,
+    component: NavigationWebsiteManager
+  },
+  {
+    key: LyEditorActivityMenu.WorkManager,
+    component: WorkManager
+  }
+];
+
+const sidebarPaneMap = Object.fromEntries(
+  sidebarPaneRegistry.map((item) => [item.key, item.component])
+) as Record<SidebarMenuKey, Component>;
+
+const currentSidebarKey = computed<SidebarMenuKey | null>(() => {
+  const activeMenu = lyEditorStore.sidebar.active;
+
+  if (!activeMenu || !(activeMenu in sidebarPaneMap)) {
+    return null;
+  }
+
+  return activeMenu as SidebarMenuKey;
+});
+
+const currentSidebarComponent = computed<Component | null>(() => {
+  if (!currentSidebarKey.value) {
+    return null;
+  }
+
+  return sidebarPaneMap[currentSidebarKey.value];
+});
 </script>
 
 <template>
   <div class="ly-editor__sidebar">
-    <ResizeArea
-      v-show="lyEditorStore.sidebar.show"
-      position="right"
-      class="h-full"
-      :width="280"
-      :max-width="400"
-    >
-      <NoteManager v-show="lyEditorStore.sidebar.active === LyEditorActivityMenu.NoteManager" />
-
-      <ArticleManager v-if="lyEditorStore.sidebar.active === LyEditorActivityMenu.ArticleManager" />
-      <ImageManager
-        v-else-if="lyEditorStore.sidebar.active === LyEditorActivityMenu.ImageManager"
-      />
-      <HitokotoManager
-        v-else-if="lyEditorStore.sidebar.active === LyEditorActivityMenu.HitokotoManager"
-      />
-      <NavigationWebsiteManager
-        v-else-if="lyEditorStore.sidebar.active === LyEditorActivityMenu.NavigationWebsiteManager"
-      />
-      <WorkManager v-else-if="lyEditorStore.sidebar.active === LyEditorActivityMenu.WorkManager" />
-    </ResizeArea>
+    <KeepAlive>
+      <component :is="currentSidebarComponent" />
+    </KeepAlive>
   </div>
 </template>
 

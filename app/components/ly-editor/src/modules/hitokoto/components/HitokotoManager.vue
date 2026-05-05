@@ -1,26 +1,32 @@
 <script setup lang="ts">
 import type { HitokotoTypeItem } from "#shared/types/hitokoto";
-import { IndeterminateProgressBar } from "@/components/progress";
 import { getAllHitokotoType, deleteHitokotoType } from "@/apis/hitokoto";
-import { useLyEditorStore } from "@/stores";
+import { useLyEditorTabs } from "@/composables/useLyEditorTabs";
+import { useLyEditorModal } from "@/composables/useLyEditorModal";
+import { LyEditorTabPanel } from "#shared/constants";
+import { SidebarPanel } from "../../../components";
 import Scrollbar from "@/components/scrollbar";
-import { LyEditorTabPanelEnum } from "@@/shared/enums";
 
 const $notify = useNotification();
 const $msgBox = useMessageBox();
 
-const lyEditorStore = useLyEditorStore();
+const { openTabPanel } = useLyEditorTabs();
+const { openModal } = useLyEditorModal();
 
 const data = ref<HitokotoTypeItem[]>([]);
+const loading = ref(false);
 
 const loadData = async () => {
   try {
+    loading.value = true;
     data.value = await getAllHitokotoType();
   } catch (error) {
     $notify.error({
-      title: "操作失败",
+      title: "加载分类失败",
       error
     });
+  } finally {
+    loading.value = false;
   }
 };
 
@@ -29,7 +35,7 @@ onMounted(() => {
 });
 
 const handleOpenBaseFormModal = async (e?: HitokotoTypeItem) => {
-  const result = await openWorkspaceModal("hitokoto-type-form", e);
+  const result = await openModal("hitokoto-type-form", e);
 
   if (result.action === "submitted") {
     await loadData();
@@ -37,18 +43,15 @@ const handleOpenBaseFormModal = async (e?: HitokotoTypeItem) => {
 };
 
 const handleOpenDetailsModal = async (e: HitokotoTypeItem) => {
-  await openWorkspaceModal("hitokoto-type-details", e);
+  await openModal("hitokoto-type-details", e);
 };
 
-const handleOpenHitokoto = (e: HitokotoTypeItem) => {
-  lyEditorStore.pushTabItem({
-    key: "hitokoto-manager",
+const handleOpenHitokoto = () => {
+  openTabPanel({
+    key: LyEditorTabPanel.HitokotoPanel,
     label: "一言管理",
-    type: LyEditorTabPanelEnum.HitokotoPanel,
-    data: e
+    type: LyEditorTabPanel.HitokotoPanel
   });
-
-  lyEditorStore.currentTab = LyEditorTabPanelEnum.HitokotoPanel;
 };
 
 const handleDelete = (e: HitokotoTypeItem) => {
@@ -56,48 +59,36 @@ const handleDelete = (e: HitokotoTypeItem) => {
     title: "确认删除?",
     message: `即将删除「${e.name}」，删除后将无法恢复，是否继续？`,
     confirmButtonText: "删除",
-    confirmButtonProps: {
-      color: "error"
-    },
+    confirmButtonProps: { color: "error" },
     onConfirm: async () => {
       try {
         await deleteHitokotoType(e.id);
-        $notify.success({
-          title: "删除成功"
-        });
+        $notify.success({ title: "删除成功" });
         loadData();
       } catch (error) {
-        $notify.error({
-          title: "操作失败",
-          error
-        });
+        $notify.error({ title: "操作失败", error });
       }
     }
   });
 };
+
+const actions = [
+  {
+    label: "新建分类",
+    icon: "ep:plus",
+    onClick: handleOpenBaseFormModal
+  }
+];
 </script>
 <template>
-  <div class="sidebar-manager" @contextmenu.prevent>
-    <div class="sidebar-manager__header">
-      <div class="sidebar-manager__title"> 一言分类 </div>
-      <div class="sidebar-manager__actions">
-        <UTooltip text="新建分类">
-          <span class="sidebar-manager__actions-item" @click="handleOpenBaseFormModal()">
-            <UIcon name="ep:plus" :size="16" />
-          </span>
-        </UTooltip>
-      </div>
-    </div>
-
-    <IndeterminateProgressBar :loading="false" />
-
+  <SidebarPanel title="一言分类" :loading="loading" :actions="actions">
     <div class="flex-1 overflow-hidden">
       <Scrollbar class="h-full">
         <div
           v-for="item in data"
           :key="item.id"
           class="px-3 py-2 hover:bg-gray-100/5 cursor-pointer"
-          @click="handleOpenHitokoto(item)"
+          @click="handleOpenHitokoto"
         >
           <h6 class="truncate">{{ item.name }}</h6>
           <p class="text-xs text-gray-400 truncate" :title="item.description">
@@ -143,8 +134,8 @@ const handleDelete = (e: HitokotoTypeItem) => {
                   content: 'w-48'
                 }"
               >
-                <UTooltip text="设置">
-                  <UIcon name="custom:setting" class="hover:text-gray-400" :size="16" />
+                <UTooltip text="设置" :content="{ side: 'top' }" ignore-non-keyboard-focus>
+                  <UIcon name="custom:setting" class="hover:text-gray-400" />
                 </UTooltip>
               </UDropdownMenu>
             </div>
@@ -152,5 +143,5 @@ const handleDelete = (e: HitokotoTypeItem) => {
         </div>
       </Scrollbar>
     </div>
-  </div>
+  </SidebarPanel>
 </template>

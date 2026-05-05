@@ -24,15 +24,3 @@ export const ConfigNameEnum = {
   WORK: "work",
   NOTICE: "notice"
 } as const;
-
-export const LyEditorTabPanelEnum = {
-  EditorPanel: "editor-panel",
-  ArticlePanel: "article-panel",
-  ImagePanel: "image-panel",
-  HitokotoPanel: "hitokoto-panel",
-  NavigationWebsitePanel: "navigation-website-panel",
-  UserPanel: "user-panel",
-  DashboardPanel: "dashboard-panel",
-  CronJobPanel: "cron-job-panel",
-  SettingPanel: "setting-panel"
-} as const;

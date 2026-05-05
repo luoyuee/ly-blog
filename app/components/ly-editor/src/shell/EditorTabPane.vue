@@ -1,18 +1,13 @@
 <script setup lang="ts">
 import { EditorCore } from "../core";
 import { useLyEditorStore } from "@/stores";
-import { LyEditorTabPanelEnum } from "@@/shared/enums";
-import { workspacePanelRegistry } from "../workspace/panels";
+import { lyEditorPanelRegistry } from "../registry/panels";
 
 const lyEditorStore = useLyEditorStore();
 
-const imagePanelTabs = computed(() => {
-  return lyEditorStore.tabs.filter((item) => item.type === LyEditorTabPanelEnum.ImagePanel);
-});
-
-const singletonPanelTabs = computed(() => {
+const tabs = computed(() => {
   return lyEditorStore.tabs.filter((item) => {
-    return item.type !== "note" && item.type !== LyEditorTabPanelEnum.ImagePanel;
+    return item.type !== "note";
   });
 });
 
@@ -26,7 +21,7 @@ const showEditorCore = computed(() => {
 });
 
 const getPanelComponent = (type: string) => {
-  return workspacePanelRegistry[type]?.component;
+  return lyEditorPanelRegistry[type]?.component;
 };
 </script>
 
@@ -36,15 +31,7 @@ const getPanelComponent = (type: string) => {
 
     <component
       :is="getPanelComponent(item.type)"
-      v-for="item in imagePanelTabs"
-      v-show="lyEditorStore.currentTab === item.key"
-      :key="item.key"
-      :tab="item"
-    />
-
-    <component
-      :is="getPanelComponent(item.type)"
-      v-for="item in singletonPanelTabs"
+      v-for="item in tabs"
       v-show="lyEditorStore.currentTab === item.key"
       :key="item.key"
       :tab="item"

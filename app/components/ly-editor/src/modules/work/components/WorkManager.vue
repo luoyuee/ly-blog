@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { WorkItem } from "#shared/types/config";
-import { IndeterminateProgressBar } from "@/components/progress";
 import { getWorkConfig, updateWorkConfig } from "@/apis/config";
-import Scrollbar from "@/components/scrollbar";
+import { SidebarPanel } from "../../../components";
 import { VueDraggable } from "vue-draggable-plus";
+import Scrollbar from "@/components/scrollbar";
 
 const $notify = useNotification();
 const $msgBox = useMessageBox();
@@ -73,22 +73,19 @@ const handleDragEnd = async () => {
     });
   }
 };
+
+const actions = [
+  {
+    label: "新建项目",
+    icon: "ep:plus",
+    onClick: () => {
+      handleOpenFormModal();
+    }
+  }
+];
 </script>
 <template>
-  <div class="sidebar-manager" @contextmenu.prevent>
-    <div class="sidebar-manager__header">
-      <div class="sidebar-manager__title"> 项目管理 </div>
-      <div class="sidebar-manager__actions">
-        <UTooltip text="新建项目">
-          <span class="sidebar-manager__actions-item" @click="handleOpenFormModal()">
-            <UIcon name="ep:plus" :size="16" />
-          </span>
-        </UTooltip>
-      </div>
-    </div>
-
-    <IndeterminateProgressBar :loading="false" />
-
+  <SidebarPanel title="项目管理" :actions="actions">
     <div class="flex-1 overflow-hidden">
       <Scrollbar class="h-full">
         <VueDraggable
@@ -170,5 +167,5 @@ const handleDragEnd = async () => {
         </VueDraggable>
       </Scrollbar>
     </div>
-  </div>
+  </SidebarPanel>
 </template>

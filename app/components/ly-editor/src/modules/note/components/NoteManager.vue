@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { useLyEditorStore } from "@/stores";
-import { onMounted } from "vue";
 import { IndeterminateProgressBar } from "@/components/progress";
+import { SidebarPanel } from "../../../components";
+import { useLyEditorStore } from "@/stores";
 import { lyEditorEmitter } from "@/events";
+import { onMounted } from "vue";
 import NoteTree from "./NoteTree.vue";
 
 const editorStore = useLyEditorStore();
@@ -30,31 +31,28 @@ const handleNewFolder = () => {
 const handleReload = () => {
   editorStore.loadNoteFolderTree();
 };
+
+const actions = [
+  {
+    label: "新建文件",
+    icon: "custom:file-add",
+    onClick: handleNewNote
+  },
+  {
+    label: "新建文件夹",
+    icon: "custom:folder-plus",
+    onClick: handleNewFolder
+  },
+  {
+    label: "刷新目录",
+    icon: "custom:redo",
+    onClick: handleReload
+  }
+];
 </script>
 <template>
-  <div class="sidebar-manager">
-    <div class="sidebar-manager__header">
-      <div class="sidebar-manager__title"> 笔记管理 </div>
-      <div class="sidebar-manager__actions">
-        <UTooltip text="新建文件">
-          <span class="sidebar-manager__actions-item" @click="handleNewNote">
-            <UIcon name="custom:file-add" />
-          </span>
-        </UTooltip>
-        <UTooltip text="新建文件夹">
-          <span class="sidebar-manager__actions-item" @click="handleNewFolder">
-            <UIcon name="custom:folder-plus" />
-          </span>
-        </UTooltip>
-        <UTooltip text="刷新目录">
-          <span class="sidebar-manager__actions-item" @click="handleReload">
-            <UIcon name="custom:redo" />
-          </span>
-        </UTooltip>
-      </div>
-    </div>
-
+  <SidebarPanel title="笔记管理" :actions="actions">
     <IndeterminateProgressBar :loading="editorStore.noteManager.loading" />
     <NoteTree v-model="editorStore.noteManager.folderTree" />
-  </div>
+  </SidebarPanel>
 </template>

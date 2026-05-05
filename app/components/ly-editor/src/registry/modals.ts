@@ -1,5 +1,6 @@
-import type { WorkspaceModalKey } from "../types/modals";
+import type { LyEditorModalKey } from "#shared/types/ly-editor";
 import type { Component } from "vue";
+
 import {
   CategoryDetailsModal,
   CategoryFormModal,
@@ -24,7 +25,7 @@ import {
  *
  * 具体组件会在迁移 modal 阶段逐步接入。
  */
-export const workspaceModalRegistry = {
+export const lyEditorModalRegistry = {
   "category-form": CategoryFormModal,
   "category-details": CategoryDetailsModal,
   "hitokoto-form": HitokotoFormModal,
@@ -41,4 +42,4 @@ export const workspaceModalRegistry = {
   "note-save": NoteSaveModal,
   "work-form": WorkFormModal,
   "send-email": SendEmailModal
-} satisfies Partial<Record<WorkspaceModalKey, Component>>;
+} satisfies Partial<Record<LyEditorModalKey, Component>>;

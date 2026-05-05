@@ -1,11 +1,16 @@
 <script setup lang="ts">
 import type { DropdownMenuItem } from "@nuxt/ui";
-import { useFullscreen } from "@vueuse/core";
+import { useLyEditorModal } from "@/composables/useLyEditorModal";
+import { useLyEditorTabs } from "@/composables/useLyEditorTabs";
 import { useLyEditorStore, useUserStore } from "@/stores";
-import { LyEditorTabPanelEnum } from "@@/shared/enums";
+import { LyEditorTabPanel } from "#shared/constants";
+import { useFullscreen } from "@vueuse/core";
 
 const lyEditorStore = useLyEditorStore();
 const userStore = useUserStore();
+
+const { openModal } = useLyEditorModal();
+const { openTabPanel } = useLyEditorTabs();
 
 const dropdownMenu = ref<{ key: number; name: string; items: DropdownMenuItem[] }[]>([
   {
@@ -46,7 +51,7 @@ const toggleSidebar = () => {
   lyEditorStore.sidebar.show = !lyEditorStore.sidebar.show;
 };
 
-const userDropdownMenuItem = ref<DropdownMenuItem[]>([
+const userDropdownMenuItem = ref<DropdownMenuItem[][]>([
   [
     {
       label: "Luoyue",
@@ -58,7 +63,11 @@ const userDropdownMenuItem = ref<DropdownMenuItem[]>([
       label: "用户信息",
       icon: "i-lucide-user",
       onSelect: () => {
-        openWorkspacePanelTab(LyEditorTabPanelEnum.UserPanel, "用户信息");
+        openTabPanel({
+          key: LyEditorTabPanel.UserPanel,
+          label: "用户信息",
+          type: LyEditorTabPanel.UserPanel
+        });
       }
     }
   ],
@@ -72,11 +81,11 @@ const userDropdownMenuItem = ref<DropdownMenuItem[]>([
 ]);
 
 const openNoticeManagerModal = async () => {
-  await openWorkspaceModal("notice-manager", undefined);
+  await openModal("notice-manager", undefined);
 };
 
 const openSendEmailModal = async () => {
-  await openWorkspaceModal("send-email", undefined);
+  await openModal("send-email", undefined);
 };
 </script>
 

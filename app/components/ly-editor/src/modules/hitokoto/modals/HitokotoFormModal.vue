@@ -1,21 +1,28 @@
 <script setup lang="ts">
 import type { FormSubmitEvent } from "@nuxt/ui";
 import type { HitokotoItem, HitokotoForm, HitokotoTypeSelectOption } from "#shared/types/hitokoto";
-import { reactive } from "vue";
 import { getHitokotoTypeOptions, createHitokoto, updateHitokoto } from "@/apis/hitokoto";
+import { useForm } from "@/composables/useForm";
 import { BasicModal } from "@/components/basic-modal";
 import { z } from "zod";
 
 const $notify = useNotification();
 
-const props = defineProps<{
-  open?: boolean;
-  payload?: HitokotoItem;
-}>();
+const visible = defineModel<boolean>("visible", {
+  default: false
+});
+
+const props = defineProps({
+  payload: {
+    type: Object as PropType<{
+      record?: HitokotoItem;
+      mode?: "create" | "update";
+    }>,
+    default: () => ({})
+  }
+});
 
 const emits = defineEmits<{
-  cancel: [];
-  submit: [];
   resolve: [
     result:
       | {
@@ -35,43 +42,28 @@ const schema = z.object({
   content: z.string({ message: "请输入内容" }).min(1, "请输入内容")
 });
 
-const formData = reactive<HitokotoForm>({
+const { formData, formState, resetForm, setForm } = useForm<HitokotoForm>({
+  id: undefined,
+  type: undefined,
+  source: undefined,
+  author: undefined,
   content: undefined
 });
 
-const resetForm = () => {
-  Object.keys(formData).forEach((key) => {
-    formData[key as keyof HitokotoForm] = undefined;
-  });
-};
-
-const visible = ref(false);
-
-const handleOpen = (data?: HitokotoItem) => {
-  resetForm();
-
-  if (data) {
-    formData.id = data.id;
-    formData.type = data.type;
-    formData.source = data.source;
-    formData.author = data.author;
-    formData.content = data.content;
-  }
-
-  visible.value = true;
-};
-
-defineExpose({
-  open: handleOpen
+const modalTitle = computed(() => {
+  return props.payload.mode === "update" ? "修改语句" : "添加语句";
 });
 
 watch(
-  () => props.open,
-  (open) => {
-    if (open) {
-      handleOpen(props.payload);
-    } else {
-      visible.value = false;
+  visible,
+  (newVal) => {
+    if (!newVal) return;
+
+    resetForm();
+
+    if (props.payload.record) {
+      const { id, type, source, author, content } = props.payload.record;
+      setForm({ id, type, source, author, content });
     }
   },
   {
@@ -79,11 +71,11 @@ watch(
   }
 );
 
-const submitting = ref(false);
 const formRef = useTemplateRef("formRef");
+
 const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => {
   try {
-    submitting.value = true;
+    formState.submitting = true;
 
     if (event.data.id) {
       await updateHitokoto({ id: event.data.id, ...event.data });
@@ -101,7 +93,6 @@ const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => 
 
     visible.value = false;
 
-    emits("submit");
     emits("resolve", {
       action: "submitted"
     });
@@ -111,7 +102,7 @@ const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => 
       error
     });
   } finally {
-    submitting.value = false;
+    formState.submitting = false;
   }
 };
 
@@ -121,7 +112,6 @@ const handleConfirm = async () => {
 
 const handleCancel = () => {
   visible.value = false;
-  emits("cancel");
   emits("resolve", {
     action: "cancelled"
   });
@@ -136,8 +126,8 @@ onMounted(async () => {
 <template>
   <BasicModal
     v-model:visible="visible"
-    :title="formData.id ? '修改语句' : '添加语句'"
-    :submitting="submitting"
+    :title="modalTitle"
+    :submitting="formState.submitting"
     @cancel="handleCancel"
     @confirm="handleConfirm"
   >
@@ -171,13 +161,16 @@ onMounted(async () => {
 
     <template #footer>
       <UButton
-        label="取消"
         color="neutral"
         variant="outline"
-        :disabled="submitting"
+        :disabled="formState.submitting"
         @click="handleCancel"
-      />
-      <UButton label="确认" color="primary" :loading="submitting" @click="handleConfirm" />
+      >
+        取消
+      </UButton>
+      <UButton color="primary" :loading="formState.submitting" @click="handleConfirm">
+        确认
+      </UButton>
     </template>
   </BasicModal>
 </template>

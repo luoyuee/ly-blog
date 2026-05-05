@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { HitokotoTypeItem } from "#shared/types/hitokoto";
 import { getHitokotoDetails } from "@/apis/hitokoto";
-import { Descriptions, DescriptionsItem } from "@/components/descriptions";
+import { Descriptions, DescriptionsItem } from "@/components/descriptions-v2";
 import { BasicModal } from "@/components/basic-modal";
 import dayjs from "dayjs";
 

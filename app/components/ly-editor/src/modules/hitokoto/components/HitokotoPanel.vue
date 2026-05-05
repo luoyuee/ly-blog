@@ -2,12 +2,15 @@
 import type { HitokotoItem, HitokotoTypeItem } from "#shared/types/hitokoto";
 import type { TableColumn, SelectItem } from "@nuxt/ui";
 import { getHitokotoTypeOptions, getPaginatedHitokotos, deleteHitokoto } from "@/apis/hitokoto";
+import { useLyEditorModal } from "@/composables/useLyEditorModal";
 import { h, resolveComponent } from "vue";
 import numeral from "numeral";
 import dayjs from "dayjs";
 
 const $notify = useNotification();
 const $msgBox = useMessageBox();
+
+const { openModal } = useLyEditorModal();
 
 const UButton = resolveComponent("UButton");
 const UDropdownMenu = resolveComponent("UDropdownMenu");
@@ -137,7 +140,7 @@ const columns: TableColumn<HitokotoItem>[] = [
                 label: "编辑语句",
                 icon: "ep:edit",
                 onSelect: () => {
-                  handleOpenHitokotoFormModal(row.original);
+                  handleOpenHitokotoFormModal("update", row.original);
                 }
               },
               {
@@ -197,15 +200,15 @@ onMounted(() => {
 });
 
 const handleImportData = async () => {
-  const result = await openWorkspaceModal("hitokoto-import", undefined);
+  const result = await openModal("hitokoto-import", undefined);
 
   if (result.action === "imported") {
     await loadData();
   }
 };
 
-const handleOpenHitokotoFormModal = async (e?: HitokotoItem) => {
-  const result = await openWorkspaceModal("hitokoto-form", e);
+const handleOpenHitokotoFormModal = async (mode: "create" | "update", record?: HitokotoItem) => {
+  const result = await openModal("hitokoto-form", { record, mode });
 
   if (result.action === "submitted") {
     await loadData();
@@ -222,9 +225,7 @@ const handleDelete = (e: HitokotoItem) => {
     title: "确认删除?",
     message: `即将删除「${e.content}」，删除后将无法恢复，是否继续？`,
     confirmButtonText: "删除",
-    confirmButtonProps: {
-      color: "error"
-    },
+    confirmButtonProps: { color: "error" },
     onConfirm: async () => {
       try {
         await deleteHitokoto(e.id);
@@ -246,7 +247,9 @@ const handleDelete = (e: HitokotoItem) => {
   <div class="p-4 h-full overflow-hidden flex flex-col">
     <div class="flex justify-between items-center mb-4">
       <div class="flex gap-4">
-        <UButton icon="ep:plus" @click="handleOpenHitokotoFormModal()"> 新增 </UButton>
+        <UButton icon="ep:plus" @click="() => handleOpenHitokotoFormModal('create')">
+          新增
+        </UButton>
         <UButton icon="ep:upload" @click="handleImportData">导入</UButton>
       </div>
 

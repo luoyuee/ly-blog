@@ -1,8 +1,10 @@
 <script setup lang="ts">
-import type { ActivityMenuItem } from "../types";
+import type { ActivityMenuItem, EditorTabItem } from "#shared/types/ly-editor";
+import { LyEditorActivityMenu, LyEditorTabPanel } from "#shared/constants";
+import { useLyEditorTabs } from "@/composables/useLyEditorTabs";
 import { useLyEditorStore } from "@/stores";
-import { LyEditorActivityMenu } from "#shared/constants";
-import { LyEditorTabPanelEnum } from "@@/shared/enums";
+
+const { openTabPanel } = useLyEditorTabs();
 
 const lyEditorStore = useLyEditorStore();
 
@@ -33,12 +35,10 @@ const activityMenu = ref<ActivityMenuItem[]>([
     icon: "custom:hitokoto"
   },
   {
-    key: LyEditorActivityMenu.NavigationWebsiteManager,
+    key: LyEditorActivityMenu.NavigationManager,
     label: "导航网站",
     icon: "ep:link",
-    onClick: () => {
-      openWorkspacePanelTab(LyEditorTabPanelEnum.NavigationWebsitePanel, "导航网站");
-    }
+    panel: LyEditorTabPanel.NavigationWebsitePanel
   },
   {
     key: LyEditorActivityMenu.WorkManager,
@@ -52,31 +52,46 @@ const actionMenu = ref<ActivityMenuItem[]>([
     key: LyEditorActivityMenu.DashboardPanel,
     label: "仪表盘",
     icon: "ep:histogram",
-    panel: LyEditorTabPanelEnum.DashboardPanel
+    panel: LyEditorTabPanel.DashboardPanel
   },
   {
     key: LyEditorActivityMenu.CronJobPanel,
     label: "定时任务",
     icon: "ep:timer",
-    panel: LyEditorTabPanelEnum.CronJobPanel
+    panel: LyEditorTabPanel.CronJobPanel
   },
   {
     key: LyEditorActivityMenu.SettingPanel,
     label: "设置",
     icon: "custom:setting",
-    panel: LyEditorTabPanelEnum.SettingPanel
+    panel: LyEditorTabPanel.SettingPanel
   }
 ]);
 
 const handleClickMenu = (e: ActivityMenuItem) => {
   lyEditorStore.sidebar.active = e.key;
+
   if (e.onClick) e.onClick();
+
+  if (!e.panel) return;
+
+  openTabPanel({
+    key: e.panel,
+    label: e.label,
+    type: e.panel
+  } as EditorTabItem);
 };
 
 const handleClickAction = (e: ActivityMenuItem) => {
+  if (e.onClick) e.onClick();
+
   if (!e.panel) return;
 
-  openWorkspacePanelTab(e.panel, e.label, e);
+  openTabPanel({
+    key: e.panel,
+    label: e.label,
+    type: e.panel
+  } as EditorTabItem);
 };
 </script>
 

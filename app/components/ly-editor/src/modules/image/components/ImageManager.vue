@@ -1,17 +1,19 @@
 <script setup lang="ts">
 import type { ImageFolder } from "#shared/types/image";
-import { IndeterminateProgressBar } from "@/components/progress";
-import Scrollbar from "@/components/scrollbar";
+import { LyEditorTabPanel } from "#shared/constants";
+import { SidebarPanel } from "../../../components";
 import { getAllImageFolder } from "@/apis/image";
-import { LyEditorTabPanelEnum } from "@@/shared/enums";
 import { useLyEditorStore } from "@/stores";
+import Scrollbar from "@/components/scrollbar";
 
 const lyEditorStore = useLyEditorStore();
 
 const data = ref<ImageFolder[]>([]);
+const loading = ref(false);
 
 const loadData = async (): Promise<void> => {
   try {
+    loading.value = true;
     const response = await getAllImageFolder();
     data.value = response;
   } catch (error) {
@@ -20,6 +22,8 @@ const loadData = async (): Promise<void> => {
       title: String(error),
       color: "error"
     });
+  } finally {
+    loading.value = false;
   }
 };
 
@@ -41,28 +45,23 @@ const handleOpenImageFolder = (e: ImageFolder) => {
   lyEditorStore.pushTabItem({
     key,
     label: e.name,
-    type: LyEditorTabPanelEnum.ImagePanel,
+    type: LyEditorTabPanel.ImagePanel,
     data: e
   });
 
   lyEditorStore.currentTab = key;
 };
+
+const actions = [
+  {
+    label: "新建目录",
+    icon: "ep:plus",
+    onClick: handleOpenFormModal
+  }
+];
 </script>
 <template>
-  <div class="sidebar-manager" @contextmenu.prevent>
-    <div class="sidebar-manager__header">
-      <div class="sidebar-manager__title"> 图片管理器 </div>
-      <div class="sidebar-manager__actions">
-        <UTooltip text="新建目录">
-          <span class="sidebar-manager__actions-item" @click="handleOpenFormModal()">
-            <UIcon name="ep:plus" :size="16" />
-          </span>
-        </UTooltip>
-      </div>
-    </div>
-
-    <IndeterminateProgressBar :loading="false" />
-
+  <SidebarPanel title="图片管理器" :loading="loading" :actions="actions">
     <div class="flex-1 overflow-hidden">
       <Scrollbar class="h-full">
         <div
@@ -126,5 +125,5 @@ const handleOpenImageFolder = (e: ImageFolder) => {
         </div>
       </Scrollbar>
     </div>
-  </div>
+  </SidebarPanel>
 </template>

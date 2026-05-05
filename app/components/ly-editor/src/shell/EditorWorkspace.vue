@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import EditorActivityBar from "./EditorActivityBar.vue";
 import EditorMenuBar from "./EditorMenuBar.vue";
-import EditorModalManager from "../modals/EditorModalManager.vue";
-import EditorPreview from "./EditorPreview.vue";
+import EditorModalManager from "./EditorModalManager.vue";
+// import EditorPreview from "./EditorPreview.vue";
 import EditorSidebar from "./EditorSidebar.vue";
 import EditorStatusBar from "./EditorStatusBar.vue";
 import EditorTabBar from "./EditorTabBar.vue";
@@ -20,7 +20,7 @@ import EditorTabPane from "./EditorTabPane.vue";
           <EditorTabBar />
           <EditorTabPane class="flex-1" />
         </section>
-        <EditorPreview class="bg-blue-100" />
+        <!-- <EditorPreview class="bg-blue-100" /> -->
       </main>
     </section>
     <EditorStatusBar />

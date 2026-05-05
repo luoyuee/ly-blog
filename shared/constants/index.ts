@@ -1,3 +1,5 @@
+export * from "./ly-editor";
+
 export const TagColors: string[] = [
   "#6fa3ef",
   "#bc99c4",
@@ -24,19 +26,6 @@ export const BrowserIcon: Record<string, string> = {
   Edge: "colorful:edge",
   Firefox: "colorful:firefox",
   unknown: "colorful:browser"
-} as const;
-
-export const LyEditorActivityMenu = {
-  NoteManager: 1,
-  ArticleManager: 2,
-  SearchPanel: 3,
-  ImageManager: 4,
-  HitokotoManager: 5,
-  NavigationWebsiteManager: 6,
-  WorkManager: 7,
-  DashboardPanel: 97,
-  CronJobPanel: 98,
-  SettingPanel: 99
 } as const;
 
 export const ImageFolderEnum = {

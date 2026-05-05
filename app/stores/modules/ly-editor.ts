@@ -1,4 +1,9 @@
-import type { EditorTabItem, FolderTreeItem } from "#shared/types/ly-editor";
+import type {
+  EditorTabItem,
+  FolderTreeItem,
+  LyEditorModalItem,
+  LyEditorModalKey
+} from "#shared/types/ly-editor";
 import { getFolderTree } from "@/apis/note";
 import { defineStore } from "pinia";
 
@@ -21,11 +26,15 @@ export interface LyEditorStoreModel {
   };
   sidebar: {
     show: boolean;
-    active: number;
+    width: number;
+    active: string;
   };
   preview: {
     show: boolean;
     content?: string;
+  };
+  modal: {
+    active?: LyEditorModalItem;
   };
 }
 
@@ -46,13 +55,29 @@ export const lyEditorStore = defineStore("ly-editor", {
     },
     sidebar: {
       show: true,
-      active: 1
+      width: 280,
+      active: "note-manager"
     },
     preview: {
       show: false
+    },
+    modal: {
+      active: undefined
     }
   }),
+  getters: {
+    hasActiveModal: (state) => Boolean(state.modal.active),
+    activeModalKey: (state): LyEditorModalKey | undefined => state.modal.active?.key,
+    activeModalPayload: (state): unknown => state.modal.active?.payload
+  },
   actions: {
+    openModal(item: LyEditorModalItem) {
+      this.modal.active = item;
+    },
+    closeModal() {
+      this.modal.active = undefined;
+    },
+
     async loadNoteFolderTree() {
       try {
         this.noteManager.loading = true;

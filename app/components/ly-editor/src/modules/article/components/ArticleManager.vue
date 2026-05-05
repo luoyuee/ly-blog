@@ -1,15 +1,18 @@
 <script setup lang="ts">
 import type { ArticleCategory } from "#shared/types/article";
-import { IndeterminateProgressBar } from "@/components/progress";
 import { getAllArticleCategory, deleteArticleCategory } from "@/apis/article";
-import { useLyEditorStore } from "@/stores";
-import Scrollbar from "@/components/scrollbar";
+import { useLyEditorModal } from "@/composables/useLyEditorModal";
+import { useLyEditorTabs } from "@/composables/useLyEditorTabs";
+import { LyEditorTabPanel } from "#shared/constants";
+import { SidebarPanel } from "../../../components";
 import { lyEditorEmitter } from "@/events";
+import Scrollbar from "@/components/scrollbar";
 
 const $notify = useNotification();
 const $msgBox = useMessageBox();
 
-const lyEditorStore = useLyEditorStore();
+const { openModal } = useLyEditorModal();
+const { openTabPanel } = useLyEditorTabs();
 
 const data = ref<ArticleCategory[]>([]);
 
@@ -26,7 +29,7 @@ onMounted(() => {
 });
 
 const handleOpenFormModal = async (e?: ArticleCategory) => {
-  const result = await openWorkspaceModal("category-form", e);
+  const result = await openModal("category-form", e);
 
   if (result.action === "submitted") {
     await loadData();
@@ -34,19 +37,15 @@ const handleOpenFormModal = async (e?: ArticleCategory) => {
 };
 
 const handleOpenDetailsModal = async (e: ArticleCategory) => {
-  await openWorkspaceModal("category-details", e);
+  await openModal("category-details", e);
 };
 
-const handleOpenHitokoto = (e: ArticleCategory) => {
-  lyEditorStore.pushTabItem({
-    key: "article-manager",
+const handleOpenPanel = () => {
+  openTabPanel({
+    key: LyEditorTabPanel.ArticlePanel,
     label: "文章管理",
-    openTime: new Date().getTime(),
-    type: "article-manager",
-    data: e
+    type: LyEditorTabPanel.ArticlePanel
   });
-
-  lyEditorStore.currentTab = "article-manager";
 };
 
 const handleDelete = (e: ArticleCategory) => {
@@ -72,29 +71,24 @@ const handleDelete = (e: ArticleCategory) => {
 lyEditorEmitter.on("cmd.article-manager:reload", () => {
   loadData();
 });
+
+const actions = [
+  {
+    label: "新建分类",
+    icon: "ep:plus",
+    onClick: handleOpenFormModal
+  }
+];
 </script>
 <template>
-  <div class="sidebar-manager" @contextmenu.prevent>
-    <div class="sidebar-manager__header">
-      <div class="sidebar-manager__title"> 文章管理 </div>
-      <div class="sidebar-manager__actions">
-        <UTooltip text="新建分类">
-          <span class="sidebar-manager__actions-item" @click="handleOpenFormModal()">
-            <UIcon name="ep:plus" :size="16" />
-          </span>
-        </UTooltip>
-      </div>
-    </div>
-
-    <IndeterminateProgressBar :loading="false" />
-
+  <SidebarPanel title="文章管理" :actions="actions">
     <div class="flex-1 overflow-hidden">
       <Scrollbar>
         <div
           v-for="item in data"
           :key="item.id"
           class="px-3 py-2 hover:bg-gray-100/5 cursor-pointer"
-          @click="handleOpenHitokoto(item)"
+          @click="handleOpenPanel"
         >
           <div class="flex items-center">
             <UIcon :name="item.icon ?? 'colorful:folder'" class="mr-1 shrink-0" />
@@ -154,5 +148,5 @@ lyEditorEmitter.on("cmd.article-manager:reload", () => {
         </div>
       </Scrollbar>
     </div>
-  </div>
+  </SidebarPanel>
 </template>
