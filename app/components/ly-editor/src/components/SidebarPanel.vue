@@ -101,6 +101,7 @@ const lyEditorStore = useLyEditorStore();
       cursor: pointer;
       padding: 4px;
       border-radius: 4px;
+
       &:hover {
         background-color: rgba(235, 240, 250, 0.06);
       }

@@ -1,31 +1,39 @@
 <script setup lang="ts">
-import type { HitokotoTypeItem, HitokotoTypeForm } from "#shared/types/hitokoto";
+import type { HitokotoTypeForm } from "#shared/types/hitokoto";
 import type { FormSubmitEvent } from "@nuxt/ui";
+import type {
+  HitokotoTypeFormModalPayload,
+  HitokotoTypeFormModalResult
+} from "#shared/types/ly-editor";
 import { createHitokotoType, updateHitokotoType } from "@/apis/hitokoto";
 import { BasicModal } from "@/components/basic-modal";
-import { reactive } from "vue";
+import { useForm } from "@/composables/useForm";
+import { computed, watch } from "vue";
 import { z } from "zod";
 
 const $notify = useNotification();
 
-const props = defineProps<{
-  open?: boolean;
-  payload?: HitokotoTypeItem;
-}>();
+const visible = defineModel<boolean>("visible", {
+  default: false
+});
+
+const props = defineProps({
+  payload: {
+    type: Object as PropType<HitokotoTypeFormModalPayload>,
+    default: () => ({
+      mode: "create",
+      record: undefined
+    })
+  }
+});
 
 const emits = defineEmits<{
-  cancel: [];
-  submit: [];
-  resolve: [
-    result:
-      | {
-          action: "submitted";
-        }
-      | {
-          action: "cancelled";
-        }
-  ];
+  resolve: [result: HitokotoTypeFormModalResult];
 }>();
+
+const modalTitle = computed(() => {
+  return props.payload.mode === "create" ? "新建分类" : "修改分类";
+});
 
 const schema = z.object({
   id: z.number().optional(),
@@ -33,54 +41,27 @@ const schema = z.object({
   description: z.string().optional()
 });
 
-const formData = reactive<HitokotoTypeForm>({
+const { formData, formState, resetForm, setForm } = useForm<HitokotoTypeForm>({
   name: undefined,
   description: undefined
 });
 
-const resetForm = () => {
-  Object.keys(formData).forEach((key) => {
-    formData[key as keyof HitokotoTypeForm] = undefined;
-  });
-};
+watch(visible, (newVal) => {
+  if (!newVal) return;
 
-const visible = ref(false);
-
-const handleOpen = (data?: HitokotoTypeItem) => {
   resetForm();
 
-  if (data) {
-    formData.id = data.id;
-    formData.name = data.name;
-    formData.description = data.description;
+  if (props.payload.record) {
+    const { id, name, description } = props.payload.record;
+    setForm({ id, name, description });
   }
-
-  visible.value = true;
-};
-
-defineExpose({
-  open: handleOpen
 });
 
-watch(
-  () => props.open,
-  (open) => {
-    if (open) {
-      handleOpen(props.payload);
-    } else {
-      visible.value = false;
-    }
-  },
-  {
-    immediate: true
-  }
-);
-
-const submitting = ref(false);
 const formRef = useTemplateRef("formRef");
+
 const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => {
   try {
-    submitting.value = true;
+    formState.submitting = true;
 
     if (event.data.id) {
       await updateHitokotoType({
@@ -105,7 +86,6 @@ const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => 
 
     visible.value = false;
 
-    emits("submit");
     emits("resolve", {
       action: "submitted"
     });
@@ -115,7 +95,7 @@ const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => 
       error
     });
   } finally {
-    submitting.value = false;
+    formState.submitting = false;
   }
 };
 
@@ -125,17 +105,15 @@ const handleConfirm = async () => {
 
 const handleCancel = () => {
   visible.value = false;
-  emits("cancel");
   emits("resolve", {
     action: "cancelled"
   });
 };
 </script>
 <template>
-  <BasicModal v-model:visible="visible" :title="formData.id ? '修改分类' : '新建分类'">
+  <BasicModal v-model:visible="visible" :title="modalTitle">
     <UForm
       ref="formRef"
-      class="space-y-2"
       :schema="schema"
       :state="formData"
       :validate-on-input-delay="100"
@@ -152,13 +130,16 @@ const handleCancel = () => {
 
     <template #footer>
       <UButton
-        label="取消"
         color="neutral"
         variant="outline"
-        :disabled="submitting"
+        :disabled="formState.submitting"
         @click="handleCancel"
-      />
-      <UButton label="确认" color="primary" :loading="submitting" @click="handleConfirm" />
+      >
+        取消
+      </UButton>
+      <UButton color="primary" :loading="formState.submitting" @click="handleConfirm">
+        确认
+      </UButton>
     </template>
   </BasicModal>
 </template>

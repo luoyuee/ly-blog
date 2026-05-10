@@ -1,9 +1,11 @@
 <script setup lang="ts">
+import type { HitokotoFormModalPayload, HitokotoFormModalResult } from "#shared/types/ly-editor";
+import type { HitokotoForm, HitokotoTypeSelectOption } from "#shared/types/hitokoto";
 import type { FormSubmitEvent } from "@nuxt/ui";
-import type { HitokotoItem, HitokotoForm, HitokotoTypeSelectOption } from "#shared/types/hitokoto";
 import { getHitokotoTypeOptions, createHitokoto, updateHitokoto } from "@/apis/hitokoto";
-import { useForm } from "@/composables/useForm";
 import { BasicModal } from "@/components/basic-modal";
+import { useForm } from "@/composables/useForm";
+import { computed, watch } from "vue";
 import { z } from "zod";
 
 const $notify = useNotification();
@@ -14,24 +16,16 @@ const visible = defineModel<boolean>("visible", {
 
 const props = defineProps({
   payload: {
-    type: Object as PropType<{
-      record?: HitokotoItem;
-      mode?: "create" | "update";
-    }>,
-    default: () => ({})
+    type: Object as PropType<HitokotoFormModalPayload>,
+    default: () => ({
+      mode: "create",
+      record: undefined
+    })
   }
 });
 
 const emits = defineEmits<{
-  resolve: [
-    result:
-      | {
-          action: "submitted";
-        }
-      | {
-          action: "cancelled";
-        }
-  ];
+  resolve: [result: HitokotoFormModalResult];
 }>();
 
 const schema = z.object({
@@ -133,7 +127,6 @@ onMounted(async () => {
   >
     <UForm
       ref="formRef"
-      class="space-y-2"
       :schema="schema"
       :state="formData"
       :validate-on-input-delay="100"

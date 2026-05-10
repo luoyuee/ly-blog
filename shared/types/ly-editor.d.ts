@@ -138,6 +138,26 @@ export type LyEditorModalKey =
 /**
  * LY Editor 弹窗参数映射。
  */
+export type HitokotoFormModalPayload = {
+  mode: "create" | "update";
+  record?: HitokotoItem;
+};
+
+export type HitokotoFormModalResult = { action: "submitted" } | { action: "cancelled" };
+
+export type HitokotoImportModalResult = { action: "imported" } | { action: "cancelled" };
+
+export type HitokotoTypeFormModalPayload = {
+  mode: "create" | "update";
+  record?: HitokotoTypeItem;
+};
+
+export type HitokotoTypeFormModalResult = { action: "submitted" } | { action: "cancelled" };
+
+export type HitokotoTypeDetailsModalPayload = HitokotoTypeItem;
+
+export type HitokotoTypeDetailsModalResult = { action: "closed" } | { action: "cancelled" };
+
 export type LyEditorModalPayloadMap = {
   "note-folder-form": NoteFolderForm | undefined;
   "note-save": EditorTabItem;
@@ -154,13 +174,10 @@ export type LyEditorModalPayloadMap = {
     works: WorkItem[];
   };
   "image-folder-form": ImageFolder | undefined;
-  "hitokoto-form": {
-    mode: "create" | "update";
-    record?: HitokotoItem;
-  };
+  "hitokoto-form": HitokotoFormModalPayload;
   "hitokoto-import": undefined;
-  "hitokoto-type-form": HitokotoTypeItem | undefined;
-  "hitokoto-type-details": HitokotoTypeItem;
+  "hitokoto-type-form": HitokotoTypeFormModalPayload;
+  "hitokoto-type-details": HitokotoTypeDetailsModalPayload;
 };
 
 /**
@@ -179,10 +196,10 @@ export type LyEditorModalResultMap = {
   "send-email": { action: "sent" } | { action: "cancelled" };
   "work-form": { action: "submitted" } | { action: "cancelled" };
   "image-folder-form": { action: "submitted" } | { action: "cancelled" };
-  "hitokoto-form": { action: "submitted" } | { action: "cancelled" };
-  "hitokoto-import": { action: "imported" } | { action: "cancelled" };
-  "hitokoto-type-form": { action: "submitted" } | { action: "cancelled" };
-  "hitokoto-type-details": { action: "closed" } | { action: "cancelled" };
+  "hitokoto-form": HitokotoFormModalResult;
+  "hitokoto-import": HitokotoImportModalResult;
+  "hitokoto-type-form": HitokotoTypeFormModalResult;
+  "hitokoto-type-details": HitokotoTypeDetailsModalResult;
 };
 
 /**

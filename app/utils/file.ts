@@ -4,8 +4,9 @@
  * - object: 对象数据（会被 JSON 序列化）
  * - unknown[]: 数组数据（会被 JSON 序列化）
  * - ArrayBuffer: 二进制数据
+ * - Blob: 已构建好的文件对象
  */
-export type DownloadData = string | object | unknown[] | ArrayBuffer;
+export type DownloadData = string | object | unknown[] | ArrayBuffer | Blob;
 
 /**
  * 下载文件
@@ -25,7 +26,9 @@ export function downloadFile(
 
   let blob: Blob;
 
-  if (data instanceof ArrayBuffer) {
+  if (data instanceof Blob) {
+    blob = data;
+  } else if (data instanceof ArrayBuffer) {
     blob = new Blob([data], { type: mimeType || "application/octet-stream" });
   } else if (typeof data === "string") {
     blob = new Blob([data], { type: mimeType || "text/plain;charset=utf-8" });
@@ -50,5 +53,7 @@ export function downloadFile(
   link.click();
 
   document.body.removeChild(link);
-  URL.revokeObjectURL(url);
+  setTimeout(() => {
+    URL.revokeObjectURL(url);
+  }, 0);
 }

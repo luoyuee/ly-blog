@@ -1,52 +1,40 @@
 <script setup lang="ts">
-import type { HitokotoTypeItem } from "#shared/types/hitokoto";
-import { getHitokotoDetails } from "@/apis/hitokoto";
+import type {
+  HitokotoTypeDetailsModalPayload,
+  HitokotoTypeDetailsModalResult
+} from "#shared/types/ly-editor";
 import { Descriptions, DescriptionsItem } from "@/components/descriptions-v2";
+import { getHitokotoDetails } from "@/apis/hitokoto";
 import { BasicModal } from "@/components/basic-modal";
 import dayjs from "dayjs";
 
-const props = defineProps<{
-  open?: boolean;
-  payload?: HitokotoTypeItem;
-}>();
-
-const emits = defineEmits<{
-  cancel: [];
-  resolve: [
-    result:
-      | {
-          action: "closed";
-        }
-      | {
-          action: "cancelled";
-        }
-  ];
-}>();
-
-const visible = ref(false);
-
-const data = ref<Partial<HitokotoTypeItem>>({});
-
-const handleOpen = (e: HitokotoTypeItem) => {
-  visible.value = true;
-
-  getHitokotoDetails(e.id).then((res) => {
-    data.value = res;
-  });
-};
-
-defineExpose({
-  open: handleOpen
+const visible = defineModel<boolean>("visible", {
+  default: false
 });
 
+const props = defineProps({
+  payload: {
+    type: Object as PropType<HitokotoTypeDetailsModalPayload>,
+    default: undefined
+  }
+});
+
+const emits = defineEmits<{
+  resolve: [result: HitokotoTypeDetailsModalResult];
+}>();
+
+const data = ref<Partial<HitokotoTypeDetailsModalPayload>>({});
+
 watch(
-  () => props.open,
-  (open) => {
-    if (open && props.payload) {
-      handleOpen(props.payload);
-    } else {
+  [visible, () => props.payload?.id],
+  async ([newVal, id]) => {
+    if (!newVal || !id) {
+      data.value = {};
       visible.value = false;
+      return;
     }
+
+    data.value = await getHitokotoDetails(id);
   },
   {
     immediate: true
@@ -55,7 +43,6 @@ watch(
 
 const handleCancel = () => {
   visible.value = false;
-  emits("cancel");
   emits("resolve", {
     action: "closed"
   });

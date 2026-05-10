@@ -1,29 +1,20 @@
 <script setup lang="ts">
+import type { HitokotoImportModalResult } from "#shared/types/ly-editor";
 import { uploadHitokotoData } from "@/apis/hitokoto";
-import { reactive } from "vue";
 import { BasicModal } from "@/components/basic-modal";
+import { useForm } from "@/composables/useForm";
 
 const $notify = useNotification();
 
-const props = defineProps<{
-  open?: boolean;
-}>();
+const visible = defineModel<boolean>("visible", {
+  default: false
+});
 
 const emits = defineEmits<{
-  cancel: [];
-  submit: [];
-  resolve: [
-    result:
-      | {
-          action: "imported";
-        }
-      | {
-          action: "cancelled";
-        }
-  ];
+  resolve: [result: HitokotoImportModalResult];
 }>();
 
-const formData = reactive<{
+const { formData, formState, resetForm, setFieldValue } = useForm<{
   filename?: string;
   file?: File;
 }>({
@@ -31,76 +22,53 @@ const formData = reactive<{
   file: undefined
 });
 
-const visible = ref(false);
-
-const handleOpen = () => {
-  formData.filename = undefined;
-  formData.file = undefined;
-
-  visible.value = true;
-};
-
-defineExpose({
-  open: handleOpen
-});
-
-watch(
-  () => props.open,
-  (open) => {
-    if (open) {
-      handleOpen();
-    } else {
-      visible.value = false;
-    }
-  },
-  {
-    immediate: true
-  }
-);
-
-const submitting = ref(false);
 const uploadProgress = ref<number>(0);
 
+watch(visible, (newVal) => {
+  if (!newVal) return;
+
+  resetForm();
+  uploadProgress.value = 0;
+});
+
 const handleConfirm = async () => {
-  if (formData.file) {
-    try {
-      submitting.value = true;
-      uploadProgress.value = 0;
+  if (!formData.file) return;
 
-      await uploadHitokotoData(formData.file, (e) => {
-        uploadProgress.value = Math.round((e.progress ?? 0) * 100);
+  try {
+    formState.submitting = true;
+    uploadProgress.value = 0;
 
-        if (uploadProgress.value >= 100) {
-          uploadProgress.value = 100;
-        }
-      });
+    await uploadHitokotoData(formData.file, (e) => {
+      uploadProgress.value = Math.round((e.progress ?? 0) * 100);
 
-      $notify.success({
-        title: "导入成功"
-      });
+      if (uploadProgress.value >= 100) {
+        uploadProgress.value = 100;
+      }
+    });
 
-      emits("submit");
-      emits("resolve", {
-        action: "imported"
-      });
+    $notify.success({
+      title: "导入成功"
+    });
 
-      setTimeout(() => {
-        visible.value = false;
-      }, 500);
-    } catch (error) {
-      $notify.error({
-        title: "操作失败",
-        error
-      });
-    } finally {
-      submitting.value = false;
-    }
+    emits("resolve", {
+      action: "imported"
+    });
+
+    setTimeout(() => {
+      visible.value = false;
+    }, 500);
+  } catch (error) {
+    $notify.error({
+      title: "操作失败",
+      error
+    });
+  } finally {
+    formState.submitting = false;
   }
 };
 
 const handleCancel = () => {
   visible.value = false;
-  emits("cancel");
   emits("resolve", {
     action: "cancelled"
   });
@@ -109,9 +77,9 @@ const handleCancel = () => {
 const handleChange = (e: Event) => {
   const target = e.target as HTMLInputElement;
   if (target.files && target.files.length > 0) {
-    formData.file = target.files[0];
+    setFieldValue("file", target.files[0]);
   } else {
-    formData.file = undefined;
+    setFieldValue("file", undefined);
   }
 };
 </script>
@@ -119,7 +87,7 @@ const handleChange = (e: Event) => {
   <BasicModal
     v-model:visible="visible"
     title="导入数据"
-    :submitting="submitting"
+    :submitting="formState.submitting"
     @cancel="handleCancel"
     @confirm="handleConfirm"
   >
@@ -129,10 +97,10 @@ const handleChange = (e: Event) => {
         class="w-full"
         type="file"
         accept=".json"
-        :disabled="submitting"
+        :disabled="formState.submitting"
         @change="handleChange"
       />
-      <UProgress v-if="submitting" v-model="uploadProgress" status class="mt-4" />
+      <UProgress v-if="formState.submitting" v-model="uploadProgress" status class="mt-4" />
     </div>
   </BasicModal>
 </template>

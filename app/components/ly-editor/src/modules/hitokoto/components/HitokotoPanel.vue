@@ -1,14 +1,22 @@
 <script setup lang="ts">
 import type { HitokotoItem, HitokotoTypeItem } from "#shared/types/hitokoto";
 import type { TableColumn, SelectItem } from "@nuxt/ui";
-import { getHitokotoTypeOptions, getPaginatedHitokotos, deleteHitokoto } from "@/apis/hitokoto";
 import { useLyEditorModal } from "@/composables/useLyEditorModal";
+import { Pagination } from "@/components/pagination";
+import { downloadFile } from "@/utils/file";
 import { h, resolveComponent } from "vue";
-import numeral from "numeral";
+import { useI18n } from "vue-i18n";
+import {
+  getHitokotoTypeOptions,
+  getPaginatedHitokotos,
+  deleteHitokoto,
+  exportHitokotoData
+} from "@/apis/hitokoto";
 import dayjs from "dayjs";
 
 const $notify = useNotification();
 const $msgBox = useMessageBox();
+const { t } = useI18n();
 
 const { openModal } = useLyEditorModal();
 
@@ -38,6 +46,7 @@ const loadTypeOptions = async () => {
 };
 
 const data = ref<HitokotoItem[]>([]);
+const exporting = ref(false);
 
 const state = reactive<{
   page: number;
@@ -61,6 +70,9 @@ const columns: TableColumn<HitokotoItem>[] = [
   {
     accessorKey: "id",
     header: "#",
+    meta: {
+      class: { td: "min-w-12" }
+    },
     cell: ({ row }) => `#${row.getValue("id")}`
   },
   {
@@ -85,19 +97,23 @@ const columns: TableColumn<HitokotoItem>[] = [
   {
     accessorKey: "source",
     header: "来源",
-    cell: ({ row }) => h("div", { class: "w-24" }, row.getValue("source"))
+    meta: {
+      class: { td: "min-w-24" }
+    }
   },
   {
     accessorKey: "author",
     header: "作者",
-    cell: ({ row }) => h("div", { class: "w-20" }, row.getValue("author"))
+    meta: {
+      class: { td: "min-w-24" }
+    }
   },
   {
     accessorKey: "type",
     header: "类型",
-    minSize: 200,
-    size: 200,
-    maxSize: 200,
+    meta: {
+      class: { td: "min-w-24" }
+    },
     cell: ({ row }) => {
       const type = row.getValue<number | null>("type");
 
@@ -111,58 +127,59 @@ const columns: TableColumn<HitokotoItem>[] = [
   {
     accessorKey: "length",
     header: "长度",
-    cell: ({ row }) => h("div", { class: "w-20" }, row.getValue("length"))
+    meta: {
+      class: { td: "min-w-24" }
+    }
   },
   {
     accessorKey: "updated_at",
     header: "更新日期",
+    meta: {
+      class: { td: "w-46" }
+    },
     cell: ({ row }) =>
       h(
-        "div",
-        { class: "w-34" },
-        dayjs(row.original.updated_at ?? row.original.created_at).format("YYYY/MM/DD HH:mm:ss")
+        "span",
+        dayjs(row.original.updated_at ?? row.original.created_at).format(t("format.datetime"))
       )
   },
   {
     id: "actions",
-    cell: ({ row }) => {
-      return h(
-        "div",
-        { class: "text-right" },
-        h(
-          UDropdownMenu,
-          {
-            content: {
-              align: "end"
-            },
-            items: [
-              {
-                label: "编辑语句",
-                icon: "ep:edit",
-                onSelect: () => {
-                  handleOpenHitokotoFormModal("update", row.original);
-                }
-              },
-              {
-                label: "删除语句",
-                icon: "ep:delete",
-                color: "error",
-                onSelect: () => {
-                  handleDelete(row.original);
-                }
-              }
-            ]
+    meta: {
+      class: { td: "w-16" }
+    },
+    cell: ({ row }) =>
+      h(
+        UDropdownMenu,
+        {
+          content: {
+            align: "end"
           },
-          () =>
-            h(UButton, {
-              icon: "i-lucide-ellipsis-vertical",
-              color: "neutral",
-              variant: "ghost",
-              class: "ml-auto"
-            })
-        )
-      );
-    }
+          items: [
+            {
+              label: "编辑语句",
+              icon: "ep:edit",
+              onSelect: () => {
+                handleOpenHitokotoFormModal("update", row.original);
+              }
+            },
+            {
+              label: "删除语句",
+              icon: "ep:delete",
+              color: "error",
+              onSelect: () => {
+                handleDelete(row.original);
+              }
+            }
+          ]
+        },
+        () =>
+          h(UButton, {
+            icon: "lucide:ellipsis-vertical",
+            color: "neutral",
+            variant: "ghost"
+          })
+      )
   }
 ];
 
@@ -207,6 +224,29 @@ const handleImportData = async () => {
   }
 };
 
+const handleExportData = async () => {
+  try {
+    exporting.value = true;
+
+    const blob = await exportHitokotoData();
+    const fileName = `hitokoto-${dayjs().format("YYYYMMDD-HHmmss")}.json`;
+    downloadFile(blob, fileName, {
+      mimeType: "application/json;charset=utf-8"
+    });
+
+    $notify.success({
+      title: "导出成功"
+    });
+  } catch (error) {
+    $notify.error({
+      title: "导出失败",
+      error
+    });
+  } finally {
+    exporting.value = false;
+  }
+};
+
 const handleOpenHitokotoFormModal = async (mode: "create" | "update", record?: HitokotoItem) => {
   const result = await openModal("hitokoto-form", { record, mode });
 
@@ -244,13 +284,14 @@ const handleDelete = (e: HitokotoItem) => {
 };
 </script>
 <template>
-  <div class="p-4 h-full overflow-hidden flex flex-col">
-    <div class="flex justify-between items-center mb-4">
+  <div class="p-4 h-full overflow-hidden flex flex-col gap-4">
+    <div class="flex justify-between items-center">
       <div class="flex gap-4">
         <UButton icon="ep:plus" @click="() => handleOpenHitokotoFormModal('create')">
           新增
         </UButton>
         <UButton icon="ep:upload" @click="handleImportData">导入</UButton>
+        <UButton icon="ep:download" :loading="exporting" @click="handleExportData">导出</UButton>
       </div>
 
       <UFieldGroup>
@@ -261,6 +302,7 @@ const handleDelete = (e: HitokotoItem) => {
         <UButton icon="ep:search" @click="handleSearch">搜索</UButton>
       </UFieldGroup>
     </div>
+
     <div class="border border-muted flex-1 overflow-hidden rounded-md">
       <UTable
         sticky
@@ -276,28 +318,12 @@ const handleDelete = (e: HitokotoItem) => {
       />
     </div>
 
-    <div class="pt-4 flex justify-between items-center gap-4">
-      <div class="text-sm">
-        {{ `共「${numeral(state.total).format("0,0")}」条数据` }}
-      </div>
-      <div class="flex gap-4 items-center">
-        <USelect
-          v-model="state.per_page"
-          :items="[
-            { label: '50/页', value: 50 },
-            { label: '100/页', value: 100 },
-            { label: '200/页', value: 200 }
-          ]"
-          class="w-24"
-          @change="loadData"
-        />
-        <UPagination
-          v-model:page="state.page"
-          :items-per-page="state.per_page"
-          :total="state.total"
-          @update:page="loadData"
-        />
-      </div>
-    </div>
+    <Pagination
+      v-model:page="state.page"
+      v-model:page-size="state.per_page"
+      :total="state.total"
+      @update:page="loadData"
+      @update:page-size="loadData"
+    />
   </div>
 </template>

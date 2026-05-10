@@ -33,6 +33,9 @@ export default defineAppConfig({
         }
       }
     },
+    form: {
+      base: "space-y-2",
+    },
     formField: {
       slots: {
         root: "pb-4 relative",

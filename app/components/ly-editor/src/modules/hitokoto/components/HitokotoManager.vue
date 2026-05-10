@@ -35,7 +35,10 @@ onMounted(() => {
 });
 
 const handleOpenBaseFormModal = async (e?: HitokotoTypeItem) => {
-  const result = await openModal("hitokoto-type-form", e);
+  const result = await openModal("hitokoto-type-form", {
+    mode: e ? "update" : "create",
+    record: e
+  });
 
   if (result.action === "submitted") {
     await loadData();

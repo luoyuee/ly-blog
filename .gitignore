@@ -5,6 +5,8 @@
 .nitro
 .cache
 dist
+dist-ssr
+*.local
 
 # Node dependencies
 node_modules
@@ -12,6 +14,11 @@ node_modules
 # Logs
 logs
 *.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
 
 # Misc
 .DS_Store
@@ -36,3 +43,5 @@ prisma/generated
 /scripts/new-icons
 /scripts/old-icons
 /scripts/old-color-icons
+
+.sisyphus

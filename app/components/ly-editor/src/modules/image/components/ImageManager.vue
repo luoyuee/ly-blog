@@ -111,9 +111,6 @@ const actions = [
                     side: 'bottom',
                     sideOffset: 8
                   }"
-                  :ui="{
-                    content: 'w-48'
-                  }"
                 >
                   <UTooltip text="设置">
                     <UIcon name="custom:setting" class="hover:text-gray-400" :size="16" />
