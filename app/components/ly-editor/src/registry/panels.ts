@@ -1,12 +1,13 @@
 import type { LyEditorPanelRegistryItem } from "#shared/types/ly-editor";
 import { LyEditorTabPanel } from "#shared/constants";
 import {
-  ArticlePaneContent,
+  ArticlePanel,
   CronJobPanel,
   DashboardPanel,
   HitokotoPanel,
   ImageFolderPanel,
-  NavigationWebsitePaneContent,
+  SearchHistoryPanel,
+  NavigationWebsitePanel,
   SettingPanel,
   UserPanel
 } from "../modules";
@@ -16,7 +17,7 @@ import {
  */
 export const lyEditorPanelRegistry = {
   [LyEditorTabPanel.ArticlePanel]: {
-    component: ArticlePaneContent,
+    component: ArticlePanel,
     keepAlive: true
   },
   [LyEditorTabPanel.ImagePanel]: {
@@ -28,7 +29,11 @@ export const lyEditorPanelRegistry = {
     keepAlive: true
   },
   [LyEditorTabPanel.NavigationWebsitePanel]: {
-    component: NavigationWebsitePaneContent,
+    component: NavigationWebsitePanel,
+    keepAlive: true
+  },
+  [LyEditorTabPanel.NavigationHistoryPanel]: {
+    component: SearchHistoryPanel,
     keepAlive: true
   },
   [LyEditorTabPanel.DashboardPanel]: {

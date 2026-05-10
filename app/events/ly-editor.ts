@@ -1,4 +1,4 @@
-import type { EditorTabItem } from "#shared/types/ly-editor";
+import type { EditorTabItem, NavigationWebsiteFormModalPayload } from "#shared/types/ly-editor";
 import type { NoteFolderForm } from "#shared/types/note";
 import mitt from "mitt";
 
@@ -76,7 +76,7 @@ type Events = {
   "cmd.modal-manager:open:category-details": ArticleCategory;
   "cmd.modal-manager:open:shortcut-form": ShortcutItem | undefined;
   "cmd.modal-manager:open:search-engine-form": SearchEngineItem | undefined;
-  "cmd.modal-manager:open:navigation-website-form": NavigationWebsiteItem | undefined;
+  "cmd.modal-manager:open:navigation-website-form": NavigationWebsiteFormModalPayload;
 
   "state.shortcut-form:cancel": undefined;
   "notify.shortcut-form:submitted": undefined;

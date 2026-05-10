@@ -1,14 +1,13 @@
 <script setup lang="ts">
 import type { ArticleCategoryOption, ArticleItem } from "#shared/types/article";
-import type { HitokotoItem } from "#shared/types/hitokoto";
 import type { TableColumn, SelectItem } from "@nuxt/ui";
+import { Pagination } from "@/components/pagination";
 import {
   getArticleCategoryOptions,
   getAdminPaginatedArticles,
   deleteArticle
 } from "@/apis/article";
 import { h, resolveComponent } from "vue";
-import numeral from "numeral";
 import dayjs from "dayjs";
 import { openEditorNoteFile } from "../../../utils";
 
@@ -205,22 +204,6 @@ onMounted(() => {
   loadData();
 });
 
-const handleImportData = async () => {
-  const result = await openWorkspaceModal("hitokoto-import", undefined);
-
-  if (result.action === "imported") {
-    await loadData();
-  }
-};
-
-const handleOpenHitokotoFormModal = async (e?: HitokotoItem) => {
-  const result = await openWorkspaceModal("hitokoto-form", e);
-
-  if (result.action === "submitted") {
-    await loadData();
-  }
-};
-
 const handleSearch = () => {
   state.page = 1;
   loadData();
@@ -254,10 +237,7 @@ const handleDelete = (e: ArticleItem) => {
 <template>
   <div class="p-4 h-full overflow-hidden flex flex-col">
     <div class="flex justify-between items-center mb-4">
-      <div class="flex gap-4">
-        <UButton icon="ep:plus" @click="handleOpenHitokotoFormModal()"> 新增 </UButton>
-        <UButton icon="ep:upload" @click="handleImportData">导入</UButton>
-      </div>
+      <div class="flex gap-4"> </div>
 
       <UFieldGroup>
         <USelect v-model="state.category_id" :items="categoryOptions" class="w-24" />
@@ -283,28 +263,13 @@ const handleDelete = (e: ArticleItem) => {
       />
     </div>
 
-    <div class="pt-4 flex justify-between items-center gap-4">
-      <div class="text-sm">
-        {{ `共「${numeral(state.total).format("0,0")}」条数据` }}
-      </div>
-      <div class="flex gap-4 items-center">
-        <USelect
-          v-model="state.per_page"
-          :items="[
-            { label: '50/页', value: 50 },
-            { label: '100/页', value: 100 },
-            { label: '200/页', value: 200 }
-          ]"
-          class="w-24"
-          @change="loadData"
-        />
-        <UPagination
-          v-model:page="state.page"
-          :items-per-page="state.per_page"
-          :total="state.total"
-          @update:page="loadData"
-        />
-      </div>
-    </div>
+    <Pagination
+      v-model:page="state.page"
+      v-model:page-size="state.per_page"
+      :page-sizes="[50, 100, 200]"
+      :total="state.total"
+      @update:page="loadData"
+      @update:page-size="loadData"
+    />
   </div>
 </template>

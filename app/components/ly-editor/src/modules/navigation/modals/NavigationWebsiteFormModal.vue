@@ -1,34 +1,31 @@
 <script setup lang="ts">
+import type { NavigationWebsiteFormModalPayload, NavigationWebsiteFormModalResult } from "#shared/types/ly-editor";
 import type { FormSubmitEvent } from "@nuxt/ui";
-import type {
-  NavigationWebsiteItem,
-  NavigationWebsiteForm
-} from "#shared/types/navigation-website";
+import type { NavigationWebsiteForm } from "#shared/types/navigation-website";
 import { createNavigationWebsite, updateNavigationWebsite } from "@/apis/navigation-website";
 import { BasicModal } from "@/components/basic-modal";
 import { useForm } from "~/composables/useForm";
-import { lyEditorEmitter } from "~/events";
+import { computed, watch } from "vue";
 import { z } from "zod";
 
 const $notify = useNotification();
 
-const props = defineProps<{
-  open?: boolean;
-  payload?: NavigationWebsiteItem;
-}>();
+const visible = defineModel<boolean>("visible", {
+  default: false
+});
+
+const props = defineProps({
+  payload: {
+    type: Object as PropType<NavigationWebsiteFormModalPayload>,
+    default: () => ({
+      mode: "create",
+      record: undefined
+    })
+  }
+});
 
 const emits = defineEmits<{
-  cancel: [];
-  submit: [];
-  resolve: [
-    result:
-      | {
-          action: "submitted";
-        }
-      | {
-          action: "cancelled";
-        }
-  ];
+  resolve: [result: NavigationWebsiteFormModalResult];
 }>();
 
 const schema = z.object({
@@ -45,7 +42,13 @@ const schema = z.object({
   status: z.number().int().default(1)
 });
 
-const { formData, resetForm, setForm } = useForm<NavigationWebsiteForm>({
+const { formData, formState, resetForm, setForm } = useForm<NavigationWebsiteForm>({
+  id: undefined,
+  name: undefined,
+  url: undefined,
+  icon: undefined,
+  tags: undefined,
+  description: undefined,
   type: 1,
   hot: 0,
   is_favorite: false,
@@ -53,27 +56,45 @@ const { formData, resetForm, setForm } = useForm<NavigationWebsiteForm>({
   status: 1
 });
 
-const visible = ref(false);
-
-const handleOpen = (data?: NavigationWebsiteItem) => {
-  resetForm();
-
-  if (data) {
-    setForm(data);
-  }
-
-  visible.value = true;
-};
-
-lyEditorEmitter.on("cmd.modal-manager:open:navigation-website-form", handleOpen);
+const modalTitle = computed(() => {
+  return props.payload.mode === "update" ? "编辑网站" : "新增网站";
+});
 
 watch(
-  () => props.open,
-  (open) => {
-    if (open) {
-      handleOpen(props.payload);
-    } else {
-      visible.value = false;
+  visible,
+  (newVal) => {
+    if (!newVal) return;
+
+    resetForm();
+
+    if (props.payload.record) {
+      const {
+        id,
+        name,
+        url,
+        icon,
+        tags,
+        description,
+        type,
+        hot,
+        is_favorite,
+        is_public,
+        status
+      } = props.payload.record;
+
+      setForm({
+        id,
+        name,
+        url,
+        icon,
+        tags,
+        description,
+        type,
+        hot,
+        is_favorite,
+        is_public,
+        status
+      });
     }
   },
   {
@@ -81,12 +102,11 @@ watch(
   }
 );
 
-const submitting = ref(false);
 const formRef = useTemplateRef("formRef");
 
 const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => {
   try {
-    submitting.value = true;
+    formState.submitting = true;
 
     if (event.data.id) {
       await updateNavigationWebsite({
@@ -127,8 +147,6 @@ const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => 
 
     visible.value = false;
 
-    lyEditorEmitter.emit("notify.navigation-website-form:submitted");
-    emits("submit");
     emits("resolve", {
       action: "submitted"
     });
@@ -138,7 +156,7 @@ const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => 
       error
     });
   } finally {
-    submitting.value = false;
+    formState.submitting = false;
   }
 };
 
@@ -148,7 +166,6 @@ const handleConfirm = async () => {
 
 const handleCancel = () => {
   visible.value = false;
-  lyEditorEmitter.emit("state.navigation-website-form:cancel");
   emits("resolve", {
     action: "cancelled"
   });
@@ -157,8 +174,8 @@ const handleCancel = () => {
 <template>
   <BasicModal
     v-model:visible="visible"
-    :title="formData.id ? '编辑网站' : '新增网站'"
-    :submitting="submitting"
+    :title="modalTitle"
+    :submitting="formState.submitting"
     @cancel="handleCancel"
     @confirm="handleConfirm"
   >
@@ -228,10 +245,10 @@ const handleCancel = () => {
         label="取消"
         color="neutral"
         variant="outline"
-        :disabled="submitting"
+        :disabled="formState.submitting"
         @click="handleCancel"
       />
-      <UButton label="确认" color="primary" :loading="submitting" @click="handleConfirm" />
+      <UButton label="确认" color="primary" :loading="formState.submitting" @click="handleConfirm" />
     </template>
   </BasicModal>
 </template>

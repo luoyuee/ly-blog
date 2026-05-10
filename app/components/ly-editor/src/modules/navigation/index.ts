@@ -1,6 +1,7 @@
 export { default as NavigationWebsiteManager } from "./components/NavigationWebsiteManager.vue";
-export { default as NavigationWebsitePaneContent } from "./components/NavigationWebsitePaneContent.vue";
-export { default as SearchHistoryPaneContent } from "./components/SearchHistoryPaneContent.vue";
+export { default as NavigationWebsitePanel } from "./components/NavigationWebsitePanel.vue";
+export { default as SearchHistoryPanel } from "./components/SearchHistoryPanel.vue";
+export { default as SearchHistoryPaneContent } from "./components/SearchHistoryPanel.vue";
 export { default as ShortcutSection } from "./components/ShortcutSection.vue";
 export { default as SearchEngineSection } from "./components/SearchEngineSection.vue";
 export { default as ShortcutFormModal } from "./modals/ShortcutFormModal.vue";

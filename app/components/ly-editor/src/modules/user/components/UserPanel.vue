@@ -1,17 +1,17 @@
 <script setup lang="ts">
-import dayjs from "dayjs";
-import { BasicModal } from "@/components/basic-modal";
-import { AvatarUpload } from "@/components/avatar";
-import { useUserStore } from "@/stores";
 import { updateUserProfile, changeUserPassword } from "@/apis/user";
-import { UserRoleEnum } from "#shared/enums";
 import { useNotification } from "@/composables/useNotification";
+import { BasicModal } from "@/components/basic-modal";
 import { useMessage } from "@/composables/useMessage";
+import { AvatarUpload } from "@/components/avatar";
+import { UserRoleEnum } from "#shared/enums";
+import { useUserStore } from "@/stores";
 import { z } from "zod";
+import dayjs from "dayjs";
 
 const userStore = useUserStore();
 
-const profileForm = reactive<{
+const { formData: profileForm, setForm: setProfileForm, setInitial: setProfileInitial } = useForm<{
   username: string;
   nickname: string;
   email: string;
@@ -27,10 +27,16 @@ watch(
   () => userStore.profile,
   (info) => {
     if (!info) return;
-    profileForm.username = info.username;
-    profileForm.nickname = info.nickname;
-    profileForm.email = info.email;
-    profileForm.avatar = null;
+
+    const profileData = {
+      username: info.username,
+      nickname: info.nickname,
+      email: info.email,
+      avatar: null
+    };
+
+    setProfileInitial(profileData);
+    setProfileForm(profileData);
   },
   {
     immediate: true
@@ -87,6 +93,11 @@ const handleSaveProfile = async () => {
 
 const passwordVisible = ref(false);
 const passwordSubmitting = ref(false);
+const { formData: passwordForm, resetForm: resetPasswordForm } = useForm({
+  old_password: "",
+  new_password: "",
+  confirm_password: ""
+});
 const passwordSchema = z.object({
   old_password: z.string({ message: "请输入当前密码" }).min(1, "请输入当前密码"),
   new_password: z.string({ message: "请输入新密码" }).min(6, "请至少输入6位新密码"),
@@ -97,16 +108,9 @@ const passwordSchema = z.object({
       message: "两次输入的新密码不一致"
     })
 });
-const passwordForm = reactive({
-  old_password: "",
-  new_password: "",
-  confirm_password: ""
-});
 
 const openPasswordModal = () => {
-  passwordForm.old_password = "";
-  passwordForm.new_password = "";
-  passwordForm.confirm_password = "";
+  resetPasswordForm();
   passwordVisible.value = true;
 };
 
@@ -215,7 +219,10 @@ const handleLogout = () => {
 
       <UForm :state="profileForm" class="space-y-4 flex-1">
         <UFormField label="头像" name="avatar" orientation="horizontal">
-          <AvatarUpload :src="userStore.profile?.avatar ?? '/images/avatar.webp'" @change="handleAvatarChange" />
+          <AvatarUpload
+            :src="userStore.profile?.avatar ?? '/images/avatar.webp'"
+            @change="handleAvatarChange"
+          />
         </UFormField>
 
         <UFormField label="用户名" name="username" orientation="horizontal">
@@ -232,16 +239,35 @@ const handleLogout = () => {
       </UForm>
     </div>
 
-    <BasicModal v-model:visible="passwordVisible" title="修改密码" @confirm="handleConfirmPassword" @cancel="handleCancelPassword">
-      <UForm ref="passwordFormRef" :schema="passwordSchema" :state="passwordForm" class="space-y-4" @submit="handleSubmitPassword">
+    <BasicModal
+      v-model:visible="passwordVisible"
+      title="修改密码"
+      @confirm="handleConfirmPassword"
+      @cancel="handleCancelPassword"
+    >
+      <UForm
+        ref="passwordFormRef"
+        :schema="passwordSchema"
+        :state="passwordForm"
+        class="space-y-4"
+        @submit="handleSubmitPassword"
+      >
         <UFormField label="当前密码" name="old_password">
-          <UInput v-model="passwordForm.old_password" type="password" placeholder="请输入当前密码" />
+          <UInput
+            v-model="passwordForm.old_password"
+            type="password"
+            placeholder="请输入当前密码"
+          />
         </UFormField>
         <UFormField label="新密码" name="new_password">
           <UInput v-model="passwordForm.new_password" type="password" placeholder="请输入新密码" />
         </UFormField>
         <UFormField label="确认密码" name="confirm_password">
-          <UInput v-model="passwordForm.confirm_password" type="password" placeholder="请再次输入新密码" />
+          <UInput
+            v-model="passwordForm.confirm_password"
+            type="password"
+            placeholder="请再次输入新密码"
+          />
         </UFormField>
       </UForm>
     </BasicModal>

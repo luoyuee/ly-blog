@@ -1,40 +1,34 @@
 <script setup lang="ts">
-import type { WorkItem, WorkForm } from "#shared/types/config";
+import type { WorkForm } from "#shared/types/config";
+import type { WorkFormModalPayload, WorkFormModalResult } from "#shared/types/ly-editor";
 import { EmojiOptions } from "#shared/constants/emoji";
 import type { FormSubmitEvent, SelectMenuItem } from "@nuxt/ui";
 import { updateWorkConfig } from "@/apis/config";
 import { BasicModal } from "@/components/basic-modal";
-import { z } from "zod";
 import { ImageSelect } from "@/components/image";
+import { useForm } from "@/composables/useForm";
+import { computed, watch } from "vue";
+import { z } from "zod";
 
 const $notify = useNotification();
 
-const props = withDefaults(
-  defineProps<{
-    open?: boolean;
-    payload?: {
-      item?: WorkItem;
-      works: WorkItem[];
-    };
-    works?: WorkItem[];
-  }>(),
-  {
-    works: () => []
+const visible = defineModel<boolean>("visible", {
+  default: false
+});
+
+const props = defineProps({
+  payload: {
+    type: Object as PropType<WorkFormModalPayload>,
+    default: () => ({
+      mode: "create",
+      record: undefined,
+      works: []
+    })
   }
-);
+});
 
 const emits = defineEmits<{
-  cancel: [];
-  submit: [];
-  resolve: [
-    result:
-      | {
-          action: "submitted";
-        }
-      | {
-          action: "cancelled";
-        }
-  ];
+  resolve: [result: WorkFormModalResult];
 }>();
 
 const schema = z.object({
@@ -46,37 +40,48 @@ const schema = z.object({
   repoUrl: z.string({ message: "请输入项目仓库地址" }).min(1, "请输入项目仓库地址")
 });
 
-const formData = ref<WorkForm>({});
+const { formData, formState, resetForm, setForm } = useForm<WorkForm>({
+  name: undefined,
+  icon: undefined,
+  description: undefined,
+  image: undefined,
+  languages: [],
+  repoUrl: undefined
+});
 
-const resetForm = () => {
-  formData.value = {};
-};
+const isEdit = computed(() => {
+  return props.payload.mode === "update";
+});
 
-const visible = ref(false);
+const modalTitle = computed(() => {
+  return isEdit.value ? "修改信息" : "新建项目";
+});
 
-const isEdit = ref(false);
+const workItems = computed(() => {
+  return props.payload.works;
+});
 
-const handleOpen = (data?: WorkItem) => {
-  resetForm();
-
-  isEdit.value = Boolean(data);
-
-  formData.value = data || {};
-
-  visible.value = true;
-};
-
-defineExpose({
-  open: handleOpen
+const originalRepoUrl = computed(() => {
+  return props.payload.record?.repoUrl;
 });
 
 watch(
-  () => props.open,
-  (open) => {
-    if (open) {
-      handleOpen(props.payload?.item);
-    } else {
-      visible.value = false;
+  visible,
+  (newVal) => {
+    if (!newVal) return;
+
+    resetForm();
+
+    if (props.payload.record) {
+      const { name, icon, description, image, languages, repoUrl } = props.payload.record;
+      setForm({
+        name,
+        icon,
+        description,
+        image,
+        languages,
+        repoUrl
+      });
     }
   },
   {
@@ -84,17 +89,26 @@ watch(
   }
 );
 
-const workItems = computed(() => props.payload?.works ?? props.works);
-
-const submitting = ref(false);
 const formRef = useTemplateRef("formRef");
+
 const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => {
   try {
-    submitting.value = true;
+    formState.submitting = true;
 
     if (isEdit.value) {
+      const duplicatedItem = workItems.value.find((item) => {
+        return item.repoUrl === event.data.repoUrl && item.repoUrl !== originalRepoUrl.value;
+      });
+
+      if (duplicatedItem) {
+        $notify.error({
+          title: "项目已存在"
+        });
+        return;
+      }
+
       const data = workItems.value.map((item) => {
-        if (item.repoUrl === event.data.repoUrl) {
+        if (item.repoUrl === originalRepoUrl.value) {
           return {
             ...item,
             name: event.data.name,
@@ -104,6 +118,7 @@ const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => 
             languages: event.data.languages
           };
         }
+
         return item;
       });
 
@@ -141,7 +156,6 @@ const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => 
 
     visible.value = false;
 
-    emits("submit");
     emits("resolve", {
       action: "submitted"
     });
@@ -151,7 +165,7 @@ const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => 
       error
     });
   } finally {
-    submitting.value = false;
+    formState.submitting = false;
   }
 };
 
@@ -161,7 +175,6 @@ const handleConfirm = async () => {
 
 const handleCancel = () => {
   visible.value = false;
-  emits("cancel");
   emits("resolve", {
     action: "cancelled"
   });
@@ -174,8 +187,15 @@ const emojiItems = computed<SelectMenuItem[]>(() => {
   }));
 });
 </script>
+
 <template>
-  <BasicModal v-model:visible="visible" :title="isEdit ? '修改信息' : '新建项目'">
+  <BasicModal
+    v-model:visible="visible"
+    :title="modalTitle"
+    :submitting="formState.submitting"
+    @cancel="handleCancel"
+    @confirm="handleConfirm"
+  >
     <UForm
       ref="formRef"
       class="space-y-2"
@@ -215,16 +235,5 @@ const emojiItems = computed<SelectMenuItem[]>(() => {
         <ImageSelect v-model="formData.image" />
       </UFormField>
     </UForm>
-
-    <template #footer>
-      <UButton
-        label="取消"
-        color="neutral"
-        variant="outline"
-        :disabled="submitting"
-        @click="handleCancel"
-      />
-      <UButton label="确认" color="primary" :loading="submitting" @click="handleConfirm" />
-    </template>
   </BasicModal>
 </template>

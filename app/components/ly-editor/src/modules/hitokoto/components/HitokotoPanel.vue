@@ -321,6 +321,7 @@ const handleDelete = (e: HitokotoItem) => {
     <Pagination
       v-model:page="state.page"
       v-model:page-size="state.per_page"
+      :page-sizes="[50, 100, 200]"
       :total="state.total"
       @update:page="loadData"
       @update:page-size="loadData"

@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import type { SearchEngineItem, SearchHistoryItem } from "#shared/types/navigation-website";
 import type { TableColumn } from "@nuxt/ui";
+import { Pagination } from "@/components/pagination";
 import {
   deleteSearchHistory,
   getPaginatedSearchHistories,
   getSearchEngineList
 } from "@/apis/navigation-website";
 import { h, resolveComponent } from "vue";
-import numeral from "numeral";
 import dayjs from "dayjs";
 
 const $notify = useNotification();
@@ -217,8 +217,8 @@ const handleDelete = (e: SearchHistoryItem) => {
 </script>
 
 <template>
-  <div class="p-4 h-full overflow-hidden flex flex-col">
-    <div class="flex justify-between items-center mb-4">
+  <div class="p-4 h-full overflow-hidden flex flex-col gap-4">
+    <div class="flex justify-between items-center">
       <div class="flex gap-4"></div>
 
       <UFieldGroup>
@@ -245,28 +245,13 @@ const handleDelete = (e: SearchHistoryItem) => {
       />
     </div>
 
-    <div class="pt-4 flex justify-between items-center gap-4">
-      <div class="text-sm">
-        {{ `共「${numeral(state.total).format("0,0")}」条数据` }}
-      </div>
-      <div class="flex gap-4 items-center">
-        <USelect
-          v-model="state.per_page"
-          :items="[
-            { label: '50/页', value: 50 },
-            { label: '100/页', value: 100 },
-            { label: '200/页', value: 200 }
-          ]"
-          class="w-24"
-          @change="loadData"
-        />
-        <UPagination
-          v-model:page="state.page"
-          :items-per-page="state.per_page"
-          :total="state.total"
-          @update:page="loadData"
-        />
-      </div>
-    </div>
+    <Pagination
+      v-model:page="state.page"
+      v-model:page-size="state.per_page"
+      :page-sizes="[50, 100, 200]"
+      :total="state.total"
+      @update:page="loadData"
+      @update:page-size="loadData"
+    />
   </div>
 </template>

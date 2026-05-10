@@ -57,6 +57,9 @@ export type EditorTabItem = {
   | {
       type: "navigation-website-panel";
     }
+  | {
+      type: "navigation-history-panel";
+    }
 );
 
 export type FolderTreeItem = {
@@ -158,6 +161,33 @@ export type HitokotoTypeDetailsModalPayload = HitokotoTypeItem;
 
 export type HitokotoTypeDetailsModalResult = { action: "closed" } | { action: "cancelled" };
 
+/**
+ * 项目表单弹窗参数。
+ */
+export type WorkFormModalPayload = {
+  mode: "create" | "update";
+  record?: WorkItem;
+  works: WorkItem[];
+};
+
+/**
+ * 项目表单弹窗结果。
+ */
+export type WorkFormModalResult = { action: "submitted" } | { action: "cancelled" };
+
+/**
+ * 导航网站表单弹窗参数。
+ */
+export type NavigationWebsiteFormModalPayload = {
+  mode: "create" | "update";
+  record?: NavigationWebsiteItem;
+};
+
+/**
+ * 导航网站表单弹窗结果。
+ */
+export type NavigationWebsiteFormModalResult = { action: "submitted" } | { action: "cancelled" };
+
 export type LyEditorModalPayloadMap = {
   "note-folder-form": NoteFolderForm | undefined;
   "note-save": EditorTabItem;
@@ -166,13 +196,10 @@ export type LyEditorModalPayloadMap = {
   "category-details": ArticleCategory;
   "shortcut-form": ShortcutItem | undefined;
   "search-engine-form": SearchEngineItem | undefined;
-  "navigation-website-form": NavigationWebsiteItem | undefined;
+  "navigation-website-form": NavigationWebsiteFormModalPayload;
   "notice-manager": undefined;
   "send-email": undefined;
-  "work-form": {
-    item?: WorkItem;
-    works: WorkItem[];
-  };
+  "work-form": WorkFormModalPayload;
   "image-folder-form": ImageFolder | undefined;
   "hitokoto-form": HitokotoFormModalPayload;
   "hitokoto-import": undefined;
@@ -191,10 +218,10 @@ export type LyEditorModalResultMap = {
   "category-details": { action: "closed" } | { action: "cancelled" };
   "shortcut-form": { action: "submitted" } | { action: "cancelled" };
   "search-engine-form": { action: "submitted" } | { action: "cancelled" };
-  "navigation-website-form": { action: "submitted" } | { action: "cancelled" };
+  "navigation-website-form": NavigationWebsiteFormModalResult;
   "notice-manager": { action: "saved" } | { action: "cancelled" };
   "send-email": { action: "sent" } | { action: "cancelled" };
-  "work-form": { action: "submitted" } | { action: "cancelled" };
+  "work-form": WorkFormModalResult;
   "image-folder-form": { action: "submitted" } | { action: "cancelled" };
   "hitokoto-form": HitokotoFormModalResult;
   "hitokoto-import": HitokotoImportModalResult;

@@ -1,14 +1,16 @@
 <script setup lang="ts">
 import type { NavigationWebsiteItem } from "#shared/types/navigation-website";
 import type { TableColumn } from "@nuxt/ui";
+import { Pagination } from "@/components/pagination";
 import { getPaginatedNavigationWebsites, deleteNavigationWebsite } from "@/apis/navigation-website";
+import { useLyEditorModal } from "@/composables/useLyEditorModal";
 import { h, resolveComponent } from "vue";
-
-import numeral from "numeral";
 import dayjs from "dayjs";
 
 const $notify = useNotification();
 const $msgBox = useMessageBox();
+
+const { openModal } = useLyEditorModal();
 
 const UButton = resolveComponent("UButton");
 const UDropdownMenu = resolveComponent("UDropdownMenu");
@@ -287,7 +289,10 @@ onMounted(() => {
 });
 
 const handleOpenFormModal = async (e?: NavigationWebsiteItem) => {
-  const result = await openWorkspaceModal("navigation-website-form", e);
+  const result = await openModal("navigation-website-form", {
+    mode: e ? "update" : "create",
+    record: e
+  });
 
   if (result.action === "submitted") {
     await loadData();
@@ -357,28 +362,13 @@ const handleDelete = (e: NavigationWebsiteItem) => {
       />
     </div>
 
-    <div class="pt-4 flex justify-between items-center gap-4">
-      <div class="text-sm">
-        {{ `共「${numeral(state.total).format("0,0")}」条数据` }}
-      </div>
-      <div class="flex gap-4 items-center">
-        <USelect
-          v-model="state.per_page"
-          :items="[
-            { label: '50/页', value: 50 },
-            { label: '100/页', value: 100 },
-            { label: '200/页', value: 200 }
-          ]"
-          class="w-24"
-          @change="loadData"
-        />
-        <UPagination
-          v-model:page="state.page"
-          :items-per-page="state.per_page"
-          :total="state.total"
-          @update:page="loadData"
-        />
-      </div>
-    </div>
+    <Pagination
+      v-model:page="state.page"
+      v-model:page-size="state.per_page"
+      :page-sizes="[50, 100, 200]"
+      :total="state.total"
+      @update:page="loadData"
+      @update:page-size="loadData"
+    />
   </div>
 </template>

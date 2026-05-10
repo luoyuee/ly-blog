@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { WorkItem } from "#shared/types/config";
+import { useLyEditorModal } from "@/composables/useLyEditorModal";
 import { getWorkConfig, updateWorkConfig } from "@/apis/config";
 import { SidebarPanel } from "../../../components";
 import { VueDraggable } from "vue-draggable-plus";
@@ -7,17 +8,22 @@ import Scrollbar from "@/components/scrollbar";
 
 const $notify = useNotification();
 const $msgBox = useMessageBox();
+const { openModal } = useLyEditorModal();
 
 const data = ref<WorkItem[]>([]);
+const loading = ref(false);
 
 const loadData = async () => {
   try {
+    loading.value = true;
     data.value = await getWorkConfig();
   } catch (error) {
     $notify.error({
       title: "操作失败",
       error
     });
+  } finally {
+    loading.value = false;
   }
 };
 
@@ -26,8 +32,9 @@ onMounted(() => {
 });
 
 const handleOpenFormModal = async (e?: WorkItem) => {
-  const result = await openWorkspaceModal("work-form", {
-    item: e,
+  const result = await openModal("work-form", {
+    mode: e ? "update" : "create",
+    record: e,
     works: data.value
   });
 
@@ -85,7 +92,7 @@ const actions = [
 ];
 </script>
 <template>
-  <SidebarPanel title="项目管理" :actions="actions">
+  <SidebarPanel title="项目管理" :loading="loading" :actions="actions">
     <div class="flex-1 overflow-hidden">
       <Scrollbar class="h-full">
         <VueDraggable
