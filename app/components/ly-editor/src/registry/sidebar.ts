@@ -2,6 +2,7 @@ import type { Component } from "vue";
 import { LyEditorActivityMenu } from "#shared/constants";
 
 import {
+  AccessTokenManager,
   NoteManager,
   ArticleManager,
   HitokotoManager,
@@ -38,6 +39,9 @@ export const lyEditorSidebarRegistry = {
   },
   [LyEditorActivityMenu.WorkManager]: {
     component: WorkManager
+  },
+  [LyEditorActivityMenu.AccessTokenManager]: {
+    component: AccessTokenManager
   }
 } satisfies Record<string, LyEditorSidebarRegistryItem>;
 

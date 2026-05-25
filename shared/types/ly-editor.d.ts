@@ -4,6 +4,7 @@ import type { HitokotoItem, HitokotoTypeItem } from "./hitokoto";
 import type { NoteFolderForm } from "./note";
 import type { ImageFolder } from "./image";
 import type { WorkItem } from "./config";
+import type { AccessTokenItem, CreatedAccessToken } from "./access-token";
 
 export interface NoteData {
   id?: number;
@@ -57,9 +58,12 @@ export type EditorTabItem = {
   | {
       type: "navigation-website-panel";
     }
-  | {
-      type: "navigation-history-panel";
-    }
+    | {
+        type: "navigation-history-panel";
+      }
+    | {
+        type: "access-token-panel";
+      }
 );
 
 export type FolderTreeItem = {
@@ -136,7 +140,9 @@ export type LyEditorModalKey =
   | "hitokoto-form"
   | "hitokoto-import"
   | "hitokoto-type-form"
-  | "hitokoto-type-details";
+  | "hitokoto-type-details"
+  | "access-token-form"
+  | "access-token-created";
 
 /**
  * LY Editor 弹窗参数映射。
@@ -188,6 +194,33 @@ export type NavigationWebsiteFormModalPayload = {
  */
 export type NavigationWebsiteFormModalResult = { action: "submitted" } | { action: "cancelled" };
 
+/**
+ * Access Token 表单弹窗参数。
+ */
+export type AccessTokenFormModalPayload = {
+  mode: "create" | "update";
+  record?: AccessTokenItem;
+};
+
+/**
+ * Access Token 表单弹窗结果。
+ */
+export type AccessTokenFormModalResult =
+  | { action: "submitted"; data?: CreatedAccessToken }
+  | { action: "cancelled" };
+
+/**
+ * Access Token 明文展示弹窗参数。
+ */
+export type AccessTokenCreatedModalPayload = {
+  record: CreatedAccessToken;
+};
+
+/**
+ * Access Token 明文展示弹窗结果。
+ */
+export type AccessTokenCreatedModalResult = { action: "closed" } | { action: "cancelled" };
+
 export type LyEditorModalPayloadMap = {
   "note-folder-form": NoteFolderForm | undefined;
   "note-save": EditorTabItem;
@@ -205,6 +238,8 @@ export type LyEditorModalPayloadMap = {
   "hitokoto-import": undefined;
   "hitokoto-type-form": HitokotoTypeFormModalPayload;
   "hitokoto-type-details": HitokotoTypeDetailsModalPayload;
+  "access-token-form": AccessTokenFormModalPayload;
+  "access-token-created": AccessTokenCreatedModalPayload;
 };
 
 /**
@@ -227,6 +262,8 @@ export type LyEditorModalResultMap = {
   "hitokoto-import": HitokotoImportModalResult;
   "hitokoto-type-form": HitokotoTypeFormModalResult;
   "hitokoto-type-details": HitokotoTypeDetailsModalResult;
+  "access-token-form": AccessTokenFormModalResult;
+  "access-token-created": AccessTokenCreatedModalResult;
 };
 
 /**

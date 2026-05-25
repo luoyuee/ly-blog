@@ -165,6 +165,7 @@ const displayDate = computed(() => {
         <UInput :value="displayDate" readonly class="w-32" />
         <UInputTime
           v-model="timeValue"
+          :hour-cycle="24"
           granularity="second"
           icon="lucide:clock"
           @change="handleChange"

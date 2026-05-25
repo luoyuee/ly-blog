@@ -1,6 +1,7 @@
 import type { LyEditorPanelRegistryItem } from "#shared/types/ly-editor";
 import { LyEditorTabPanel } from "#shared/constants";
 import {
+  AccessTokenPanel,
   ArticlePanel,
   CronJobPanel,
   DashboardPanel,
@@ -34,6 +35,10 @@ export const lyEditorPanelRegistry = {
   },
   [LyEditorTabPanel.NavigationHistoryPanel]: {
     component: SearchHistoryPanel,
+    keepAlive: true
+  },
+  [LyEditorTabPanel.AccessTokenPanel]: {
+    component: AccessTokenPanel,
     keepAlive: true
   },
   [LyEditorTabPanel.DashboardPanel]: {

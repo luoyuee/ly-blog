@@ -24,3 +24,6 @@ export const ConfigNameEnum = {
   WORK: "work",
   NOTICE: "notice"
 } as const;
+
+export { ACCESS_TOKEN_SCOPES, AccessTokenScopeEnum } from "./access-token";
+export type { AccessTokenScope } from "./access-token";

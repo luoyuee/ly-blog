@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { FormSubmitEvent } from "@nuxt/ui";
+import { InputPassword } from "@/components/form/input";
 import { AvatarUpload } from "@/components/avatar";
 import { adminRegister } from "@/apis/user";
 import { reactive } from "vue";
@@ -83,7 +84,7 @@ const handleAvatarChange = (file: File | null) => {
 </script>
 <template>
   <div class="flex h-dvh items-center justify-center bg-box sm:bg-page sm:bg-login transition-all">
-    <div class="bg-box sm:shadow-md p-6 rounded-md w-128 transition-all">
+    <div class="bg-box sm:shadow-md p-6 rounded-md w-lg transition-all">
       <h1 class="flex items-center justify-center mb-6 select-none">
         <img src="/ly.svg" alt="logo" class="w-12" />
         <span class="text-3xl text-gray-300">LY Blog</span>
@@ -127,21 +128,20 @@ const handleAvatarChange = (file: File | null) => {
         </UFormField>
 
         <UFormField name="password" label="密码" required>
-          <UInput
+          <InputPassword
             v-model="formData.password"
             class="w-full"
             icon="ep:lock"
-            type="password"
             placeholder="请输入管理员密码"
+            show-strength
           />
         </UFormField>
 
         <UFormField name="confirmPassword" label="确认密码" required>
-          <UInput
+          <InputPassword
             v-model="formData.confirmPassword"
             class="w-full"
             icon="ep:lock"
-            type="password"
             placeholder="请再次输入密码"
           />
         </UFormField>

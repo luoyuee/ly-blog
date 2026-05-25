@@ -87,7 +87,8 @@ const passwordStrength = computed<PasswordStrengthState>(() => {
 </script>
 
 <template>
-  <div class="w-full flex flex-col gap-1">
+  <!-- Block: input-password -->
+  <div class="input-password w-full flex flex-col gap-1">
     <UInput
       v-model="modelValue"
       :type="showPassword ? 'text' : 'password'"
@@ -110,18 +111,21 @@ const passwordStrength = computed<PasswordStrengthState>(() => {
       <span class="text-sm text-gray-400 shrink-0">强度：</span>
       <!-- 左侧固定渲染 10 个块，通过填充数量表达强度。 -->
       <div class="flex flex-1 items-center gap-1">
-        <span
+        <div
           v-for="i in STRENGTH_BLOCK_COUNT"
           :key="i"
-          class="h-2 flex-1 rounded-[2px] bg-gray-100"
-          :class="{
-            'bg-red-500': passwordStrength.filledBlocks >= i && passwordStrength.level === 'weak',
-            'bg-yellow-500':
-              passwordStrength.filledBlocks >= i && passwordStrength.level === 'medium',
-            'bg-green-500':
-              passwordStrength.filledBlocks >= i && passwordStrength.level === 'strong'
-          }"
-        ></span>
+          class="h-2 flex-1 rounded-xs bg-gray-100 overflow-hidden"
+        >
+          <div
+            class="size-full rounded-xs transform-gpu transition-opacity duration-300 ease-out"
+            :class="[
+              passwordStrength.level === 'weak' ? 'bg-red-500' : '',
+              passwordStrength.level === 'medium' ? 'bg-yellow-500' : '',
+              passwordStrength.level === 'strong' ? 'bg-green-500' : '',
+              passwordStrength.filledBlocks >= i ? 'opacity-100' : 'opacity-0'
+            ]"
+          ></div>
+        </div>
       </div>
       <!-- 右侧文案固定宽度占位，避免切换强度时布局抖动。 -->
       <span
@@ -133,3 +137,25 @@ const passwordStrength = computed<PasswordStrengthState>(() => {
     </div>
   </div>
 </template>
+
+<style scoped>
+/**
+ * 密码输入框组件样式
+ * Block: .input-password
+ * Element: .input-password__control (内部 input 元素)
+ * 通过 :deep() 穿透 scoped 样式，隐藏浏览器原生密码显示按钮
+ */
+.input-password {
+  /* Block 级样式可在此扩展 */
+}
+
+.input-password :deep(input[type="password"]) {
+  /* Element: 密码输入控件的基础样式 */
+}
+
+/* 隐藏浏览器原生密码显示按钮 */
+.input-password :deep(input[type="password"]::-ms-reveal),
+.input-password :deep(input[type="password"]::-webkit-credentials-auto-fill-button) {
+  display: none;
+}
+</style>

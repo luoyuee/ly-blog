@@ -3,6 +3,26 @@ import { useFileStorage } from "@@/server/utils/useFileStorage";
 import { optimizeImage } from "@@/server/utils/image";
 import { prisma } from "@@/server/db";
 import { readFormData } from "h3";
+import mime from "mime";
+
+const resolveImageFilename = async (folderId: number, originalName: string): Promise<string> => {
+  const existed = await prisma.image.findFirst({
+    where: {
+      folder_id: folderId,
+      filename: originalName,
+      status: 1
+    }
+  });
+
+  if (!existed) return originalName;
+
+  const extensionIndex = originalName.lastIndexOf(".");
+  const basename = extensionIndex > 0 ? originalName.slice(0, extensionIndex) : originalName;
+  const extension = extensionIndex > 0 ? originalName.slice(extensionIndex) : "";
+  const timestamp = Date.now();
+
+  return `${basename}-${timestamp}${extension}`;
+};
 
 /**
  * 上传图片
@@ -46,7 +66,15 @@ export default defineEventHandler(async (event) => {
 
   // 查询图片是否已经存在
   const exist = await prisma.image.findFirst({
-    where: { hash: imageHash, folder_id: folder.id }
+    where: {
+      folder_id: folder.id,
+      Asset: {
+        hash: imageHash
+      }
+    },
+    include: {
+      Asset: true
+    }
   });
 
   if (!exist) {
@@ -65,21 +93,42 @@ export default defineEventHandler(async (event) => {
     const now = new Date();
 
     const optimizedSize = fileStorage.getSize(optimized.content);
+    const originalName = file.name || `${imageHash}.${optimized.format}`;
+    const filename = await resolveImageFilename(folder.id, originalName);
 
     // 更新数据库
-    const [data] = await prisma.$transaction([
+    const asset = await prisma.asset.upsert({
+      where: { hash: imageHash },
+      create: {
+        created_at: now,
+        created_by: event.context.user.id,
+        hash: imageHash,
+        ext: optimized.format,
+        mime_type: mime.getType(optimized.format),
+        size: optimizedSize,
+        preview: previewHash,
+        width: optimized.metadata.width ?? 100,
+        height: optimized.metadata.height ?? 100
+      },
+      update: {
+        updated_at: now,
+        updated_by: event.context.user.id,
+        preview: previewHash,
+        width: optimized.metadata.width ?? 100,
+        height: optimized.metadata.height ?? 100
+      }
+    });
+
+    const [image] = await prisma.$transaction([
       prisma.image.create({
         data: {
           created_at: now,
           created_by: event.context.user.id,
           tags: tagArray,
           folder_id: folder.id,
-          width: optimized.metadata.width ?? 100,
-          height: optimized.metadata.height ?? 100,
-          size: optimizedSize,
-          format: optimized.format,
-          hash: imageHash,
-          preview: previewHash
+          asset_id: asset.id,
+          original_name: originalName,
+          filename
         }
       }),
 
@@ -93,8 +142,24 @@ export default defineEventHandler(async (event) => {
       })
     ]);
 
-    return getOKResponse(event, data);
+    return getOKResponse(event, {
+      ...image,
+      hash: asset.hash,
+      height: asset.height,
+      width: asset.width,
+      size: asset.size,
+      format: asset.ext,
+      preview: asset.preview
+    });
   }
 
-  return getOKResponse(event, exist);
+  return getOKResponse(event, {
+    ...exist,
+    hash: exist.Asset.hash,
+    height: exist.Asset.height,
+    width: exist.Asset.width,
+    size: exist.Asset.size,
+    format: exist.Asset.ext,
+    preview: exist.Asset.preview
+  });
 });

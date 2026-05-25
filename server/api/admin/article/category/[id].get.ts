@@ -1,28 +1,21 @@
-import {
-  getBadResponse,
-  getNotFoundResponse,
-  getOKResponse,
-} from "@@/server/utils/response";
+import { getBadResponse, getNotFoundResponse, getOKResponse } from "@@/server/utils/response";
 import { prisma } from "@@/server/db";
 import { z } from "zod";
 
 export default defineEventHandler(async (event) => {
-  const { data: id, error } = z
-    .number({ coerce: true })
-    .int()
-    .safeParse(getRouterParam(event, "id"));
+  const { data: id, error } = z.coerce.number().int().safeParse(getRouterParam(event, "id"));
 
   if (error) return getBadResponse(event, error.message);
 
   const results = await prisma.articleCategory.findUnique({
     where: {
-      id,
+      id
     },
     include: {
       _count: {
-        select: { articles: true },
-      },
-    },
+        select: { articles: true }
+      }
+    }
   });
 
   if (results === null) return getNotFoundResponse(event);
@@ -31,6 +24,6 @@ export default defineEventHandler(async (event) => {
 
   return getOKResponse(event, {
     ...rest,
-    count: _count.articles ?? 0,
+    count: _count.articles ?? 0
   });
 });

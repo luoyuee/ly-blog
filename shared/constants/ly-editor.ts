@@ -6,6 +6,7 @@ export const LyEditorActivityMenu = {
   HitokotoManager: "hitokoto-manager",
   NavigationManager: "navigation-manager",
   WorkManager: "work-manager",
+  AccessTokenManager: "access-token-manager",
   DashboardPanel: "dashboard-panel",
   CronJobPanel: "cron-job-panel",
   SettingPanel: "setting-panel"
@@ -18,6 +19,7 @@ export const LyEditorTabPanel = {
   HitokotoPanel: "hitokoto-panel",
   NavigationWebsitePanel: "navigation-website-panel",
   NavigationHistoryPanel: "navigation-history-panel",
+  AccessTokenPanel: "access-token-panel",
   UserPanel: "user-panel",
   DashboardPanel: "dashboard-panel",
   CronJobPanel: "cron-job-panel",

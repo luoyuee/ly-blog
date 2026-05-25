@@ -44,6 +44,12 @@ const activityMenu = ref<ActivityMenuItem[]>([
     key: LyEditorActivityMenu.WorkManager,
     label: "项目管理",
     icon: "ep:briefcase"
+  },
+  {
+    key: LyEditorActivityMenu.AccessTokenManager,
+    label: "令牌管理",
+    icon: "ep:key",
+    panel: LyEditorTabPanel.AccessTokenPanel
   }
 ]);
 
