@@ -1,4 +1,5 @@
 export * from "./access-token";
+export * from "./attachment";
 export * from "./article";
 export * from "./dashboard";
 export * from "./hitokoto";

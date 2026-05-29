@@ -4,6 +4,7 @@ import type { Component } from "vue";
 import {
   AccessTokenCreatedModal,
   AccessTokenFormModal,
+  AttachmentFolderFormModal,
   CategoryDetailsModal,
   CategoryFormModal,
   HitokotoFormModal,
@@ -35,6 +36,7 @@ export const lyEditorModalRegistry = {
   "hitokoto-type-form": HitokotoTypeFormModal,
   "hitokoto-type-details": HitokotoTypeDetailsModal,
   "image-folder-form": ImageFolderFormModal,
+  "attachment-folder-form": AttachmentFolderFormModal,
   "shortcut-form": ShortcutFormModal,
   "search-engine-form": SearchEngineFormModal,
   "access-token-form": AccessTokenFormModal,

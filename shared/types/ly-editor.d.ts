@@ -3,6 +3,7 @@ import type { ArticleCategory, ArticleCategoryForm } from "./article";
 import type { HitokotoItem, HitokotoTypeItem } from "./hitokoto";
 import type { NoteFolderForm } from "./note";
 import type { ImageFolder } from "./image";
+import type { AttachmentFolder } from "./attachment";
 import type { WorkItem } from "./config";
 import type { AccessTokenItem, CreatedAccessToken } from "./access-token";
 
@@ -18,6 +19,8 @@ export interface ImagePreviewData {
 }
 
 export type ImageManagerData = ImageFolder;
+
+export type AttachmentManagerData = AttachmentFolder;
 
 export type EditorTabItem = {
   key: string;
@@ -39,6 +42,10 @@ export type EditorTabItem = {
   | {
       type: "image-panel";
       data: ImageManagerData;
+    }
+  | {
+      type: "attachment-panel";
+      data: AttachmentManagerData;
     }
   | {
       type: "hitokoto-panel";
@@ -137,6 +144,7 @@ export type LyEditorModalKey =
   | "send-email"
   | "work-form"
   | "image-folder-form"
+  | "attachment-folder-form"
   | "hitokoto-form"
   | "hitokoto-import"
   | "hitokoto-type-form"
@@ -151,6 +159,13 @@ export type HitokotoFormModalPayload = {
   mode: "create" | "update";
   record?: HitokotoItem;
 };
+
+export type AttachmentFolderFormModalPayload = {
+  mode: "create" | "update";
+  record?: AttachmentFolder;
+};
+
+export type AttachmentFolderFormModalResult = { action: "submitted" } | { action: "cancelled" };
 
 export type HitokotoFormModalResult = { action: "submitted" } | { action: "cancelled" };
 
@@ -234,6 +249,7 @@ export type LyEditorModalPayloadMap = {
   "send-email": undefined;
   "work-form": WorkFormModalPayload;
   "image-folder-form": ImageFolder | undefined;
+  "attachment-folder-form": AttachmentFolderFormModalPayload;
   "hitokoto-form": HitokotoFormModalPayload;
   "hitokoto-import": undefined;
   "hitokoto-type-form": HitokotoTypeFormModalPayload;
@@ -258,6 +274,7 @@ export type LyEditorModalResultMap = {
   "send-email": { action: "sent" } | { action: "cancelled" };
   "work-form": WorkFormModalResult;
   "image-folder-form": { action: "submitted" } | { action: "cancelled" };
+  "attachment-folder-form": AttachmentFolderFormModalResult;
   "hitokoto-form": HitokotoFormModalResult;
   "hitokoto-import": HitokotoImportModalResult;
   "hitokoto-type-form": HitokotoTypeFormModalResult;

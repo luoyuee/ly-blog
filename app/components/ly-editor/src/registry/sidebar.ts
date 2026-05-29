@@ -3,6 +3,7 @@ import { LyEditorActivityMenu } from "#shared/constants";
 
 import {
   AccessTokenManager,
+  AttachmentManager,
   NoteManager,
   ArticleManager,
   HitokotoManager,
@@ -30,6 +31,9 @@ export const lyEditorSidebarRegistry = {
   },
   [LyEditorActivityMenu.ImageManager]: {
     component: ImageManager
+  },
+  [LyEditorActivityMenu.AttachmentManager]: {
+    component: AttachmentManager
   },
   [LyEditorActivityMenu.HitokotoManager]: {
     component: HitokotoManager

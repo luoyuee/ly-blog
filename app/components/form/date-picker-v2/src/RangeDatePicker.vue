@@ -1,17 +1,29 @@
 <script setup lang="ts">
 import type { DateRange, TimeValue } from "reka-ui";
 import type { PropType } from "vue";
-import { CalendarDateTime, Time } from "@internationalized/date";
+import type {
+  DatePickerMode,
+  DatePickerRangeValue,
+  DatePickerShowFormat,
+  DatePickerValueType
+} from "./types";
+import { TimePicker } from "@/components/form/time-picker";
 import { computed, ref, shallowRef, watch } from "vue";
-import dayjs from "dayjs";
+import {
+  createDayjsRangeFromValue,
+  formatDateRangePickerValue,
+  parsePickerModelValue,
+  syncRangePickerValue
+} from "./utils";
 
-const modelValue = defineModel<{
-  start: Date | string | null;
-  end: Date | string | null;
-} | null>({});
+const modelValue = defineModel<DatePickerRangeValue | null>({});
 
 const props = defineProps({
   disabled: {
+    type: Boolean,
+    default: false
+  },
+  clearable: {
     type: Boolean,
     default: false
   },
@@ -19,19 +31,28 @@ const props = defineProps({
     type: String,
     default: "请选择日期范围"
   },
+  confirmText: {
+    type: String,
+    default: "确定"
+  },
+  cancelText: {
+    type: String,
+    default: "取消"
+  },
   format: {
     type: String,
     default: "YYYY-MM-DD HH:mm:ss"
   },
+  valueType: {
+    type: String as PropType<DatePickerValueType>,
+    default: "string"
+  },
   showFormat: {
-    type: Object as PropType<{
-      date: string;
-      time: string;
-    }>,
+    type: Object as PropType<DatePickerShowFormat>,
     default: () => ({ date: "YYYY-MM-DD", time: "HH:mm:ss" })
   },
   type: {
-    type: String as PropType<"date" | "datetime">,
+    type: String as PropType<DatePickerMode>,
     default: "date"
   },
   numberOfMonths: {
@@ -46,43 +67,32 @@ const rangeValue = shallowRef<DateRange | null>(null);
 const startTimeValue = shallowRef<TimeValue | null>(null);
 const endTimeValue = shallowRef<TimeValue | null>(null);
 
-const toCalendarDateTime = (d: dayjs.Dayjs) => {
-  return new CalendarDateTime(d.year(), d.month() + 1, d.date(), d.hour(), d.minute(), d.second());
+// 范围选择在弹层中维护草稿值，点击确定后才统一写回 v-model。
+const createSelectedRange = () => {
+  return createDayjsRangeFromValue(rangeValue.value, startTimeValue.value, endTimeValue.value);
 };
 
-const toTime = (d: dayjs.Dayjs) => {
-  return new Time(d.hour(), d.minute(), d.second());
+// 外部值可能是字符串或 Date，这里统一转换为日历与时间组件可识别的值。
+const syncCurrentModelValue = () => {
+  syncRangePickerValue(
+    parsePickerModelValue(modelValue.value?.start, props.format),
+    parsePickerModelValue(modelValue.value?.end, props.format),
+    (value) => {
+      rangeValue.value = value;
+    },
+    (value) => {
+      startTimeValue.value = value;
+    },
+    (value) => {
+      endTimeValue.value = value;
+    }
+  );
 };
 
 watch(
   modelValue,
-  (newValue) => {
-    if (newValue?.start && newValue?.end) {
-      const start =
-        typeof newValue.start === "string"
-          ? dayjs(newValue.start, props.format)
-          : dayjs(newValue.start);
-
-      const end =
-        typeof newValue.end === "string" ? dayjs(newValue.end, props.format) : dayjs(newValue.end);
-
-      if (start.isValid() && end.isValid()) {
-        rangeValue.value = {
-          start: toCalendarDateTime(start),
-          end: toCalendarDateTime(end)
-        };
-
-        startTimeValue.value = toTime(start);
-
-        endTimeValue.value = toTime(end);
-
-        return;
-      }
-    }
-
-    rangeValue.value = null;
-    startTimeValue.value = null;
-    endTimeValue.value = null;
+  () => {
+    syncCurrentModelValue();
   },
   { immediate: true, deep: true }
 );
@@ -95,150 +105,148 @@ const handleClear = () => {
   popoverOpen.value = false;
 };
 
-const handleChange = () => {
-  if (rangeValue.value?.start && rangeValue.value?.end) {
-    const start = dayjs({
-      year: rangeValue.value.start.year,
-      month: rangeValue.value.start.month - 1,
-      day: rangeValue.value.start.day,
-      hour: startTimeValue.value?.hour || 0,
-      minute: startTimeValue.value?.minute || 0,
-      second: startTimeValue.value?.second || 0
-    });
+const handleConfirm = () => {
+  const selectedRange = createSelectedRange();
 
-    const end = dayjs({
-      year: rangeValue.value.end.year,
-      month: rangeValue.value.end.month - 1,
-      day: rangeValue.value.end.day,
-      hour: endTimeValue.value?.hour || 0,
-      minute: endTimeValue.value?.minute || 0,
-      second: endTimeValue.value?.second || 0
-    });
-
-    modelValue.value = {
-      start: start.format(props.format),
-      end: end.format(props.format)
-    };
-    return;
+  if (selectedRange?.start && selectedRange.end) {
+    modelValue.value = formatDateRangePickerValue(
+      {
+        start: selectedRange.start,
+        end: selectedRange.end
+      },
+      props.valueType,
+      props.format
+    );
+  } else {
+    modelValue.value = null;
   }
 
-  modelValue.value = null;
+  popoverOpen.value = false;
+};
+
+const handleCancel = () => {
+  syncCurrentModelValue();
+  popoverOpen.value = false;
 };
 
 const displayText = computed(() => {
-  if (!rangeValue.value?.start || !rangeValue.value?.end) {
+  const startValue = parsePickerModelValue(modelValue.value?.start, props.format);
+  const endValue = parsePickerModelValue(modelValue.value?.end, props.format);
+
+  if (!startValue?.isValid() || !endValue?.isValid()) {
     return props.placeholder;
   }
 
-  const start = dayjs({
-    year: rangeValue.value.start.year,
-    month: rangeValue.value.start.month - 1,
-    day: rangeValue.value.start.day,
-    hour: startTimeValue.value?.hour || 0,
-    minute: startTimeValue.value?.minute || 0,
-    second: startTimeValue.value?.second || 0
-  });
-
-  const end = dayjs({
-    year: rangeValue.value.end.year,
-    month: rangeValue.value.end.month - 1,
-    day: rangeValue.value.end.day,
-    hour: endTimeValue.value?.hour || 0,
-    minute: endTimeValue.value?.minute || 0,
-    second: endTimeValue.value?.second || 0
-  });
-
   if (props.type === "date") {
-    return `${start.format(props.showFormat.date)} ~ ${end.format(props.showFormat.date)}`;
+    return `${startValue.format(props.showFormat.date)} ~ ${endValue.format(props.showFormat.date)}`;
   }
 
-  return `${start.format(`${props.showFormat.date} ${props.showFormat.time}`)} ~ ${end.format(`${props.showFormat.date} ${props.showFormat.time}`)}`;
+  return `${startValue.format(`${props.showFormat.date} ${props.showFormat.time}`)} ~ ${endValue.format(`${props.showFormat.date} ${props.showFormat.time}`)}`;
 });
 
 const displayStartDate = computed(() => {
-  if (!rangeValue.value?.start) {
+  const selectedRange = createSelectedRange();
+
+  if (!selectedRange?.start) {
     return "";
   }
 
-  return dayjs({
-    year: rangeValue.value.start.year,
-    month: rangeValue.value.start.month - 1,
-    day: rangeValue.value.start.day
-  }).format(props.showFormat.date);
+  return selectedRange.start.format(props.showFormat.date);
 });
 
 const displayEndDate = computed(() => {
-  if (!rangeValue.value?.end) {
+  const selectedRange = createSelectedRange();
+
+  if (!selectedRange?.end) {
     return "";
   }
 
-  return dayjs({
-    year: rangeValue.value.end.year,
-    month: rangeValue.value.end.month - 1,
-    day: rangeValue.value.end.day
-  }).format(props.showFormat.date);
+  return selectedRange.end.format(props.showFormat.date);
 });
 </script>
 
 <template>
-  <UPopover v-model:open="popoverOpen" :disabled="props.disabled">
+  <UPopover
+    v-model:open="popoverOpen"
+    :disabled="props.disabled"
+    :content="{
+      onOpenAutoFocus: (event) => event.preventDefault()
+    }"
+  >
     <UButton
       color="neutral"
       variant="subtle"
-      icon="lucide:calendar"
+      icon="i-lucide-calendar"
       class="w-full"
       v-bind="$attrs"
       :disabled="props.disabled"
     >
-      <div class="w-full flex justify-between items-center overflow-hidden">
-        <span class="truncate flex-1 text-left">
-          {{ displayText }}
-        </span>
-        <span class="shrink-0">
-          <UIcon
-            v-if="rangeValue?.start || rangeValue?.end"
-            name="lucide:x"
-            class="cursor-pointer"
-            :class="{ 'opacity-50': props.disabled }"
-            @click.stop="handleClear"
-          />
-          <UIcon
-            v-else
-            :name="popoverOpen ? 'lucide:chevron-up' : 'lucide:chevron-down'"
-            :class="{ 'opacity-50': props.disabled }"
-          />
-        </span>
-      </div>
+      <span class="truncate flex-1 text-left">
+        {{ displayText }}
+      </span>
+
+      <template #trailing>
+        <UIcon
+          v-if="(rangeValue?.start || rangeValue?.end) && props.clearable"
+          name="lucide:x"
+          class="cursor-pointer shrink-0 text-muted size-5"
+          :class="{ 'opacity-50': props.disabled }"
+          @click.stop="handleClear"
+        />
+        <UIcon
+          v-else
+          class="shrink-0 text-dimmed size-5"
+          :name="popoverOpen ? 'lucide:chevron-up' : 'lucide:chevron-down'"
+          :class="{ 'opacity-50': props.disabled }"
+        />
+      </template>
     </UButton>
 
     <template #content>
-      <UCalendar
-        v-model="rangeValue"
-        class="p-2"
-        range
-        :number-of-months="props.numberOfMonths"
-        @update:model-value="handleChange"
-      />
+      <UCalendar v-model="rangeValue" class="p-2" range :number-of-months="props.numberOfMonths" />
 
       <div v-if="props.type === 'datetime'" class="flex">
-        <UFieldGroup class="p-2">
-          <UInput :value="displayStartDate" readonly class="w-32" />
-          <UInputTime
+        <UFieldGroup class="p-2 pt-0">
+          <UInput
+            variant="subtle"
+            icon="lucide:calendar"
+            :value="displayStartDate"
+            readonly
+            class="w-36"
+          />
+          <TimePicker
+            class="w-36"
             v-model="startTimeValue"
-            granularity="second"
-            icon="lucide:clock"
-            @change="handleChange"
+            value-type="time"
+            show-format="HH:mm:ss"
           />
         </UFieldGroup>
-        <UFieldGroup class="p-2">
-          <UInput :value="displayEndDate" readonly class="w-32" />
-          <UInputTime
+        <UFieldGroup class="p-2 pt-0">
+          <UInput
+            variant="subtle"
+            icon="lucide:calendar"
+            :value="displayEndDate"
+            readonly
+            class="w-36"
+          />
+          <TimePicker
+            class="w-36"
             v-model="endTimeValue"
-            granularity="second"
-            icon="lucide:clock"
-            @change="handleChange"
+            value-type="time"
+            show-format="HH:mm:ss"
           />
         </UFieldGroup>
+      </div>
+
+      <div class="flex justify-end gap-2 p-2 border-t border-slate-200">
+        <UButton
+          color="neutral"
+          variant="subtle"
+          size="xs"
+          :label="props.cancelText"
+          @click="handleCancel"
+        />
+        <UButton color="primary" size="xs" :label="props.confirmText" @click="handleConfirm" />
       </div>
     </template>
   </UPopover>

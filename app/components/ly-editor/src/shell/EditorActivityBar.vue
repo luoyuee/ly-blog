@@ -30,6 +30,11 @@ const activityMenu = ref<ActivityMenuItem[]>([
     icon: "custom:pic"
   },
   {
+    key: LyEditorActivityMenu.AttachmentManager,
+    label: "附件管理器",
+    icon: "ep:folder-opened"
+  },
+  {
     key: LyEditorActivityMenu.HitokotoManager,
     label: "一言管理",
     icon: "custom:hitokoto"

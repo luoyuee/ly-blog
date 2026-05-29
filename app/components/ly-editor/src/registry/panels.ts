@@ -2,6 +2,7 @@ import type { LyEditorPanelRegistryItem } from "#shared/types/ly-editor";
 import { LyEditorTabPanel } from "#shared/constants";
 import {
   AccessTokenPanel,
+  AttachmentFolderPanel,
   ArticlePanel,
   CronJobPanel,
   DashboardPanel,
@@ -23,6 +24,10 @@ export const lyEditorPanelRegistry = {
   },
   [LyEditorTabPanel.ImagePanel]: {
     component: ImageFolderPanel,
+    keepAlive: true
+  },
+  [LyEditorTabPanel.AttachmentPanel]: {
+    component: AttachmentFolderPanel,
     keepAlive: true
   },
   [LyEditorTabPanel.HitokotoPanel]: {
