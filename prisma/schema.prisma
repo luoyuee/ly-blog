@@ -252,6 +252,7 @@ model FileFolder {
   updated_at  DateTime?
   updated_by  Int?
   name        String    @db.VarChar(255)
+  icon        String?   @db.VarChar(512)
   description String?   @db.VarChar(1024)
   cover       String?   @db.VarChar(512)
   count       Int       @default(0)

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { ActivityMenuItem, EditorTabItem } from "#shared/types/ly-editor";
-import { LyEditorActivityMenu, LyEditorTabPanel } from "#shared/constants";
+import { LyEditorActivityMenuEnum, LyEditorTabPanelEnum } from "#shared/enums";
 import { useLyEditorTabs } from "@/composables/useLyEditorTabs";
 import { useLyEditorStore } from "@/stores";
 
@@ -10,72 +10,72 @@ const lyEditorStore = useLyEditorStore();
 
 const activityMenu = ref<ActivityMenuItem[]>([
   {
-    key: LyEditorActivityMenu.NoteManager,
+    key: LyEditorActivityMenuEnum.NoteManager,
     label: "笔记管理",
     icon: "custom:copy-file"
   },
   {
-    key: LyEditorActivityMenu.ArticleManager,
+    key: LyEditorActivityMenuEnum.ArticleManager,
     label: "文章管理",
     icon: "custom:send"
   },
   {
-    key: LyEditorActivityMenu.SearchPanel,
+    key: LyEditorActivityMenuEnum.SearchPanel,
     label: "搜索",
     icon: "custom:search"
   },
   {
-    key: LyEditorActivityMenu.ImageManager,
+    key: LyEditorActivityMenuEnum.ImageManager,
     label: "图片管理器",
     icon: "custom:pic"
   },
   {
-    key: LyEditorActivityMenu.AttachmentManager,
+    key: LyEditorActivityMenuEnum.AttachmentManager,
     label: "附件管理器",
     icon: "ep:folder-opened"
   },
   {
-    key: LyEditorActivityMenu.HitokotoManager,
+    key: LyEditorActivityMenuEnum.HitokotoManager,
     label: "一言管理",
     icon: "custom:hitokoto"
   },
   {
-    key: LyEditorActivityMenu.NavigationManager,
+    key: LyEditorActivityMenuEnum.NavigationManager,
     label: "导航网站",
     icon: "ep:link",
-    panel: LyEditorTabPanel.NavigationWebsitePanel
+    panel: LyEditorTabPanelEnum.NavigationWebsitePanel
   },
   {
-    key: LyEditorActivityMenu.WorkManager,
+    key: LyEditorActivityMenuEnum.WorkManager,
     label: "项目管理",
     icon: "ep:briefcase"
   },
   {
-    key: LyEditorActivityMenu.AccessTokenManager,
+    key: LyEditorActivityMenuEnum.AccessTokenManager,
     label: "令牌管理",
     icon: "ep:key",
-    panel: LyEditorTabPanel.AccessTokenPanel
+    panel: LyEditorTabPanelEnum.AccessTokenPanel
   }
 ]);
 
 const actionMenu = ref<ActivityMenuItem[]>([
   {
-    key: LyEditorActivityMenu.DashboardPanel,
+    key: LyEditorActivityMenuEnum.DashboardPanel,
     label: "仪表盘",
     icon: "ep:histogram",
-    panel: LyEditorTabPanel.DashboardPanel
+    panel: LyEditorTabPanelEnum.DashboardPanel
   },
   {
-    key: LyEditorActivityMenu.CronJobPanel,
+    key: LyEditorActivityMenuEnum.CronJobPanel,
     label: "定时任务",
     icon: "ep:timer",
-    panel: LyEditorTabPanel.CronJobPanel
+    panel: LyEditorTabPanelEnum.CronJobPanel
   },
   {
-    key: LyEditorActivityMenu.SettingPanel,
+    key: LyEditorActivityMenuEnum.SettingPanel,
     label: "设置",
     icon: "custom:setting",
-    panel: LyEditorTabPanel.SettingPanel
+    panel: LyEditorTabPanelEnum.SettingPanel
   }
 ]);
 

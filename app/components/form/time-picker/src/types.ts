@@ -1,11 +1,6 @@
 import type { CalendarDateTime, Time, ZonedDateTime } from "@internationalized/date";
 
-export type TimePickerInputValue =
-  | string
-  | Time
-  | CalendarDateTime
-  | ZonedDateTime
-  | null;
+export type TimePickerInputValue = string | Time | CalendarDateTime | ZonedDateTime | null;
 
 export type TimePickerValue = string | Time | null;
 

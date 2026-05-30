@@ -1,6 +1,6 @@
 <script setup lang="ts">
+import type { IClientConfigSwiperItem } from "#shared/types/config";
 import type { PropType } from "vue";
-import type { IClientConfigSwiperItem } from "@@/shared/types/config";
 
 const props = defineProps({
   items: {
@@ -23,7 +23,7 @@ const props = defineProps({
     :ui="{
       dot: 'size-2 opacity-40 bg-black',
       prev: 'transition-all duration-300 shadow-[none] cursor-pointer opacity-60 hover:opacity-80',
-      next: 'transition-all duration-300 shadow-[none] cursor-pointer opacity-60 hover:opacity-80',
+      next: 'transition-all duration-300 shadow-[none] cursor-pointer opacity-60 hover:opacity-80'
     }"
   >
     <img :src="item.image" class="block w-full h-full object-cover" />

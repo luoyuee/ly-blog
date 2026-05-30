@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { GetArticlePaginatedResponse } from "@/apis/article/models";
-import type { ArticleItem } from "@@/shared/types/article";
+import type { ArticleItem } from "#shared/types/article";
 import { LifeCountdownCard, TagCard, NoticeCard, HitokotoCard } from "@/components/mac-card";
 import { AuthorCard } from "@/components/user-card";
 import { BannerImage } from "@/components/banner-image";

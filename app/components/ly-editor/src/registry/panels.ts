@@ -1,5 +1,5 @@
 import type { LyEditorPanelRegistryItem } from "#shared/types/ly-editor";
-import { LyEditorTabPanel } from "#shared/constants";
+import { LyEditorTabPanelEnum } from "#shared/enums";
 import {
   AccessTokenPanel,
   AttachmentFolderPanel,
@@ -18,47 +18,47 @@ import {
  * 工作台面板注册表。
  */
 export const lyEditorPanelRegistry = {
-  [LyEditorTabPanel.ArticlePanel]: {
+  [LyEditorTabPanelEnum.ArticlePanel]: {
     component: ArticlePanel,
     keepAlive: true
   },
-  [LyEditorTabPanel.ImagePanel]: {
+  [LyEditorTabPanelEnum.ImagePanel]: {
     component: ImageFolderPanel,
     keepAlive: true
   },
-  [LyEditorTabPanel.AttachmentPanel]: {
+  [LyEditorTabPanelEnum.AttachmentPanel]: {
     component: AttachmentFolderPanel,
     keepAlive: true
   },
-  [LyEditorTabPanel.HitokotoPanel]: {
+  [LyEditorTabPanelEnum.HitokotoPanel]: {
     component: HitokotoPanel,
     keepAlive: true
   },
-  [LyEditorTabPanel.NavigationWebsitePanel]: {
+  [LyEditorTabPanelEnum.NavigationWebsitePanel]: {
     component: NavigationWebsitePanel,
     keepAlive: true
   },
-  [LyEditorTabPanel.NavigationHistoryPanel]: {
+  [LyEditorTabPanelEnum.NavigationHistoryPanel]: {
     component: SearchHistoryPanel,
     keepAlive: true
   },
-  [LyEditorTabPanel.AccessTokenPanel]: {
+  [LyEditorTabPanelEnum.AccessTokenPanel]: {
     component: AccessTokenPanel,
     keepAlive: true
   },
-  [LyEditorTabPanel.DashboardPanel]: {
+  [LyEditorTabPanelEnum.DashboardPanel]: {
     component: DashboardPanel,
     keepAlive: true
   },
-  [LyEditorTabPanel.CronJobPanel]: {
+  [LyEditorTabPanelEnum.CronJobPanel]: {
     component: CronJobPanel,
     keepAlive: true
   },
-  [LyEditorTabPanel.SettingPanel]: {
+  [LyEditorTabPanelEnum.SettingPanel]: {
     component: SettingPanel,
     keepAlive: true
   },
-  [LyEditorTabPanel.UserPanel]: {
+  [LyEditorTabPanelEnum.UserPanel]: {
     component: UserPanel,
     keepAlive: true
   }

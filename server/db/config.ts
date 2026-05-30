@@ -1,6 +1,6 @@
 import type { IServerConfig, IServerConfigStorage } from "#shared/types/config";
 import type { JsonObject } from "@prisma/client/runtime/client";
-import { isArray, isObject } from "@@/shared/utils/typed";
+import { isArray, isObject } from "#shared/utils/typed";
 import { useStorage } from "#imports";
 import { prisma } from "./index";
 import { z } from "zod";

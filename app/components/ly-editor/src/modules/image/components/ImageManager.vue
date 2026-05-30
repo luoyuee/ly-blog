@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { ImageFolder } from "#shared/types/image";
-import { LyEditorTabPanel } from "#shared/constants";
+import { LyEditorTabPanelEnum } from "#shared/enums";
 import { SidebarPanel } from "../../../components";
 import { getAllImageFolder } from "@/apis/image";
 import { useLyEditorStore } from "@/stores";
@@ -45,7 +45,7 @@ const handleOpenImageFolder = (e: ImageFolder) => {
   lyEditorStore.pushTabItem({
     key,
     label: e.name,
-    type: LyEditorTabPanel.ImagePanel,
+    type: LyEditorTabPanelEnum.ImagePanel,
     data: e
   });
 

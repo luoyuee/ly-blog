@@ -1,4 +1,4 @@
-import type { UserRoleEnum } from "@/enums";
+import type { UserRoleEnum } from "#shared/enums";
 
 export interface Profile {
   nickname: string;

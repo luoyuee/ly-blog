@@ -95,17 +95,11 @@ const getHighlightOffset = () => {
 };
 
 const normalizedColumns = computed<PickerColumn[]>(() => {
-  return normalizePickerColumns(
-    getPickerColumnItems(props.items),
-    props.fieldNames
-  );
+  return normalizePickerColumns(getPickerColumnItems(props.items), props.fieldNames);
 });
 
 const normalizedOptions = computed<PickerColumn>(() => {
-  return normalizePickerOptions(
-    getPickerOptionItems(props.items),
-    props.fieldNames
-  );
+  return normalizePickerOptions(getPickerOptionItems(props.items), props.fieldNames);
 });
 
 const getResolvedSelection = (sourceSelection: PickerSelectionState) => {
@@ -136,10 +130,7 @@ const getColumnSelectedIndex = (columnIndex: number) => {
   );
 };
 
-const getSelectableOption = (
-  columnIndex: number,
-  direction: PickerDirection
-) => {
+const getSelectableOption = (columnIndex: number, direction: PickerDirection) => {
   return getPickerAdjacentSelectableOption(
     displayState.value.columns,
     displayState.value.selection,
@@ -224,9 +215,7 @@ const setColumnRef = (el: PickerScrollbarExposed | null, index: number) => {
   columnRefs.value[index] = el;
 };
 
-const getColumnInteractionState = (
-  columnIndex: number
-): PickerColumnInteractionState => {
+const getColumnInteractionState = (columnIndex: number): PickerColumnInteractionState => {
   const state = columnInteractionStates.value[columnIndex];
 
   if (state) {
@@ -290,10 +279,7 @@ const scheduleScrollSnap = (columnIndex: number) => {
   }, 120);
 };
 
-const handleScrollbarDragStateChange = (
-  columnIndex: number,
-  isDragging: boolean
-) => {
+const handleScrollbarDragStateChange = (columnIndex: number, isDragging: boolean) => {
   const state = getColumnInteractionState(columnIndex);
   state.isDraggingScrollbar = isDragging;
 
@@ -389,10 +375,7 @@ defineExpose({
 <template>
   <div class="w-full max-w-[calc(100vw-1rem)] bg-white rounded-md">
     <div class="flex" :style="{ height: `${getPanelHeight()}px` }">
-      <template
-        v-for="(column, columnIndex) in displayState.columns"
-        :key="columnIndex"
-      >
+      <template v-for="(column, columnIndex) in displayState.columns" :key="columnIndex">
         <div
           v-if="props.arrowControl"
           class="relative flex min-w-0 basis-0 flex-1 flex-col border-r border-neutral-200 last:border-r-0"
@@ -416,18 +399,13 @@ defineExpose({
             icon="mdi:chevron-up"
           />
 
-          <div
-            class="flex flex-1 flex-col"
-            :style="{ height: `${props.itemHeight * 3}px` }"
-          >
+          <div class="flex flex-1 flex-col" :style="{ height: `${props.itemHeight * 3}px` }">
             <div
               class="flex items-center justify-center px-3 text-sm text-neutral-500"
               :style="{ height: `${props.itemHeight}px` }"
             >
               <span class="truncate text-center">
-                {{
-                  arrowColumnDisplayItems[columnIndex]?.previous?.label ?? ""
-                }}
+                {{ arrowColumnDisplayItems[columnIndex]?.previous?.label ?? "" }}
               </span>
             </div>
             <div
@@ -462,14 +440,9 @@ defineExpose({
         <Scrollbar
           v-else
           class="picker__column-scrollbar relative min-w-0 basis-0 flex-1 border-r border-neutral-200 last:border-r-0"
-          :ref="
-            (el) =>
-              setColumnRef(el as PickerScrollbarExposed | null, columnIndex)
-          "
+          :ref="(el) => setColumnRef(el as PickerScrollbarExposed | null, columnIndex)"
           :theme="scrollbarTheme"
-          @drag-state-change="
-            handleScrollbarDragStateChange(columnIndex, $event)
-          "
+          @drag-state-change="handleScrollbarDragStateChange(columnIndex, $event)"
           @scroll="handleScrollbarScroll(columnIndex)"
         >
           <!-- 中间高亮带仅负责视觉定位，真正的选中值仍以 modelValue 为准。 -->

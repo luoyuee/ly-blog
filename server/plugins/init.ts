@@ -1,4 +1,4 @@
-import { ConfigNameEnum } from "#shared/constants";
+import { ConfigNameEnum } from "#shared/enums";
 import {
   DefaultArticleCategoryData,
   DefaultClientConfig,

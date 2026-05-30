@@ -6,6 +6,7 @@ import { z } from "zod";
 export default defineEventHandler(async (event) => {
   const schema = z.object({
     name: z.string().min(1),
+    icon: z.string().optional(),
     description: z.string().optional()
   });
 
@@ -27,6 +28,7 @@ export default defineEventHandler(async (event) => {
       created_at: new Date(),
       created_by: event.context.user.id,
       name: body.name,
+      icon: body.icon,
       description: body.description
     }
   });

@@ -10,6 +10,7 @@ export interface AttachmentFolder {
   updated_at?: number;
   updated_by?: number;
   name: string;
+  icon?: string;
   description?: string;
   cover?: string;
   count: number;

@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import type { AttachmentFolder } from "#shared/types/attachment";
-import { LyEditorTabPanel } from "#shared/constants";
 import { getAllAttachmentFolder, deleteAttachmentFolder } from "@/apis/attachment";
-import { SidebarPanel } from "../../../components";
-import { useLyEditorTabs } from "@/composables/useLyEditorTabs";
 import { useLyEditorModal } from "@/composables/useLyEditorModal";
+import { useLyEditorTabs } from "@/composables/useLyEditorTabs";
+import { LyEditorTabPanelEnum } from "#shared/enums";
+import { SidebarPanel } from "../../../components";
 import Scrollbar from "@/components/scrollbar";
 import numeral from "numeral";
 
@@ -13,6 +13,8 @@ const $msgBox = useMessageBox();
 
 const { openTabPanel } = useLyEditorTabs();
 const { openModal } = useLyEditorModal();
+
+const defaultFolderIcon = "icon-park-outline:folder-open";
 
 const data = ref<AttachmentFolder[]>([]);
 const loading = ref(false);
@@ -55,7 +57,7 @@ const handleOpenAttachmentFolder = (record: AttachmentFolder) => {
   openTabPanel({
     key,
     label: record.name,
-    type: LyEditorTabPanel.AttachmentPanel,
+    type: LyEditorTabPanelEnum.AttachmentPanel,
     data: record
   });
 };
@@ -105,7 +107,7 @@ const actions = [
           @click="handleOpenAttachmentFolder(item)"
         >
           <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-gray-100/5">
-            <UIcon name="ep:folder-opened" class="text-lg text-gray-300" />
+            <UIcon :name="item.icon || defaultFolderIcon" class="text-lg text-gray-300" />
           </div>
 
           <div class="min-w-0 flex-1">
@@ -127,14 +129,14 @@ const actions = [
                         handleOpenFormModal(item);
                       }
                     },
-                     {
-                       label: '删除目录',
-                       icon: 'ep:delete',
-                       color: 'error',
-                       onSelect: () => {
-                         handleDeleteFolder(item);
-                       }
-                     }
+                    {
+                      label: '删除目录',
+                      icon: 'ep:delete',
+                      color: 'error',
+                      onSelect: () => {
+                        handleDeleteFolder(item);
+                      }
+                    }
                   ]"
                   :content="{
                     align: 'start',

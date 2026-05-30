@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { IClientConfigSwiperItem } from "@@/shared/types/config";
+import type { IClientConfigSwiperItem } from "#shared/types/config";
 import type { FormSubmitEvent, TableColumn } from "@nuxt/ui";
 import { BasicModal } from "@/components/basic-modal";
 import { useForm } from "@/composables/useForm";

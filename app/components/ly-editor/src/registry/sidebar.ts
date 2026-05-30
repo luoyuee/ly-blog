@@ -1,5 +1,5 @@
 import type { Component } from "vue";
-import { LyEditorActivityMenu } from "#shared/constants";
+import { LyEditorActivityMenuEnum } from "#shared/enums";
 
 import {
   AccessTokenManager,
@@ -23,28 +23,28 @@ type LyEditorSidebarRegistryItem = {
  * 编辑器侧边栏注册表。
  */
 export const lyEditorSidebarRegistry = {
-  [LyEditorActivityMenu.NoteManager]: {
+  [LyEditorActivityMenuEnum.NoteManager]: {
     component: NoteManager
   },
-  [LyEditorActivityMenu.ArticleManager]: {
+  [LyEditorActivityMenuEnum.ArticleManager]: {
     component: ArticleManager
   },
-  [LyEditorActivityMenu.ImageManager]: {
+  [LyEditorActivityMenuEnum.ImageManager]: {
     component: ImageManager
   },
-  [LyEditorActivityMenu.AttachmentManager]: {
+  [LyEditorActivityMenuEnum.AttachmentManager]: {
     component: AttachmentManager
   },
-  [LyEditorActivityMenu.HitokotoManager]: {
+  [LyEditorActivityMenuEnum.HitokotoManager]: {
     component: HitokotoManager
   },
-  [LyEditorActivityMenu.NavigationManager]: {
+  [LyEditorActivityMenuEnum.NavigationManager]: {
     component: NavigationWebsiteManager
   },
-  [LyEditorActivityMenu.WorkManager]: {
+  [LyEditorActivityMenuEnum.WorkManager]: {
     component: WorkManager
   },
-  [LyEditorActivityMenu.AccessTokenManager]: {
+  [LyEditorActivityMenuEnum.AccessTokenManager]: {
     component: AccessTokenManager
   }
 } satisfies Record<string, LyEditorSidebarRegistryItem>;

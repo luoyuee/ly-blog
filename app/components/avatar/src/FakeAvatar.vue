@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { generateBgColorByText, generateTextColorByText } from "@@/shared/utils/color";
+import { generateBgColorByText, generateTextColorByText } from "#shared/utils/color";
 import { computed } from "vue";
 
 interface Props {

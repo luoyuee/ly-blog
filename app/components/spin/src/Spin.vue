@@ -144,9 +144,7 @@ const panelClassName = computed(() => {
  * Spinner 默认样式。
  */
 const spinnerClassName = computed(() => {
-  const classNames = ["size-8 animate-spin text-primary", props.spinnerClass].filter(
-    Boolean
-  );
+  const classNames = ["size-8 animate-spin text-primary", props.spinnerClass].filter(Boolean);
 
   return classNames.join(" ");
 });

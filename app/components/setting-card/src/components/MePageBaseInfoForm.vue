@@ -3,9 +3,9 @@ import type { IMePageConfigBaseInfoItem } from "#shared/types/config";
 import type { FormSubmitEvent, TableColumn } from "@nuxt/ui";
 import { computed, h, onBeforeUnmount, reactive, ref, resolveComponent, watch } from "vue";
 import { useSortable } from "@vueuse/integrations/useSortable";
-import { CustomIconNames } from "@@/shared/constants/icon-sets";
 import { BasicModal } from "@/components/basic-modal";
 import { SelectIcon } from "@/components/form/select";
+import { CustomIconNames } from "#shared/constants";
 import { z } from "zod";
 
 const handleClass = "me-page-base-info-form__handle";

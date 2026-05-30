@@ -42,11 +42,7 @@ export type PickerSelectionState = Array<PickerPrimitive | undefined>;
 
 // Scrollbar 组件暴露给 Picker 的最小控制面，只保留滚动定位和读取原生滚动容器能力。
 export interface PickerScrollbarExposed {
-  scrollTo: (options: {
-    top?: number;
-    left?: number;
-    behavior?: ScrollBehavior;
-  }) => void;
+  scrollTo: (options: { top?: number; left?: number; behavior?: ScrollBehavior }) => void;
   getScrollElement: () => HTMLElement | null | undefined;
 }
 

@@ -29,6 +29,7 @@ export async function getAllAttachmentFolder(): Promise<AttachmentFolder[]> {
  */
 export async function createAttachmentFolder(data: {
   name: string;
+  icon?: string;
   description?: string;
 }): Promise<AttachmentFolder> {
   try {
@@ -50,6 +51,7 @@ export async function createAttachmentFolder(data: {
 export async function updateAttachmentFolder(data: {
   id: number;
   name: string;
+  icon?: string;
   description?: string;
 }): Promise<void> {
   try {

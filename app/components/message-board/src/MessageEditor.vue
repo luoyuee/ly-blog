@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { TipTapEditor } from "@/components/tiptap-editor";
-import { MarkdownSupportURL } from "@@/shared/constants";
+import { MarkdownSupportURL } from "#shared/constants";
 import { useMessage } from "@/composables/useMessage";
 import { getQQInfo, isQQEmail } from "@/utils";
 import { createMessage } from "@/apis/message";

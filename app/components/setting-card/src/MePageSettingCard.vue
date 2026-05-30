@@ -35,15 +35,15 @@ const { formData, formState, isDirty, setForm, setInitial, resetForm } =
 const schema = z.object({
   author: z.object({
     name: z.string({ message: "请输入名称" }).min(1, "请输入名称"),
-    avatar: z.union([z.string().url("请输入正确的头像链接"), z.literal("")]).optional(),
+    avatar: z.union([z.url("请输入正确的头像链接"), z.literal("")]).optional(),
     location: z.string().optional(),
     dev_role: z.string().optional(),
     dev_direction: z.string().optional(),
     quote: z.string().optional()
   }),
   github_snake: z.object({
-    light: z.union([z.string().url("请输入正确的图片链接"), z.literal("")]).optional(),
-    dark: z.union([z.string().url("请输入正确的图片链接"), z.literal("")]).optional()
+    light: z.union([z.url("请输入正确的图片链接"), z.literal("")]).optional(),
+    dark: z.union([z.url("请输入正确的图片链接"), z.literal("")]).optional()
   })
 });
 

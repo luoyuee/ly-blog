@@ -7,6 +7,7 @@ export default defineEventHandler(async (event) => {
   const schema = z.object({
     id: z.number().int(),
     name: z.string().min(1),
+    icon: z.string().optional(),
     description: z.string().optional()
   });
 
@@ -41,6 +42,7 @@ export default defineEventHandler(async (event) => {
       updated_at: new Date(),
       updated_by: event.context.user.id,
       name: body.name,
+      icon: body.icon,
       description: body.description
     }
   });

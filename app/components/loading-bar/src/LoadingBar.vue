@@ -63,11 +63,7 @@ async function init(): Promise<void> {
   transitionDisabled.value = false;
 }
 // 加载条开始加载的回调函数
-async function start(
-  from = 0,
-  to = 80,
-  status: "starting" | "error" = "starting"
-): Promise<void> {
+async function start(from = 0, to = 80, status: "starting" | "error" = "starting"): Promise<void> {
   loadingStarted.value = true;
   await init();
   if (loadingFinishing.value) {
@@ -141,9 +137,9 @@ defineExpose({
     <Transition
       name="fade-in"
       appear
+      :css="!transitionDisabled"
       @after-enter="onAfterEnter"
       @after-leave="onAfterLeave"
-      :css="!transitionDisabled"
     >
       <div
         v-if="initialDisplay"
@@ -160,11 +156,7 @@ defineExpose({
           containerStyle
         ]"
       >
-        <div
-          ref="loadingBarRef"
-          class="loading-bar"
-          style="max-width: 100%"
-        ></div>
+        <div ref="loadingBarRef" class="loading-bar max-w-full"></div>
       </div>
     </Transition>
   </Teleport>

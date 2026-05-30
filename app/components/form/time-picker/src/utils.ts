@@ -83,10 +83,7 @@ export const getPeriodByHour = (hour: number): TimePickerPeriod => {
   return hour >= 12 ? "PM" : "AM";
 };
 
-export const getDisplayHourByTime = (
-  time: Time,
-  hourCycle: TimePickerHourCycle
-) => {
+export const getDisplayHourByTime = (time: Time, hourCycle: TimePickerHourCycle) => {
   if (hourCycle === 24) {
     return time.hour;
   }
@@ -200,11 +197,7 @@ export const formatTimePickerValue = (
   }).format(format);
 };
 
-export const formatTimePickerDisplay = (
-  time: Time | null,
-  format: string,
-  placeholder: string
-) => {
+export const formatTimePickerDisplay = (time: Time | null, format: string, placeholder: string) => {
   const displayText = formatTimePickerValue(time, "string", format);
   return displayText ?? placeholder;
 };

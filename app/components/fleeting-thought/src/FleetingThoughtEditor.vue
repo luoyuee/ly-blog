@@ -3,7 +3,7 @@ import type { PropType } from "vue";
 import type { FleetingThought } from "#shared/types/fleeting-thought";
 import { createFleetingThought, updateFleetingThought } from "@/apis/fleeting-thought";
 import { TipTapEditor } from "@/components/tiptap-editor";
-import { MarkdownSupportURL } from "@@/shared/constants";
+import { MarkdownSupportURL } from "#shared/constants";
 
 const $message = useMessage();
 

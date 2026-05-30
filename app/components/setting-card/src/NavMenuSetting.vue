@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { IClientConfigNavMenuItem } from "@@/shared/types/config";
+import type { IClientConfigNavMenuItem } from "#shared/types/config";
 import type { FormSubmitEvent } from "@nuxt/ui";
 import { SelectIcon } from "@/components/form/select";
 import { BasicModal } from "@/components/basic-modal";

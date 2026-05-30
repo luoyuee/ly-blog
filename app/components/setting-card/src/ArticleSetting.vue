@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { IClientConfigArticle } from "@@/shared/types/config";
+import type { IClientConfigArticle } from "#shared/types/config";
 import type { FormSubmitEvent } from "@nuxt/ui";
 import { BasicModal } from "@/components/basic-modal";
 import { useForm } from "@/composables/useForm";
@@ -27,7 +27,7 @@ const schema = z.object({
     .array(
       z.object({
         name: z.string({ message: "请输入收款码名称" }).min(1, "请输入收款码名称"),
-        image: z.string({ message: "请输入收款码图片链接" }).url("请输入合法的图片链接")
+        image: z.url("请输入合法的图片链接")
       })
     )
     .optional()

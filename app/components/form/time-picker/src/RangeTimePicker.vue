@@ -1,10 +1,7 @@
 <script setup lang="ts">
 import type { Time } from "@internationalized/date";
 import type { PropType } from "vue";
-import type {
-  PickerPrimitive,
-  PickerRawOption
-} from "@/components/form/picker";
+import type { PickerPrimitive, PickerRawOption } from "@/components/form/picker";
 import type {
   TimePickerHourCycle,
   TimePickerInputValue,
@@ -175,14 +172,8 @@ const endSelection = computed<PickerPrimitive[]>({
 
 // 只从外部真实值同步到 draft。取消时也调用它，丢弃尚未确认的面板实时选择。
 const syncCurrentModelValue = () => {
-  startTime.value = parseTimePickerValue(
-    modelValue.value?.start ?? null,
-    props.format
-  );
-  endTime.value = parseTimePickerValue(
-    modelValue.value?.end ?? null,
-    props.format
-  );
+  startTime.value = parseTimePickerValue(modelValue.value?.start ?? null, props.format);
+  endTime.value = parseTimePickerValue(modelValue.value?.end ?? null, props.format);
 };
 
 watch(
@@ -233,11 +224,7 @@ const handleClear = () => {
 };
 
 const formatDisplayValue = (value: TimePickerInputValue) => {
-  return formatTimePickerDisplay(
-    parseTimePickerValue(value, props.format),
-    props.showFormat,
-    ""
-  );
+  return formatTimePickerDisplay(parseTimePickerValue(value, props.format), props.showFormat, "");
 };
 
 const displayText = computed(() => {
@@ -298,12 +285,8 @@ const displayText = computed(() => {
 
     <template #content>
       <div class="flex items-stretch gap-2 p-2">
-        <div
-          class="min-w-0 w-40 overflow-hidden rounded-md border border-slate-200"
-        >
-          <div
-            class="border-b border-slate-200 px-3 py-2 text-center text-xs text-slate-500"
-          >
+        <div class="min-w-0 w-40 overflow-hidden rounded-md border border-slate-200">
+          <div class="border-b border-slate-200 px-3 py-2 text-center text-xs text-slate-500">
             {{ props.startPlaceholder }}
           </div>
           <PickerPanel
@@ -316,12 +299,8 @@ const displayText = computed(() => {
           />
         </div>
 
-        <div
-          class="min-w-0 w-40 overflow-hidden rounded-md border border-slate-200"
-        >
-          <div
-            class="border-b border-slate-200 px-3 py-2 text-center text-xs text-slate-500"
-          >
+        <div class="min-w-0 w-40 overflow-hidden rounded-md border border-slate-200">
+          <div class="border-b border-slate-200 px-3 py-2 text-center text-xs text-slate-500">
             {{ props.endPlaceholder }}
           </div>
           <PickerPanel
@@ -343,12 +322,7 @@ const displayText = computed(() => {
           :label="props.cancelText"
           @click="handleCancel"
         />
-        <UButton
-          color="primary"
-          size="xs"
-          :label="props.confirmText"
-          @click="handleConfirm"
-        />
+        <UButton color="primary" size="xs" :label="props.confirmText" @click="handleConfirm" />
       </div>
     </template>
   </UPopover>

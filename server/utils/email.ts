@@ -1,6 +1,6 @@
-import type { IServerConfig, IServerConfigMailer, IClientConfig } from "@@/shared/types/config";
+import type { IServerConfig, IServerConfigMailer, IClientConfig } from "#shared/types/config";
 import type { Attachment } from "nodemailer/lib/mailer";
-import { ConfigNameEnum } from "@@/shared/enums";
+import { ConfigNameEnum } from "#shared/enums";
 import { prisma } from "@@/server/db";
 import { z } from "zod";
 import nodemailer from "nodemailer";

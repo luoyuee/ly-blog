@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { IClientConfigBackground } from "@@/shared/types/config";
+import type { IClientConfigBackground } from "#shared/types/config";
 import { useForm } from "@/composables/useForm";
 import { useConfigStore } from "@/stores";
 import { cloneDeep } from "es-toolkit";

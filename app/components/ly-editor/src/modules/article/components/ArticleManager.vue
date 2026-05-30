@@ -3,7 +3,7 @@ import type { ArticleCategory } from "#shared/types/article";
 import { getAllArticleCategory, deleteArticleCategory } from "@/apis/article";
 import { useLyEditorModal } from "@/composables/useLyEditorModal";
 import { useLyEditorTabs } from "@/composables/useLyEditorTabs";
-import { LyEditorTabPanel } from "#shared/constants";
+import { LyEditorTabPanelEnum } from "#shared/enums";
 import { SidebarPanel } from "../../../components";
 import { lyEditorEmitter } from "@/events";
 import Scrollbar from "@/components/scrollbar";
@@ -42,9 +42,9 @@ const handleOpenDetailsModal = async (e: ArticleCategory) => {
 
 const handleOpenPanel = () => {
   openTabPanel({
-    key: LyEditorTabPanel.ArticlePanel,
+    key: LyEditorTabPanelEnum.ArticlePanel,
     label: "文章管理",
-    type: LyEditorTabPanel.ArticlePanel
+    type: LyEditorTabPanelEnum.ArticlePanel
   });
 };
 

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { CalendarDateTime } from "@internationalized/date";
 import type { TimeValue } from "reka-ui";
 import type { PropType } from "vue";
 import type {
@@ -7,7 +8,6 @@ import type {
   DatePickerValue,
   DatePickerValueType
 } from "./types";
-import { CalendarDateTime } from "@internationalized/date";
 import { TimePicker } from "@/components/form/time-picker";
 import { computed, ref, shallowRef, watch } from "vue";
 import {

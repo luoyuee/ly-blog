@@ -1,5 +1,5 @@
 import { getBadResponse, getNotFoundResponse, getOKResponse } from "@@/server/utils/response";
-import { ConfigNameEnum } from "@@/shared/constants";
+import { ConfigNameEnum } from "#shared/enums";
 import { prisma } from "@@/server/db";
 import { readBody } from "h3";
 import { z } from "zod";

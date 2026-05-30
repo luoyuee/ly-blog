@@ -7,6 +7,7 @@ import type {
 } from "#shared/types/ly-editor";
 import { createAttachmentFolder, updateAttachmentFolder } from "@/apis/attachment";
 import { BasicModal } from "@/components/basic-modal";
+import { SelectIcon } from "@/components/form/select";
 import { useForm } from "@/composables/useForm";
 import { computed, watch } from "vue";
 import { z } from "zod";
@@ -38,12 +39,14 @@ const modalTitle = computed(() => {
 const schema = z.object({
   id: z.number().optional(),
   name: z.string({ message: "请输入目录名称" }).min(1, "请输入目录名称"),
+  icon: z.string().optional(),
   description: z.string().optional()
 });
 
 const { formData, formState, resetForm, setForm } = useForm<AttachmentFolderForm>({
   id: undefined,
   name: undefined,
+  icon: undefined,
   description: undefined
 });
 
@@ -55,8 +58,8 @@ watch(
     resetForm();
 
     if (props.payload.record) {
-      const { id, name, description } = props.payload.record;
-      setForm({ id, name, description });
+      const { id, name, icon, description } = props.payload.record;
+      setForm({ id, name, icon, description });
     }
   },
   {
@@ -74,6 +77,7 @@ const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => 
       await updateAttachmentFolder({
         id: event.data.id,
         name: event.data.name,
+        icon: event.data.icon,
         description: event.data.description
       });
 
@@ -83,6 +87,7 @@ const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => 
     } else {
       await createAttachmentFolder({
         name: event.data.name,
+        icon: event.data.icon,
         description: event.data.description
       });
 
@@ -129,6 +134,10 @@ const handleCancel = () => {
     >
       <UFormField name="name" label="目录名称" required>
         <UInput v-model="formData.name" placeholder="请输入目录名称" />
+      </UFormField>
+
+      <UFormField name="icon" label="目录图标">
+        <SelectIcon v-model="formData.icon" placeholder="请选择目录图标" />
       </UFormField>
 
       <UFormField name="description" label="目录描述">

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ArticleCategoryRootItem } from "@@/shared/types/article";
+import type { ArticleCategoryRootItem } from "#shared/types/article";
 import { useConfigStore, useUserStore } from "@/stores";
 import { SearchDrawer } from "@/components/search-box";
 import ThemeSwitch from "@/components/theme-switch";

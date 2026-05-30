@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { createArticleComment } from "@/apis/article/comment";
 import { TipTapEditor } from "@/components/tiptap-editor";
-import { MarkdownSupportURL } from "@@/shared/constants";
+import { MarkdownSupportURL } from "#shared/constants";
 import { useMessage } from "@/composables/useMessage";
 import { useConfigStore } from "@/stores";
 import { getQQInfo, isQQEmail } from "@/utils";

@@ -110,17 +110,11 @@ const popoverOpen = ref(false);
 const tempSelection = ref<PickerPrimitive[]>([]);
 
 const normalizedColumns = computed<PickerColumn[]>(() => {
-  return normalizePickerColumns(
-    getPickerColumnItems(props.items),
-    props.fieldNames
-  );
+  return normalizePickerColumns(getPickerColumnItems(props.items), props.fieldNames);
 });
 
 const normalizedOptions = computed<PickerColumn>(() => {
-  return normalizePickerOptions(
-    getPickerOptionItems(props.items),
-    props.fieldNames
-  );
+  return normalizePickerOptions(getPickerOptionItems(props.items), props.fieldNames);
 });
 
 const getResolvedSelection = (sourceSelection: PickerSelectionState) => {
@@ -168,9 +162,7 @@ const syncTempSelection = () => {
 
 // 每次打开都把 draft 修正为可渲染、可滚动、可提交的有效路径。
 const initializeTempSelection = () => {
-  tempSelection.value = getPickerOutputSelection(
-    getResolvedSelection(modelValue.value)
-  );
+  tempSelection.value = getPickerOutputSelection(getResolvedSelection(modelValue.value));
 };
 
 watch(
@@ -219,11 +211,7 @@ const handleClear = () => {
 </script>
 
 <template>
-  <UPopover
-    v-model:open="popoverOpen"
-    :disabled="props.disabled"
-    :ui="popoverUi"
-  >
+  <UPopover v-model:open="popoverOpen" :disabled="props.disabled" :ui="popoverUi">
     <slot
       name="trigger"
       :selected="modelValue"
@@ -234,12 +222,7 @@ const handleClear = () => {
       :placeholder="props.placeholder"
       :clear="handleClear"
     >
-      <UButton
-        color="neutral"
-        variant="subtle"
-        class="w-full"
-        :disabled="props.disabled"
-      >
+      <UButton color="neutral" variant="subtle" class="w-full" :disabled="props.disabled">
         <span class="min-w-0 flex-1 truncate text-left">
           {{ displayText }}
         </span>
@@ -281,12 +264,7 @@ const handleClear = () => {
             :label="props.cancelText"
             @click="handleCancel"
           />
-          <UButton
-            color="primary"
-            size="xs"
-            :label="props.confirmText"
-            @click="handleConfirm"
-          />
+          <UButton color="primary" size="xs" :label="props.confirmText" @click="handleConfirm" />
         </div>
       </div>
     </template>

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { SidebarPanel } from "@/components/ly-editor/src/components";
 import { useLyEditorTabs } from "@/composables/useLyEditorTabs";
-import { LyEditorTabPanel } from "#shared/constants";
+import { LyEditorTabPanelEnum } from "#shared/enums";
 
 const { openTabPanel } = useLyEditorTabs();
 
@@ -21,9 +21,9 @@ const scopeItems = [
  */
 const handleOpenAccessTokenPanel = () => {
   openTabPanel({
-    key: LyEditorTabPanel.AccessTokenPanel,
+    key: LyEditorTabPanelEnum.AccessTokenPanel,
     label: "令牌管理",
-    type: LyEditorTabPanel.AccessTokenPanel
+    type: LyEditorTabPanelEnum.AccessTokenPanel
   });
 };
 

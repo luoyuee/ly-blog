@@ -2,10 +2,10 @@
 import type { FormSubmitEvent, TableColumn } from "@nuxt/ui";
 import type { IMePageConfigSkillGridItem } from "#shared/types/config";
 import { computed, h, onBeforeUnmount, reactive, ref, resolveComponent, watch } from "vue";
-import { SkillIconNames } from "@@/shared/constants/icon-sets";
 import { useSortable } from "@vueuse/integrations/useSortable";
 import { BasicModal } from "@/components/basic-modal";
 import { SelectIcon } from "@/components/form/select";
+import { SkillIconNames } from "#shared/constants";
 import { z } from "zod";
 
 const handleClass = "me-page-skill-grid-form__handle";

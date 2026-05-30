@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { WorkItem } from "@@/shared/types/config";
+import type { WorkItem } from "#shared/types/config";
 import { useWaterfall } from "@/composables/useWaterfall";
 import { BannerImage } from "@/components/banner-image";
 import { PageFooter } from "@/components/page-footer";

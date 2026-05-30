@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { LyEditorTabPanel } from "#shared/constants";
+import { LyEditorTabPanelEnum } from "#shared/enums";
 import ShortcutSection from "./ShortcutSection.vue";
 import SearchEngineSection from "./SearchEngineSection.vue";
 import { useLyEditorTabs } from "@/composables/useLyEditorTabs";
@@ -12,8 +12,8 @@ const { openTabPanel } = useLyEditorTabs();
  */
 const handleOpenSearchHistoryPanel = () => {
   openTabPanel({
-    key: LyEditorTabPanel.NavigationHistoryPanel,
-    type: LyEditorTabPanel.NavigationHistoryPanel,
+    key: LyEditorTabPanelEnum.NavigationHistoryPanel,
+    type: LyEditorTabPanelEnum.NavigationHistoryPanel,
     label: "搜索历史"
   });
 };

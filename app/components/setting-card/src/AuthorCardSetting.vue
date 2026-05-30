@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { IClientConfigAuthorCard, IClientConfigAuthorCardLink } from "@@/shared/types/config";
+import type { IClientConfigAuthorCard, IClientConfigAuthorCardLink } from "#shared/types/config";
 import type { FormSubmitEvent, TableColumn } from "@nuxt/ui";
 import { BasicModal } from "@/components/basic-modal";
 import { SelectIcon } from "@/components/form/select";

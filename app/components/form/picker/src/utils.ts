@@ -13,11 +13,7 @@ import type {
 } from "./types";
 
 const isPrimitive = (value: unknown): value is PickerPrimitive => {
-  return (
-    typeof value === "string" ||
-    typeof value === "number" ||
-    typeof value === "boolean"
-  );
+  return typeof value === "string" || typeof value === "number" || typeof value === "boolean";
 };
 
 const isRecord = (value: unknown): value is PickerRawOption => {
@@ -26,9 +22,7 @@ const isRecord = (value: unknown): value is PickerRawOption => {
 
 // items 同时支持“多列数组”和“级联树”两种形态。
 // 组件层不直接判断数组结构，统一经由这里拆出 columns/options，避免 Picker 与 PickerPanel 重复实现。
-export const isPickerColumnItems = (
-  items: PickerItems
-): items is PickerRawOption[][] => {
+export const isPickerColumnItems = (items: PickerItems): items is PickerRawOption[][] => {
   return items.every(Array.isArray);
 };
 
@@ -229,13 +223,8 @@ export const getPickerDisplayState = (params: {
   normalizedOptions: PickerColumn;
   shouldResolveSelection: boolean;
 }): PickerDisplayState => {
-  const {
-    mode,
-    sourceSelection,
-    normalizedColumns,
-    normalizedOptions,
-    shouldResolveSelection
-  } = params;
+  const { mode, sourceSelection, normalizedColumns, normalizedOptions, shouldResolveSelection } =
+    params;
   const selection = shouldResolveSelection
     ? resolvePickerSelection({
         mode,
@@ -258,9 +247,7 @@ export const getPickerDisplayState = (params: {
 };
 
 // 对外输出不允许包含归一化过程中产生的 undefined，占位只属于内部推导状态。
-export const getPickerOutputSelection = (
-  selection: PickerSelectionState
-): PickerPrimitive[] => {
+export const getPickerOutputSelection = (selection: PickerSelectionState): PickerPrimitive[] => {
   return selection.filter((item): item is PickerPrimitive => item !== undefined);
 };
 
@@ -292,20 +279,11 @@ export const getPickerAdjacentSelectableOption = (
     return null;
   }
 
-  const selectedIndex = getPickerColumnSelectedIndex(
-    columns,
-    selection,
-    columnIndex
-  );
+  const selectedIndex = getPickerColumnSelectedIndex(columns, selection, columnIndex);
   const step = direction === "previous" ? -1 : 1;
-  const startIndex =
-    selectedIndex >= 0 ? selectedIndex + step : step > 0 ? 0 : column.length - 1;
+  const startIndex = selectedIndex >= 0 ? selectedIndex + step : step > 0 ? 0 : column.length - 1;
 
-  for (
-    let nextIndex = startIndex;
-    nextIndex >= 0 && nextIndex < column.length;
-    nextIndex += step
-  ) {
+  for (let nextIndex = startIndex; nextIndex >= 0 && nextIndex < column.length; nextIndex += step) {
     const option = column[nextIndex];
 
     if (option && !option.disabled) {
@@ -322,20 +300,11 @@ export const getPickerColumnDisplayItems = (
   columnIndex: number
 ): PickerColumnDisplayItems => {
   const column = columns[columnIndex] ?? [];
-  const selectedIndex = getPickerColumnSelectedIndex(
-    columns,
-    selection,
-    columnIndex
-  );
+  const selectedIndex = getPickerColumnSelectedIndex(columns, selection, columnIndex);
 
   return {
-    previous: getPickerAdjacentSelectableOption(
-      columns,
-      selection,
-      columnIndex,
-      "previous"
-    ),
-    current: selectedIndex >= 0 ? column[selectedIndex] ?? null : null,
+    previous: getPickerAdjacentSelectableOption(columns, selection, columnIndex, "previous"),
+    current: selectedIndex >= 0 ? (column[selectedIndex] ?? null) : null,
     next: getPickerAdjacentSelectableOption(columns, selection, columnIndex, "next")
   };
 };

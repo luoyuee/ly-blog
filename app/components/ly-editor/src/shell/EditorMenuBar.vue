@@ -3,7 +3,7 @@ import type { DropdownMenuItem } from "@nuxt/ui";
 import { useLyEditorModal } from "@/composables/useLyEditorModal";
 import { useLyEditorTabs } from "@/composables/useLyEditorTabs";
 import { useLyEditorStore, useUserStore } from "@/stores";
-import { LyEditorTabPanel } from "#shared/constants";
+import { LyEditorTabPanelEnum } from "#shared/enums";
 import { useFullscreen } from "@vueuse/core";
 
 const lyEditorStore = useLyEditorStore();
@@ -64,9 +64,9 @@ const userDropdownMenuItem = ref<DropdownMenuItem[][]>([
       icon: "i-lucide-user",
       onSelect: () => {
         openTabPanel({
-          key: LyEditorTabPanel.UserPanel,
+          key: LyEditorTabPanelEnum.UserPanel,
           label: "用户信息",
-          type: LyEditorTabPanel.UserPanel
+          type: LyEditorTabPanelEnum.UserPanel
         });
       }
     }

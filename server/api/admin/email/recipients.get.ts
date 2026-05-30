@@ -1,5 +1,5 @@
 import type { Prisma } from "@@/prisma/generated/client";
-import type { RecipientOption } from "@@/shared/types";
+import type { RecipientOption } from "#shared/types";
 import { getOKResponse } from "@@/server/utils/response";
 import { prisma } from "@@/server/db";
 

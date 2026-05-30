@@ -1,9 +1,6 @@
 <script setup lang="ts">
 import type { PropType } from "vue";
-import type {
-  PickerPrimitive,
-  PickerRawOption
-} from "@/components/form/picker";
+import type { PickerPrimitive, PickerRawOption } from "@/components/form/picker";
 import type {
   TimePickerHourCycle,
   TimePickerInputValue,
@@ -102,9 +99,7 @@ const emit = defineEmits<{
   cancel: [value: TimePickerInputValue];
 }>();
 
-const selectedTime = shallowRef(
-  parseTimePickerValue(modelValue.value, props.format)
-);
+const selectedTime = shallowRef(parseTimePickerValue(modelValue.value, props.format));
 
 const columnModes = computed(() => {
   return getTimePickerColumnModes(props.hourCycle, props.showSecond);
@@ -128,19 +123,11 @@ const pickerItems = computed<PickerRawOption[][]>(() => {
 });
 
 const pickerValue = computed<PickerPrimitive[]>(() => {
-  return createSelectionFromTime(
-    selectedTime.value,
-    columnModes.value,
-    props.hourCycle
-  );
+  return createSelectionFromTime(selectedTime.value, columnModes.value, props.hourCycle);
 });
 
 const displayText = computed(() => {
-  return formatTimePickerDisplay(
-    selectedTime.value,
-    props.showFormat,
-    props.placeholder
-  );
+  return formatTimePickerDisplay(selectedTime.value, props.showFormat, props.placeholder);
 });
 
 watch(
@@ -157,11 +144,7 @@ const updateModelValue = (value: TimePickerValue) => {
 };
 
 const handlePickerConfirm = (selection: PickerPrimitive[]) => {
-  const time = createTimeFromSelection(
-    selection,
-    columnModes.value,
-    props.hourCycle
-  );
+  const time = createTimeFromSelection(selection, columnModes.value, props.hourCycle);
   const nextValue = formatTimePickerValue(time, props.valueType, props.format);
 
   updateModelValue(nextValue);

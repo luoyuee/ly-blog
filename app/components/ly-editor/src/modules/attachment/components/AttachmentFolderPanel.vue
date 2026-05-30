@@ -35,6 +35,8 @@ const { openModal } = useLyEditorModal();
 const UButton = resolveComponent("UButton");
 const UDropdownMenu = resolveComponent("UDropdownMenu");
 
+const defaultFolderIcon = "icon-park-outline:folder-open";
+
 const data = ref<AttachmentItem[]>([]);
 const currentFolder = ref<AttachmentFolder>({ ...props.tab.data });
 const fileInputRef = useTemplateRef("fileInputRef");
@@ -350,7 +352,10 @@ onMounted(() => {
   <div class="flex h-full flex-col overflow-hidden p-4">
     <div class="mb-4 flex items-center justify-between gap-4">
       <div>
-        <h3 class="text-sm font-medium">{{ currentFolder.name }}</h3>
+        <h3 class="flex items-center gap-1 text-sm font-medium">
+          <UIcon :name="currentFolder.icon || defaultFolderIcon" class="shrink-0" />
+          <span>{{ currentFolder.name }}</span>
+        </h3>
         <p class="text-xs text-gray-400">
           {{ currentFolder.description || "当前目录用于管理文章与页面附件资源。" }}
         </p>

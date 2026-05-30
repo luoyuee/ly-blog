@@ -2,7 +2,7 @@ import type {
   DailyStatistics,
   IpRequestSummary,
   RequestStatsValue
-} from "@@/shared/types/dashboard";
+} from "#shared/types/dashboard";
 import type { InputJsonValue } from "@prisma/client/runtime/client";
 import { useIPLocation } from "@@/server/utils/ip";
 import { prisma } from "@@/server/db";

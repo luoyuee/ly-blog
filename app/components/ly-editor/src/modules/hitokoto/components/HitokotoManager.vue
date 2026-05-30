@@ -3,7 +3,7 @@ import type { HitokotoTypeItem } from "#shared/types/hitokoto";
 import { getAllHitokotoType, deleteHitokotoType } from "@/apis/hitokoto";
 import { useLyEditorTabs } from "@/composables/useLyEditorTabs";
 import { useLyEditorModal } from "@/composables/useLyEditorModal";
-import { LyEditorTabPanel } from "#shared/constants";
+import { LyEditorTabPanelEnum } from "#shared/enums";
 import { SidebarPanel } from "../../../components";
 import Scrollbar from "@/components/scrollbar";
 
@@ -51,9 +51,9 @@ const handleOpenDetailsModal = async (e: HitokotoTypeItem) => {
 
 const handleOpenHitokoto = () => {
   openTabPanel({
-    key: LyEditorTabPanel.HitokotoPanel,
+    key: LyEditorTabPanelEnum.HitokotoPanel,
     label: "一言管理",
-    type: LyEditorTabPanel.HitokotoPanel
+    type: LyEditorTabPanelEnum.HitokotoPanel
   });
 };
 
