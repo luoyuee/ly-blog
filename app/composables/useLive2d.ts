@@ -1,6 +1,9 @@
 import type { Oml2dProperties, Oml2dMethods, Oml2dEvents, ModelOptions } from "oh-my-live2d";
 import { useBreakpoints, useDebounceFn } from "@vueuse/core";
+import { createLogger } from "@/utils/logger";
 import { onUnmounted } from "vue";
+
+const logger = createLogger("useLive2d");
 
 /** oh-my-live2d 实例的联合类型（属性 + 方法 + 事件） */
 type Oml2d = Oml2dProperties & Oml2dMethods & Oml2dEvents;
@@ -263,7 +266,7 @@ export const useLive2d = (): UseLive2dReturn => {
       instance.value = loadOml2d({ models: cachedConfig.models });
       isInitialized.value = true;
     } catch (error) {
-      console.error("[useLive2d] Failed to load oh-my-live2d:", error);
+      logger.error("[useLive2d] Failed to load oh-my-live2d:", error);
     } finally {
       isLoading.value = false;
     }

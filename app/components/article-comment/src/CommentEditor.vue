@@ -3,10 +3,12 @@ import { createArticleComment } from "@/apis/article/comment";
 import { TipTapEditor } from "@/components/tiptap-editor";
 import { MarkdownSupportURL } from "#shared/constants";
 import { useMessage } from "@/composables/useMessage";
+import { useLogger } from "@/composables/useLogger";
 import { useConfigStore } from "@/stores";
 import { getQQInfo, isQQEmail } from "@/utils";
 import { z } from "zod";
 
+const logger = useLogger();
 const $message = useMessage();
 
 const configStore = useConfigStore();
@@ -106,7 +108,7 @@ const handleSubmit = async () => {
     clearData();
     emits("submitted");
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     $message.error("提交失败");
   } finally {
     state.submitting = false;

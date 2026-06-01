@@ -2,9 +2,11 @@
 import type { ImageFolder, ImageItem, ImageSelectItem } from "#shared/types/image";
 import { getAllImageFolder, getPaginatedImages } from "@/apis/image";
 import { BasicModal } from "@/components/basic-modal";
+import { useLogger } from "@/composables/useLogger";
 import { Scrollbar } from "@/components/scrollbar";
 import ImageUploadModal from "./ImageUploadModal.vue";
 
+const logger = useLogger();
 const $message = useMessage();
 
 const emits = defineEmits(["cancel", "confirm", "closed"]);
@@ -104,7 +106,7 @@ const loadImages = async (): Promise<void> => {
     });
 
     imageList.value = imageList.value.concat(response.data);
-    console.log(imageList.value);
+    logger.debug(imageList.value);
     state.total = response.total;
 
     state.more = state.page < Math.ceil(response.total / state.per_page);

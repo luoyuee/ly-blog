@@ -1,8 +1,11 @@
 import type { UpdateClientConfigRequest } from "@/apis/config/models";
 import type { IClientConfig, IClientConfigLocale } from "#shared/types/config";
 import { updateClientConfig } from "@/apis/config";
+import { createLogger } from "@/utils/logger";
 import { defineStore } from "pinia";
 import { AxiosError } from "axios";
+
+const logger = createLogger("config-store");
 
 export const configStore = defineStore("config", {
   state: (): IClientConfig => ({
@@ -36,7 +39,7 @@ export const configStore = defineStore("config", {
         });
         if (data.value) this.$patch(data.value);
       } catch (error) {
-        console.error(error);
+        logger.error(error);
 
         const toast = useToast();
         toast.add({

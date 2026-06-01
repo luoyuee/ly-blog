@@ -1,16 +1,18 @@
 <script setup lang="ts">
 import type { ArticleItem, ArticleCategory } from "#shared/types/article";
 import type { GetArticlePaginatedResponse } from "@/apis/article/models";
-import { BannerImage } from "@/components/banner-image";
 import { NoticeCard, TagCard, LifeCountdownCard, HitokotoCard } from "@/components/mac-card";
 import { ArticleList, ArticleListDivider } from "@/components/article";
+import { BannerImage } from "@/components/banner-image";
+import { useIntersectionObserver } from "@vueuse/core";
 import { getPaginatedArticles } from "@/apis/article";
-import { useRoute } from "vue-router";
-import { AuthorCard } from "@/components/user-card";
 import { PageFooter } from "@/components/page-footer";
 import { useMessage } from "@/composables/useMessage";
-import { useIntersectionObserver } from "@vueuse/core";
+import { AuthorCard } from "@/components/user-card";
+import { useLogger } from "@/composables/useLogger";
+import { useRoute } from "vue-router";
 
+const logger = useLogger();
 const $message = useMessage();
 const route = useRoute();
 
@@ -74,7 +76,7 @@ const loadArticles = async () => {
     state.total = response.total;
   } catch (error) {
     $message.error("加载数据失败");
-    console.error(error);
+    logger.error(error);
   } finally {
     state.loading = false;
   }

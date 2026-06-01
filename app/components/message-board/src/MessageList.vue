@@ -2,10 +2,12 @@
 import type { GetMessagePaginatedResponse } from "@/apis/message/models";
 import type { MessageBoard } from "#shared/types/message";
 import { deleteMessage, getPaginatedMessages } from "@/apis/message";
+import { useMessage } from "@/composables/useMessage";
+import { useLogger } from "@/composables/useLogger";
 import MessageListItem from "./MessageListItem.vue";
 import MessageEditor from "./MessageEditor.vue";
-import { useMessage } from "@/composables/useMessage";
 
+const logger = useLogger();
 const $message = useMessage();
 
 const state = reactive<{
@@ -47,13 +49,13 @@ const loadData = async () => {
       per_page: state.per_page
     });
 
-    console.log("response", response);
+    logger.debug("response", response);
 
     messages.value = response.data;
     state.page = response.page;
     state.total = response.total;
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     $message.error("加载数据失败");
   } finally {
     state.loading = false;
@@ -106,7 +108,7 @@ const handleDelete = async (id: number) => {
     $message.success("删除成功");
     loadData();
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     $message.error("删除失败");
   }
 };

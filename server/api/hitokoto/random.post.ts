@@ -13,14 +13,14 @@ const getHitokotoCount = defineCachedFunction(
     return count;
   },
   {
-    maxAge: 10,
+    maxAge: 10
   }
 );
 
 export default defineEventHandler(async (event) => {
   const schema = z.object({
     max_length: z.coerce.number().int().optional().nullable(),
-    type: z.coerce.number().array().optional().nullable(),
+    type: z.coerce.number().array().optional().nullable()
   });
 
   const { error, data: body } = schema.safeParse(await readBody(event));
@@ -34,7 +34,6 @@ export default defineEventHandler(async (event) => {
   }
   if (body.type && body.type.length > 0) {
     where.type = { in: body.type };
-    console.log(body);
   }
 
   const count = await getHitokotoCount();
@@ -42,7 +41,7 @@ export default defineEventHandler(async (event) => {
   if (count < 1) {
     return getOKResponse(event, {
       id: 0,
-      content: defaultHitokoto,
+      content: defaultHitokoto
     });
   }
 
@@ -55,9 +54,9 @@ export default defineEventHandler(async (event) => {
         type: true,
         author: true,
         source: true,
-        content: true,
+        content: true
       },
-      skip: randomSkip,
+      skip: randomSkip
     });
     if (result) {
       return getOKResponse(event, {
@@ -65,13 +64,13 @@ export default defineEventHandler(async (event) => {
         type: result.type,
         author: result.author,
         source: result.source,
-        content: result.content,
+        content: result.content
       });
     }
   }
 
   return getOKResponse(event, {
     id: 0,
-    content: defaultHitokoto,
+    content: defaultHitokoto
   });
 });

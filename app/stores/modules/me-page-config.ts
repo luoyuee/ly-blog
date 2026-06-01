@@ -2,8 +2,11 @@ import type { UpdateMePageConfigRequest } from "@/apis/config/models";
 import type { IMePageConfig } from "#shared/types/config";
 import { DefaultMePageConfig } from "#shared/constants/default-configs";
 import { getMePageConfig, updateMePageConfig } from "@/apis/config";
+import { createLogger } from "@/utils/logger";
 import { defineStore } from "pinia";
 import { AxiosError } from "axios";
+
+const logger = createLogger("me-page-config-store");
 
 export const mePageConfigStore = defineStore("me-page-config", {
   state: (): IMePageConfig => structuredClone(DefaultMePageConfig),
@@ -17,7 +20,7 @@ export const mePageConfigStore = defineStore("me-page-config", {
 
         this.$patch(data);
       } catch (error) {
-        console.error(error);
+        logger.error(error);
         toast.add({
           title: "获取个人页配置失败！",
           color: "error",

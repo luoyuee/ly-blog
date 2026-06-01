@@ -2,6 +2,7 @@
 import type { ArticleCategoryOption, ArticleItem } from "#shared/types/article";
 import type { TableColumn, SelectItem } from "@nuxt/ui";
 import { Pagination } from "@/components/pagination";
+import { useLogger } from "@/composables/useLogger";
 import {
   getArticleCategoryOptions,
   getAdminPaginatedArticles,
@@ -11,6 +12,7 @@ import { h, resolveComponent } from "vue";
 import dayjs from "dayjs";
 import { openEditorNoteFile } from "../../../utils";
 
+const logger = useLogger();
 const $notify = useNotification();
 const $msgBox = useMessageBox();
 
@@ -38,7 +40,7 @@ const loadCategoryOptions = async () => {
       {}
     );
   } catch (error) {
-    console.error(error);
+    logger.error(error);
   }
 };
 
@@ -193,7 +195,7 @@ const loadData = async () => {
     state.total = res.total;
     data.value = res.data;
   } catch (error) {
-    console.error(error);
+    logger.error(error);
   } finally {
     state.loading = false;
   }

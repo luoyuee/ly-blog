@@ -8,6 +8,9 @@ import { registerFileHandlers } from "./file-handlers";
 import { registerEditorLanguage } from "./language";
 import { initMonaco } from "./monaco";
 import { syncNotePreview } from "./preview-sync";
+import { createLogger } from "@/utils/logger";
+
+const logger = createLogger("ly-editor");
 
 async function handleSaveNote(e: EditorTabItem) {
   if (e.type === "note" && e.data.id) {
@@ -24,7 +27,7 @@ async function handleSaveNote(e: EditorTabItem) {
         item.isChange = false;
       }
     } catch (error) {
-      console.log(error);
+      logger.error(error);
     }
   } else {
     openWorkspaceModal("note-save", e);

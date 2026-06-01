@@ -4,7 +4,9 @@ import type { FleetingThought } from "#shared/types/fleeting-thought";
 import { createFleetingThought, updateFleetingThought } from "@/apis/fleeting-thought";
 import { TipTapEditor } from "@/components/tiptap-editor";
 import { MarkdownSupportURL } from "#shared/constants";
+import { useLogger } from "@/composables/useLogger";
 
+const logger = useLogger();
 const $message = useMessage();
 
 const emits = defineEmits(["submitted", "updated", "cancel"]);
@@ -59,7 +61,7 @@ const handleSubmit = async () => {
     $message.success("提交成功");
     formData.content = "";
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     $message.error("提交失败" + error);
   } finally {
     state.submitting = false;

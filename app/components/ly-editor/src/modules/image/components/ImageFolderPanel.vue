@@ -1,11 +1,14 @@
 <script setup lang="ts">
 import type { PropType } from "vue";
-import { getPaginatedImages } from "@/apis/image";
 import type { ImageItem } from "#shared/types/image";
 import type { EditorTabItem, ImageManagerData } from "#shared/types/ly-editor";
 import { ImageUploadModal, ImageDetailModal } from "@/components/image";
+import { useLogger } from "@/composables/useLogger";
+import { getPaginatedImages } from "@/apis/image";
 import ImageWaterfall from "@/components/image-waterfall";
 import Scrollbar from "@/components/scrollbar";
+
+const logger = useLogger();
 
 const props = defineProps({
   tab: {
@@ -45,7 +48,7 @@ const loadData = async () => {
 
     data.value = res.data;
   } catch (error) {
-    console.error(error);
+    logger.error(error);
   } finally {
     state.loading = false;
   }

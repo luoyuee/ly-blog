@@ -5,11 +5,13 @@ import type { AxiosProgressEvent } from "axios";
 import { SelectLocalFile } from "@/components/form/select";
 import { InputTagArea } from "@/components/form/input";
 import { BasicModal } from "@/components/basic-modal";
+import { useLogger } from "@/composables/useLogger";
 import { uploadImageFile } from "@/apis/image";
 import { ref } from "vue";
 import Viewer from "viewerjs";
 import "viewerjs/dist/viewer.css";
 
+const logger = useLogger();
 const $msgBox = useMessageBox();
 
 const props = defineProps({
@@ -83,7 +85,7 @@ const handleConfirm = async (): Promise<void> => {
 
   for (const fileItem of fileList.value) {
     if (fileItem.status !== "succeed") {
-      console.log(fileItem);
+      logger.debug(fileItem);
 
       fileItem.status = "uploading";
 

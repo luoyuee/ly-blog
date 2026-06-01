@@ -2,10 +2,12 @@
 import type { NoteDashboard } from "@/apis/dashboard/models";
 import { useNotification } from "@/composables/useNotification";
 import { getNoteDashboard } from "@/apis/dashboard";
+import { useLogger } from "@/composables/useLogger";
 import { useResizeObserver } from "@vueuse/core";
 import * as echarts from "echarts";
 import numeral from "numeral";
 
+const logger = useLogger();
 const $notify = useNotification();
 
 const chartRef = ref<HTMLDivElement | null>(null);
@@ -131,7 +133,7 @@ onMounted(async () => {
     await loadData();
     initChart();
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     $notify.error({
       title: "初始化笔记卡片失败",
       error

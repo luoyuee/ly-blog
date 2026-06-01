@@ -1,5 +1,6 @@
 import type { ReadableStream } from "node:stream/web";
 import { resetIPLocationSearcher } from "@@/server/utils/ip";
+import { runtimeLogger } from "@@/server/utils/logger";
 import { getServerConfig } from "@@/server/db/config";
 import { pipeline } from "node:stream/promises";
 import { Readable } from "node:stream";
@@ -279,7 +280,7 @@ export default defineTask({
     }
 
     if (!downloadUrl) {
-      console.log("未配置 CZDB 下载链接，跳过更新");
+      runtimeLogger.info("未配置 CZDB 下载链接，跳过更新");
       return {
         result: {
           ok: true,

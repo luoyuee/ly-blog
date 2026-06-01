@@ -2,11 +2,13 @@
 import { TipTapEditor } from "@/components/tiptap-editor";
 import { MarkdownSupportURL } from "#shared/constants";
 import { useMessage } from "@/composables/useMessage";
+import { useLogger } from "@/composables/useLogger";
 import { getQQInfo, isQQEmail } from "@/utils";
 import { createMessage } from "@/apis/message";
 import { useConfigStore } from "@/stores";
 import { z } from "zod";
 
+const logger = useLogger();
 const $message = useMessage();
 
 const configStore = useConfigStore();
@@ -102,7 +104,7 @@ const handleSubmit = async () => {
     clearFormData();
     emits("submitted");
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     $message.error("提交失败");
   } finally {
     state.submitting = false;

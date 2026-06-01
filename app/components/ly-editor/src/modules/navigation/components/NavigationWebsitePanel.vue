@@ -4,9 +4,11 @@ import type { TableColumn } from "@nuxt/ui";
 import { Pagination } from "@/components/pagination";
 import { getPaginatedNavigationWebsites, deleteNavigationWebsite } from "@/apis/navigation-website";
 import { useLyEditorModal } from "@/composables/useLyEditorModal";
+import { useLogger } from "@/composables/useLogger";
 import { h, resolveComponent } from "vue";
 import dayjs from "dayjs";
 
+const logger = useLogger();
 const $notify = useNotification();
 const $msgBox = useMessageBox();
 
@@ -278,7 +280,7 @@ const loadData = async () => {
     state.total = res.total;
     data.value = res.data;
   } catch (error) {
-    console.error(error);
+    logger.error(error);
   } finally {
     state.loading = false;
   }

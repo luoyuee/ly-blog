@@ -2,15 +2,17 @@
 import type { GetArticlePaginatedResponse } from "@/apis/article/models";
 import type { ArticleItem } from "#shared/types/article";
 import { LifeCountdownCard, TagCard, NoticeCard, HitokotoCard } from "@/components/mac-card";
-import { AuthorCard } from "@/components/user-card";
-import { BannerImage } from "@/components/banner-image";
 import { ArticleList, ArticleListDivider } from "@/components/article";
-import { getPaginatedArticles } from "@/apis/article";
-import { useRoute } from "vue-router";
-import { PageFooter } from "@/components/page-footer";
-import { useMessage } from "@/composables/useMessage";
+import { BannerImage } from "@/components/banner-image";
 import { useIntersectionObserver } from "@vueuse/core";
+import { PageFooter } from "@/components/page-footer";
+import { getPaginatedArticles } from "@/apis/article";
+import { useMessage } from "@/composables/useMessage";
+import { AuthorCard } from "@/components/user-card";
+import { useLogger } from "@/composables/useLogger";
+import { useRoute } from "vue-router";
 
+const logger = useLogger();
 const $message = useMessage();
 const route = useRoute();
 
@@ -64,7 +66,7 @@ const loadArticles = async () => {
     state.total = response.total;
   } catch (error) {
     $message.error("加载数据失败");
-    console.error(error);
+    logger.error(error);
   } finally {
     state.loading = false;
   }

@@ -1,5 +1,6 @@
 import type { EventHandlerRequest, H3Event } from "h3";
 import { requireAccessToken } from "@@/server/utils/auth/access-token";
+import { runtimeLogger } from "@@/server/utils/logger";
 import { UserRoleEnum } from "#shared/enums";
 import { getCookie, setCookie } from "h3";
 import { prisma } from "@@/server/db";
@@ -68,7 +69,7 @@ const resolveAdminSession = async (event: H3Event<EventHandlerRequest>): Promise
     }
   } catch (error) {
     // JWT 解析失败（过期、篡改等），静默处理
-    console.log(String(error));
+    runtimeLogger.debug(String(error));
   }
 };
 

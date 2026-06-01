@@ -4,8 +4,11 @@ import type {
   LyEditorModalItem,
   LyEditorModalKey
 } from "#shared/types/ly-editor";
+import { createLogger } from "@/utils/logger";
 import { getFolderTree } from "@/apis/note";
 import { defineStore } from "pinia";
+
+const logger = createLogger("ly-editor-store");
 
 export interface LyEditorStoreModel {
   editor: {
@@ -85,7 +88,7 @@ export const lyEditorStore = defineStore("ly-editor", {
           "include-file": true
         });
       } catch (error) {
-        console.error(error);
+        logger.error(error);
         const toast = useToast();
         toast.add({
           title: "加载目录失败",
@@ -117,7 +120,7 @@ export const lyEditorStore = defineStore("ly-editor", {
         // 先删除目标项
         this.tabs.splice(index, 1);
 
-        console.log(this.tabs, index);
+        logger.debug(this.tabs, index);
 
         // 如果删除的是当前打开项，按要求设置新的当前项
         if (isCurrent) {

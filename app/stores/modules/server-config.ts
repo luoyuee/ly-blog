@@ -1,8 +1,11 @@
 import type { UpdateServerConfigRequest } from "@/apis/config/models";
 import type { IServerConfig } from "#shared/types/config";
 import { getServerConfig, updateServerConfig } from "@/apis/config";
+import { createLogger } from "@/utils/logger";
 import { defineStore } from "pinia";
 import { AxiosError } from "axios";
+
+const logger = createLogger("server-config-store");
 
 export const serverConfigStore = defineStore("server-config", {
   /**
@@ -29,7 +32,7 @@ export const serverConfigStore = defineStore("server-config", {
 
         this.$patch(data);
       } catch (error) {
-        console.error(error);
+        logger.error(error);
         toast.add({
           title: "获取服务端配置失败！",
           color: "error",

@@ -1,17 +1,23 @@
 <script setup lang="ts">
-import type { SearchHistoryItem as SearchHistoryRecord, SearchTips } from "#shared/types/navigation-website";
-import { useStorage } from "@vueuse/core";
+import type {
+  SearchHistoryItem as SearchHistoryRecord,
+  SearchTips
+} from "#shared/types/navigation-website";
 import { computed, nextTick, onMounted, onUnmounted, reactive, ref, watch } from "vue";
+import { useSearchEngine } from "./composables/useSearchEngine";
+import { useUserStore } from "@/stores/modules/user";
+import { useLogger } from "@/composables/useLogger";
+import { useStorage } from "@vueuse/core";
+import { debounce } from "es-toolkit";
 import {
   createSearchHistory,
   getPaginatedSearchHistories,
   getPublicSearchEngineList,
   searchNavigationWebsites
-} from "~/apis/navigation-website";
+} from "@/apis/navigation-website";
 import jsonp from "#shared/utils/jsonp";
-import { debounce } from "es-toolkit";
-import { useUserStore } from "~/stores/modules/user";
-import { useSearchEngine } from "./composables/useSearchEngine";
+
+const logger = useLogger();
 
 type SearchHistoryStorageItem = Pick<SearchHistoryRecord, "search_engine_id" | "keyword">;
 
@@ -97,7 +103,9 @@ const getDefaultSearchEngineId = () => currentEngine.value?.id ?? engines.value[
 const isSearchHistoryStorageItem = (
   value: SearchHistoryStorageItem | string
 ): value is SearchHistoryStorageItem =>
-  typeof value !== "string" && typeof value.search_engine_id === "number" && typeof value.keyword === "string";
+  typeof value !== "string" &&
+  typeof value.search_engine_id === "number" &&
+  typeof value.keyword === "string";
 
 /**
  * 解析本地历史项，兼容旧版 string[]。
@@ -293,7 +301,9 @@ const addLocalSearchHistory = (keyword: string) => {
   }
 
   const nextHistory = readLocalSearchHistory().filter(
-    (item) => item.search_engine_id !== searchEngineId || item.keyword.toLowerCase() !== normalizedKeyword.toLowerCase()
+    (item) =>
+      item.search_engine_id !== searchEngineId ||
+      item.keyword.toLowerCase() !== normalizedKeyword.toLowerCase()
   );
 
   writeLocalSearchHistory([
@@ -367,7 +377,7 @@ const syncSearchHistory = async () => {
   try {
     await migrateLocalSearchHistory();
   } catch (error) {
-    console.error(error);
+    logger.error(error);
   }
 
   if (syncToken !== searchHistorySyncToken || !isLoggedIn.value) {
@@ -382,7 +392,7 @@ const syncSearchHistory = async () => {
 
     remoteSearchHistory.value = nextRemoteHistory;
   } catch (error) {
-    console.error(error);
+    logger.error(error);
   } finally {
     if (syncToken === searchHistorySyncToken) {
       isRemoteSearchHistoryLoading.value = false;
@@ -393,7 +403,8 @@ const syncSearchHistory = async () => {
 const historyList = computed<SearchHistoryPanelItem[]>(() => {
   const guestHistories = getLocalSearchHistoryKeywords();
   const histories =
-    isLoggedIn.value && !(isRemoteSearchHistoryLoading.value && remoteSearchHistory.value.length === 0)
+    isLoggedIn.value &&
+    !(isRemoteSearchHistoryLoading.value && remoteSearchHistory.value.length === 0)
       ? remoteSearchHistory.value.map((item) => item.keyword)
       : guestHistories;
 
@@ -437,7 +448,7 @@ const loadEngines = async () => {
         }))
     );
   } catch (error) {
-    console.error(error);
+    logger.error(error);
   } finally {
     isSearchHistoryReady.value = true;
     void syncSearchHistory();
@@ -569,7 +580,7 @@ const getSearchTips = debounce(async () => {
     tips.list = temp;
     tipsRef.value?.scrollTo(0, 0);
   } catch (error) {
-    console.log(error);
+    logger.debug(error);
   }
 }, 250);
 
@@ -712,7 +723,7 @@ const handleSearch = (selectedItem?: SearchPanelItem) => {
         });
         remoteSearchHistory.value = await loadRemoteSearchHistory();
       } catch (error) {
-        console.error(error);
+        logger.error(error);
       }
     })();
   } else {
@@ -829,7 +840,11 @@ defineExpose({
         >
           {{ item.text }}
         </div>
-        <div v-else-if="item.type === 'link'" class="search-box__tip-link" @click="handleClickTip(item)">
+        <div
+          v-else-if="item.type === 'link'"
+          class="search-box__tip-link"
+          @click="handleClickTip(item)"
+        >
           <img :src="item.icon" :alt="item.text" />
           <div>
             <h5>{{ item.text }}</h5>

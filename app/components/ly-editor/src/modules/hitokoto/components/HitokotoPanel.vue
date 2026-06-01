@@ -3,6 +3,7 @@ import type { HitokotoItem, HitokotoTypeItem } from "#shared/types/hitokoto";
 import type { TableColumn, SelectItem } from "@nuxt/ui";
 import { useLyEditorModal } from "@/composables/useLyEditorModal";
 import { Pagination } from "@/components/pagination";
+import { useLogger } from "@/composables/useLogger";
 import { downloadFile } from "@/utils/file";
 import { h, resolveComponent } from "vue";
 import { useI18n } from "vue-i18n";
@@ -14,6 +15,7 @@ import {
 } from "@/apis/hitokoto";
 import dayjs from "dayjs";
 
+const logger = useLogger();
 const $notify = useNotification();
 const $msgBox = useMessageBox();
 const { t } = useI18n();
@@ -41,7 +43,7 @@ const loadTypeOptions = async () => {
       return map;
     }, {});
   } catch (error) {
-    console.error(error);
+    logger.error(error);
   }
 };
 
@@ -205,7 +207,7 @@ const loadData = async () => {
     state.total = res.total;
     data.value = res.data;
   } catch (error) {
-    console.error(error);
+    logger.error(error);
   } finally {
     state.loading = false;
   }

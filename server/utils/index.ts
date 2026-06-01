@@ -1,5 +1,5 @@
+import { runtimeLogger } from "@@/server/utils/logger";
 import crypto from "crypto";
-
 import axios from "axios";
 
 export async function getQQInfo(qq: string): Promise<{ nickname: string; avatar: string }> {
@@ -15,37 +15,10 @@ export async function getQQInfo(qq: string): Promise<{ nickname: string; avatar:
       result.nickname = response.data.result.nickname;
     }
   } catch (error) {
-    console.error(error);
+    runtimeLogger.error(error);
   }
 
   return result;
-}
-
-export function saveFile(
-  data: Blob,
-  options?: {
-    filename?: string;
-  }
-) {
-  const url = URL.createObjectURL(data);
-
-  const now = new Date();
-  const year = now.getFullYear();
-  const month = String(now.getMonth() + 1).padStart(2, "0");
-  const day = String(now.getDate()).padStart(2, "0");
-  const hours = String(now.getHours()).padStart(2, "0");
-  const minutes = String(now.getMinutes()).padStart(2, "0");
-  const seconds = String(now.getSeconds()).padStart(2, "0");
-  const defaultName = `${year}-${month}-${day}-${hours}-${minutes}-${seconds}`;
-
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = options ? (options.filename ?? defaultName) : defaultName;
-  document.body.appendChild(a);
-  a.click();
-
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
 }
 
 export const getHash = (buffer: Buffer) => {
