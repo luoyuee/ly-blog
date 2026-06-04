@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Descriptions, DescriptionsItem } from "@/components/descriptions-v2";
+import { Descriptions, DescriptionsItem } from "@/components/descriptions";
 
 definePageMeta({
   layout: "blank"

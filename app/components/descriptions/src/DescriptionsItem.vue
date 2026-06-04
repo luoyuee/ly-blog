@@ -1,24 +1,22 @@
 <script setup lang="ts">
-const props = defineProps({
-  label: {
-    type: String,
-    default: ""
-  },
-  content: {
-    type: [String, Number, Boolean, Object, Array],
-    default: ""
-  }
+export interface Props {
+  label?: string; // 内容的描述标签 string | slot
+  span?: number; // 包含列的数量；当使用水平列表且未设置 span 时等效于 span: 1，但最后一行的最后一项，会包含该行剩余的所有列数
+}
+withDefaults(defineProps<Props>(), {
+  label: undefined,
+  span: undefined
 });
 </script>
 <template>
-  <tr>
-    <td class="border-1 border-white/20 bg-white/5 py-1 px-2 text-nowrap w-0">
-      {{ props.label }}
-    </td>
-    <td class="border-1 border-white/20 py-1 px-2 text-sm break-all">
-      <slot>
-        {{ props.content }}
-      </slot>
+  <tr :data-span="span">
+    <th
+      class="border-r border-muted bg-elevated/50 dark:bg-elevated text-start font-normal text-highlighted last:border-r-0"
+    >
+      <slot name="label">{{ label }}</slot>
+    </th>
+    <td class="table-cell flex-1 wrap-break-word border-r border-muted text-toned last:border-r-0">
+      <slot></slot>
     </td>
   </tr>
 </template>

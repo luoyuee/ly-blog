@@ -1,9 +1,10 @@
 <script setup lang="ts">
+import type { PropType } from "vue";
 import type {
   HitokotoTypeDetailsModalPayload,
   HitokotoTypeDetailsModalResult
 } from "#shared/types/ly-editor";
-import { Descriptions, DescriptionsItem } from "@/components/descriptions-v2";
+import { Descriptions, DescriptionsItem } from "@/components/descriptions";
 import { getHitokotoDetails } from "@/apis/hitokoto";
 import { BasicModal } from "@/components/basic-modal";
 import dayjs from "dayjs";
@@ -50,7 +51,7 @@ const handleCancel = () => {
 </script>
 <template>
   <BasicModal v-model:visible="visible" title="分类详情">
-    <Descriptions class="w-full">
+    <Descriptions class="w-full" :column="1">
       <DescriptionsItem label="分类名称">{{ data.name }}</DescriptionsItem>
       <DescriptionsItem label="分类描述">{{ data.description }}</DescriptionsItem>
       <DescriptionsItem label="创建日期">

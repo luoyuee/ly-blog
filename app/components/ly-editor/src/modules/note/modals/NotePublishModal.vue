@@ -325,7 +325,7 @@ const handleChangePinned = () => {
           </div>
 
           <div class="w-[320px] space-y-2 shrink-0">
-            <Descriptions>
+            <Descriptions :column="1">
               <DescriptionsItem label="文章来源">
                 {{ note?.name || $t("placeholder.hyphen") }}
               </DescriptionsItem>
@@ -376,7 +376,11 @@ const handleChangePinned = () => {
               <UInput v-model="formData.custom_url" placeholder="可选" />
             </UFormField>
 
-            <UFormField v-if="formData.custom_url" label="仅自定义链接访问" name="custom_url_access_only">
+            <UFormField
+              v-if="formData.custom_url"
+              label="仅自定义链接访问"
+              name="custom_url_access_only"
+            >
               <USwitch v-model="formData.custom_url_access_only" />
             </UFormField>
 

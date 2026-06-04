@@ -6,8 +6,8 @@ import { fileURLToPath } from "node:url";
  */
 export const devPages = [
   {
-    name: "dev-descriptions-v2",
-    path: "/test/descriptions-v2",
-    file: fileURLToPath(new URL("./descriptions-v2.vue", import.meta.url))
+    name: "dev-descriptions",
+    path: "/test/descriptions",
+    file: fileURLToPath(new URL("./descriptions.vue", import.meta.url))
   }
 ];
