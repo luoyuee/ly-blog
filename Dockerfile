@@ -24,14 +24,21 @@ ENV NODE_OPTIONS="--max-old-space-size=8192"
 # 依赖安装与构建
 #################################################################
 
-COPY package.json package-lock.json* ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 
-RUN if [ -f package-lock.json ]; then npm ci; else npm install; fi
+# 优先使用镜像内已提供的 corepack，如不存在则通过 npm 全局安装
+RUN corepack --version || npm install -g corepack
+# 启用 corepack 对包管理器的代理能力
+RUN corepack enable
+# 优先读取 package.json 中声明的 packageManager，缺失时回退到 pnpm@11.5.1
+RUN corepack prepare "$(node -p "require('./package.json').packageManager || 'pnpm@11.5.1'")" --activate
+# 严格按照 pnpm 锁文件安装依赖，确保容器内外依赖版本一致
+RUN pnpm install --frozen-lockfile
 
 COPY . .
 
-RUN npm run prisma:generate
-RUN npm run build
+RUN pnpm run prisma:generate
+RUN pnpm run build
 
 #################################################################
 # 运行配置
@@ -67,6 +74,6 @@ CMD ["./run-prod.sh"]
 # - -p 9005:3000 将宿主机 9005 端口映射到容器 3000
 # - data 目录通过挂载实现数据持久化
 # - 这些目录已在 .dockerignore 中忽略，不会被打包进镜像
-# - 其他代码和依赖由镜像在构建阶段通过 npm 安装和构建
+# - 其他代码和依赖由镜像在构建阶段通过 pnpm 安装和构建
 #################################################################
 
