@@ -1,6 +1,7 @@
 {
   "name": "ly-blog",
   "version": "0.11.2",
+  "packageManager": "pnpm@11.5.1",
   "type": "module",
   "private": true,
   "scripts": {
@@ -23,7 +24,7 @@
   "dependencies": {
     "@internationalized/date": "^3.12.0",
     "@monaco-editor/loader": "^1.7.0",
-    "@nuxt/ui": "4.6.1",
+    "@nuxt/ui": "4.8.1",
     "@nuxtlabs/monarch-mdc": "^0.8.1",
     "@pinia/nuxt": "^0.11.3",
     "@prisma/adapter-pg": "^7.2.0",
@@ -63,7 +64,7 @@
     "monaco-editor": "^0.55.1",
     "nodemailer": "^7.0.12",
     "numeral": "^2.0.6",
-    "nuxt": "^4.4.4",
+    "nuxt": "^4.4.7",
     "oh-my-live2d": "^0.19.3",
     "pg": "^8.16.3",
     "pg-copy-streams": "^7.0.0",
@@ -118,12 +119,5 @@
     "svgo": "^4.0.0",
     "tailwindcss": "^4.1.18",
     "typescript": "^5.9.3"
-  },
-  "pnpm": {
-    "overrides": {
-      "@tiptap/core": "3.22.4",
-      "@tiptap/pm": "3.22.4",
-      "@tiptap/vue-3": "3.22.4"
-    }
   }
 }
