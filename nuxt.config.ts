@@ -1,11 +1,15 @@
-import tailwindcss from "@tailwindcss/vite";
 import { devPages } from "./app/dev-pages";
+import { fileURLToPath } from "node:url";
 import injectMetadata from "./vite-config/inject-metadata";
+import tailwindcss from "@tailwindcss/vite";
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   compatibilityDate: "2025-07-15",
   devtools: { enabled: false },
+  alias: {
+    "@ly-editor": fileURLToPath(new URL("./app/components/ly-editor", import.meta.url))
+  },
   // sourcemap: false,
   devServer: {
     host: "0.0.0.0",

@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import type { ImageFolder } from "#shared/types/image";
+import { SidebarPanel, SidebarPanelListItem } from "@ly-editor/src/components";
+import { useLyEditorModal } from "@/composables/useLyEditorModal";
 import { LyEditorTabPanelEnum } from "#shared/enums";
-import { SidebarPanel } from "../../../components";
 import { getAllImageFolder } from "@/apis/image";
 import { useLyEditorStore } from "@/stores";
 import Scrollbar from "@/components/scrollbar";
 
 const lyEditorStore = useLyEditorStore();
+const { openModal } = useLyEditorModal();
 
 const data = ref<ImageFolder[]>([]);
 const loading = ref(false);
@@ -31,8 +33,8 @@ onMounted(() => {
   loadData();
 });
 
-const handleOpenFormModal = async (e?: ImageFolder) => {
-  const result = await openWorkspaceModal("image-folder-form", e);
+const handleOpenFormModal = async (record?: ImageFolder) => {
+  const result = await openModal("image-folder-form", record);
 
   if (result.action === "submitted") {
     await loadData();
@@ -64,62 +66,34 @@ const actions = [
   <SidebarPanel title="图片管理器" :loading="loading" :actions="actions">
     <div class="flex-1 overflow-hidden">
       <Scrollbar class="h-full">
-        <div
+        <SidebarPanelListItem
           v-for="item in data"
           :key="item.id"
-          class="flex p-2 hover:bg-gray-100/5 cursor-pointer"
+          :image="item.cover ? `/static/image/${item.cover}` : '/images/no_pictures.svg'"
+          :title="item.name"
+          :description="item.description"
+          :meta-items="[{ text: item.count, icon: 'custom:pic' }]"
+          :action-items="[
+            {
+              label: '重命名',
+              icon: 'ep:edit',
+              onSelect: () => {
+                handleOpenFormModal(item);
+              }
+            },
+            {
+              label: '目录详情',
+              icon: 'ep:warning'
+            },
+            {
+              label: '删除目录',
+              icon: 'ep:delete',
+              color: 'error',
+              disabled: item.is_system
+            }
+          ]"
           @click="handleOpenImageFolder(item)"
-        >
-          <img
-            class="w-16 h-16 rounded object-cover"
-            :src="item.cover ? `/static/image/${item.cover}` : '/images/no_pictures.svg'"
-            alt="cover"
-          />
-          <div class="pl-2 flex-1 overflow-hidden flex flex-col">
-            <h6 class="truncate">{{ item.name }}</h6>
-            <p class="flex-1 text-xs text-gray-400 truncate">
-              {{ item.description }}
-            </p>
-            <div class="flex justify-between items-center leading-none">
-              <div class="text-xs flex items-center gap-1">
-                <UIcon name="custom:pic" />
-                {{ item.count }}
-              </div>
-              <div class="flex items-center gap-1" @click.stop>
-                <UDropdownMenu
-                  :items="[
-                    {
-                      label: '重命名',
-                      icon: 'ep:edit',
-                      onSelect: () => {
-                        handleOpenFormModal(item);
-                      }
-                    },
-                    {
-                      label: '目录详情',
-                      icon: 'ep:warning'
-                    },
-                    {
-                      label: '删除目录',
-                      icon: 'ep:delete',
-                      color: 'error',
-                      disabled: item.is_system
-                    }
-                  ]"
-                  :content="{
-                    align: 'start',
-                    side: 'bottom',
-                    sideOffset: 8
-                  }"
-                >
-                  <UTooltip text="设置">
-                    <UIcon name="custom:setting" class="hover:text-gray-400" :size="16" />
-                  </UTooltip>
-                </UDropdownMenu>
-              </div>
-            </div>
-          </div>
-        </div>
+        />
       </Scrollbar>
     </div>
   </SidebarPanel>

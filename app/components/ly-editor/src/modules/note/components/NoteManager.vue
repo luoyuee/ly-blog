@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { SidebarPanel } from "../../../components";
+import { SidebarPanel } from "@ly-editor/src/components";
 import { useLyEditorModal } from "@/composables/useLyEditorModal";
 import { useLyEditorStore } from "@/stores";
 import { lyEditorEmitter } from "@/events";

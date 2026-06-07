@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { EditorTabItem } from "#shared/types/ly-editor";
+import type { ContextMenuItem } from "@nuxt/ui";
 import { VueDraggable } from "vue-draggable-plus";
 import { useLyEditorStore } from "@/stores";
 import { lyEditorEmitter } from "@/events";
@@ -15,15 +16,81 @@ const handleChangeTab = (e: EditorTabItem) => {
   }
 };
 
-const handleCloseTab = (e: EditorTabItem) => {
-  lyEditorStore.removeTabItem(e.key);
-
-  lyEditorEmitter.emit("cmd.editor-core:close:file", e);
-
+/**
+ * 切换到关闭标签后 Pinia 自动选中的笔记标签。
+ */
+const switchCurrentNoteTab = () => {
   const next = lyEditorStore.getCurrentTabItem();
+
   if (next && next.type === "note") {
     lyEditorEmitter.emit("cmd.editor-core:switch:file", next);
   }
+};
+
+/**
+ * 批量关闭标签，并通知编辑器核心同步文件状态。
+ */
+const closeTabs = (items: EditorTabItem[]) => {
+  items.forEach((item) => {
+    lyEditorStore.removeTabItem(item.key);
+    lyEditorEmitter.emit("cmd.editor-core:close:file", item);
+  });
+
+  switchCurrentNoteTab();
+};
+
+const handleCloseTab = (e: EditorTabItem) => {
+  closeTabs([e]);
+};
+
+const getRightTabs = (e: EditorTabItem) => {
+  const index = lyEditorStore.tabs.findIndex((item) => item.key === e.key);
+
+  return index === -1 ? [] : lyEditorStore.tabs.slice(index + 1);
+};
+
+const getSavedTabs = () => lyEditorStore.tabs.filter((item) => !item.isChange);
+
+const getContextMenuItems = (e: EditorTabItem): ContextMenuItem[] => {
+  const rightTabs = getRightTabs(e);
+  const savedTabs = getSavedTabs();
+
+  return [
+    {
+      label: "关闭",
+      onSelect: () => {
+        closeTabs([e]);
+      }
+    },
+    {
+      label: "关闭其他",
+      disabled: lyEditorStore.tabs.length <= 1,
+      onSelect: () => {
+        closeTabs(lyEditorStore.tabs.filter((item) => item.key !== e.key));
+      }
+    },
+    {
+      label: "关闭右侧标签页",
+      disabled: rightTabs.length === 0,
+      onSelect: () => {
+        closeTabs(rightTabs);
+      }
+    },
+    {
+      label: "关闭已保存",
+      disabled: savedTabs.length === 0,
+      onSelect: () => {
+        closeTabs(savedTabs);
+      }
+    },
+    {
+      label: "全部关闭",
+      disabled: lyEditorStore.tabs.length === 0,
+      onSelect: () => {
+        closeTabs([...lyEditorStore.tabs]);
+      }
+    }
+  ];
 };
 
 const scrollbarRef = useTemplateRef("scrollbarRef");
@@ -38,25 +105,32 @@ const handleWheel = (e: WheelEvent) => {
     <Scrollbar ref="scrollbarRef" :height="34" class="w-full" mouse-wheel="horizontal">
       <VueDraggable v-model="lyEditorStore.tabs" target=".editor-tab-bar" :animation="150">
         <div class="editor-tab-bar" @wheel="handleWheel">
-          <div
+          <UContextMenu
             v-for="item in lyEditorStore.tabs"
             :key="item.key"
-            class="editor-tab-bar__item"
-            :class="{
-              'editor-tab-bar__item--active': lyEditorStore.currentTab === item.key,
-              'editor-tab-bar__item--changed': item.isChange
-            }"
-            @click="handleChangeTab(item)"
+            :items="getContextMenuItems(item)"
           >
-            <span class="editor-tab-bar__item-label">{{ item.label }}</span>
-            <span class="editor-tab-bar__item-action" @click.stop="handleCloseTab(item)">
-              <UIcon class="editor-tab-bar__icon editor-tab-bar__icon--change" name="custom:dot" />
-              <UIcon
-                class="editor-tab-bar__icon editor-tab-bar__icon--close"
-                name="custom:close-small"
-              />
-            </span>
-          </div>
+            <div
+              class="editor-tab-bar__item"
+              :class="{
+                'editor-tab-bar__item--active': lyEditorStore.currentTab === item.key,
+                'editor-tab-bar__item--changed': item.isChange
+              }"
+              @click="handleChangeTab(item)"
+            >
+              <span class="editor-tab-bar__item-label">{{ item.label }}</span>
+              <span class="editor-tab-bar__item-action" @click.stop="handleCloseTab(item)">
+                <UIcon
+                  class="editor-tab-bar__icon editor-tab-bar__icon--change"
+                  name="custom:dot"
+                />
+                <UIcon
+                  class="editor-tab-bar__icon editor-tab-bar__icon--close"
+                  name="custom:close-small"
+                />
+              </span>
+            </div>
+          </UContextMenu>
         </div>
       </VueDraggable>
     </Scrollbar>

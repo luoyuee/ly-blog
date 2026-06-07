@@ -4,7 +4,7 @@ import { getAllAttachmentFolder, deleteAttachmentFolder } from "@/apis/attachmen
 import { useLyEditorModal } from "@/composables/useLyEditorModal";
 import { useLyEditorTabs } from "@/composables/useLyEditorTabs";
 import { LyEditorTabPanelEnum } from "#shared/enums";
-import { SidebarPanel } from "../../../components";
+import { SidebarPanel, SidebarPanelListItem } from "@ly-editor/src/components";
 import Scrollbar from "@/components/scrollbar";
 import numeral from "numeral";
 
@@ -13,8 +13,6 @@ const $msgBox = useMessageBox();
 
 const { openTabPanel } = useLyEditorTabs();
 const { openModal } = useLyEditorModal();
-
-const defaultFolderIcon = "icon-park-outline:folder-open";
 
 const data = ref<AttachmentFolder[]>([]);
 const loading = ref(false);
@@ -100,66 +98,35 @@ const actions = [
   <SidebarPanel title="附件管理器" :loading="loading" :actions="actions">
     <div class="flex-1 overflow-hidden">
       <Scrollbar class="h-full">
-        <div
+        <SidebarPanelListItem
           v-for="item in data"
           :key="item.id"
-          class="flex items-start gap-3 p-3 hover:bg-gray-100/5 cursor-pointer"
+          :icon="item.icon || 'icon-park-outline:folder-open'"
+          :title="item.name"
+          :description="item.description"
+          :meta-items="[
+            { text: item.count, icon: 'ep:document' },
+            { text: numeral(item.size).format('0.0 b'), icon: 'icon-park-outline:solid-state-disk' }
+          ]"
+          :action-items="[
+            {
+              label: '重命名',
+              icon: 'ep:edit',
+              onSelect: () => {
+                handleOpenFormModal(item);
+              }
+            },
+            {
+              label: '删除目录',
+              icon: 'ep:delete',
+              color: 'error',
+              onSelect: () => {
+                handleDeleteFolder(item);
+              }
+            }
+          ]"
           @click="handleOpenAttachmentFolder(item)"
-        >
-          <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-gray-100/5">
-            <UIcon :name="item.icon || defaultFolderIcon" class="text-lg text-gray-300" />
-          </div>
-
-          <div class="min-w-0 flex-1">
-            <div class="flex items-start justify-between gap-2">
-              <div class="min-w-0">
-                <h6 class="truncate">{{ item.name }}</h6>
-                <p class="truncate text-xs text-gray-400">
-                  {{ item.description || "暂无目录描述" }}
-                </p>
-              </div>
-
-              <div class="flex items-center gap-1" @click.stop>
-                <UDropdownMenu
-                  :items="[
-                    {
-                      label: '重命名',
-                      icon: 'ep:edit',
-                      onSelect: () => {
-                        handleOpenFormModal(item);
-                      }
-                    },
-                    {
-                      label: '删除目录',
-                      icon: 'ep:delete',
-                      color: 'error',
-                      onSelect: () => {
-                        handleDeleteFolder(item);
-                      }
-                    }
-                  ]"
-                  :content="{
-                    align: 'start',
-                    side: 'bottom',
-                    sideOffset: 8
-                  }"
-                >
-                  <UTooltip text="设置">
-                    <UIcon name="custom:setting" class="hover:text-gray-400" :size="16" />
-                  </UTooltip>
-                </UDropdownMenu>
-              </div>
-            </div>
-
-            <div class="mt-2 flex items-center gap-3 text-xs text-gray-400">
-              <span class="flex items-center gap-1">
-                <UIcon name="ep:document" />
-                {{ item.count }}
-              </span>
-              <span>{{ numeral(item.size).format("0.0 b") }}</span>
-            </div>
-          </div>
-        </div>
+        />
       </Scrollbar>
     </div>
   </SidebarPanel>

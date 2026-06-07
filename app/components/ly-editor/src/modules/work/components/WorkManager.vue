@@ -2,7 +2,7 @@
 import type { WorkItem } from "#shared/types/config";
 import { useLyEditorModal } from "@/composables/useLyEditorModal";
 import { getWorkConfig, updateWorkConfig } from "@/apis/config";
-import { SidebarPanel } from "../../../components";
+import { SidebarPanel } from "@ly-editor/src/components";
 import { VueDraggable } from "vue-draggable-plus";
 import Scrollbar from "@/components/scrollbar";
 

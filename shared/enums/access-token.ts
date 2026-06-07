@@ -14,3 +14,20 @@ export type AccessTokenScope = (typeof AccessTokenScopeEnum)[keyof typeof Access
 
 /** 访问令牌权限范围值列表 */
 export const ACCESS_TOKEN_SCOPES = Object.values(AccessTokenScopeEnum);
+
+/**
+ * 访问令牌危险等级枚举
+ * @description 定义权限范围的危险程度
+ */
+export const AccessTokenDangerLevelEnum = {
+  /** 安全 */
+  SAFE: 1,
+  /** 警告 */
+  WARNING: 2,
+  /** 危险 */
+  DANGER: 3
+} as const;
+
+/** 访问令牌危险等级类型 */
+export type AccessTokenDangerLevel =
+  (typeof AccessTokenDangerLevelEnum)[keyof typeof AccessTokenDangerLevelEnum];

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { AccessTokenItem } from "#shared/types/access-token";
 import type { TableColumn } from "@nuxt/ui";
-import { Pagination } from "@/components/pagination";
+import { TabPanelTable } from "@ly-editor/src/components";
 import { disableAccessToken, getPaginatedAccessTokens } from "@/apis/access-token";
 import { useLyEditorModal } from "@/composables/useLyEditorModal";
 import { h, resolveComponent } from "vue";
@@ -277,35 +277,20 @@ const handleDisable = (record: AccessTokenItem) => {
 </script>
 
 <template>
-  <div class="flex h-full flex-col gap-4 overflow-hidden p-4">
-    <div class="flex items-center justify-between gap-4">
+  <TabPanelTable
+    v-model:page="state.page"
+    v-model:page-size="state.per_page"
+    :loading="state.loading"
+    :data="data"
+    :columns="columns"
+    :total="state.total"
+    @refresh="loadData"
+  >
+    <template #header-left>
       <div class="flex items-center gap-2">
         <UButton icon="ep:plus" @click="handleOpenFormModal()">新建令牌</UButton>
         <UButton icon="ep:refresh" color="neutral" variant="soft" @click="loadData">刷新</UButton>
       </div>
-    </div>
-
-    <div class="flex-1 overflow-hidden rounded-md border border-muted">
-      <UTable
-        sticky
-        class="max-h-full flex-1"
-        :loading="state.loading"
-        :data="data"
-        :columns="columns"
-        :ui="{
-          th: 'bg-white/8',
-          tr: 'hover:bg-white/5',
-          td: 'whitespace-normal'
-        }"
-      />
-    </div>
-
-    <Pagination
-      v-model:page="state.page"
-      v-model:page-size="state.per_page"
-      :total="state.total"
-      @update:page="loadData"
-      @update:page-size="loadData"
-    />
-  </div>
+    </template>
+  </TabPanelTable>
 </template>

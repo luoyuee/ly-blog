@@ -4,7 +4,7 @@ import { getAllHitokotoType, deleteHitokotoType } from "@/apis/hitokoto";
 import { useLyEditorTabs } from "@/composables/useLyEditorTabs";
 import { useLyEditorModal } from "@/composables/useLyEditorModal";
 import { LyEditorTabPanelEnum } from "#shared/enums";
-import { SidebarPanel } from "../../../components";
+import { SidebarPanel } from "@ly-editor/src/components";
 import Scrollbar from "@/components/scrollbar";
 
 const $notify = useNotification();

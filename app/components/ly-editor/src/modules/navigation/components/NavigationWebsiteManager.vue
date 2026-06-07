@@ -3,7 +3,7 @@ import { LyEditorTabPanelEnum } from "#shared/enums";
 import ShortcutSection from "./ShortcutSection.vue";
 import SearchEngineSection from "./SearchEngineSection.vue";
 import { useLyEditorTabs } from "@/composables/useLyEditorTabs";
-import { SidebarPanel } from "../../../components";
+import { SidebarPanel } from "@ly-editor/src/components";
 
 const { openTabPanel } = useLyEditorTabs();
 

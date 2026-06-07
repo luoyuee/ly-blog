@@ -4,7 +4,7 @@ import { getAllArticleCategory, deleteArticleCategory } from "@/apis/article";
 import { useLyEditorModal } from "@/composables/useLyEditorModal";
 import { useLyEditorTabs } from "@/composables/useLyEditorTabs";
 import { LyEditorTabPanelEnum } from "#shared/enums";
-import { SidebarPanel } from "../../../components";
+import { SidebarPanel } from "@ly-editor/src/components";
 import { lyEditorEmitter } from "@/events";
 import Scrollbar from "@/components/scrollbar";
 
