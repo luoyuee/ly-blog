@@ -2,7 +2,7 @@
 import type { PropType } from "vue";
 import type { TableColumn } from "@nuxt/ui";
 import { Pagination } from "@/components/pagination";
-import TabPanelHeader from "./TabPanelHeader.vue.vue";
+import TabPanelHeader from "./TabPanelHeader.vue";
 
 const props = defineProps({
   data: {

@@ -1,34 +1,19 @@
 <script setup lang="ts">
-// import { initEditor } from "./editor";
 import { onBeforeUnmount, onMounted, useTemplateRef } from "vue";
-import monacoLoader from "@monaco-editor/loader";
+import { initEditor } from "./editor";
 
 const monacoEditorRef = useTemplateRef("monacoEditorRef");
 let disposeEditor: (() => void) | undefined;
 
 onMounted(async () => {
-  if (monacoEditorRef.value) {
-    // const monacoPackage = await import("monaco-editor");
+  if (!monacoEditorRef.value) return;
 
-    // monacoLoader.config();
+  const editor = await initEditor(monacoEditorRef.value);
+  if (!editor) return;
 
-    const monaco = await monacoLoader.init();
-
-    const monacoEditor = monaco.editor.create(monacoEditorRef.value, {
-      language: "mdc",
-      theme: "vs-dark",
-      model: null,
-      automaticLayout: true
-    });
-
-    // initEditor(monacoEditorRef.value).then((editor) => {
-    //   if (!editor) return;
-
-    //   disposeEditor = () => {
-    //     editor.dispose();
-    //   };
-    // });
-  }
+  disposeEditor = () => {
+    editor.dispose();
+  };
 });
 
 onBeforeUnmount(() => {

@@ -21,7 +21,7 @@ import {
   SendEmailModal,
   ShortcutFormModal,
   WorkFormModal
-} from "../modules";
+} from "@ly-editor/src/modules";
 
 /**
  * 工作台弹窗注册表。

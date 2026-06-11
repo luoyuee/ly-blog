@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { lyEditorModalRegistry } from "../registry";
+import { lyEditorModalRegistry } from "@ly-editor/src/registry";
 import { useLyEditorModal } from "@/composables/useLyEditorModal";
 import { useLyEditorStore } from "@/stores";
 

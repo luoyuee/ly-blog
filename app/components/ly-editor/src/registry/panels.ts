@@ -12,7 +12,7 @@ import {
   NavigationWebsitePanel,
   SettingPanel,
   UserPanel
-} from "../modules";
+} from "@ly-editor/src/modules";
 
 /**
  * 工作台面板注册表。
@@ -63,3 +63,5 @@ export const lyEditorPanelRegistry = {
     keepAlive: true
   }
 } satisfies Record<string, LyEditorPanelRegistryItem>;
+
+export type LyEditorPanelKey = keyof typeof lyEditorPanelRegistry;

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { LyEditorSidebarMenuKey } from "../registry";
-import { lyEditorSidebarRegistry } from "../registry";
+import type { LyEditorSidebarMenuKey } from "@ly-editor/src/registry";
+import { lyEditorSidebarRegistry } from "@ly-editor/src/registry";
 import { useLyEditorStore } from "@/stores";
 
 const lyEditorStore = useLyEditorStore();

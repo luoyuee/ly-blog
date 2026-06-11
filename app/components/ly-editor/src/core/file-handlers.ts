@@ -1,13 +1,13 @@
 import type { EditorTabItem } from "#shared/types/ly-editor";
 import { lyEditorEmitter } from "@/events";
 import dayjs from "dayjs";
-import { getEditorFilePath } from "../utils";
+import { getEditorFilePath } from "@ly-editor/src/utils";
 
 /**
  * 绑定文件相关事件。
  */
 export const registerFileHandlers = (
-  monacoPackage: Awaited<ReturnType<typeof import("monaco-editor")>>,
+  monacoPackage: typeof import("monaco-editor"),
   monacoEditor: import("monaco-editor").editor.IStandaloneCodeEditor,
   lyEditorStore: ReturnType<typeof useLyEditorStore>,
   handleOpenFile: (path: string) => void
@@ -82,12 +82,7 @@ export const registerFileHandlers = (
 
     monacoEditor.executeEdits("", [
       {
-        range: new monacoPackage.Range(
-          startLineNumber,
-          startColumn - 1,
-          endLineNumber,
-          endColumn
-        ),
+        range: new monacoPackage.Range(startLineNumber, startColumn - 1, endLineNumber, endColumn),
         text,
         forceMoveMarkers: true
       }

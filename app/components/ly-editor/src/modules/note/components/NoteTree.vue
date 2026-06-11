@@ -1,9 +1,12 @@
 <script setup lang="ts">
 import type { FolderTreeItem } from "#shared/types/ly-editor";
-import { getEditorFilePath } from "../../../utils";
+import { getEditorFilePath } from "@ly-editor/src/utils";
 import { lyEditorEmitter } from "@/events";
+import { useLyEditorModal } from "@/composables/useLyEditorModal";
 import { getNoteDetail } from "@/apis/note";
 import dayjs from "dayjs";
+
+const { openModal } = useLyEditorModal();
 
 const modelValue = defineModel<FolderTreeItem[]>({
   default: () => []
@@ -49,12 +52,24 @@ const handleOpenFile = async (data: FolderTreeItem) => {
   }
 };
 
-const handlePublishNote = (data: FolderTreeItem) => {
-  openWorkspaceModal("note-publish", data).then((result) => {
-    if (result.action === "published") {
-      lyEditorEmitter.emit("cmd.note-manager:reload");
-    }
+const handlePublishNote = async (data: FolderTreeItem) => {
+  const result = await openModal("note-publish", data);
+
+  if (result.action === "published") {
+    lyEditorEmitter.emit("cmd.note-manager:reload");
+  }
+};
+
+const handleRenameFolder = async (data: FolderTreeItem) => {
+  const result = await openModal("note-folder-form", {
+    id: data.id,
+    parent_id: data.parent_id,
+    name: data.name
   });
+
+  if (result.action === "submitted") {
+    lyEditorEmitter.emit("cmd.note-manager:reload");
+  }
 };
 </script>
 <template>
@@ -108,7 +123,7 @@ const handlePublishNote = (data: FolderTreeItem) => {
           @dblclick="handleOpenFile(item)"
         >
           <UIcon class="mx-1 shrink-0" name="colorful:markdown" />
-          <span class="truncate flex-1">{{ `${item.name}${item.data?.extension ?? ''}` }}</span>
+          <span class="truncate flex-1">{{ `${item.name}${item.data?.extension ?? ""}` }}</span>
           <UIcon class="mx-1 shrink-0" name="material-icon-theme:label" />
         </div>
       </UContextMenu>
@@ -129,15 +144,7 @@ const handlePublishNote = (data: FolderTreeItem) => {
                 label: '重命名',
                 icon: 'lucide:text-cursor-input',
                 onSelect: () => {
-                  openWorkspaceModal('note-folder-form', {
-                    id: item.id,
-                    parent_id: item.parent_id,
-                    name: item.name
-                  }).then((result) => {
-                    if (result.action === 'submitted') {
-                      lyEditorEmitter.emit('cmd.note-manager:reload');
-                    }
-                  });
+                  handleRenameFolder(item);
                 }
               },
               {

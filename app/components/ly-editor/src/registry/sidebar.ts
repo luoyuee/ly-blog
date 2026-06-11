@@ -10,7 +10,7 @@ import {
   ImageManager,
   NavigationWebsiteManager,
   WorkManager
-} from "../modules";
+} from "@ly-editor/src/modules";
 
 /**
  * 编辑器侧边栏注册项。

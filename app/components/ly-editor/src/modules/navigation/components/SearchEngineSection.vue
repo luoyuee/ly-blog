@@ -2,9 +2,11 @@
 import type { SearchEngineItem } from "#shared/types/navigation-website";
 import { getSearchEngineList, deleteSearchEngine } from "~/apis/navigation-website";
 import { lyEditorEmitter } from "~/events";
+import { useLyEditorModal } from "@/composables/useLyEditorModal";
 
 const $notify = useNotification();
 const $msgBox = useMessageBox();
+const { openModal } = useLyEditorModal();
 
 const searchEngines = ref<SearchEngineItem[]>([]);
 
@@ -24,7 +26,7 @@ onMounted(() => {
 });
 
 const handleOpenSearchEngineFormModal = async (e?: SearchEngineItem) => {
-  const result = await openWorkspaceModal("search-engine-form", e);
+  const result = await openModal("search-engine-form", e);
 
   if (result.action === "submitted") {
     await loadSearchEngines();

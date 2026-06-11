@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { EditorCore } from "../core";
+import type { LyEditorPanelKey } from "@ly-editor/src/registry/panels";
+import { lyEditorPanelRegistry } from "@ly-editor/src/registry/panels";
+import { EditorCore } from "@ly-editor/src/core";
 import { useLyEditorStore } from "@/stores";
-import { lyEditorPanelRegistry } from "../registry/panels";
 
 const lyEditorStore = useLyEditorStore();
 
@@ -20,8 +21,12 @@ const showEditorCore = computed(() => {
   return false;
 });
 
+const isLyEditorPanelKey = (type: string): type is LyEditorPanelKey => {
+  return type in lyEditorPanelRegistry;
+};
+
 const getPanelComponent = (type: string) => {
-  return lyEditorPanelRegistry[type]?.component;
+  return isLyEditorPanelKey(type) ? lyEditorPanelRegistry[type].component : undefined;
 };
 </script>
 

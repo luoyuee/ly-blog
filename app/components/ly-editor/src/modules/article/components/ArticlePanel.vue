@@ -10,7 +10,7 @@ import {
 } from "@/apis/article";
 import { h, resolveComponent } from "vue";
 import dayjs from "dayjs";
-import { openEditorNoteFile } from "../../../utils";
+import { openEditorNoteFile } from "@ly-editor/src/utils";
 
 const logger = useLogger();
 const $notify = useNotification();

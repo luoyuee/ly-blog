@@ -1,7 +1,5 @@
 import type { EditorTabItem } from "#shared/types/ly-editor";
 import { useLyEditorStore } from "@/stores";
-import { lyEditorEmitter } from "@/events";
-import dayjs from "dayjs";
 import { updateNoteContent } from "@/apis/note";
 import { useDebounceFn } from "@vueuse/core";
 import { registerFileHandlers } from "./file-handlers";
@@ -9,6 +7,7 @@ import { registerEditorLanguage } from "./language";
 import { initMonaco } from "./monaco";
 import { syncNotePreview } from "./preview-sync";
 import { createLogger } from "@/utils/logger";
+import { useLyEditorModal } from "@/composables/useLyEditorModal";
 
 const logger = createLogger("ly-editor");
 
@@ -30,7 +29,8 @@ async function handleSaveNote(e: EditorTabItem) {
       logger.error(error);
     }
   } else {
-    openWorkspaceModal("note-save", e);
+    const { openModal } = useLyEditorModal();
+    openModal("note-save", e);
   }
 }
 
@@ -49,63 +49,44 @@ export async function initEditor(editorEl: HTMLElement) {
       language: "mdc",
       theme: "vs-dark",
       model: null,
-      automaticLayout: true
+      automaticLayout: true,
+      formatOnType: true
     });
 
-    // function handleOpenFile(path: string): void {
-    //   console.log(monacoPackage.editor.getModels());
+    const handleOpenFile = (path: string): void => {
+      const model = monacoPackage.editor.getModel(monacoPackage.Uri.parse(path));
 
-    //   const model = monacoPackage.editor.getModels().find((model) => {
-    //     console.log([model.uri.path, path]);
-    //     return model.uri.path === path;
-    //   });
+      if (!model) return;
 
-    //   console.log(model);
+      monacoEditor.setModel(model);
+      lyEditorStore.preview.content = monacoEditor.getValue();
+    };
 
-    //   if (model) {
-    //     monacoEditor.setModel(model);
-    //     lyEditorStore.preview.content = monacoEditor.getValue();
-    //   }
-    // }
+    monacoEditor.onDidChangeModelContent(
+      useDebounceFn(() => {
+        const item: EditorTabItem | undefined = lyEditorStore.getCurrentTabItem();
 
-    // function handleLeaveWarning(e: BeforeUnloadEvent) {
-    //   const isChange = Object.values(lyEditorStore.tabs).find((item) => item.isChange);
-    //   if (isChange) {
-    //     e.preventDefault();
-    //     return "您有未保存的更改，确定要离开吗？";
-    //   }
-    // }
+        syncNotePreview(item, monacoEditor.getValue(), lyEditorStore);
+      }, 200)
+    );
 
-    // window.removeEventListener("beforeunload", handleLeaveWarning);
-    // window.addEventListener("beforeunload", handleLeaveWarning);
+    monacoEditor.addAction({
+      id: "save",
+      label: "save",
+      keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS],
+      run: () => {
+        const item = lyEditorStore.getCurrentTabItem();
 
-    // monacoEditor.onDidChangeModelContent(
-    //   useDebounceFn(() => {
-    //     const item: EditorTabItem | undefined = lyEditorStore.getCurrentTabItem();
+        if (!item || item.type !== "note") {
+          return;
+        }
 
-    //     syncNotePreview(item, monacoEditor.getValue(), lyEditorStore);
-    //   }, 200)
-    // );
+        item.data.content = monacoEditor.getValue();
+        handleSaveNote(item);
+      }
+    });
 
-    // monacoEditor.addAction({
-    //   id: "save",
-    //   label: "save",
-    //   keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS],
-    //   run: () => {
-    //     const item = lyEditorStore.getCurrentTabItem();
-
-    //     if (!item || item.type !== "note") {
-    //       return;
-    //     }
-
-    //     if (item) {
-    //       item.data.content = monacoEditor.getValue();
-    //       handleSaveNote(item);
-    //     }
-    //   }
-    // });
-
-    // registerFileHandlers(monacoPackage, monacoEditor, lyEditorStore, handleOpenFile);
+    registerFileHandlers(monacoPackage, monacoEditor, lyEditorStore, handleOpenFile);
 
     lyEditorStore.editor.initializing = false;
     return monacoEditor;
