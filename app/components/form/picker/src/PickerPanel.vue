@@ -378,7 +378,7 @@ defineExpose({
       <template v-for="(column, columnIndex) in displayState.columns" :key="columnIndex">
         <div
           v-if="props.arrowControl"
-          class="relative flex min-w-0 basis-0 flex-1 flex-col border-r border-neutral-200 last:border-r-0"
+          class="relative flex min-w-0 basis-0 flex-1 flex-col border-r border-muted last:border-r-0"
         >
           <div
             class="pointer-events-none absolute inset-x-0 bg-primary/10"
@@ -401,7 +401,7 @@ defineExpose({
 
           <div class="flex flex-1 flex-col" :style="{ height: `${props.itemHeight * 3}px` }">
             <div
-              class="flex items-center justify-center px-3 text-sm text-neutral-500"
+              class="flex items-center justify-center px-3 text-sm text-muted"
               :style="{ height: `${props.itemHeight}px` }"
             >
               <span class="truncate text-center">
@@ -417,7 +417,7 @@ defineExpose({
               </span>
             </div>
             <div
-              class="flex items-center justify-center px-3 text-sm text-neutral-500"
+              class="flex items-center justify-center px-3 text-sm text-muted"
               :style="{ height: `${props.itemHeight}px` }"
             >
               <span class="truncate text-center">
@@ -440,7 +440,7 @@ defineExpose({
         <Scrollbar
           v-else
           :ref="(el) => setColumnRef(el as PickerScrollbarExposed | null, columnIndex)"
-          class="picker__column-scrollbar relative min-w-0 basis-0 flex-1 border-r border-neutral-200 last:border-r-0"
+          class="picker__column-scrollbar relative min-w-0 basis-0 flex-1 border-r border-muted last:border-r-0"
           :theme="scrollbarTheme"
           @drag-state-change="handleScrollbarDragStateChange(columnIndex, $event)"
           @scroll="handleScrollbarScroll(columnIndex)"
@@ -468,10 +468,10 @@ defineExpose({
               class="flex w-full items-center justify-center px-3 text-sm transition-colors"
               :class="[
                 option.disabled
-                  ? 'cursor-not-allowed text-neutral-300'
-                  : 'text-neutral-700 hover:bg-neutral-100',
+                  ? 'cursor-not-allowed text-dimmed opacity-60'
+                  : 'text-default hover:bg-elevated',
                 displayState.selection[columnIndex] === option.value
-                  ? 'font-medium text-primary hover:bg-transparent'
+                  ? 'font-medium text-primary hover:bg-primary/10'
                   : ''
               ]"
               :style="{ height: `${props.itemHeight}px` }"

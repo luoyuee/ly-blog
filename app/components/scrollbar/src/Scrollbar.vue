@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted, watch, nextTick, useTemplateRef } from "vue";
 import { usePhysicsScroll } from "@/composables/usePhysicsScroll";
+import { ref, computed, onMounted, onUnmounted, watch, nextTick, useTemplateRef } from "vue";
 
 interface ScrollState {
   vertical: { ratio: number; thumbSize: number };
@@ -41,6 +41,11 @@ const props = defineProps({
     default: true
   }
 });
+
+const emit = defineEmits<{
+  scroll: [event: Event];
+  dragStateChange: [isDragging: boolean];
+}>();
 
 // 是否显示滚动条
 const showScrollbar = ref(props.always);
@@ -154,10 +159,11 @@ const handleContentScroll = (e: Event) => {
   } else {
     scrollState.value.horizontal.ratio = 0;
   }
+
+  emit("scroll", e);
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-let originalOnSelectStart: ((this: GlobalEventHandlers, ev: Event) => any) | null = null;
+let originalOnSelectStart: ((this: GlobalEventHandlers, ev: Event) => unknown) | null = null;
 
 // 开始拖拽
 const startDrag = (type: "vertical" | "horizontal", e: MouseEvent | TouchEvent) => {
@@ -166,6 +172,7 @@ const startDrag = (type: "vertical" | "horizontal", e: MouseEvent | TouchEvent) 
 
   isDragging.value = true;
   dragType.value = type;
+  emit("dragStateChange", true);
 
   const clientX = "touches" in e ? e.touches[0]!.clientX : e.clientX;
   const clientY = "touches" in e ? e.touches[0]!.clientY : e.clientY;
@@ -228,6 +235,7 @@ const onDrag = (e: MouseEvent | TouchEvent) => {
 // 结束拖拽
 const endDrag = () => {
   isDragging.value = false;
+  emit("dragStateChange", false);
   document.removeEventListener("mousemove", onDrag);
   document.removeEventListener("mouseup", endDrag);
   document.removeEventListener("touchmove", onDrag);
@@ -425,6 +433,9 @@ onUnmounted(() => {
 defineExpose({
   // 保留wheel方法以保持向后兼容
   wheel: handleWheel,
+  getScrollElement: () => {
+    return containerRef.value;
+  },
   // 新增方法
   scrollTo: (options: { top?: number; left?: number; behavior?: ScrollBehavior }) => {
     if (containerRef.value) {

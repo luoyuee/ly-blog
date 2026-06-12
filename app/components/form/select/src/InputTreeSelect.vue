@@ -799,7 +799,7 @@ watch(
           <template #trailing v-if="tag.isCustom">
             <UIcon
               name="mdi:close-thick"
-              class="cursor-pointer text-blue-400 hover:text-blue-600"
+              class="cursor-pointer text-primary hover:text-primary/80"
               @click.stop="handleDelete(tag)"
             />
           </template>

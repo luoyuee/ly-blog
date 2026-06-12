@@ -190,14 +190,15 @@ const displayDate = computed(() => {
         <UInput
           variant="subtle"
           icon="lucide:calendar"
-          :value="displayDate"
-          readonly
+          placeholder="请选择日期"
           class="w-36"
+          readonly
+          :model-value="displayDate"
         />
         <TimePicker v-model="timeValue" class="w-36" value-type="time" show-format="HH:mm:ss" />
       </UFieldGroup>
 
-      <div class="flex justify-end gap-2 p-2 border-t border-slate-200">
+      <div class="flex justify-end gap-2 p-2 border-t border-muted">
         <UButton
           color="neutral"
           variant="subtle"

@@ -238,7 +238,7 @@ const displayEndDate = computed(() => {
         </UFieldGroup>
       </div>
 
-      <div class="flex justify-end gap-2 p-2 border-t border-slate-200">
+      <div class="flex justify-end gap-2 p-2 border-t border-muted">
         <UButton
           color="neutral"
           variant="subtle"
