@@ -10,10 +10,19 @@ const { openTabPanel } = useLyEditorTabs();
 /**
  * 危险等级颜色映射
  */
-const dangerLevelColorMap: Record<AccessTokenDangerLevel, string> = {
-  [AccessTokenDangerLevelEnum.SAFE]: "text-green-600",
-  [AccessTokenDangerLevelEnum.WARNING]: "text-yellow-600",
-  [AccessTokenDangerLevelEnum.DANGER]: "text-red-500"
+const dangerLevelIconMap: Record<AccessTokenDangerLevel, { name: string; class: string }> = {
+  [AccessTokenDangerLevelEnum.SAFE]: {
+    name: "lucide:shield-check",
+    class: "text-green-400"
+  },
+  [AccessTokenDangerLevelEnum.WARNING]: {
+    name: "lucide:shield-alert",
+    class: "text-yellow-400"
+  },
+  [AccessTokenDangerLevelEnum.DANGER]: {
+    name: "lucide:shield-x",
+    class: "text-red-400"
+  }
 };
 
 /**
@@ -30,7 +39,7 @@ const handleOpenAccessTokenPanel = () => {
 const actions = [
   {
     label: "打开列表",
-    icon: "icon-park-outline:expand-left",
+    icon: "lucide:panel-left-open",
     onClick: handleOpenAccessTokenPanel
   }
 ];
@@ -48,10 +57,7 @@ const actions = [
           >
             <div class="text-sm font-medium text-default flex items-center justify-between">
               <span>{{ item.name }}</span>
-              <UIcon
-                name="icon-park-outline:protect"
-                :class="dangerLevelColorMap[item.dangerLevel]"
-              />
+              <UIcon v-bind="dangerLevelIconMap[item.dangerLevel]" />
             </div>
             <div class="mt-1 text-xs leading-5 text-muted">
               {{ item.description }}

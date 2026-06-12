@@ -287,10 +287,10 @@ const handleDisable = (record: AccessTokenItem) => {
     @refresh="loadData"
   >
     <template #header-left>
-      <div class="flex items-center gap-2">
-        <UButton icon="ep:plus" @click="handleOpenFormModal()">新建令牌</UButton>
-        <UButton icon="ep:refresh" color="neutral" variant="soft" @click="loadData">刷新</UButton>
-      </div>
+      <UButton icon="lucide:plus" @click="handleOpenFormModal()">新建令牌</UButton>
+    </template>
+    <template #header-right>
+      <UButton icon="lucide:refresh-cw" color="neutral" variant="soft" @click="loadData">刷新</UButton>
     </template>
   </TabPanelTable>
 </template>

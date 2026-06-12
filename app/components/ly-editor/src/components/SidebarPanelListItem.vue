@@ -63,7 +63,7 @@ const handleClick = (): void => {
 
 <template>
   <div class="flex p-2 cursor-pointer hover:bg-white/5 gap-2" @click="handleClick">
-    <div class="size-16 shrink-0 rounded">
+    <div v-if="props.image || props.icon" class="size-16 shrink-0 rounded">
       <slot name="media">
         <img
           v-if="props.image"
@@ -99,7 +99,7 @@ const handleClick = (): void => {
             <div
               v-for="(item, index) in props.metaItems"
               :key="index"
-              class="flex items-center gap-1 text-xs text-muted"
+              class="flex items-center gap-1 text-xs text-dimmed leading-none"
             >
               <UIcon v-if="item.icon" :name="item.icon" />
               <span class="truncate">

@@ -373,7 +373,7 @@ defineExpose({
 </script>
 
 <template>
-  <div class="w-full max-w-[calc(100vw-1rem)] bg-white rounded-md">
+  <div class="w-full max-w-[calc(100vw-1rem)] rounded-md">
     <div class="flex" :style="{ height: `${getPanelHeight()}px` }">
       <template v-for="(column, columnIndex) in displayState.columns" :key="columnIndex">
         <div
@@ -395,8 +395,8 @@ defineExpose({
             class="rounded-none"
             :style="{ height: `${props.itemHeight}px` }"
             :disabled="!canMoveSelection(columnIndex, 'previous')"
-            @click="handleArrowStep(columnIndex, 'previous')"
             icon="mdi:chevron-up"
+            @click="handleArrowStep(columnIndex, 'previous')"
           />
 
           <div class="flex flex-1 flex-col" :style="{ height: `${props.itemHeight * 3}px` }">
@@ -433,14 +433,14 @@ defineExpose({
             class="rounded-none"
             :style="{ height: `${props.itemHeight}px` }"
             :disabled="!canMoveSelection(columnIndex, 'next')"
-            @click="handleArrowStep(columnIndex, 'next')"
             icon="mdi:chevron-down"
+            @click="handleArrowStep(columnIndex, 'next')"
           />
         </div>
         <Scrollbar
           v-else
-          class="picker__column-scrollbar relative min-w-0 basis-0 flex-1 border-r border-neutral-200 last:border-r-0"
           :ref="(el) => setColumnRef(el as PickerScrollbarExposed | null, columnIndex)"
+          class="picker__column-scrollbar relative min-w-0 basis-0 flex-1 border-r border-neutral-200 last:border-r-0"
           :theme="scrollbarTheme"
           @drag-state-change="handleScrollbarDragStateChange(columnIndex, $event)"
           @scroll="handleScrollbarScroll(columnIndex)"
@@ -452,7 +452,7 @@ defineExpose({
               top: `${getHighlightOffset()}px`,
               height: `${props.itemHeight}px`
             }"
-          />
+          ></div>
 
           <div
             class="h-full overscroll-contain"

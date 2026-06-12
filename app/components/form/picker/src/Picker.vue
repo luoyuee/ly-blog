@@ -216,7 +216,7 @@ const handleClear = () => {
       name="trigger"
       :selected="modelValue"
       :open="popoverOpen"
-      :displayText="displayText"
+      :display-text="displayText"
       :clearable="props.clearable"
       :disabled="props.disabled"
       :placeholder="props.placeholder"

@@ -13,7 +13,7 @@ import { useForm } from "@/composables/useForm";
 import { computed, watch } from "vue";
 import { z } from "zod";
 import dayjs from "dayjs";
-import { DatePicker } from "@/components/form/date-picker-v2";
+import { DatePicker } from "@/components/form/date-picker";
 
 const $notify = useNotification();
 
@@ -203,9 +203,9 @@ const scopeOptions = computed<SelectItem[]>(() => {
 
       <UAlert
         v-if="props.payload.mode === 'create'"
-        color="neutral"
+        color="warning"
         variant="soft"
-        icon="ep:warning-filled"
+        icon="lucide:triangle-alert"
         title="安全提示"
         description="Access Token 创建后仅会展示一次明文，请在关闭提示前妥善保存。"
       />

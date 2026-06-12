@@ -6,13 +6,13 @@ const slots = useSlots();
 const hasDefaultSlot = computed(() => !!slots.default);
 </script>
 <template>
-  <div :class="['flex items-center gap-4', { 'justify-between': !hasDefaultSlot }]">
+  <div :class="['flex items-center gap-2', { 'justify-between': !hasDefaultSlot }]">
     <slot>
-      <div class="flex items-center gap-4">
+      <div class="flex items-center gap-2">
         <slot name="left"></slot>
       </div>
 
-      <div class="flex items-center gap-4">
+      <div class="flex items-center gap-2">
         <slot name="right"></slot>
       </div>
     </slot>

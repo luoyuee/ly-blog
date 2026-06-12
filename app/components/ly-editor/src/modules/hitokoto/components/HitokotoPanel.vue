@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { HitokotoItem, HitokotoTypeItem } from "#shared/types/hitokoto";
 import type { TableColumn, SelectItem } from "@nuxt/ui";
+import { TabPanelTable } from "@ly-editor/src/components";
 import { useLyEditorModal } from "@/composables/useLyEditorModal";
-import { Pagination } from "@/components/pagination";
 import { useLogger } from "@/composables/useLogger";
 import { downloadFile } from "@/utils/file";
 import { h, resolveComponent } from "vue";
@@ -160,14 +160,14 @@ const columns: TableColumn<HitokotoItem>[] = [
           items: [
             {
               label: "编辑语句",
-              icon: "ep:edit",
+              icon: "lucide:edit",
               onSelect: () => {
                 handleOpenHitokotoFormModal("update", row.original);
               }
             },
             {
               label: "删除语句",
-              icon: "ep:delete",
+              icon: "lucide:trash-2",
               color: "error",
               onSelect: () => {
                 handleDelete(row.original);
@@ -177,7 +177,7 @@ const columns: TableColumn<HitokotoItem>[] = [
         },
         () =>
           h(UButton, {
-            icon: "lucide:ellipsis-vertical",
+            icon: "lucide:more-horizontal",
             color: "neutral",
             variant: "ghost"
           })
@@ -286,47 +286,35 @@ const handleDelete = (e: HitokotoItem) => {
 };
 </script>
 <template>
-  <div class="p-4 h-full overflow-hidden flex flex-col gap-4">
-    <div class="flex justify-between items-center">
-      <div class="flex gap-4">
-        <UButton icon="ep:plus" @click="() => handleOpenHitokotoFormModal('create')">
+  <TabPanelTable
+    v-model:page="state.page"
+    v-model:page-size="state.per_page"
+    :loading="state.loading"
+    :data="data"
+    :columns="columns"
+    :total="state.total"
+    @refresh="loadData"
+  >
+    <template #header-left>
+      <div class="flex items-center gap-4">
+        <UButton icon="lucide:plus" @click="() => handleOpenHitokotoFormModal('create')">
           新增
         </UButton>
-        <UButton icon="ep:upload" @click="handleImportData">导入</UButton>
-        <UButton icon="ep:download" :loading="exporting" @click="handleExportData">导出</UButton>
+        <UButton icon="lucide:upload" @click="handleImportData">导入</UButton>
+        <UButton icon="lucide:download" :loading="exporting" @click="handleExportData">
+          导出
+        </UButton>
       </div>
+    </template>
 
+    <template #header-right>
       <UFieldGroup>
         <USelect v-model="state.type" :items="typeOptions" class="w-24" />
 
         <UInput v-model.trim="state.keyword" class="w-48" placeholder="请输入关键词" />
 
-        <UButton icon="ep:search" @click="handleSearch">搜索</UButton>
+        <UButton icon="lucide:search" @click="handleSearch">搜索</UButton>
       </UFieldGroup>
-    </div>
-
-    <div class="border border-muted flex-1 overflow-hidden rounded-md">
-      <UTable
-        sticky
-        class="flex-1 max-h-full"
-        :loading="state.loading"
-        :data="data"
-        :columns="columns"
-        :ui="{
-          th: 'bg-white/8',
-          tr: 'hover:bg-white/5',
-          td: 'whitespace-normal'
-        }"
-      />
-    </div>
-
-    <Pagination
-      v-model:page="state.page"
-      v-model:page-size="state.per_page"
-      :page-sizes="[50, 100, 200]"
-      :total="state.total"
-      @update:page="loadData"
-      @update:page-size="loadData"
-    />
-  </div>
+    </template>
+  </TabPanelTable>
 </template>

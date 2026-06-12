@@ -215,8 +215,8 @@ const displayEndDate = computed(() => {
             class="w-36"
           />
           <TimePicker
-            class="w-36"
             v-model="startTimeValue"
+            class="w-36"
             value-type="time"
             show-format="HH:mm:ss"
           />
@@ -230,8 +230,8 @@ const displayEndDate = computed(() => {
             class="w-36"
           />
           <TimePicker
-            class="w-36"
             v-model="endTimeValue"
+            class="w-36"
             value-type="time"
             show-format="HH:mm:ss"
           />

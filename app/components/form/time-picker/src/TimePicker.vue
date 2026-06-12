@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { PropType } from "vue";
 import type { PickerPrimitive, PickerRawOption } from "@/components/form/picker";
+import type { PropType } from "vue";
 import type {
   TimePickerHourCycle,
   TimePickerInputValue,
@@ -187,7 +187,7 @@ const handleClear = () => {
         :selected="modelValue"
         :time="selectedTime"
         :open="open"
-        :displayText="displayText"
+        :display-text="displayText"
         :clearable="props.clearable"
         :disabled="props.disabled"
         :placeholder="props.placeholder"

@@ -55,9 +55,6 @@ importers:
       '@tiptap/extension-text-style':
         specifier: ^3.22.4
         version: 3.22.4(@tiptap/core@3.22.4(@tiptap/pm@3.22.4))
-      '@vuepic/vue-datepicker':
-        specifier: ^12.1.0
-        version: 12.1.0(vue@3.5.35(typescript@5.9.3))
       '@vueuse/core':
         specifier: ^14.1.0
         version: 14.2.1(vue@3.5.35(typescript@5.9.3))
@@ -664,9 +661,6 @@ packages:
 
   '@dabh/diagnostics@2.0.8':
     resolution: {integrity: sha512-R4MSXTVnuMzGD7bzHdW2ZhhdPC/igELENcq5IjEverBvq5hn1SXCWcsi6eSsdWP0/Ur+SItRRjAktmdoX/8R/Q==}
-
-  '@date-fns/tz@1.4.1':
-    resolution: {integrity: sha512-P5LUNhtbj6YfI3iJjw5EL9eUAG6OitD0W3fWQcpQjDRc/QIsL0tRNuO1PcDvPccWL1fSTXXdE1ds+l95DV/OFA==}
 
   '@dxup/nuxt@0.4.1':
     resolution: {integrity: sha512-gtYffW6OfWNvoLW+XD3Mx/K8uUq08PMGLYJoDxc92EzZAWqR0FhcR5iaLm5r/OxyGTKz+P5f5Y7Aoir9+SjYaw==}
@@ -3970,12 +3964,6 @@ packages:
 
   '@vue/shared@3.5.35':
     resolution: {integrity: sha512-zSbjL7gRXwks2ZQLRGCajBtBXEOXW9Ddhn/HvSdrGkE2dqGnumzW8XtusRrxrE9LvqtiqDXQ+A60Hp6mvdYxfA==}
-
-  '@vuepic/vue-datepicker@12.1.0':
-    resolution: {integrity: sha512-QuWcO+CqIGYFoRNCagp9xUY9sMK/OHUlVIDxBYjw7HjCTWXfuE/r3l3loB00faEtb0Teo3DeBn26hT3tYA5pgg==}
-    engines: {node: '>=18.12.0'}
-    peerDependencies:
-      vue: '>=3.5.0'
 
   '@vueuse/core@10.11.1':
     resolution: {integrity: sha512-guoy26JQktXPcz+0n3GukWIy/JDNKti9v6VEMu6kV2sYBsWuGiTU8OWdg+ADfUbHg3/3DlqySDe7JmdHrktiww==}
@@ -8945,8 +8933,6 @@ snapshots:
       enabled: 2.0.0
       kuler: 2.0.0
 
-  '@date-fns/tz@1.4.1': {}
-
   '@dxup/nuxt@0.4.1(magicast@0.5.2)(typescript@5.9.3)':
     dependencies:
       '@dxup/unimport': 0.1.2
@@ -12285,16 +12271,6 @@ snapshots:
       vue: 3.5.35(typescript@5.9.3)
 
   '@vue/shared@3.5.35': {}
-
-  '@vuepic/vue-datepicker@12.1.0(vue@3.5.35(typescript@5.9.3))':
-    dependencies:
-      '@date-fns/tz': 1.4.1
-      '@floating-ui/vue': 1.1.11(vue@3.5.35(typescript@5.9.3))
-      '@vueuse/core': 14.2.1(vue@3.5.35(typescript@5.9.3))
-      date-fns: 4.1.0
-      vue: 3.5.35(typescript@5.9.3)
-    transitivePeerDependencies:
-      - '@vue/composition-api'
 
   '@vueuse/core@10.11.1(vue@3.5.35(typescript@5.9.3))':
     dependencies:
