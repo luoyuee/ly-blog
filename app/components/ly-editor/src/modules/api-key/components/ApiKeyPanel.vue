@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { AccessTokenItem } from "#shared/types/access-token";
+import type { ApiKeyItem } from "#shared/types/api-key";
 import type { TableColumn } from "@nuxt/ui";
 import { TabPanelTable } from "@ly-editor/src/components";
-import { disableAccessToken, getPaginatedAccessTokens } from "@/apis/access-token";
+import { disableApiKey, getPaginatedApiKeys } from "@/apis/api-key";
 import { useLyEditorModal } from "@/composables/useLyEditorModal";
 import { h, resolveComponent } from "vue";
 import dayjs from "dayjs";
@@ -15,7 +15,7 @@ const { openModal } = useLyEditorModal();
 const UButton = resolveComponent("UButton");
 const UDropdownMenu = resolveComponent("UDropdownMenu");
 
-const data = ref<AccessTokenItem[]>([]);
+const data = ref<ApiKeyItem[]>([]);
 
 const state = reactive<{
   page: number;
@@ -59,7 +59,7 @@ const getStatusMeta = (status: number) => {
   }
 };
 
-const columns: TableColumn<AccessTokenItem>[] = [
+const columns: TableColumn<ApiKeyItem>[] = [
   {
     accessorKey: "id",
     header: "#",
@@ -200,13 +200,13 @@ const columns: TableColumn<AccessTokenItem>[] = [
 ];
 
 /**
- * 加载 Access Token 列表。
+ * 加载 API 密钥列表。
  */
 const loadData = async () => {
   try {
     state.loading = true;
 
-    const res = await getPaginatedAccessTokens({
+    const res = await getPaginatedApiKeys({
       page: state.page,
       per_page: state.per_page
     });
@@ -230,8 +230,8 @@ onMounted(() => {
 /**
  * 打开创建/编辑弹窗。
  */
-const handleOpenFormModal = async (record?: AccessTokenItem) => {
-  const result = await openModal("access-token-form", {
+const handleOpenFormModal = async (record?: ApiKeyItem) => {
+  const result = await openModal("api-key-form", {
     mode: record ? "update" : "create",
     record
   });
@@ -240,7 +240,7 @@ const handleOpenFormModal = async (record?: AccessTokenItem) => {
     await loadData();
 
     if (result.data) {
-      await openModal("access-token-created", {
+      await openModal("api-key-created", {
         record: result.data
       });
     }
@@ -248,19 +248,19 @@ const handleOpenFormModal = async (record?: AccessTokenItem) => {
 };
 
 /**
- * 快速禁用 Token。
+ * 快速禁用 API 密钥。
  */
-const handleDisable = (record: AccessTokenItem) => {
+const handleDisable = (record: ApiKeyItem) => {
   $msgBox.error({
     title: "确认禁用?",
-    message: `即将禁用「${record.name}」，禁用后当前后端列表将不再展示该 Token，是否继续？`,
+    message: `即将禁用「${record.name}」，禁用后当前前后端列表将不再展示该 API 密钥，是否继续？`,
     confirmButtonText: "禁用",
     confirmButtonProps: {
       color: "error"
     },
     onConfirm: async () => {
       try {
-        await disableAccessToken(record.id);
+        await disableApiKey(record.id);
         $notify.success({
           title: "禁用成功"
         });
@@ -287,7 +287,7 @@ const handleDisable = (record: AccessTokenItem) => {
     @refresh="loadData"
   >
     <template #header-left>
-      <UButton icon="lucide:plus" @click="handleOpenFormModal()">新建令牌</UButton>
+      <UButton icon="lucide:plus" @click="handleOpenFormModal()">新建 API 密钥</UButton>
     </template>
     <template #header-right>
       <UButton icon="lucide:refresh-cw" color="neutral" variant="soft" @click="loadData">刷新</UButton>

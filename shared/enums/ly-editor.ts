@@ -19,8 +19,8 @@ export const LyEditorActivityMenuEnum = {
   NavigationManager: "navigation-manager",
   /** 作品管理 */
   WorkManager: "work-manager",
-  /** 访问令牌管理 */
-  AccessTokenManager: "access-token-manager",
+  /** API Key 管理 */
+  ApiKeyManager: "api-key-manager",
   /** 仪表盘面板 */
   DashboardPanel: "dashboard-panel",
   /** 定时任务面板 */
@@ -51,8 +51,8 @@ export const LyEditorTabPanelEnum = {
   NavigationWebsitePanel: "navigation-website-panel",
   /** 导航历史面板 */
   NavigationHistoryPanel: "navigation-history-panel",
-  /** 访问令牌面板 */
-  AccessTokenPanel: "access-token-panel",
+  /** API Key 面板 */
+  ApiKeyPanel: "api-key-panel",
   /** 用户面板 */
   UserPanel: "user-panel",
   /** 仪表盘面板 */

@@ -350,14 +350,14 @@ model User {
   @@map("user")
 }
 
-model AccessToken {
+model ApiKey {
   id           Int       @id @default(autoincrement())
   created_at   DateTime? @default(now())
   created_by   Int?
   updated_at   DateTime?
   updated_by   Int?
-  name         String    @db.VarChar(255) // Token 名称，用于后台识别调用方
-  token_hash   String    @unique @db.VarChar(128) // Access Token 哈希值，明文只在创建时返回一次
+  name         String    @db.VarChar(255) // API Key 名称，用于后台识别调用方
+  key_hash     String    @unique @db.VarChar(128) // Secret API Key 哈希值，明文只在创建时返回一次
   scopes       Json // 权限范围，如 hitokoto:import、note:import
   expires_at   DateTime? // 过期时间，空表示长期有效
   last_used_at DateTime? // 最近一次使用时间
@@ -367,7 +367,7 @@ model AccessToken {
 
   @@index([status])
   @@index([expires_at])
-  @@map("access_token")
+  @@map("api_key")
 }
 
 model MessageBoard {

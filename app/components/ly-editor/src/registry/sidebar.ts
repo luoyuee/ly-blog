@@ -2,7 +2,7 @@ import type { Component } from "vue";
 import { LyEditorActivityMenuEnum } from "#shared/enums";
 
 import {
-  AccessTokenManager,
+  ApiKeyManager,
   AttachmentManager,
   NoteManager,
   ArticleManager,
@@ -44,8 +44,8 @@ export const lyEditorSidebarRegistry = {
   [LyEditorActivityMenuEnum.WorkManager]: {
     component: WorkManager
   },
-  [LyEditorActivityMenuEnum.AccessTokenManager]: {
-    component: AccessTokenManager
+  [LyEditorActivityMenuEnum.ApiKeyManager]: {
+    component: ApiKeyManager
   }
 } satisfies Record<string, LyEditorSidebarRegistryItem>;
 

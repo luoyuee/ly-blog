@@ -1,7 +1,7 @@
 import type { LyEditorPanelRegistryItem } from "#shared/types/ly-editor";
 import { LyEditorTabPanelEnum } from "#shared/enums";
 import {
-  AccessTokenPanel,
+  ApiKeyPanel,
   AttachmentFolderPanel,
   ArticlePanel,
   CronJobPanel,
@@ -42,8 +42,8 @@ export const lyEditorPanelRegistry = {
     component: SearchHistoryPanel,
     keepAlive: true
   },
-  [LyEditorTabPanelEnum.AccessTokenPanel]: {
-    component: AccessTokenPanel,
+  [LyEditorTabPanelEnum.ApiKeyPanel]: {
+    component: ApiKeyPanel,
     keepAlive: true
   },
   [LyEditorTabPanelEnum.DashboardPanel]: {

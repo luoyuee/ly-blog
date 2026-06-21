@@ -2,8 +2,8 @@ import type { LyEditorModalKey } from "#shared/types/ly-editor";
 import type { Component } from "vue";
 
 import {
-  AccessTokenCreatedModal,
-  AccessTokenFormModal,
+  ApiKeyCreatedModal,
+  ApiKeyFormModal,
   AttachmentFolderFormModal,
   CategoryDetailsModal,
   CategoryFormModal,
@@ -39,8 +39,8 @@ export const lyEditorModalRegistry = {
   "attachment-folder-form": AttachmentFolderFormModal,
   "shortcut-form": ShortcutFormModal,
   "search-engine-form": SearchEngineFormModal,
-  "access-token-form": AccessTokenFormModal,
-  "access-token-created": AccessTokenCreatedModal,
+  "api-key-form": ApiKeyFormModal,
+  "api-key-created": ApiKeyCreatedModal,
   "navigation-website-form": NavigationWebsiteFormModal,
   "notice-manager": NoticeManagerModal,
   "note-folder-form": NoteFolderFormModal,

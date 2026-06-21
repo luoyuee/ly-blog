@@ -5,7 +5,7 @@ import type { NoteFolderForm } from "./note";
 import type { ImageFolder } from "./image";
 import type { AttachmentFolder } from "./attachment";
 import type { WorkItem } from "./config";
-import type { AccessTokenItem, CreatedAccessToken } from "./access-token";
+import type { ApiKeyItem, CreatedApiKey } from "./api-key";
 
 export interface NoteData {
   id?: number;
@@ -69,7 +69,7 @@ export type EditorTabItem = {
         type: "navigation-history-panel";
       }
     | {
-        type: "access-token-panel";
+        type: "api-key-panel";
       }
 );
 
@@ -149,8 +149,8 @@ export type LyEditorModalKey =
   | "hitokoto-import"
   | "hitokoto-type-form"
   | "hitokoto-type-details"
-  | "access-token-form"
-  | "access-token-created";
+  | "api-key-form"
+  | "api-key-created";
 
 /**
  * LY Editor 弹窗参数映射。
@@ -210,31 +210,31 @@ export type NavigationWebsiteFormModalPayload = {
 export type NavigationWebsiteFormModalResult = { action: "submitted" } | { action: "cancelled" };
 
 /**
- * Access Token 表单弹窗参数。
+ * API Key 表单弹窗参数。
  */
-export type AccessTokenFormModalPayload = {
+export type ApiKeyFormModalPayload = {
   mode: "create" | "update";
-  record?: AccessTokenItem;
+  record?: ApiKeyItem;
 };
 
 /**
- * Access Token 表单弹窗结果。
+ * API Key 表单弹窗结果。
  */
-export type AccessTokenFormModalResult =
-  | { action: "submitted"; data?: CreatedAccessToken }
+export type ApiKeyFormModalResult =
+  | { action: "submitted"; data?: CreatedApiKey }
   | { action: "cancelled" };
 
 /**
- * Access Token 明文展示弹窗参数。
+ * Secret API Key 明文展示弹窗参数。
  */
-export type AccessTokenCreatedModalPayload = {
-  record: CreatedAccessToken;
+export type ApiKeyCreatedModalPayload = {
+  record: CreatedApiKey;
 };
 
 /**
- * Access Token 明文展示弹窗结果。
+ * Secret API Key 明文展示弹窗结果。
  */
-export type AccessTokenCreatedModalResult = { action: "closed" } | { action: "cancelled" };
+export type ApiKeyCreatedModalResult = { action: "closed" } | { action: "cancelled" };
 
 export type LyEditorModalPayloadMap = {
   "note-folder-form": NoteFolderForm | undefined;
@@ -254,8 +254,8 @@ export type LyEditorModalPayloadMap = {
   "hitokoto-import": undefined;
   "hitokoto-type-form": HitokotoTypeFormModalPayload;
   "hitokoto-type-details": HitokotoTypeDetailsModalPayload;
-  "access-token-form": AccessTokenFormModalPayload;
-  "access-token-created": AccessTokenCreatedModalPayload;
+  "api-key-form": ApiKeyFormModalPayload;
+  "api-key-created": ApiKeyCreatedModalPayload;
 };
 
 /**
@@ -279,8 +279,8 @@ export type LyEditorModalResultMap = {
   "hitokoto-import": HitokotoImportModalResult;
   "hitokoto-type-form": HitokotoTypeFormModalResult;
   "hitokoto-type-details": HitokotoTypeDetailsModalResult;
-  "access-token-form": AccessTokenFormModalResult;
-  "access-token-created": AccessTokenCreatedModalResult;
+  "api-key-form": ApiKeyFormModalResult;
+  "api-key-created": ApiKeyCreatedModalResult;
 };
 
 /**

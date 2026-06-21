@@ -1,13 +1,13 @@
-import { createPlainAccessToken, hashAccessToken } from "@@/server/utils/auth/access-token";
+import { createPlainApiKey, hashApiKey } from "@@/server/utils/auth/api-key";
 import { getBadResponse, getOKResponse } from "@@/server/utils/response";
-import { ACCESS_TOKEN_SCOPES } from "#shared/enums";
+import { API_KEY_SCOPES } from "#shared/enums";
 import { readBody } from "h3";
 import { prisma } from "@@/server/db";
 import { z } from "zod";
 
 const scopeSchema = z.string().refine(
-  (scope) => ACCESS_TOKEN_SCOPES.includes(scope as (typeof ACCESS_TOKEN_SCOPES)[number]),
-  "Access Token 权限范围无效"
+  (scope) => API_KEY_SCOPES.includes(scope as (typeof API_KEY_SCOPES)[number]),
+  "API Key 权限范围无效"
 );
 
 export default defineEventHandler(async (event) => {
@@ -20,15 +20,15 @@ export default defineEventHandler(async (event) => {
   const { error, data: body } = schema.safeParse(await readBody(event));
   if (error) return getBadResponse(event, error.message);
 
-  const plainToken = createPlainAccessToken();
+  const plainApiKey = createPlainApiKey();
   const now = new Date();
 
-  const token = await prisma.accessToken.create({
+  const apiKey = await prisma.apiKey.create({
     data: {
       created_at: now,
       created_by: event.context.user.id,
       name: body.name,
-      token_hash: hashAccessToken(plainToken),
+      key_hash: hashApiKey(plainApiKey),
       scopes: body.scopes,
       expires_at: body.expires_at ? new Date(body.expires_at) : null
     },
@@ -43,7 +43,7 @@ export default defineEventHandler(async (event) => {
   });
 
   return getOKResponse(event, {
-    ...token,
-    token: plainToken
+    ...apiKey,
+    secret_key: plainApiKey
   });
 });

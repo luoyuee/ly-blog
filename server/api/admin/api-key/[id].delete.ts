@@ -7,10 +7,10 @@ export default defineEventHandler(async (event) => {
   const { error, data: id } = z.coerce.number().int().safeParse(getRouterParam(event, "id"));
   if (error) return getBadResponse(event, error.message);
 
-  const token = await prisma.accessToken.findUnique({ where: { id } });
-  if (!token) return getNotFoundResponse(event);
+  const apiKey = await prisma.apiKey.findUnique({ where: { id } });
+  if (!apiKey) return getNotFoundResponse(event);
 
-  await prisma.accessToken.update({
+  await prisma.apiKey.update({
     where: { id },
     data: {
       updated_at: new Date(),

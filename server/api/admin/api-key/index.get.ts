@@ -15,7 +15,7 @@ export default defineEventHandler(async (event) => {
   const where = { status: 1 };
 
   const [data, total] = await Promise.all([
-    prisma.accessToken.findMany({
+    prisma.apiKey.findMany({
       where,
       select: {
         id: true,
@@ -35,7 +35,7 @@ export default defineEventHandler(async (event) => {
       skip: (params.page - 1) * params.per_page,
       take: params.per_page
     }),
-    prisma.accessToken.count({ where })
+    prisma.apiKey.count({ where })
   ]);
 
   return getOKResponse(event, {

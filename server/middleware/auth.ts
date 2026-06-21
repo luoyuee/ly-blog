@@ -1,5 +1,5 @@
 import type { EventHandlerRequest, H3Event } from "h3";
-import { requireAccessToken } from "@@/server/utils/auth/access-token";
+import { requireApiKey } from "@@/server/utils/auth/api-key";
 import { runtimeLogger } from "@@/server/utils/logger";
 import { UserRoleEnum } from "#shared/enums";
 import { getCookie, setCookie } from "h3";
@@ -84,9 +84,9 @@ export default defineEventHandler(async (event) => {
   // 2. 忽略路由：登录/注册页面，直接放行
   if (ignoreRouteRegexp.test(event.path)) return;
 
-  // 3. Integration 路由：使用 Access Token 鉴权（外部 API 访问）
+  // 3. Integration 路由：使用 API Key 鉴权（外部 API 访问）
   if (integrationRouteRegexp.test(event.path)) {
-    await requireAccessToken(event);
+    await requireApiKey(event);
     return;
   }
 

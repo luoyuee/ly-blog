@@ -1,8 +1,5 @@
 <script setup lang="ts">
-import type {
-  AccessTokenCreatedModalPayload,
-  AccessTokenCreatedModalResult
-} from "#shared/types/ly-editor";
+import type { ApiKeyCreatedModalPayload, ApiKeyCreatedModalResult } from "#shared/types/ly-editor";
 import { writeClipboardText } from "@/utils/clipboard";
 import { BasicModal } from "@/components/basic-modal";
 
@@ -14,23 +11,23 @@ const visible = defineModel<boolean>("visible", {
 
 const props = defineProps({
   payload: {
-    type: Object as PropType<AccessTokenCreatedModalPayload>,
+    type: Object as PropType<ApiKeyCreatedModalPayload>,
     required: true
   }
 });
 
 const emits = defineEmits<{
-  resolve: [result: AccessTokenCreatedModalResult];
+  resolve: [result: ApiKeyCreatedModalResult];
 }>();
 
 const tokenVisible = ref(false);
 
-const tokenPlaintext = computed(() => {
-  return props.payload.record.token;
+const secretKeyPlaintext = computed(() => {
+  return props.payload.record.secret_key;
 });
 
 const maskedToken = computed(() => {
-  const token = tokenPlaintext.value;
+  const token = secretKeyPlaintext.value;
 
   if (token.length <= 2) {
     return token;
@@ -44,7 +41,7 @@ const maskedToken = computed(() => {
 });
 
 const displayedToken = computed(() => {
-  return tokenVisible.value ? tokenPlaintext.value : maskedToken.value;
+  return tokenVisible.value ? secretKeyPlaintext.value : maskedToken.value;
 });
 
 watch(
@@ -65,7 +62,7 @@ const handleToggleTokenVisible = () => {
 
 const handleCopyToken = async () => {
   try {
-    await writeClipboardText(tokenPlaintext.value);
+    await writeClipboardText(secretKeyPlaintext.value);
 
     $notify.success({
       title: "复制成功"
@@ -73,7 +70,7 @@ const handleCopyToken = async () => {
   } catch (error) {
     $notify.error({
       title: "复制失败",
-      description: "请手动复制当前 Token。",
+      description: "请手动复制当前 API 密钥。",
       error
     });
   }
@@ -97,7 +94,7 @@ const handleCancel = () => {
 <template>
   <BasicModal
     v-model:visible="visible"
-    title="请立即保存 Access Token"
+    title="请立即保存 API 密钥"
     confirm-button-text="我已保存"
     :show-cancel-button="false"
     @confirm="handleClose"
@@ -109,11 +106,11 @@ const handleCancel = () => {
         color="warning"
         variant="soft"
         icon="lucide:triangle-alert"
-        title="明文 Token 仅展示一次"
-        description="关闭当前弹窗后，系统将无法再次查看该明文 Token，请先复制并妥善保管。"
+        title="明文 API 密钥仅展示一次"
+        description="关闭当前弹窗后，系统将无法再次查看该明文 API 密钥，请先复制并妥善保管。"
       />
 
-      <UFormField label="Token 明文">
+      <UFormField label="API 密钥明文">
         <UInput :model-value="displayedToken" readonly class="w-full">
           <template #trailing>
             <div class="flex items-center gap-1">
@@ -124,34 +121,11 @@ const handleCancel = () => {
                 :icon="tokenVisible ? 'lucide:eye-off' : 'lucide:eye'"
                 @click="handleToggleTokenVisible"
               />
-              <UButton
-                color="neutral"
-                variant="ghost"
-                size="xs"
-                icon="lucide:copy"
-                @click="handleCopyToken"
-              />
+              <UButton color="neutral" variant="ghost" size="xs" icon="lucide:copy" @click="handleCopyToken" />
             </div>
           </template>
         </UInput>
       </UFormField>
-
-      <div class="space-y-1 text-sm text-gray-400">
-        <div>
-          <span>名称：</span>
-          <span>{{ props.payload.record.name }}</span>
-        </div>
-        <div>
-          <span>权限：</span>
-          <UBadge
-            v-for="scope in props.payload.record.scopes"
-            :key="scope"
-            :label="scope"
-            class="mb-2 mr-2"
-            variant="subtle"
-          />
-        </div>
-      </div>
     </div>
   </BasicModal>
 </template>

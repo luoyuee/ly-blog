@@ -51,10 +51,10 @@ const activityMenu = ref<ActivityMenuItem[]>([
     icon: "ep:briefcase"
   },
   {
-    key: LyEditorActivityMenuEnum.AccessTokenManager,
-    label: "令牌管理",
+    key: LyEditorActivityMenuEnum.ApiKeyManager,
+    label: "API 密钥管理",
     icon: "ep:key",
-    panel: LyEditorTabPanelEnum.AccessTokenPanel
+    panel: LyEditorTabPanelEnum.ApiKeyPanel
   }
 ]);
 

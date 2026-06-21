@@ -1,12 +1,12 @@
 import { getBadResponse, getOKResponse } from "@@/server/utils/response";
-import { requireAccessScope } from "@@/server/utils/auth/access-token";
-import { AccessTokenScopeEnum } from "#shared/enums";
+import { requireApiKeyScope } from "@@/server/utils/auth/api-key";
+import { ApiKeyScopeEnum } from "#shared/enums";
 import { readFormData } from "h3";
 import { prisma } from "@@/server/db";
 import { z } from "zod";
 
 export default defineEventHandler(async (event) => {
-  requireAccessScope(event, AccessTokenScopeEnum.HITOKOTO_IMPORT);
+  requireApiKeyScope(event, ApiKeyScopeEnum.HITOKOTO_IMPORT);
 
   const formData = await readFormData(event);
 

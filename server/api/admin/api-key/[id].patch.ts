@@ -1,5 +1,5 @@
 import { getBadResponse, getNotFoundResponse, getOKResponse } from "@@/server/utils/response";
-import { ACCESS_TOKEN_SCOPES } from "#shared/enums";
+import { API_KEY_SCOPES } from "#shared/enums";
 import { getRouterParam, readBody } from "h3";
 import { prisma } from "@@/server/db";
 import { z } from "zod";
@@ -7,8 +7,8 @@ import { z } from "zod";
 const scopeSchema = z
   .string()
   .refine(
-    (scope) => ACCESS_TOKEN_SCOPES.includes(scope as (typeof ACCESS_TOKEN_SCOPES)[number]),
-    "Access Token 权限范围无效"
+    (scope) => API_KEY_SCOPES.includes(scope as (typeof API_KEY_SCOPES)[number]),
+    "API Key 权限范围无效"
   );
 
 export default defineEventHandler(async (event) => {
@@ -25,10 +25,10 @@ export default defineEventHandler(async (event) => {
   const { error, data: body } = schema.safeParse(await readBody(event));
   if (error) return getBadResponse(event, error.message);
 
-  const token = await prisma.accessToken.findUnique({ where: { id: idResult.data } });
-  if (!token) return getNotFoundResponse(event);
+  const apiKey = await prisma.apiKey.findUnique({ where: { id: idResult.data } });
+  if (!apiKey) return getNotFoundResponse(event);
 
-  await prisma.accessToken.update({
+  await prisma.apiKey.update({
     where: { id: idResult.data },
     data: {
       updated_at: new Date(),

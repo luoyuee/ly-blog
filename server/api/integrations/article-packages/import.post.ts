@@ -1,7 +1,7 @@
 import { getBadResponse, getOKResponse } from "@@/server/utils/response";
 import { useFileStorage } from "@@/server/utils/useFileStorage";
-import { requireAccessScope } from "@@/server/utils/auth/access-token";
-import { AccessTokenScopeEnum } from "#shared/enums";
+import { requireApiKeyScope } from "@@/server/utils/auth/api-key";
+import { ApiKeyScopeEnum } from "#shared/enums";
 import { prisma } from "@@/server/db";
 import { fileTypeFromBuffer } from "file-type";
 import { readFormData } from "h3";
@@ -63,7 +63,7 @@ const replaceAssetPaths = (content: string, assets: ImportedAsset[]): string => 
 };
 
 export default defineEventHandler(async (event) => {
-  requireAccessScope(event, AccessTokenScopeEnum.NOTE_IMPORT);
+  requireApiKeyScope(event, ApiKeyScopeEnum.NOTE_IMPORT);
 
   const formData = await readFormData(event);
   const file = formData.get("file");

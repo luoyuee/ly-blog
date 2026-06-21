@@ -1,13 +1,10 @@
 <script setup lang="ts">
-import type {
-  AccessTokenFormModalPayload,
-  AccessTokenFormModalResult
-} from "#shared/types/ly-editor";
-import type { AccessTokenForm } from "#shared/types/access-token";
-import type { AccessTokenScope } from "#shared/enums";
+import type { ApiKeyFormModalPayload, ApiKeyFormModalResult } from "#shared/types/ly-editor";
+import type { ApiKeyForm } from "#shared/types/api-key";
+import type { ApiKeyScope } from "#shared/enums";
 import type { FormSubmitEvent, SelectItem } from "@nuxt/ui";
-import { ACCESS_TOKEN_SCOPES } from "#shared/enums";
-import { createAccessToken, updateAccessToken } from "@/apis/access-token";
+import { API_KEY_SCOPES } from "#shared/enums";
+import { createApiKey, updateApiKey } from "@/apis/api-key";
 import { BasicModal } from "@/components/basic-modal";
 import { useForm } from "@/composables/useForm";
 import { computed, watch } from "vue";
@@ -23,7 +20,7 @@ const visible = defineModel<boolean>("visible", {
 
 const props = defineProps({
   payload: {
-    type: Object as PropType<AccessTokenFormModalPayload>,
+    type: Object as PropType<ApiKeyFormModalPayload>,
     default: () => ({
       mode: "create",
       record: undefined
@@ -32,21 +29,21 @@ const props = defineProps({
 });
 
 const emits = defineEmits<{
-  resolve: [result: AccessTokenFormModalResult];
+  resolve: [result: ApiKeyFormModalResult];
 }>();
 
-const scopeSchema = z.custom<AccessTokenScope>((value) => {
-  return typeof value === "string" && ACCESS_TOKEN_SCOPES.includes(value as AccessTokenScope);
+const scopeSchema = z.custom<ApiKeyScope>((value) => {
+  return typeof value === "string" && API_KEY_SCOPES.includes(value as ApiKeyScope);
 }, "请选择有效的权限范围");
 
 const schema = z.object({
   id: z.number().optional(),
-  name: z.string({ message: "请输入 Token 名称" }).min(1, "请输入 Token 名称"),
+  name: z.string({ message: "请输入 API 密钥名称" }).min(1, "请输入 API 密钥名称"),
   scopes: z.array(scopeSchema).min(1, "请至少选择一个权限范围"),
   expires_at: z.string().nullable().optional()
 });
 
-const { formData, formState, resetForm, setForm } = useForm<AccessTokenForm>({
+const { formData, formState, resetForm, setForm } = useForm<ApiKeyForm>({
   id: undefined,
   name: undefined,
   scopes: [],
@@ -55,7 +52,7 @@ const { formData, formState, resetForm, setForm } = useForm<AccessTokenForm>({
 });
 
 const modalTitle = computed(() => {
-  return props.payload.mode === "update" ? "编辑令牌" : "新建令牌";
+  return props.payload.mode === "update" ? "编辑 API 密钥" : "新建 API 密钥";
 });
 
 const isEdit = computed(() => {
@@ -104,7 +101,7 @@ const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => 
     formState.submitting = true;
 
     if (isEdit.value && event.data.id) {
-      await updateAccessToken({
+      await updateApiKey({
         id: event.data.id,
         name: event.data.name,
         scopes: event.data.scopes,
@@ -122,7 +119,7 @@ const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => 
       return;
     }
 
-    const createdToken = await createAccessToken({
+    const createdApiKey = await createApiKey({
       name: event.data.name,
       scopes: event.data.scopes,
       expires_at: normalizeExpiresAt(event.data.expires_at)
@@ -135,7 +132,7 @@ const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => 
     visible.value = false;
     emits("resolve", {
       action: "submitted",
-      data: createdToken
+      data: createdApiKey
     });
   } catch (error) {
     $notify.error({
@@ -159,7 +156,7 @@ const handleCancel = () => {
 };
 
 const scopeOptions = computed<SelectItem[]>(() => {
-  return ACCESS_TOKEN_SCOPES.map((item) => ({
+  return API_KEY_SCOPES.map((item) => ({
     label: item,
     value: item
   }));
@@ -183,7 +180,7 @@ const scopeOptions = computed<SelectItem[]>(() => {
       @submit="handleSubmit"
     >
       <UFormField name="name" label="名称" required>
-        <UInput v-model="formData.name" placeholder="如：内容导入 Token" />
+        <UInput v-model="formData.name" placeholder="如：内容导入 API 密钥" />
       </UFormField>
 
       <UFormField name="scopes" label="权限范围" required>
@@ -207,7 +204,7 @@ const scopeOptions = computed<SelectItem[]>(() => {
         variant="soft"
         icon="lucide:triangle-alert"
         title="安全提示"
-        description="Access Token 创建后仅会展示一次明文，请在关闭提示前妥善保存。"
+        description="API 密钥创建后仅会展示一次明文，请在关闭提示前妥善保存。"
       />
     </UForm>
   </BasicModal>
