@@ -1,22 +1,27 @@
 <script setup lang="ts">
 import type { FormSubmitEvent } from "@nuxt/ui";
+import type { NoteFolderForm } from "#shared/types/note";
 import { createFolder, renameFolder, getFolderTree } from "@/apis/note";
 import { BasicModal } from "@/components/basic-modal";
-import { lyEditorEmitter } from "@/events";
 import { TreeSelect } from "@/components/tree-select";
+import { useForm } from "@/composables/useForm";
+import { watch } from "vue";
 import { z } from "zod";
-import type { NoteFolderForm } from "~~/shared/types/note";
 
 const $notify = useNotification();
 
-const props = defineProps<{
-  open?: boolean;
-  payload?: NoteFolderForm;
-}>();
+const visible = defineModel<boolean>("visible", {
+  default: false
+});
+
+const props = defineProps({
+  payload: {
+    type: Object as PropType<NoteFolderForm | undefined>,
+    default: undefined
+  }
+});
 
 const emits = defineEmits<{
-  cancel: [];
-  submit: [];
   resolve: [
     result:
       | {
@@ -34,48 +39,38 @@ const schema = z.object({
   name: z.string({ message: "请输入目录名称" }).min(1, "请输入目录名称")
 });
 
-const formData = ref<NoteFolderForm>({});
-
-const visible = ref(false);
+const { formData, formState, resetForm, setForm } = useForm<NoteFolderForm>({
+  id: undefined,
+  parent_id: undefined,
+  name: undefined
+});
 
 const folderTree = ref<FolderTreeItem[]>([]);
 
-const handleOpen = (data?: NoteFolderForm) => {
-  formData.value = data || {};
-
-  getFolderTree().then((res) => {
-    folderTree.value = res;
-  });
-
-  visible.value = true;
-};
-
-lyEditorEmitter.on("intent.note-manager:new:folder", handleOpen);
-lyEditorEmitter.on("intent.note-manager:rename:folder", handleOpen);
-
+// 监听弹窗显示，初始化表单与回填数据
 watch(
-  () => props.open,
-  (open) => {
-    if (open) {
-      handleOpen(props.payload);
-    } else {
-      visible.value = false;
+  visible,
+  async (newVal) => {
+    if (!newVal) return;
+
+    resetForm();
+
+    if (props.payload) {
+      setForm(props.payload);
     }
+
+    folderTree.value = await getFolderTree();
   },
   {
     immediate: true
   }
 );
 
-defineExpose({
-  open: handleOpen
-});
-
-const submitting = ref(false);
 const formRef = useTemplateRef("formRef");
+
 const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => {
   try {
-    submitting.value = true;
+    formState.submitting = true;
 
     if (event.data.id) {
       await renameFolder({
@@ -99,7 +94,6 @@ const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => 
 
     visible.value = false;
 
-    emits("submit");
     emits("resolve", {
       action: "submitted"
     });
@@ -109,7 +103,7 @@ const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => 
       error
     });
   } finally {
-    submitting.value = false;
+    formState.submitting = false;
   }
 };
 
@@ -119,14 +113,19 @@ const handleConfirm = async () => {
 
 const handleCancel = () => {
   visible.value = false;
-  emits("cancel");
   emits("resolve", {
     action: "cancelled"
   });
 };
 </script>
 <template>
-  <BasicModal v-model:visible="visible" :title="formData.id ? '重命名' : '创建目录'">
+  <BasicModal
+    v-model:visible="visible"
+    :title="formData.id ? '重命名' : '创建目录'"
+    :submitting="formState.submitting"
+    @cancel="handleCancel"
+    @confirm="handleConfirm"
+  >
     <UForm
       ref="formRef"
       class="space-y-2"
@@ -147,16 +146,5 @@ const handleCancel = () => {
         <UInput v-model="formData.name" placeholder="请输入目录名称" />
       </UFormField>
     </UForm>
-
-    <template #footer>
-      <UButton
-        label="取消"
-        color="neutral"
-        variant="outline"
-        :disabled="submitting"
-        @click="handleCancel"
-      />
-      <UButton label="确认" color="primary" :loading="submitting" @click="handleConfirm" />
-    </template>
   </BasicModal>
 </template>

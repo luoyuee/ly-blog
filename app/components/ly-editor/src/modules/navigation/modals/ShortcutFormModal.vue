@@ -5,15 +5,21 @@ import { createShortcut, updateShortcut } from "~/apis/navigation-website";
 import { SelectIcon } from "~/components/form/select";
 import { BasicModal } from "@/components/basic-modal";
 import { useForm } from "~/composables/useForm";
-import { lyEditorEmitter } from "~/events";
+import { computed, watch } from "vue";
 import { z } from "zod";
 
 const $notify = useNotification();
 
-const props = defineProps<{
-  open?: boolean;
-  payload?: ShortcutItem;
-}>();
+const visible = defineModel<boolean>("visible", {
+  default: false
+});
+
+const props = defineProps({
+  payload: {
+    type: Object as PropType<ShortcutItem | undefined>,
+    default: undefined
+  }
+});
 
 const emits = defineEmits<{
   resolve: [
@@ -43,29 +49,18 @@ const { formData, formState, resetForm, setForm } = useForm<ShortcutForm>({
   status: 1
 });
 
-const visible = ref(false);
-
 const title = computed(() => (formData.id ? "编辑快捷方式" : "新增快捷方式"));
 
-const handleOpen = (data?: ShortcutItem) => {
-  resetForm();
-
-  if (data) {
-    setForm(data);
-  }
-
-  visible.value = true;
-};
-
-lyEditorEmitter.on("cmd.modal-manager:open:shortcut-form", handleOpen);
-
+// 监听弹窗显示，初始化表单与回填数据
 watch(
-  () => props.open,
-  (open) => {
-    if (open) {
-      handleOpen(props.payload);
-    } else {
-      visible.value = false;
+  visible,
+  (newVal) => {
+    if (!newVal) return;
+
+    resetForm();
+
+    if (props.payload) {
+      setForm(props.payload);
     }
   },
   {
@@ -74,6 +69,7 @@ watch(
 );
 
 const formRef = useTemplateRef("formRef");
+
 const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => {
   try {
     formState.submitting = true;
@@ -109,7 +105,6 @@ const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => 
 
     visible.value = false;
 
-    lyEditorEmitter.emit("notify.shortcut-form:submitted");
     emits("resolve", {
       action: "submitted"
     });
@@ -129,7 +124,6 @@ const handleConfirm = async () => {
 
 const handleCancel = () => {
   visible.value = false;
-  lyEditorEmitter.emit("state.shortcut-form:cancel");
   emits("resolve", {
     action: "cancelled"
   });

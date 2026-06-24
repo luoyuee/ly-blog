@@ -3,16 +3,21 @@ import type { ArticleCategory } from "#shared/types/article";
 import { Descriptions, DescriptionsItem } from "@/components/descriptions";
 import { getArticleCategoryDetails } from "@/apis/article";
 import { BasicModal } from "@/components/basic-modal";
-import { lyEditorEmitter } from "@/events";
+import { watch } from "vue";
 import dayjs from "dayjs";
 
-const props = defineProps<{
-  open?: boolean;
-  payload?: ArticleCategory;
-}>();
+const visible = defineModel<boolean>("visible", {
+  default: false
+});
+
+const props = defineProps({
+  payload: {
+    type: Object as PropType<ArticleCategory>,
+    default: undefined
+  }
+});
 
 const emits = defineEmits<{
-  cancel: [];
   resolve: [
     result:
       | {
@@ -24,41 +29,28 @@ const emits = defineEmits<{
   ];
 }>();
 
-const visible = ref(false);
-
 const data = ref<Partial<ArticleCategory>>({});
 
-const handleOpen = (e: ArticleCategory) => {
-  visible.value = true;
-
-  getArticleCategoryDetails(e.id).then((res) => {
-    data.value = res;
-  });
-};
-
-lyEditorEmitter.on("cmd.modal-manager:open:category-details", handleOpen);
-
+// 监听弹窗显示，加载分类详情
 watch(
-  () => props.open,
-  (open) => {
-    if (open && props.payload) {
-      handleOpen(props.payload);
-    } else {
-      visible.value = false;
+  visible,
+  async (newVal) => {
+    if (!newVal) {
+      data.value = {};
+      return;
     }
+
+    if (!props.payload) return;
+
+    data.value = await getArticleCategoryDetails(props.payload.id);
   },
   {
     immediate: true
   }
 );
 
-defineExpose({
-  open: handleOpen
-});
-
 const handleCancel = () => {
   visible.value = false;
-  emits("cancel");
   emits("resolve", {
     action: "closed"
   });

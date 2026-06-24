@@ -2,16 +2,23 @@
 import type { ImageFolder } from "#shared/types/image";
 import type { FormSubmitEvent } from "@nuxt/ui";
 import { createImageFolder, updateImageFolder } from "@/apis/image";
-import { reactive } from "vue";
-import { z } from "zod";
 import { BasicModal } from "@/components/basic-modal";
+import { useForm } from "@/composables/useForm";
+import { watch } from "vue";
+import { z } from "zod";
 
 const $notify = useNotification();
 
-const props = defineProps<{
-  open?: boolean;
-  payload?: ImageFolder;
-}>();
+const visible = defineModel<boolean>("visible", {
+  default: false
+});
+
+const props = defineProps({
+  payload: {
+    type: Object as PropType<ImageFolder | undefined>,
+    default: undefined
+  }
+});
 
 interface FormData {
   id?: number;
@@ -20,8 +27,6 @@ interface FormData {
 }
 
 const emits = defineEmits<{
-  cancel: [];
-  submit: [];
   resolve: [
     result:
       | {
@@ -39,42 +44,23 @@ const schema = z.object({
   description: z.string().optional()
 });
 
-const formData = reactive<FormData>({
+const { formData, formState, resetForm, setForm } = useForm<FormData>({
+  id: undefined,
   name: undefined,
   description: undefined
 });
 
-const resetForm = () => {
-  Object.keys(formData).forEach((key) => {
-    formData[key as keyof FormData] = undefined;
-  });
-};
-
-const visible = ref(false);
-
-const handleOpen = (data?: ImageFolder) => {
-  resetForm();
-
-  if (data) {
-    formData.id = data.id;
-    formData.name = data.name;
-    formData.description = data.description;
-  }
-
-  visible.value = true;
-};
-
-defineExpose({
-  open: handleOpen
-});
-
+// 监听弹窗显示，初始化表单与回填数据
 watch(
-  () => props.open,
-  (open) => {
-    if (open) {
-      handleOpen(props.payload);
-    } else {
-      visible.value = false;
+  visible,
+  (newVal) => {
+    if (!newVal) return;
+
+    resetForm();
+
+    if (props.payload) {
+      const { id, name, description } = props.payload;
+      setForm({ id, name, description });
     }
   },
   {
@@ -82,11 +68,11 @@ watch(
   }
 );
 
-const submitting = ref(false);
 const formRef = useTemplateRef("formRef");
+
 const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => {
   try {
-    submitting.value = true;
+    formState.submitting = true;
 
     if (event.data.id) {
       await updateImageFolder({
@@ -111,16 +97,16 @@ const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => 
 
     visible.value = false;
 
-    emits("submit");
     emits("resolve", {
       action: "submitted"
     });
-  } catch {
+  } catch (error) {
     $notify.error({
-      title: "操作失败"
+      title: "操作失败",
+      error
     });
   } finally {
-    submitting.value = false;
+    formState.submitting = false;
   }
 };
 
@@ -130,14 +116,19 @@ const handleConfirm = async () => {
 
 const handleCancel = () => {
   visible.value = false;
-  emits("cancel");
   emits("resolve", {
     action: "cancelled"
   });
 };
 </script>
 <template>
-  <BasicModal v-model:open="visible" :title="formData.id ? '修改目录' : '创建目录'">
+  <BasicModal
+    v-model:visible="visible"
+    :title="formData.id ? '修改目录' : '创建目录'"
+    :submitting="formState.submitting"
+    @cancel="handleCancel"
+    @confirm="handleConfirm"
+  >
     <UForm
       ref="formRef"
       class="space-y-2"
@@ -154,16 +145,5 @@ const handleCancel = () => {
         <UTextarea v-model="formData.description" placeholder="请输入目录描述" />
       </UFormField>
     </UForm>
-
-    <template #footer>
-      <UButton
-        label="取消"
-        color="neutral"
-        variant="outline"
-        :disabled="submitting"
-        @click="handleCancel"
-      />
-      <UButton label="确认" color="primary" :loading="submitting" @click="handleConfirm" />
-    </template>
   </BasicModal>
 </template>

@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { ApiKeyItem } from "#shared/types/api-key";
 import type { TableColumn } from "@nuxt/ui";
-import { TabPanelTable } from "@ly-editor/src/components";
 import { disableApiKey, getPaginatedApiKeys } from "@/apis/api-key";
 import { useLyEditorModal } from "@/composables/useLyEditorModal";
+import { TabPanelTable } from "@ly-editor/src/components";
 import { h, resolveComponent } from "vue";
 import dayjs from "dayjs";
 
@@ -290,7 +290,9 @@ const handleDisable = (record: ApiKeyItem) => {
       <UButton icon="lucide:plus" @click="handleOpenFormModal()">新建 API 密钥</UButton>
     </template>
     <template #header-right>
-      <UButton icon="lucide:refresh-cw" color="neutral" variant="soft" @click="loadData">刷新</UButton>
+      <UButton icon="lucide:refresh-cw" color="neutral" variant="soft" @click="loadData">
+        刷新
+      </UButton>
     </template>
   </TabPanelTable>
 </template>

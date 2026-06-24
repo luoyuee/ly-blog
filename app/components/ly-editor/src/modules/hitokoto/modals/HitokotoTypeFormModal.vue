@@ -46,16 +46,22 @@ const { formData, formState, resetForm, setForm } = useForm<HitokotoTypeForm>({
   description: undefined
 });
 
-watch(visible, (newVal) => {
-  if (!newVal) return;
+watch(
+  visible,
+  (newVal) => {
+    if (!newVal) return;
 
-  resetForm();
+    resetForm();
 
-  if (props.payload.record) {
-    const { id, name, description } = props.payload.record;
-    setForm({ id, name, description });
+    if (props.payload.record) {
+      const { id, name, description } = props.payload.record;
+      setForm({ id, name, description });
+    }
+  },
+  {
+    immediate: true
   }
-});
+);
 
 const formRef = useTemplateRef("formRef");
 

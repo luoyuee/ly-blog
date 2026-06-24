@@ -3,6 +3,7 @@ import type { FormSubmitEvent, InputMenuItem } from "@nuxt/ui";
 import type { SendEmailForm } from "@/apis/admin/models";
 import { BasicModal } from "@/components/basic-modal";
 import { getRecipients, sendEmail } from "@/apis/admin";
+import { watch } from "vue";
 import { z } from "zod";
 
 const recipientOptions = ref<InputMenuItem[]>([]);
@@ -15,16 +16,12 @@ const schema = z.object({
 
 const $notify = useNotification();
 
-const props = defineProps<{
-  open?: boolean;
-}>();
+const visible = defineModel<boolean>("visible", {
+  default: false
+});
 
 const emits = defineEmits<{
-  resolve: [
-    result:
-      | { action: "sent" }
-      | { action: "cancelled" }
-  ];
+  resolve: [result: { action: "sent" } | { action: "cancelled" }];
 }>();
 
 const formData = ref<SendEmailForm>({
@@ -33,36 +30,24 @@ const formData = ref<SendEmailForm>({
   content: ""
 });
 
-const visible = ref(false);
+// 监听弹窗显示，初始化表单并加载收件人选项
+watch(
+  visible,
+  async (newVal) => {
+    if (!newVal) return;
 
-const handleOpen = () => {
-  formData.value = {
-    to: [],
-    subject: "",
-    content: ""
-  };
+    formData.value = {
+      to: [],
+      subject: "",
+      content: ""
+    };
 
-  getRecipients().then((recipients) => {
+    const recipients = await getRecipients();
     recipientOptions.value = recipients.map((item) => ({
       label: `${item.email} (${item.nickname})`,
       value: item.email,
       avatar: { src: item.avatar || "/images/blank_avatar.webp" }
     }));
-  });
-
-  visible.value = true;
-};
-
-defineExpose({ open: handleOpen });
-
-watch(
-  () => props.open,
-  (open) => {
-    if (open) {
-      handleOpen();
-    } else {
-      visible.value = false;
-    }
   },
   { immediate: true }
 );
@@ -91,20 +76,27 @@ const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => 
 };
 
 const handleCancel = () => {
-    visible.value = false;
-    emits("resolve", { action: "cancelled" });
+  visible.value = false;
+  emits("resolve", { action: "cancelled" });
 };
 
-function onCreate(item: string) {
+const onCreate = (item: string) => {
   recipientOptions.value.push({
     label: item,
     value: item,
     avatar: { src: "/images/blank_avatar.webp" }
   });
-}
+};
 </script>
 <template>
-  <BasicModal v-model:visible="visible" title="发送邮件">
+  <BasicModal
+    v-model:visible="visible"
+    title="发送邮件"
+    confirm-button-text="发送"
+    :submitting="submitting"
+    @cancel="handleCancel"
+    @confirm="handleConfirm"
+  >
     <UForm
       ref="formRef"
       :state="formData"
@@ -134,10 +126,5 @@ function onCreate(item: string) {
         <UTextarea v-model="formData.content" :rows="6" placeholder="请输入邮件内容" />
       </UFormField>
     </UForm>
-
-    <template #footer>
-      <UButton label="取消" color="neutral" variant="outline" :disabled="submitting" @click="handleCancel" />
-      <UButton label="发送" color="primary" :loading="submitting" @click="handleConfirm" />
-    </template>
   </BasicModal>
 </template>

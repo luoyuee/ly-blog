@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { ShortcutItem } from "#shared/types/navigation-website";
 import { getShortcutList, deleteShortcut } from "~/apis/navigation-website";
-import { lyEditorEmitter } from "~/events";
 import { useLyEditorModal } from "@/composables/useLyEditorModal";
 
 const $notify = useNotification();
@@ -18,8 +17,6 @@ const loadShortcuts = async () => {
     $notify.error({ title: "操作失败", error });
   }
 };
-
-lyEditorEmitter.on("notify.shortcut-form:submitted", loadShortcuts);
 
 onMounted(() => {
   loadShortcuts();

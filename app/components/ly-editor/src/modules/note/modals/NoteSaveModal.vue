@@ -1,23 +1,27 @@
 <script setup lang="ts">
 import type { EditorTabItem, FolderTreeItem } from "#shared/types/ly-editor";
 import type { FormSubmitEvent } from "@nuxt/ui";
-import { BasicModal } from "@/components/basic-modal";
 import { getFolderTree, createNote } from "@/apis/note";
-import { lyEditorEmitter } from "@/events";
-import { reactive } from "vue";
-import { z } from "zod";
+import { BasicModal } from "@/components/basic-modal";
 import { TreeSelect } from "@/components/tree-select";
+import { lyEditorEmitter } from "@/events";
+import { reactive, watch } from "vue";
+import { z } from "zod";
 
 const $notify = useNotification();
 
-const props = defineProps<{
-  open?: boolean;
-  payload?: EditorTabItem;
-}>();
+const visible = defineModel<boolean>("visible", {
+  default: false
+});
+
+const props = defineProps({
+  payload: {
+    type: Object as PropType<EditorTabItem>,
+    default: undefined
+  }
+});
 
 const emits = defineEmits<{
-  cancel: [];
-  submit: [];
   resolve: [
     result:
       | {
@@ -38,11 +42,9 @@ const schema = z.object({
 });
 
 const state = reactive<{
-  visible: boolean;
   submitting: boolean;
   tabItem?: EditorTabItem;
 }>({
-  visible: false,
   submitting: false
 });
 
@@ -58,33 +60,39 @@ const formData = reactive<{
 
 const folderData = ref<FolderTreeItem[]>();
 
-const handleOpen = async (e: EditorTabItem) => {
-  if (e.type !== "note") return;
-  state.tabItem = e;
-  try {
-    if (e.data.id) return;
-    formData.id = e.data.id;
-    formData.name = e.data.name;
-    formData.folder_id = e.data.folder_id;
-    formData.content = e.data.content;
-
-    folderData.value = await getFolderTree();
-
-    state.visible = true;
-  } catch {
-    $notify.error({
-      title: "获取目录失败"
-    });
-  }
-};
-
+// 监听弹窗显示，初始化笔记表单
 watch(
-  () => props.open,
-  (open) => {
-    if (open && props.payload) {
-      handleOpen(props.payload);
-    } else {
-      state.visible = false;
+  visible,
+  async (newVal) => {
+    if (!newVal) {
+      state.tabItem = undefined;
+      return;
+    }
+
+    const tabItem = props.payload;
+
+    if (!tabItem || tabItem.type !== "note") {
+      visible.value = false;
+      return;
+    }
+
+    if (tabItem.data.id) {
+      visible.value = false;
+      return;
+    }
+
+    state.tabItem = tabItem;
+    formData.id = tabItem.data.id;
+    formData.name = tabItem.data.name;
+    formData.folder_id = tabItem.data.folder_id;
+    formData.content = tabItem.data.content;
+
+    try {
+      folderData.value = await getFolderTree();
+    } catch {
+      $notify.error({
+        title: "获取目录失败"
+      });
     }
   },
   {
@@ -117,13 +125,16 @@ const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => 
     });
 
     if (state.tabItem) {
+      const tab = state.tabItem;
+      visible.value = false;
       emits("resolve", {
         action: "saved",
-        tab: state.tabItem
+        tab
       });
+    } else {
+      visible.value = false;
     }
 
-    state.visible = false;
     lyEditorEmitter.emit("cmd.note-manager:reload");
   } catch (error) {
     $notify.error({
@@ -140,15 +151,20 @@ const handleConfirm = async () => {
 };
 
 const handleCancel = () => {
-  state.visible = false;
-  emits("cancel");
+  visible.value = false;
   emits("resolve", {
     action: "cancelled"
   });
 };
 </script>
 <template>
-  <BasicModal v-model:visible="state.visible" title="保存文件">
+  <BasicModal
+    v-model:visible="visible"
+    title="保存文件"
+    :submitting="state.submitting"
+    @cancel="handleCancel"
+    @confirm="handleConfirm"
+  >
     <UForm
       ref="formRef"
       class="space-y-2"
@@ -169,16 +185,5 @@ const handleCancel = () => {
         <UInput v-model="formData.name" placeholder="请输入文件名" />
       </UFormField>
     </UForm>
-
-    <template #footer>
-      <UButton
-        label="取消"
-        color="neutral"
-        variant="outline"
-        :disabled="state.submitting"
-        @click="handleCancel"
-      />
-      <UButton label="确认" color="primary" :loading="state.submitting" @click="handleConfirm" />
-    </template>
   </BasicModal>
 </template>

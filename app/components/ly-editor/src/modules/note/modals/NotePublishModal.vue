@@ -1,11 +1,11 @@
 <script setup lang="ts">
+import type { Article, ArticleCategoryTree, ArticleForm } from "#shared/types/article";
+import type { FolderTreeItem } from "#shared/types/ly-editor";
 import type { FormSubmitEvent } from "@nuxt/ui";
 import type { Note } from "#shared/types/note";
-import type { Article, ArticleCategoryTree, ArticleForm } from "#shared/types/article";
 import { BasicModal } from "@/components/basic-modal";
+import { computed, reactive, watch } from "vue";
 import { getNoteDetail } from "@/apis/note";
-import { computed, reactive } from "vue";
-import { lyEditorEmitter } from "@/events";
 import {
   getArticleDetail,
   getArticleCategoryTree,
@@ -26,10 +26,16 @@ const userStore = useUserStore();
 
 const $notify = useNotification();
 
-const props = defineProps<{
-  open?: boolean;
-  payload?: FolderTreeItem;
-}>();
+const visible = defineModel<boolean>("visible", {
+  default: false
+});
+
+const props = defineProps({
+  payload: {
+    type: Object as PropType<FolderTreeItem>,
+    default: undefined
+  }
+});
 
 const emits = defineEmits<{
   resolve: [
@@ -53,13 +59,9 @@ const customUrlPrefix = computed(() => {
 });
 
 const state = reactive<{
-  visible: boolean;
-  path?: string;
   note_id?: number;
   article_id?: number;
-}>({
-  visible: false
-});
+}>({});
 
 const folderData = ref<ArticleCategoryTree>([]);
 
@@ -77,6 +79,98 @@ const formData = reactive<ArticleForm & { enable_pinned?: boolean }>({
   custom_url_access_only: false,
   enable_pinned: false
 });
+
+const note = ref<Note | null>(null);
+const article = ref<Article | null>(null);
+
+const needUpdate = computed(() => {
+  if (!note.value || !article.value) {
+    return false;
+  }
+
+  return note.value.version > article.value.note_version;
+});
+
+const resetForm = () => {
+  formData.title = "";
+  formData.category_id = undefined;
+  formData.author = undefined;
+  formData.abstract = "";
+  formData.tags = undefined;
+  formData.published_at = undefined;
+  formData.cover = undefined;
+  formData.pin_priority = undefined;
+  formData.enable_pinned = false;
+  formData.allow_comments = true;
+  formData.allow_rewards = true;
+  formData.custom_url = undefined;
+  formData.custom_url_access_only = false;
+};
+
+const initData = async () => {
+  try {
+    if (state.article_id) {
+      article.value = await getArticleDetail(state.article_id);
+      note.value = await getNoteDetail(article.value.note_id);
+    } else if (state.note_id) {
+      note.value = await getNoteDetail(state.note_id);
+    }
+
+    if (article.value) {
+      formData.title = article.value.title;
+      formData.category_id = article.value.category_id;
+      formData.author = article.value.author;
+      formData.abstract = article.value.abstract;
+      formData.tags = article.value.tags;
+      formData.published_at = article.value.published_at;
+      formData.cover = article.value.cover;
+      formData.pin_priority = article.value.pin_priority;
+      formData.enable_pinned = Boolean(article.value.pin_priority);
+      formData.password = article.value.password;
+      formData.allow_comments = article.value.allow_comments;
+      formData.allow_rewards = article.value.allow_rewards;
+      formData.custom_url = article.value.custom_url;
+      formData.custom_url_access_only = article.value.custom_url_access_only;
+    } else if (note.value) {
+      const ast = await parseMarkdown(note.value.content);
+      formData.title = ast.data.title;
+      formData.author = userStore.profile?.nickname || "";
+    }
+  } catch (error) {
+    $notify.error({
+      title: "加载数据失败",
+      error
+    });
+  }
+
+  folderData.value = await getArticleCategoryTree();
+};
+
+// 监听弹窗显示，加载笔记/文章数据
+watch(
+  visible,
+  (newVal) => {
+    if (!newVal) {
+      state.note_id = undefined;
+      state.article_id = undefined;
+      note.value = null;
+      article.value = null;
+      resetForm();
+      return;
+    }
+
+    const payload = props.payload;
+
+    if (!payload || payload.type !== "note") return;
+
+    state.note_id = payload.id;
+    state.article_id = payload.data.article_id;
+    initData();
+  },
+  {
+    immediate: true
+  }
+);
 
 const handleSubmit = async (event: FormSubmitEvent<ArticleForm>) => {
   try {
@@ -125,34 +219,20 @@ const handleSubmit = async (event: FormSubmitEvent<ArticleForm>) => {
       });
     }
 
+    const articleId = article.value?.id;
+
+    visible.value = false;
+
     emits("resolve", {
       action: "published",
-      articleId: article.value?.id
+      articleId
     });
-
-    handleCancel();
   } catch (error) {
     $notify.error({
       title: "发布失败",
       error
     });
   }
-};
-
-const resetForm = () => {
-  formData.title = "";
-  formData.category_id = undefined;
-  formData.author = undefined;
-  formData.abstract = "";
-  formData.tags = undefined;
-  formData.published_at = undefined;
-  formData.cover = undefined;
-  formData.pin_priority = undefined;
-  formData.enable_pinned = false;
-  formData.allow_comments = true;
-  formData.allow_rewards = true;
-  formData.custom_url = undefined;
-  formData.custom_url_access_only = false;
 };
 
 const formRef = useTemplateRef("formRef");
@@ -162,99 +242,11 @@ const handleConfirm = () => {
 };
 
 const handleCancel = () => {
-  state.note_id = undefined;
-  state.article_id = undefined;
-
-  note.value = null;
-  article.value = null;
-
-  state.visible = false;
-
-  resetForm();
+  visible.value = false;
+  emits("resolve", {
+    action: "cancelled"
+  });
 };
-
-const note = ref<Note | null>(null);
-const article = ref<Article | null>(null);
-
-const needUpdate = computed(() => {
-  if (!note.value || !article.value) {
-    return false;
-  }
-
-  return note.value.version > article.value.note_version;
-});
-
-const initData = async () => {
-  try {
-    if (state.article_id) {
-      article.value = await getArticleDetail(state.article_id);
-      note.value = await getNoteDetail(article.value.note_id);
-    } else if (state.note_id) {
-      note.value = await getNoteDetail(state.note_id);
-    }
-
-    if (article.value) {
-      formData.title = article.value.title;
-      formData.category_id = article.value.category_id;
-      formData.author = article.value.author;
-      formData.abstract = article.value.abstract;
-      formData.tags = article.value.tags;
-      formData.published_at = article.value.published_at;
-      formData.cover = article.value.cover;
-      formData.pin_priority = article.value.pin_priority;
-      formData.enable_pinned = Boolean(article.value.pin_priority);
-      formData.password = article.value.password;
-      formData.allow_comments = article.value.allow_comments;
-      formData.allow_rewards = article.value.allow_rewards;
-      formData.custom_url = article.value.custom_url;
-      formData.custom_url_access_only = article.value.custom_url_access_only;
-    } else if (note.value) {
-      const ast = await parseMarkdown(note.value.content);
-      formData.title = ast.data.title;
-      formData.author = userStore.profile?.nickname || "";
-    }
-  } catch (error) {
-    $notify.error({
-      title: "加载数据失败",
-      error
-    });
-  }
-
-  folderData.value = await getArticleCategoryTree();
-};
-
-lyEditorEmitter.on("cmd.note-manager:publish:article", async (e: FolderTreeItem) => {
-  if (e.type !== "note") return;
-
-  state.note_id = e.id;
-  state.article_id = e.data.article_id;
-  state.visible = true;
-
-  initData();
-});
-
-watch(
-  () => props.open,
-  (open) => {
-    const payload = props.payload;
-
-    if (open && payload?.type === "note") {
-      state.note_id = payload.id;
-      state.article_id = payload.data.article_id;
-      state.visible = true;
-      initData();
-
-      return;
-    }
-
-    if (!open) {
-      state.visible = false;
-    }
-  },
-  {
-    immediate: true
-  }
-);
 
 const handleCopyCustomUrl = async () => {
   if (!formData.custom_url) {
@@ -285,7 +277,7 @@ const handleChangePinned = () => {
 <template>
   <ClientOnly>
     <BasicModal
-      v-model:visible="state.visible"
+      v-model:visible="visible"
       content-class="max-w-[1080px] h-[80vh]"
       :title="article ? '更新文章' : '发布文章'"
       @confirm="handleConfirm"

@@ -9,8 +9,7 @@ import {
   deleteAttachment,
   uploadAttachmentFile
 } from "@/apis/attachment";
-import { Pagination } from "@/components/pagination";
-import { useLyEditorModal } from "@/composables/useLyEditorModal";
+import { TabPanelTable } from "@ly-editor/src/components";
 import { useLyEditorStore } from "@/stores";
 import { h, resolveComponent } from "vue";
 import { useI18n } from "vue-i18n";
@@ -19,7 +18,9 @@ import numeral from "numeral";
 
 const props = defineProps({
   tab: {
-    type: Object as PropType<EditorTabItem & { type: "attachment-panel"; data: AttachmentManagerData }>,
+    type: Object as PropType<
+      EditorTabItem & { type: "attachment-panel"; data: AttachmentManagerData }
+    >,
     required: true,
     validator: (value: EditorTabItem) => value.type === "attachment-panel"
   }
@@ -30,12 +31,8 @@ const $msgBox = useMessageBox();
 const { t } = useI18n();
 const lyEditorStore = useLyEditorStore();
 
-const { openModal } = useLyEditorModal();
-
 const UButton = resolveComponent("UButton");
 const UDropdownMenu = resolveComponent("UDropdownMenu");
-
-const defaultFolderIcon = "icon-park-outline:folder-open";
 
 const data = ref<AttachmentItem[]>([]);
 const currentFolder = ref<AttachmentFolder>({ ...props.tab.data });
@@ -148,12 +145,12 @@ const columns: TableColumn<AttachmentItem>[] = [
           items: [
             {
               label: "复制链接",
-              icon: "ep:link",
+              icon: "lucide:link",
               disabled: !row.original.url,
               onSelect: async () => {
                 if (!row.original.url) return;
 
-                await navigator.clipboard.writeText(row.original.url);
+                await navigator.clipboard.writeText(window.location.origin + row.original.url);
                 $notify.success({
                   title: "链接已复制"
                 });
@@ -161,7 +158,7 @@ const columns: TableColumn<AttachmentItem>[] = [
             },
             {
               label: "打开文件",
-              icon: "ep:view",
+              icon: "lucide:eye",
               disabled: !row.original.url,
               onSelect: () => {
                 if (!row.original.url) return;
@@ -171,7 +168,7 @@ const columns: TableColumn<AttachmentItem>[] = [
             },
             {
               label: "删除文件",
-              icon: "ep:delete",
+              icon: "lucide:trash-2",
               color: "error",
               onSelect: () => {
                 handleDelete(row.original);
@@ -183,7 +180,7 @@ const columns: TableColumn<AttachmentItem>[] = [
           h(UButton, {
             color: "neutral",
             variant: "ghost",
-            icon: "i-lucide-ellipsis"
+            icon: "lucide:ellipsis"
           })
       );
     }
@@ -246,24 +243,6 @@ const loadFolderDetail = async () => {
 const handleSearch = async () => {
   state.page = 1;
   await loadData();
-};
-
-const handleResetSearch = async () => {
-  state.keyword = undefined;
-  state.page = 1;
-  await loadData();
-};
-
-const handleOpenFolderFormModal = async () => {
-  const result = await openModal("attachment-folder-form", {
-    mode: "update",
-    record: props.tab.data
-  });
-
-  if (result.action === "submitted") {
-    await loadFolderDetail();
-    await loadData();
-  }
 };
 
 const handleTriggerUpload = () => {
@@ -335,13 +314,6 @@ const handleDelete = (record: AttachmentItem) => {
   });
 };
 
-watch(
-  () => [state.page, state.per_page],
-  () => {
-    loadData();
-  }
-);
-
 onMounted(() => {
   loadFolderDetail();
   loadData();
@@ -349,51 +321,51 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="flex h-full flex-col overflow-hidden p-4">
-    <div class="mb-4 flex items-center justify-between gap-4">
-      <div>
-        <h3 class="flex items-center gap-1 text-sm font-medium">
-          <UIcon :name="currentFolder.icon || defaultFolderIcon" class="shrink-0" />
-          <span>{{ currentFolder.name }}</span>
-        </h3>
-        <p class="text-xs text-gray-400">
-          {{ currentFolder.description || "当前目录用于管理文章与页面附件资源。" }}
-        </p>
-      </div>
+  <input ref="fileInputRef" type="file" class="hidden" @change="handleFileChange" />
 
-      <div class="flex items-center gap-2">
-        <input ref="fileInputRef" type="file" class="hidden" @change="handleFileChange" />
-        <UButton color="primary" icon="ep:upload" :loading="state.loading" @click="handleTriggerUpload">
-          上传附件
-        </UButton>
-        <UButton color="neutral" variant="outline" icon="ep:edit" @click="handleOpenFolderFormModal">
-          编辑目录
-        </UButton>
-        <UButton color="neutral" variant="outline" icon="ep:refresh" :loading="state.loading" @click="loadData">
-          刷新
-        </UButton>
-      </div>
-    </div>
-
-    <div class="mb-4 flex items-center justify-between gap-4">
+  <TabPanelTable
+    v-model:page="state.page"
+    v-model:page-size="state.per_page"
+    :loading="state.loading"
+    :data="data"
+    :columns="columns"
+    :total="state.total"
+    @refresh="loadData"
+  >
+    <template #header-left>
+      <UButton
+        color="primary"
+        icon="lucide:upload"
+        :loading="state.loading"
+        @click="handleTriggerUpload"
+      >
+        上传附件
+      </UButton>
       <div class="flex items-center gap-2 text-xs text-gray-400">
         <span>文件数：{{ state.total }}</span>
         <span>目录容量：{{ numeral(currentFolder.size).format("0.0 b") }}</span>
       </div>
+    </template>
 
+    <template #header-right>
       <UFieldGroup>
-        <UInput v-model.trim="state.keyword" class="w-72" placeholder="请输入文件名关键词" @keydown.enter="handleSearch" />
-        <UButton icon="ep:search" @click="handleSearch">搜索</UButton>
-        <UButton color="neutral" variant="outline" @click="handleResetSearch">重置</UButton>
+        <UInput
+          v-model.trim="state.keyword"
+          class="w-72"
+          placeholder="请输入文件名关键词"
+          @keydown.enter="handleSearch"
+        />
+        <UButton icon="lucide:search" @click="handleSearch">搜索</UButton>
       </UFieldGroup>
-    </div>
-
-    <div class="min-h-0 flex-1 overflow-hidden rounded-lg border border-gray-100/10">
-      <UTable :data="data" :columns="columns" sticky class="h-full" :loading="state.loading" />
-    </div>
-
-    <div class="pt-4">
-      <Pagination v-model:page="state.page" v-model:page-size="state.per_page" :total="state.total" />
-    </div>
-  </div>
+      <UButton
+        color="neutral"
+        variant="outline"
+        icon="lucide:refresh-cw"
+        :loading="state.loading"
+        @click="loadData"
+      >
+        刷新
+      </UButton>
+    </template>
+  </TabPanelTable>
 </template>

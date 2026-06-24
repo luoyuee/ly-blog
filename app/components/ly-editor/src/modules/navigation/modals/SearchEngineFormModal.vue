@@ -2,19 +2,25 @@
 import type { FormSubmitEvent } from "@nuxt/ui";
 import type { SearchEngineItem, SearchEngineForm } from "#shared/types/navigation-website";
 import { createSearchEngine, updateSearchEngine } from "~/apis/navigation-website";
+import { SearchEngineIconNames } from "#shared/constants/icons";
 import { SelectIcon } from "~/components/form/select";
 import { BasicModal } from "@/components/basic-modal";
 import { useForm } from "~/composables/useForm";
-import { lyEditorEmitter } from "~/events";
+import { computed, watch } from "vue";
 import { z } from "zod";
-import { SearchEngineIconNames } from "#shared/constants/icons";
 
 const $notify = useNotification();
 
-const props = defineProps<{
-  open?: boolean;
-  payload?: SearchEngineItem;
-}>();
+const visible = defineModel<boolean>("visible", {
+  default: false
+});
+
+const props = defineProps({
+  payload: {
+    type: Object as PropType<SearchEngineItem | undefined>,
+    default: undefined
+  }
+});
 
 const emits = defineEmits<{
   resolve: [
@@ -44,29 +50,18 @@ const { formData, formState, resetForm, setForm } = useForm<SearchEngineForm>({
   status: 1
 });
 
-const visible = ref(false);
-
 const title = computed(() => (formData.id ? "编辑搜索引擎" : "新增搜索引擎"));
 
-const handleOpen = (data?: SearchEngineItem) => {
-  resetForm();
-
-  if (data) {
-    setForm(data);
-  }
-
-  visible.value = true;
-};
-
-lyEditorEmitter.on("cmd.modal-manager:open:search-engine-form", handleOpen);
-
+// 监听弹窗显示，初始化表单与回填数据
 watch(
-  () => props.open,
-  (open) => {
-    if (open) {
-      handleOpen(props.payload);
-    } else {
-      visible.value = false;
+  visible,
+  (newVal) => {
+    if (!newVal) return;
+
+    resetForm();
+
+    if (props.payload) {
+      setForm(props.payload);
     }
   },
   {
@@ -75,6 +70,7 @@ watch(
 );
 
 const formRef = useTemplateRef("formRef");
+
 const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => {
   try {
     formState.submitting = true;
@@ -110,7 +106,6 @@ const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => 
 
     visible.value = false;
 
-    lyEditorEmitter.emit("notify.search-engine-form:submitted");
     emits("resolve", {
       action: "submitted"
     });
@@ -130,7 +125,6 @@ const handleConfirm = async () => {
 
 const handleCancel = () => {
   visible.value = false;
-  lyEditorEmitter.emit("state.search-engine-form:cancel");
   emits("resolve", {
     action: "cancelled"
   });

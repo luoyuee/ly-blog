@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { SearchEngineItem } from "#shared/types/navigation-website";
 import { getSearchEngineList, deleteSearchEngine } from "~/apis/navigation-website";
-import { lyEditorEmitter } from "~/events";
 import { useLyEditorModal } from "@/composables/useLyEditorModal";
 
 const $notify = useNotification();
@@ -18,8 +17,6 @@ const loadSearchEngines = async () => {
     $notify.error({ title: "操作失败", error });
   }
 };
-
-lyEditorEmitter.on("notify.search-engine-form:submitted", loadSearchEngines);
 
 onMounted(() => {
   loadSearchEngines();

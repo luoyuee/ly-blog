@@ -1,28 +1,33 @@
 <script setup lang="ts">
 import type { FormSubmitEvent } from "@nuxt/ui";
+import type { ArticleCategoryTree, ArticleCategoryForm } from "#shared/types/article";
 import {
   getArticleCategoryTree,
   createArticleCategory,
   updateArticleCategory
 } from "@/apis/article";
-import { reactive } from "vue";
 import { SelectIcon } from "@/components/form/select";
-import type { ArticleCategoryTree, ArticleCategoryForm } from "#shared/types/article";
 import { BasicModal } from "@/components/basic-modal";
 import { TreeSelect } from "@/components/tree-select";
-import { z } from "zod";
+import { useForm } from "@/composables/useForm";
 import { lyEditorEmitter } from "@/events";
+import { watch } from "vue";
+import { z } from "zod";
 
 const $notify = useNotification();
 
-const props = defineProps<{
-  open?: boolean;
-  payload?: ArticleCategoryForm;
-}>();
+const visible = defineModel<boolean>("visible", {
+  default: false
+});
+
+const props = defineProps({
+  payload: {
+    type: Object as PropType<ArticleCategoryForm | undefined>,
+    default: undefined
+  }
+});
 
 const emits = defineEmits<{
-  cancel: [];
-  submit: [];
   resolve: [
     result:
       | {
@@ -42,43 +47,25 @@ const schema = z.object({
   description: z.string().optional()
 });
 
-const formData = reactive<ArticleCategoryForm>({
+const { formData, formState, resetForm, setForm } = useForm<ArticleCategoryForm>({
+  id: undefined,
   parent_id: undefined,
   name: undefined,
   icon: undefined,
   description: undefined
 });
 
-const resetForm = () => {
-  Object.keys(formData).forEach((key) => {
-    formData[key as keyof ArticleCategoryForm] = undefined;
-  });
-};
-
-const visible = ref(false);
-
-const handleOpen = (data?: ArticleCategoryForm) => {
-  resetForm();
-
-  if (data) {
-    formData.id = data.id;
-    formData.name = data.name;
-    formData.icon = data.icon;
-    formData.description = data.description;
-  }
-
-  visible.value = true;
-};
-
-lyEditorEmitter.on("cmd.modal-manager:open:category-form", handleOpen);
-
+// 监听弹窗显示，初始化表单与回填数据
 watch(
-  () => props.open,
-  (open) => {
-    if (open) {
-      handleOpen(props.payload);
-    } else {
-      visible.value = false;
+  visible,
+  (newVal) => {
+    if (!newVal) return;
+
+    resetForm();
+
+    if (props.payload) {
+      const { id, name, icon, description } = props.payload;
+      setForm({ id, name, icon, description });
     }
   },
   {
@@ -86,15 +73,11 @@ watch(
   }
 );
 
-defineExpose({
-  open: handleOpen
-});
-
-const submitting = ref(false);
 const formRef = useTemplateRef("formRef");
+
 const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => {
   try {
-    submitting.value = true;
+    formState.submitting = true;
 
     if (event.data.id) {
       await updateArticleCategory({
@@ -119,7 +102,6 @@ const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => 
 
     visible.value = false;
 
-    emits("submit");
     emits("resolve", {
       action: "submitted"
     });
@@ -127,7 +109,7 @@ const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => 
     $notify.error({ title: "操作失败", error });
   } finally {
     lyEditorEmitter.emit("cmd.article-manager:reload");
-    submitting.value = false;
+    formState.submitting = false;
   }
 };
 
@@ -137,7 +119,6 @@ const handleConfirm = async () => {
 
 const handleCancel = () => {
   visible.value = false;
-  emits("cancel");
   emits("resolve", {
     action: "cancelled"
   });
@@ -153,7 +134,7 @@ onMounted(async () => {
   <BasicModal
     v-model:visible="visible"
     :title="formData.id ? '修改分类' : '新建分类'"
-    :submitting="submitting"
+    :submitting="formState.submitting"
     @cancel="handleCancel"
     @confirm="handleConfirm"
   >

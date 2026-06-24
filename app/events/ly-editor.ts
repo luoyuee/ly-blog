@@ -1,5 +1,4 @@
-import type { EditorTabItem, NavigationWebsiteFormModalPayload } from "#shared/types/ly-editor";
-import type { NoteFolderForm } from "#shared/types/note";
+import type { EditorTabItem } from "#shared/types/ly-editor";
 import mitt from "mitt";
 
 /**
@@ -54,10 +53,7 @@ type Events = {
   // 笔记管理器事件
   "note-manager:create": undefined;
   "note-manager:delete": string;
-  "intent.note-manager:new:folder": undefined;
-  "intent.note-manager:rename:folder": NoteFolderForm;
   "cmd.note-manager:reload": undefined;
-  "cmd.note-manager:publish:article": FolderTreeItem;
 
   // 编辑器核心事件
   "intent.editor-core:save:file": EditorTabItem;
@@ -70,22 +66,6 @@ type Events = {
 
   // 文章管理器事件
   "cmd.article-manager:reload": undefined;
-
-  // 弹窗管理器
-  "cmd.modal-manager:open:category-form": ArticleCategoryForm | undefined;
-  "cmd.modal-manager:open:category-details": ArticleCategory;
-  "cmd.modal-manager:open:shortcut-form": ShortcutItem | undefined;
-  "cmd.modal-manager:open:search-engine-form": SearchEngineItem | undefined;
-  "cmd.modal-manager:open:navigation-website-form": NavigationWebsiteFormModalPayload;
-
-  "state.shortcut-form:cancel": undefined;
-  "notify.shortcut-form:submitted": undefined;
-
-  "state.search-engine-form:cancel": undefined;
-  "notify.search-engine-form:submitted": undefined;
-
-  "state.navigation-website-form:cancel": undefined;
-  "notify.navigation-website-form:submitted": undefined;
 };
 
 const emitter = mitt<Events>();

@@ -2,6 +2,7 @@
 import type { NoticeConfig } from "#shared/types/config";
 import { updateNoticeConfig, getNoticeConfig } from "@/apis/config";
 import { BasicModal } from "@/components/basic-modal";
+import { watch } from "vue";
 import { z } from "zod";
 
 const schema = z.object({
@@ -22,16 +23,12 @@ const schema = z.object({
 
 const $notify = useNotification();
 
-const props = defineProps<{
-  open?: boolean;
-}>();
+const visible = defineModel<boolean>("visible", {
+  default: false
+});
 
 const emits = defineEmits<{
-  resolve: [
-    result:
-      | { action: "saved" }
-      | { action: "cancelled" }
-  ];
+  resolve: [result: { action: "saved" } | { action: "cancelled" }];
 }>();
 
 const formData = ref<NoticeConfig>({
@@ -50,28 +47,13 @@ const formData = ref<NoticeConfig>({
   }
 });
 
-const visible = ref(false);
-
-const handleOpen = () => {
-  visible.value = true;
-
-  getNoticeConfig().then((res) => {
-    formData.value = res;
-  });
-};
-
-defineExpose({
-  open: handleOpen
-});
-
+// 监听弹窗显示，加载公告配置
 watch(
-  () => props.open,
-  (open) => {
-    if (open) {
-      handleOpen();
-    } else {
-      visible.value = false;
-    }
+  visible,
+  async (newVal) => {
+    if (!newVal) return;
+
+    formData.value = await getNoticeConfig();
   },
   { immediate: true }
 );
@@ -136,7 +118,13 @@ const fullscreenItems = [
 ];
 </script>
 <template>
-  <BasicModal v-model:visible="visible" title="公告设置">
+  <BasicModal
+    v-model:visible="visible"
+    title="公告设置"
+    :submitting="submitting"
+    @cancel="handleCancel"
+    @confirm="handleConfirm"
+  >
     <UTabs :items="tabItems">
       <template #card>
         <UForm :state="formData.card" class="flex flex-col gap-4">
@@ -187,10 +175,5 @@ const fullscreenItems = [
         </UForm>
       </template>
     </UTabs>
-
-    <template #footer>
-      <UButton label="取消" color="neutral" variant="outline" :disabled="submitting" @click="handleCancel" />
-      <UButton label="确认" color="primary" :loading="submitting" @click="handleConfirm" />
-    </template>
   </BasicModal>
 </template>
