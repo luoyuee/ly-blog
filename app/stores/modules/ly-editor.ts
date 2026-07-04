@@ -23,6 +23,8 @@ export interface LyEditorStoreModel {
   noteManager: {
     loading: boolean;
     folderTree: FolderTreeItem[];
+    /** 展开的节点 key 集合，独立于树数据，避免刷新数据时丢失展开状态 */
+    expandedKeys: Set<string>;
   };
   imageManager: {
     loading: boolean;
@@ -51,7 +53,8 @@ export const lyEditorStore = defineStore("ly-editor", {
     modalManager: {},
     noteManager: {
       loading: false,
-      folderTree: []
+      folderTree: [],
+      expandedKeys: new Set<string>()
     },
     imageManager: {
       loading: false

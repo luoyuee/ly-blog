@@ -3,10 +3,12 @@ import type { FolderTreeItem } from "#shared/types/ly-editor";
 import { getEditorFilePath } from "@ly-editor/src/utils";
 import { lyEditorEmitter } from "@/events";
 import { useLyEditorModal } from "@/composables/useLyEditorModal";
+import { useLyEditorStore } from "@/stores";
 import { getNoteDetail } from "@/apis/note";
 import dayjs from "dayjs";
 
 const { openModal } = useLyEditorModal();
+const editorStore = useLyEditorStore();
 
 const modelValue = defineModel<FolderTreeItem[]>({
   default: () => []
@@ -19,8 +21,25 @@ const props = defineProps({
   }
 });
 
+/**
+ * 判断节点是否处于展开状态
+ */
+const isExpanded = (key: string): boolean => editorStore.noteManager.expandedKeys.has(key);
+
+/**
+ * 设置节点展开状态
+ */
+const setExpanded = (key: string, open: boolean): void => {
+  const { expandedKeys } = editorStore.noteManager;
+  if (open) {
+    expandedKeys.add(key);
+  } else {
+    expandedKeys.delete(key);
+  }
+};
+
 const handleClickNode = (data: FolderTreeItem): void => {
-  data.is_expanded = !data.is_expanded;
+  setExpanded(data.key, !isExpanded(data.key));
 };
 
 const handleOpenFile = async (data: FolderTreeItem) => {
@@ -47,7 +66,7 @@ const handleOpenFile = async (data: FolderTreeItem) => {
         }
       });
     } finally {
-      data.is_expanded = true;
+      setExpanded(data.key, true);
     }
   }
 };
@@ -73,7 +92,7 @@ const handleRenameFolder = async (data: FolderTreeItem) => {
 };
 </script>
 <template>
-  <div class="w-full select-none">
+  <div class="w-full select-none text-sm">
     <template v-for="item in modelValue" :key="item.key">
       <UContextMenu
         v-if="item.type === 'note'"
@@ -118,24 +137,33 @@ const handleRenameFolder = async (data: FolderTreeItem) => {
         :ui="{ content: 'w-48' }"
       >
         <div
-          class="hover:bg-gray-800 rounded cursor-pointer flex items-center"
-          :style="{ 'padding-left': 20 * props.depth + 'px' }"
+          class="hover:bg-white/10 rounded cursor-pointer flex items-center gap-1 px-1"
           @dblclick="handleOpenFile(item)"
         >
-          <UIcon class="mx-1 shrink-0" name="colorful:markdown" />
+          <div :style="{ width: 24 * props.depth + 'px' }" class="flex self-stretch relative">
+            <div
+              v-for="(value, indent) in props.depth"
+              :key="value"
+              class="border-l border-slate-500/50 h-full absolute top-0"
+              :style="{ left: indent * 24 + 14 + 'px' }"
+            ></div>
+          </div>
+          <UIcon class="shrink-0 size-5 text-slate-500/50" name="mdi:dot" />
+          <UIcon class="shrink-0 size-5" name="material-icon-theme:markdown" />
           <span class="truncate flex-1">{{ `${item.name}${item.data?.extension ?? ""}` }}</span>
-          <UIcon class="mx-1 shrink-0" name="material-icon-theme:label" />
+          <UIcon class="shrink-0" name="material-symbols:square-dot-rounded" />
         </div>
       </UContextMenu>
 
       <div v-else-if="item.type === 'folder'" class="file-tree-item folder">
         <UCollapsible
-          v-model:open="item.is_expanded"
+          :open="isExpanded(item.key)"
           :unmount-on-hide="false"
           :ui="{
             content:
               'data-[state=open]:animate-[collapsible-down_100ms_ease-out] data-[state=closed]:animate-[collapsible-up_100ms_ease-out]'
           }"
+          @update:open="(open) => setExpanded(item.key, open)"
         >
           <UContextMenu
             v-if="item.type === 'folder'"
@@ -157,14 +185,28 @@ const handleRenameFolder = async (data: FolderTreeItem) => {
             :ui="{ content: 'w-48' }"
           >
             <div
-              class="hover:bg-gray-800 rounded cursor-pointer flex items-center"
-              :style="{ 'padding-left': 20 * props.depth + 'px' }"
+              class="hover:bg-white/10 rounded cursor-pointer flex items-center gap-1 px-1"
               @click="handleClickNode(item)"
             >
+              <div :style="{ width: 24 * props.depth + 'px' }" class="flex self-stretch relative">
+                <div
+                  v-for="(value, indent) in props.depth"
+                  :key="value"
+                  class="border-l border-slate-500/50 h-full absolute top-0"
+                  :style="{ left: indent * 24 + 14 + 'px' }"
+                ></div>
+              </div>
+              <div class="shrink-0 size-5 flex items-center justify-center">
+                <UIcon
+                  class="size-4 text-slate-400 transition-all duration-100"
+                  :class="{ 'rotate-90': isExpanded(item.key) }"
+                  name="material-symbols:arrow-forward-ios"
+                />
+              </div>
               <UIcon
-                class="mx-1 shrink-0 text-slate-400"
+                class="shrink-0 text-slate-400 size-5"
                 :name="
-                  item.is_expanded ? 'material-symbols:folder-open' : 'material-symbols:folder'
+                  isExpanded(item.key) ? 'material-symbols:folder-open' : 'material-symbols:folder'
                 "
               />
               <span class="truncate flex-1">{{ item.name }}</span>

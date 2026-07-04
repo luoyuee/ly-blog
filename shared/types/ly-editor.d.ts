@@ -65,12 +65,12 @@ export type EditorTabItem = {
   | {
       type: "navigation-website-panel";
     }
-    | {
-        type: "navigation-history-panel";
-      }
-    | {
-        type: "api-key-panel";
-      }
+  | {
+      type: "navigation-history-panel";
+    }
+  | {
+      type: "api-key-panel";
+    }
 );
 
 export type FolderTreeItem = {
@@ -78,7 +78,6 @@ export type FolderTreeItem = {
   id: number; // 资源ID,可能会重复
   name: string; // 显示在目录中的
   is_folder?: boolean;
-  is_expanded?: boolean;
   created_at?: number;
   updated_at?: number;
   children?: FolderTreeItem[];
