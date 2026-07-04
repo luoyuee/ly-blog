@@ -38,17 +38,17 @@ export const createMessageBox = (options: CreateMessageBoxOptions) => {
 
     switch (options.type) {
       case "primary":
-        return "ep:info-filled";
+        return "lucide:info";
       case "success":
-        return "ep:circle-check-filled";
+        return "lucide:circle-check";
       case "error":
-        return "ep:circle-close-filled";
+        return "lucide:circle-x";
       case "warning":
-        return "ep:warning-filled";
+        return "lucide:info";
       case "info":
-        return "ep:info-filled";
+        return "lucide:info";
       case "question":
-        return "ep:question-filled";
+        return "lucide:circle-help";
       default:
         return undefined;
     }

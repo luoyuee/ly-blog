@@ -216,7 +216,7 @@ const handleActive = (e: Event) => {
             color="neutral"
             variant="link"
             aria-label="关闭"
-            icon="ep:close"
+            icon="lucide:x"
             @click="close"
           />
         </div>

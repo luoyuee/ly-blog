@@ -194,7 +194,9 @@ const handleSubmit = () => {
   >
     <div class="image-select-modal__body">
       <div class="image-select-modal__toolbar">
-        <UButton icon="ep:upload" variant="outline" @click="handleUploadClick"> 上传图片 </UButton>
+        <UButton icon="lucide:upload" variant="outline" @click="handleUploadClick">
+          上传图片
+        </UButton>
 
         <UFieldGroup class="image-select-modal__filters">
           <USelect
@@ -210,7 +212,7 @@ const handleSubmit = () => {
             class="image-select-modal__keyword-input"
             placeholder="请输入关键词"
           />
-          <UButton icon="ep:search" />
+          <UButton icon="lucide:search" />
         </UFieldGroup>
       </div>
 
@@ -234,7 +236,7 @@ const handleSubmit = () => {
                 :src="`/static/image/${item.preview}.${item.format}`"
               />
               <span class="image-select-modal__selected-item__del" @click.stop="handleDelete(item)">
-                <UIcon name="ep:delete-filled" />
+                <UIcon name="lucide:trash-2" />
               </span>
             </li>
           </ul>

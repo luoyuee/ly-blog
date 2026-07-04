@@ -73,13 +73,13 @@ const handleShowImageDetail = (image: ImageItem) => {
   <div class="p-4 h-full overflow-hidden flex flex-col">
     <div class="flex justify-between items-center mb-4">
       <div class="flex gap-4">
-        <UButton icon="ep:plus" @click="handleOpenUploadModal()"> 上传 </UButton>
+        <UButton icon="lucide:plus" @click="handleOpenUploadModal()"> 上传 </UButton>
       </div>
 
       <UFieldGroup>
         <UInput v-model.trim="state.keyword" class="w-64" placeholder="请输入关键词" />
 
-        <UButton icon="ep:search" @click="handleSearch">搜索</UButton>
+        <UButton icon="lucide:search" @click="handleSearch">搜索</UButton>
       </UFieldGroup>
     </div>
 

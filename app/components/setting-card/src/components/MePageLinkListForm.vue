@@ -172,7 +172,7 @@ const columns = computed<TableColumn<RowItem>[]>(() => {
       },
       cell: () => {
         return h(UIcon, {
-          name: "ep:rank",
+          name: "lucide:grip-vertical",
           size: 16,
           class: `${handleClass} text-muted cursor-grab active:cursor-grabbing`
         });
@@ -231,14 +231,14 @@ const columns = computed<TableColumn<RowItem>[]>(() => {
             size: "xs",
             color: "primary",
             variant: "ghost",
-            icon: "ep:edit",
+            icon: "lucide:edit",
             onClick: () => openEditModal(idx)
           }),
           h(UButton, {
             size: "xs",
             color: "error",
             variant: "ghost",
-            icon: "ep:delete",
+            icon: "lucide:trash-2",
             onClick: () => handleDelete(idx)
           })
         ]);
@@ -274,7 +274,7 @@ onBeforeUnmount(() => {
     }"
   >
     <template #hint>
-      <UButton size="xs" icon="ep:plus" @click="openAddModal"> 添加 </UButton>
+      <UButton size="xs" icon="lucide:plus" @click="openAddModal"> 添加 </UButton>
     </template>
 
     <div class="border border-muted rounded-md overflow-hidden">
@@ -308,7 +308,7 @@ onBeforeUnmount(() => {
           <UInput v-model="modalForm.desc" placeholder="一句话描述" />
         </UFormField>
         <UFormField name="href" label="链接" required>
-          <UInput v-model="modalForm.href" icon="ep:link" placeholder="https://..." />
+          <UInput v-model="modalForm.href" icon="lucide:link" placeholder="https://..." />
         </UFormField>
         <UFormField
           name="icon"
@@ -320,7 +320,7 @@ onBeforeUnmount(() => {
             container: 'mt-2'
           }"
         >
-          <UInput v-model="modalForm.icon" icon="ep:link" placeholder="请输入图片链接" />
+          <UInput v-model="modalForm.icon" icon="lucide:link" placeholder="请输入图片链接" />
         </UFormField>
       </UForm>
     </BasicModal>

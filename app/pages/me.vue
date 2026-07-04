@@ -97,12 +97,12 @@ const tabItems = [
               />
 
               <div class="w-full rounded-xl border border-black/10 bg-white/90 p-3 grid gap-2">
-                <div class="flex items-center gap-2 text-[var(--text-color-2)] text-sm">
-                  <UIcon name="ep:location" />
+                <div class="flex items-center gap-2 text-(--text-color-2) text-sm">
+                  <UIcon name="lucide:map-pin" />
                   <span>{{ authorLocation }}</span>
                 </div>
-                <div class="flex items-center gap-2 text-[var(--text-color-2)] text-sm">
-                  <UIcon name="ep:briefcase" />
+                <div class="flex items-center gap-2 text-(--text-color-2) text-sm">
+                  <UIcon name="lucide:briefcase" />
                   <span>{{ authorRole }}</span>
                 </div>
               </div>
@@ -126,12 +126,12 @@ const tabItems = [
                 <span class="me-page__hello-name"> {{ authorName }} </span>
               </h1>
 
-              <div class="inline-flex items-center gap-2 text-[var(--text-color-2)] text-sm">
-                <UIcon name="ep:medal" class="w-4 h-4" />
+              <div class="inline-flex items-center gap-2 text-(--text-color-2) text-sm">
+                <UIcon name="lucide:medal" class="w-4 h-4" />
                 <span>{{ authorDirection }}</span>
               </div>
 
-              <p class="mt-3 text-[0.95rem] leading-[1.8] text-[var(--text-color-2)]">
+              <p class="mt-3 text-[0.95rem] leading-[1.8] text-(--text-color-2)">
                 {{ authorQuote }}
               </p>
 
@@ -168,9 +168,9 @@ const tabItems = [
               <template #intro>
                 <div class="pt-4">
                   <h2
-                    class="text-xl font-bold pb-2 mb-3 flex items-center border-b-2 border-[var(--text-color-5)]"
+                    class="text-xl font-bold pb-2 mb-3 flex items-center border-b-2 border-(--text-color-5)"
                   >
-                    <UIcon class="mr-1" name="ep:user" />
+                    <UIcon class="mr-1" name="lucide:user" />
                     基础信息
                   </h2>
 
@@ -179,12 +179,12 @@ const tabItems = [
 
                 <div class="pt-4">
                   <h2
-                    class="text-xl font-bold pb-2 mb-3 flex items-center border-b-2 border-[var(--text-color-5)]"
+                    class="text-xl font-bold pb-2 mb-3 flex items-center border-b-2 border-(--text-color-5)"
                   >
-                    <UIcon class="mr-1" name="ep:cpu" />
+                    <UIcon class="mr-1" name="lucide:cpu" />
                     相关技能
                   </h2>
-                  <ol class="pl-5 leading-[1.9] text-[var(--text-color-2)]">
+                  <ol class="pl-5 leading-[1.9] text-(--text-color-2)">
                     <li v-for="(item, idx) in skills" :key="idx" class="mb-2">
                       {{ item }}
                     </li>
@@ -193,9 +193,9 @@ const tabItems = [
 
                 <div class="pt-4">
                   <h2
-                    class="text-xl font-bold pb-2 mb-3 flex items-center border-b-2 border-[var(--text-color-5)]"
+                    class="text-xl font-bold pb-2 mb-3 flex items-center border-b-2 border-(--text-color-5)"
                   >
-                    <UIcon class="mr-1" name="ep:star" />
+                    <UIcon class="mr-1" name="lucide:star" />
                     我的兴趣
                   </h2>
                   <div class="flex flex-wrap gap-2">
@@ -207,12 +207,12 @@ const tabItems = [
 
                 <div class="pt-4">
                   <h2
-                    class="text-xl font-bold pb-2 mb-3 flex items-center border-b-2 border-[var(--text-color-5)]"
+                    class="text-xl font-bold pb-2 mb-3 flex items-center border-b-2 border-(--text-color-5)"
                   >
-                    <UIcon class="mr-1" name="ep:chat-line-round" />
+                    <UIcon class="mr-1" name="lucide:message-circle" />
                     语言能力
                   </h2>
-                  <ul class="pl-5 text-[var(--text-color-2)] leading-[1.9]">
+                  <ul class="pl-5 text-(--text-color-2) leading-[1.9]">
                     <li v-for="item in languageProficiency" :key="item">
                       {{ item }}
                     </li>

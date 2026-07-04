@@ -86,7 +86,7 @@ const handleDeleteFolder = (record: AttachmentFolder) => {
 const actions = [
   {
     label: "新建目录",
-    icon: "ep:plus",
+    icon: "lucide:plus",
     onClick: () => {
       handleOpenFormModal();
     }
@@ -105,20 +105,20 @@ const actions = [
           :title="item.name"
           :description="item.description"
           :meta-items="[
-            { text: item.count, icon: 'ep:document' },
+            { text: item.count, icon: 'lucide:file-text' },
             { text: numeral(item.size).format('0.0 b'), icon: 'icon-park-outline:solid-state-disk' }
           ]"
           :action-items="[
             {
               label: '重命名',
-              icon: 'ep:edit',
+              icon: 'lucide:edit',
               onSelect: () => {
                 handleOpenFormModal(item);
               }
             },
             {
               label: '删除目录',
-              icon: 'ep:delete',
+              icon: 'lucide:trash-2',
               color: 'error',
               onSelect: () => {
                 handleDeleteFolder(item);

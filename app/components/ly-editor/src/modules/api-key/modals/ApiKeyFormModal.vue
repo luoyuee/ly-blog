@@ -202,7 +202,7 @@ const scopeOptions = computed<SelectItem[]>(() => {
         v-if="props.payload.mode === 'create'"
         color="warning"
         variant="soft"
-        icon="lucide:triangle-alert"
+        icon="lucide:info"
         title="安全提示"
         description="API 密钥创建后仅会展示一次明文，请在关闭提示前妥善保存。"
       />

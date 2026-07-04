@@ -57,7 +57,7 @@ const handleOpenImageFolder = (e: ImageFolder) => {
 const actions = [
   {
     label: "新建目录",
-    icon: "ep:plus",
+    icon: "lucide:plus",
     onClick: handleOpenFormModal
   }
 ];
@@ -76,18 +76,18 @@ const actions = [
           :action-items="[
             {
               label: '重命名',
-              icon: 'ep:edit',
+              icon: 'lucide:edit',
               onSelect: () => {
                 handleOpenFormModal(item);
               }
             },
             {
               label: '目录详情',
-              icon: 'ep:warning'
+              icon: 'lucide:info'
             },
             {
               label: '删除目录',
-              icon: 'ep:delete',
+              icon: 'lucide:trash-2',
               color: 'error',
               disabled: item.is_system
             }

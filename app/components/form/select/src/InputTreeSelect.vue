@@ -824,7 +824,7 @@ watch(
         <!-- 添加标签按钮 -->
         <UBadge
           v-else
-          icon="ep:plus"
+          icon="lucide:plus"
           size="sm"
           color="primary"
           variant="subtle"

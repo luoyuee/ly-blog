@@ -118,7 +118,7 @@ const columns: TableColumn<SearchHistoryItem>[] = [
             items: [
               {
                 label: "删除记录",
-                icon: "ep:delete",
+                icon: "lucide:trash-2",
                 color: "error",
                 onSelect: () => {
                   handleDelete(row.original);
@@ -226,7 +226,7 @@ const handleDelete = (e: SearchHistoryItem) => {
 
         <UInput v-model.trim="state.keyword" class="w-48" placeholder="请输入关键词" />
 
-        <UButton icon="ep:search" @click="handleSearch">搜索</UButton>
+        <UButton icon="lucide:search" @click="handleSearch">搜索</UButton>
       </UFieldGroup>
     </div>
 

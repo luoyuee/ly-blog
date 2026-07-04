@@ -12,7 +12,7 @@ const activityMenu = ref<ActivityMenuItem[]>([
   {
     key: LyEditorActivityMenuEnum.NoteManager,
     label: "笔记管理",
-    icon: "custom:copy-file"
+    icon: "lucide:files"
   },
   {
     key: LyEditorActivityMenuEnum.ArticleManager,
@@ -22,7 +22,7 @@ const activityMenu = ref<ActivityMenuItem[]>([
   {
     key: LyEditorActivityMenuEnum.SearchPanel,
     label: "搜索",
-    icon: "custom:search"
+    icon: "lucide:search"
   },
   {
     key: LyEditorActivityMenuEnum.ImageManager,
@@ -32,7 +32,7 @@ const activityMenu = ref<ActivityMenuItem[]>([
   {
     key: LyEditorActivityMenuEnum.AttachmentManager,
     label: "附件管理器",
-    icon: "ep:folder-opened"
+    icon: "lucide:folder-open"
   },
   {
     key: LyEditorActivityMenuEnum.HitokotoManager,
@@ -42,18 +42,18 @@ const activityMenu = ref<ActivityMenuItem[]>([
   {
     key: LyEditorActivityMenuEnum.NavigationManager,
     label: "导航网站",
-    icon: "ep:link",
+    icon: "lucide:link",
     panel: LyEditorTabPanelEnum.NavigationWebsitePanel
   },
   {
     key: LyEditorActivityMenuEnum.WorkManager,
     label: "项目管理",
-    icon: "ep:briefcase"
+    icon: "lucide:briefcase"
   },
   {
     key: LyEditorActivityMenuEnum.ApiKeyManager,
     label: "API 密钥管理",
-    icon: "ep:key",
+    icon: "lucide:key",
     panel: LyEditorTabPanelEnum.ApiKeyPanel
   }
 ]);
@@ -62,19 +62,19 @@ const actionMenu = ref<ActivityMenuItem[]>([
   {
     key: LyEditorActivityMenuEnum.DashboardPanel,
     label: "仪表盘",
-    icon: "ep:histogram",
+    icon: "lucide:chart-column",
     panel: LyEditorTabPanelEnum.DashboardPanel
   },
   {
     key: LyEditorActivityMenuEnum.CronJobPanel,
     label: "定时任务",
-    icon: "ep:timer",
+    icon: "lucide:timer",
     panel: LyEditorTabPanelEnum.CronJobPanel
   },
   {
     key: LyEditorActivityMenuEnum.SettingPanel,
     label: "设置",
-    icon: "custom:setting",
+    icon: "lucide:settings",
     panel: LyEditorTabPanelEnum.SettingPanel
   }
 ]);

@@ -141,18 +141,18 @@ const handelEmailChange = () => {
 
       <UForm class="message-editor__contact-form" :schema="schema" :state="formData">
         <UFormField class="message-editor__contact-form__item" name="nickname">
-          <UInput v-model.trim="formData.nickname" placeholder="昵称（必填）" icon="i-ep-user" />
+          <UInput v-model.trim="formData.nickname" placeholder="昵称（必填）" icon="lucide:user" />
         </UFormField>
         <UFormField class="message-editor__contact-form__item" name="email">
           <UInput
             v-model.trim="formData.email"
             placeholder="邮箱（必填）"
-            icon="i-ep-message"
+            icon="lucide:mail"
             @blur="handelEmailChange"
           />
         </UFormField>
         <UFormField class="message-editor__contact-form__item" name="website">
-          <UInput v-model.trim="formData.website" placeholder="网址（选填）" icon="i-ep-link" />
+          <UInput v-model.trim="formData.website" placeholder="网址（选填）" icon="lucide:link" />
         </UFormField>
       </UForm>
     </div>
@@ -177,7 +177,7 @@ const handelEmailChange = () => {
         <UButton
           color="primary"
           :loading="state.submitting"
-          loading-icon="ep:loading"
+          loading-icon="lucide:loader-circle"
           @click="handleSubmit"
         >
           发送评论

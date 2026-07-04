@@ -19,12 +19,12 @@ const dropdownMenu = ref<{ key: number; name: string; items: DropdownMenuItem[] 
     items: [
       {
         label: "新建文件",
-        icon: "ep:document-add",
+        icon: "lucide:file-plus",
         onSelect: () => {}
       },
       {
         label: "新建文件夹",
-        icon: "ep:folder-add",
+        icon: "lucide:folder-plus",
         onSelect: () => {}
       }
     ]

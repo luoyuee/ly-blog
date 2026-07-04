@@ -64,7 +64,7 @@ const blurInput = (): void => {
         class="hover:bg-blue-500 rounded-full flex items-center p-[2px]"
         @click="removeTag(tag)"
       >
-        <UIcon name="ep:close" :size="12" class="cursor-pointer" />
+        <UIcon name="lucide:x" :size="12" class="cursor-pointer" />
       </span>
     </span>
     <UInput
@@ -78,7 +78,7 @@ const blurInput = (): void => {
     />
     <UButton
       v-else
-      icon="ep:plus"
+      icon="lucide:plus"
       size="xs"
       class="w-[90px] shrink-0 justify-center"
       @click="showInput"

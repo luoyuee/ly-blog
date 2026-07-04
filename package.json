@@ -82,7 +82,6 @@
     "zod": "^4.2.1"
   },
   "devDependencies": {
-    "@iconify-json/ep": "^1.2.4",
     "@iconify-json/lucide": "^1.2.111",
     "@iconify-json/material-icon-theme": "^1.2.67",
     "@iconify-json/material-symbols": "^1.2.76",

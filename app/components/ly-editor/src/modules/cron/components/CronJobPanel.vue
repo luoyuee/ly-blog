@@ -67,7 +67,7 @@ const handleRunTask = async (name: string) => {
             size="xs"
             color="primary"
             variant="soft"
-            icon="ep:caret-right"
+            icon="lucide:play"
             :loading="item.running"
             @click="handleRunTask(item.name)"
           />

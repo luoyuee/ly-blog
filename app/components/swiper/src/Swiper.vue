@@ -17,8 +17,8 @@ const props = defineProps({
     arrows
     orientation="horizontal"
     class="rounded-lg swiper"
-    prev-icon="ep:arrow-left-bold"
-    next-icon="ep:arrow-right-bold"
+    prev-icon="lucide:chevron-left"
+    next-icon="lucide:chevron-right"
     :items="props.items"
     :ui="{
       dot: 'size-2 opacity-40 bg-black',

@@ -135,7 +135,7 @@ const handelUpdate = (e: FleetingThought) => {
               @confirm="handleDelete"
             >
               <span class="delete-btn">
-                <UIcon name="ep:delete" />
+                <UIcon name="lucide:trash-2" />
                 删除
               </span>
             </Popconfirm>

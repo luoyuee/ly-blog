@@ -94,12 +94,12 @@ const handlePreview = (index: number) => {
       >
         <img class="image-select__list-item__img" :src="img" :alt="img" />
         <span class="image-select__list-item__del" @click.stop="handleDelete(index)">
-          <UIcon name="ep:delete-filled" />
+          <UIcon name="lucide:trash-2" />
         </span>
       </div>
 
       <div v-if="canAddItem" class="image-select__add" @click="handleShowModal">
-        <UIcon name="ep:plus" />
+        <UIcon name="lucide:plus" />
       </div>
     </div>
 

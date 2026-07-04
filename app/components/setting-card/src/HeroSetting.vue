@@ -85,7 +85,7 @@ const handleReset = () => {
           description: 'text-xs text-gray-400'
         }"
       >
-        <UInput v-model="formData.home_page_bg" placeholder="请输入图片链接" icon="ep:link" />
+        <UInput v-model="formData.home_page_bg" placeholder="请输入图片链接" icon="lucide:link" />
       </UFormField>
 
       <UFormField
@@ -117,7 +117,7 @@ const handleReset = () => {
           container: 'mt-2'
         }"
       >
-        <UInput v-model="formData.catalog_page_bg" placeholder="随机图片" icon="ep:link" />
+        <UInput v-model="formData.catalog_page_bg" placeholder="随机图片" icon="lucide:link" />
       </UFormField>
 
       <UFormField
@@ -127,7 +127,7 @@ const handleReset = () => {
           container: 'mt-2'
         }"
       >
-        <UInput v-model="formData.tag_page_bg" placeholder="随机图片" icon="ep:link" />
+        <UInput v-model="formData.tag_page_bg" placeholder="随机图片" icon="lucide:link" />
       </UFormField>
 
       <UFormField
@@ -137,7 +137,7 @@ const handleReset = () => {
           container: 'mt-2'
         }"
       >
-        <UInput v-model="formData.article_page_bg" placeholder="随机图片" icon="ep:link" />
+        <UInput v-model="formData.article_page_bg" placeholder="随机图片" icon="lucide:link" />
       </UFormField>
     </UForm>
   </SettingCard>

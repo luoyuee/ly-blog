@@ -82,7 +82,7 @@ const handleDeleteSearchEngine = (e: SearchEngineItem) => {
         >
           <UTooltip text="编辑">
             <UButton
-              icon="ep:edit"
+              icon="lucide:edit"
               size="xs"
               variant="ghost"
               @click="handleOpenSearchEngineFormModal(item)"
@@ -90,7 +90,7 @@ const handleDeleteSearchEngine = (e: SearchEngineItem) => {
           </UTooltip>
           <UTooltip text="删除">
             <UButton
-              icon="ep:delete"
+              icon="lucide:trash-2"
               size="xs"
               variant="ghost"
               color="error"

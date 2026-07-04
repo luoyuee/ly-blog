@@ -154,7 +154,7 @@ const handleDelete = (index: number) => {
         <ul class="qr-list">
           <li v-for="(item, index) in formData.payment_qr_code" :key="index" class="qr-list__item">
             <button type="button" class="qr-list__delete-btn" @click="handleDelete(index)">
-              <UIcon name="ep:close" class="text-white" size="16" />
+              <UIcon name="lucide:x" class="text-white" size="16" />
             </button>
             <img class="qr-list__img" :src="item.image" :alt="item.name" />
             <div class="qr-list__name" :title="item.name">
@@ -164,7 +164,7 @@ const handleDelete = (index: number) => {
 
           <li class="qr-list__item">
             <button type="button" class="qr-list__add-btn" @click="handleAddQr">
-              <UIcon name="ep:plus" size="36" />
+              <UIcon name="lucide:plus" size="36" />
               <span>添加收款码</span>
             </button>
           </li>
@@ -188,7 +188,7 @@ const handleDelete = (index: number) => {
           <UInput v-model="modalFormData.name" placeholder="请输入收款码名称" />
         </UFormField>
         <UFormField name="image" label="收款码图片链接">
-          <UInput v-model="modalFormData.image" icon="ep:link" placeholder="请输入链接" />
+          <UInput v-model="modalFormData.image" icon="lucide:link" placeholder="请输入链接" />
         </UFormField>
       </UForm>
     </BasicModal>

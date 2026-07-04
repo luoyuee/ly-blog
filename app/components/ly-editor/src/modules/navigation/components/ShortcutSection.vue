@@ -81,13 +81,13 @@ const handleDeleteShortcut = (e: ShortcutItem) => {
           @click.stop
         >
           <UButton
-            icon="ep:edit"
+            icon="lucide:edit"
             size="xs"
             variant="ghost"
             @click="handleOpenShortcutFormModal(item)"
           />
           <UButton
-            icon="ep:delete"
+            icon="lucide:trash-2"
             size="xs"
             variant="ghost"
             color="error"

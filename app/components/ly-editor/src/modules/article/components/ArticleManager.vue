@@ -75,7 +75,7 @@ lyEditorEmitter.on("cmd.article-manager:reload", () => {
 const actions = [
   {
     label: "新建分类",
-    icon: "ep:plus",
+    icon: "lucide:plus",
     onClick: handleOpenFormModal
   }
 ];
@@ -109,21 +109,21 @@ const actions = [
                 :items="[
                   {
                     label: '重命名',
-                    icon: 'ep:edit',
+                    icon: 'lucide:edit',
                     onSelect: () => {
                       handleOpenFormModal(item);
                     }
                   },
                   {
                     label: '分类详情',
-                    icon: 'ep:warning',
+                    icon: 'lucide:info',
                     onSelect: () => {
                       handleOpenDetailsModal(item);
                     }
                   },
                   {
                     label: '删除分类',
-                    icon: 'ep:delete',
+                    icon: 'lucide:trash-2',
                     color: 'error',
                     onSelect: () => {
                       handleDelete(item);

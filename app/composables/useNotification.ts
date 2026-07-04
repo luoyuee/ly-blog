@@ -56,7 +56,7 @@ export const useNotification = () => {
 
     toast.add({
       ...merged,
-      icon: "ep:circle-check-filled",
+      icon: "lucide:circle-check",
       color: "primary"
     });
   };
@@ -66,7 +66,7 @@ export const useNotification = () => {
 
     toast.add({
       ...merged,
-      icon: "ep:circle-check-filled",
+      icon: "lucide:circle-check",
       color: "success"
     });
   };
@@ -76,7 +76,7 @@ export const useNotification = () => {
 
     toast.add({
       ...merged,
-      icon: "ep:info-filled",
+      icon: "lucide:info",
       color: "info"
     });
   };
@@ -86,7 +86,7 @@ export const useNotification = () => {
 
     toast.add({
       ...merged,
-      icon: "ep:warning-filled",
+      icon: "lucide:info",
       color: "warning"
     });
   };
@@ -103,7 +103,7 @@ export const useNotification = () => {
     toast.add({
       ...merged,
       description,
-      icon: "ep:circle-close-filled",
+      icon: "lucide:circle-x",
       color: "error"
     });
   };

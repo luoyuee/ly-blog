@@ -84,7 +84,7 @@ const handleDragEnd = async () => {
 const actions = [
   {
     label: "新建项目",
-    icon: "ep:plus",
+    icon: "lucide:plus",
     onClick: () => {
       handleOpenFormModal();
     }
@@ -116,14 +116,14 @@ const actions = [
                   :items="[
                     {
                       label: '编辑信息',
-                      icon: 'ep:edit',
+                      icon: 'lucide:edit',
                       onSelect: () => {
                         handleOpenFormModal(item);
                       }
                     },
                     {
                       label: '删除项目',
-                      icon: 'ep:delete',
+                      icon: 'lucide:trash-2',
                       color: 'error',
                       onSelect: () => {
                         handleDelete(item);

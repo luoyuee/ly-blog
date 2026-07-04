@@ -46,7 +46,7 @@ const repoUrl = computed(() => {
       <div class="content">
         <div class="base-card">
           <h2 class="base-card-title">
-            <UIcon class="base-card-title-icon" name="ep:paperclip" />
+            <UIcon class="base-card-title-icon" name="lucide:paperclip" />
             项目简介
           </h2>
           这是一个基于 Nuxt 4
@@ -55,7 +55,7 @@ const repoUrl = computed(() => {
 
         <div class="base-card">
           <h2 class="base-card-title">
-            <UIcon class="base-card-title-icon" name="ep:operation" />
+            <UIcon class="base-card-title-icon" name="lucide:sliders-horizontal" />
             基本信息
           </h2>
           <div
@@ -75,7 +75,9 @@ const repoUrl = computed(() => {
             >
               <span class="text-sm text-gray-700">仓库主页</span>
               <span class="text-xs text-gray-500">
-                <ULink class="break-all" target="_blank" :href="repoUrl" active>{{ repoUrl }}</ULink>
+                <ULink class="break-all" target="_blank" :href="repoUrl" active>
+                  {{ repoUrl }}
+                </ULink>
               </span>
             </div>
           </div>
@@ -83,7 +85,7 @@ const repoUrl = computed(() => {
 
         <div class="base-card">
           <h2 class="base-card-title">
-            <UIcon class="base-card-title-icon" name="ep:cpu" />
+            <UIcon class="base-card-title-icon" name="lucide:cpu" />
             生产环境依赖
           </h2>
           <div
@@ -102,7 +104,7 @@ const repoUrl = computed(() => {
 
         <div class="base-card">
           <h2 class="base-card-title">
-            <UIcon class="base-card-title-icon" name="ep:box" />
+            <UIcon class="base-card-title-icon" name="lucide:box" />
             开发环境依赖
           </h2>
           <div

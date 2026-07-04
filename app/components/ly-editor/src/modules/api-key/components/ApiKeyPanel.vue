@@ -171,14 +171,14 @@ const columns: TableColumn<ApiKeyItem>[] = [
             items: [
               {
                 label: "编辑",
-                icon: "ep:edit",
+                icon: "lucide:edit",
                 onSelect: () => {
                   handleOpenFormModal(row.original);
                 }
               },
               {
                 label: "禁用",
-                icon: "ep:remove-filled",
+                icon: "lucide:circle-minus",
                 color: "error",
                 onSelect: () => {
                   handleDisable(row.original);

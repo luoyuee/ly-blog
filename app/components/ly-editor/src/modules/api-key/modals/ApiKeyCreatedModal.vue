@@ -105,7 +105,7 @@ const handleCancel = () => {
       <UAlert
         color="warning"
         variant="soft"
-        icon="lucide:triangle-alert"
+        icon="lucide:info"
         title="明文 API 密钥仅展示一次"
         description="关闭当前弹窗后，系统将无法再次查看该明文 API 密钥，请先复制并妥善保管。"
       />
@@ -121,7 +121,13 @@ const handleCancel = () => {
                 :icon="tokenVisible ? 'lucide:eye-off' : 'lucide:eye'"
                 @click="handleToggleTokenVisible"
               />
-              <UButton color="neutral" variant="ghost" size="xs" icon="lucide:copy" @click="handleCopyToken" />
+              <UButton
+                color="neutral"
+                variant="ghost"
+                size="xs"
+                icon="lucide:copy"
+                @click="handleCopyToken"
+              />
             </div>
           </template>
         </UInput>
