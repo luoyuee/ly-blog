@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, watch } from "vue";
+import { useSlotsExist } from "@/composables/useSlots";
+import { twMerge } from "tailwind-merge";
+import { clsx } from "clsx";
 
 /**
  * 全局滚动锁计数。
@@ -93,10 +96,27 @@ const props = defineProps({
 });
 
 /**
+ * 合并 Tailwind 类名。
+ *
+ * 使用 clsx 整理条件类名，再用 tailwind-merge 处理冲突类，
+ * 确保调用方传入同类工具类时能覆盖默认值。
+ */
+const mergeTailwindClass = (...classNames: Array<string | boolean | undefined>): string => {
+  return twMerge(clsx(classNames));
+};
+
+/**
  * 是否处于“激活的全屏遮罩”状态。
  * 这个计算属性用于集中驱动 Teleport 与 body 滚动锁逻辑。
  */
 const isActiveFullscreen = computed(() => props.loading && props.fullscreen);
+
+/**
+ * 是否传入默认插槽内容。
+ *
+ * 没有内容时，非 fullscreen 模式下作为独立加载占位使用。
+ */
+const hasDefaultSlot = useSlotsExist("default");
 
 /**
  * 普通模式下的包裹容器类名。
@@ -105,9 +125,11 @@ const isActiveFullscreen = computed(() => props.loading && props.fullscreen);
  * 因此在非 fullscreen 模式下始终补上该定位能力。
  */
 const wrapperClassName = computed(() => {
-  const classNames = ["relative", props.wrapperClass].filter(Boolean);
-
-  return classNames.join(" ");
+  return mergeTailwindClass(
+    "relative",
+    !hasDefaultSlot.value && !props.fullscreen && "h-32 w-full",
+    props.wrapperClass
+  );
 });
 
 /**
@@ -117,13 +139,11 @@ const wrapperClassName = computed(() => {
  * - 局部遮罩使用 absolute 覆盖当前内容区域
  */
 const overlayClassName = computed(() => {
-  const classNames = [
+  return mergeTailwindClass(
     props.fullscreen ? "fixed inset-0" : "absolute inset-0",
     "flex items-center justify-center overflow-hidden rounded-inherit bg-white/70 backdrop-blur-[2px] transition-opacity",
     props.overlayClass
-  ].filter(Boolean);
-
-  return classNames.join(" ");
+  );
 });
 
 /**
@@ -132,21 +152,17 @@ const overlayClassName = computed(() => {
  * 默认保持轻量，仅负责居中排列。需要更强视觉风格时可通过 panelClass 覆盖。
  */
 const panelClassName = computed(() => {
-  const classNames = [
+  return mergeTailwindClass(
     "flex min-w-32 max-w-full flex-col items-center gap-2 px-4 py-3 text-center",
     props.panelClass
-  ].filter(Boolean);
-
-  return classNames.join(" ");
+  );
 });
 
 /**
  * Spinner 默认样式。
  */
 const spinnerClassName = computed(() => {
-  const classNames = ["size-8 animate-spin text-primary", props.spinnerClass].filter(Boolean);
-
-  return classNames.join(" ");
+  return mergeTailwindClass("size-8 animate-spin text-primary", props.spinnerClass);
 });
 
 /**
@@ -220,7 +236,7 @@ onBeforeUnmount(() => {
 
 <template>
   <div :class="wrapperClassName">
-    <slot />
+    <slot></slot>
 
     <Transition
       enter-active-class="transition-opacity duration-200"
