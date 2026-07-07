@@ -139,6 +139,7 @@ export type LyEditorModalKey =
   | "shortcut-form"
   | "search-engine-form"
   | "navigation-website-form"
+  | "navigation-website-import"
   | "notice-manager"
   | "send-email"
   | "work-form"
@@ -209,6 +210,11 @@ export type NavigationWebsiteFormModalPayload = {
 export type NavigationWebsiteFormModalResult = { action: "submitted" } | { action: "cancelled" };
 
 /**
+ * 导航网站导入弹窗结果。
+ */
+export type NavigationWebsiteImportModalResult = { action: "imported" } | { action: "cancelled" };
+
+/**
  * API Key 表单弹窗参数。
  */
 export type ApiKeyFormModalPayload = {
@@ -244,6 +250,7 @@ export type LyEditorModalPayloadMap = {
   "shortcut-form": ShortcutItem | undefined;
   "search-engine-form": SearchEngineItem | undefined;
   "navigation-website-form": NavigationWebsiteFormModalPayload;
+  "navigation-website-import": undefined;
   "notice-manager": undefined;
   "send-email": undefined;
   "work-form": WorkFormModalPayload;
@@ -269,6 +276,7 @@ export type LyEditorModalResultMap = {
   "shortcut-form": { action: "submitted" } | { action: "cancelled" };
   "search-engine-form": { action: "submitted" } | { action: "cancelled" };
   "navigation-website-form": NavigationWebsiteFormModalResult;
+  "navigation-website-import": NavigationWebsiteImportModalResult;
   "notice-manager": { action: "saved" } | { action: "cancelled" };
   "send-email": { action: "sent" } | { action: "cancelled" };
   "work-form": WorkFormModalResult;

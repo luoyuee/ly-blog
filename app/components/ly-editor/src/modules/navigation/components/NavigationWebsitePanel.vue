@@ -1,10 +1,15 @@
 <script setup lang="ts">
 import type { NavigationWebsiteItem } from "#shared/types/navigation-website";
 import type { TableColumn } from "@nuxt/ui";
-import { getPaginatedNavigationWebsites, deleteNavigationWebsite } from "@/apis/navigation-website";
+import {
+  getPaginatedNavigationWebsites,
+  deleteNavigationWebsite,
+  exportNavigationWebsiteData
+} from "@/apis/navigation-website";
 import { useLyEditorModal } from "@/composables/useLyEditorModal";
 import { TabPanelTable } from "@ly-editor/src/components";
 import { useLogger } from "@/composables/useLogger";
+import { downloadFile } from "@/utils/file";
 import { h, resolveComponent } from "vue";
 import dayjs from "dayjs";
 
@@ -18,6 +23,7 @@ const UButton = resolveComponent("UButton");
 const UDropdownMenu = resolveComponent("UDropdownMenu");
 
 const data = ref<NavigationWebsiteItem[]>([]);
+const exporting = ref(false);
 
 const state = reactive<{
   page: number;
@@ -301,6 +307,37 @@ const handleOpenFormModal = async (e?: NavigationWebsiteItem) => {
   }
 };
 
+const handleImportData = async () => {
+  const result = await openModal("navigation-website-import", undefined);
+
+  if (result.action === "imported") {
+    await loadData();
+  }
+};
+
+const handleExportData = async () => {
+  try {
+    exporting.value = true;
+
+    const blob = await exportNavigationWebsiteData();
+    const fileName = `navigation-website-${dayjs().format("YYYYMMDD-HHmmss")}.json`;
+    downloadFile(blob, fileName, {
+      mimeType: "application/json;charset=utf-8"
+    });
+
+    $notify.success({
+      title: "导出成功"
+    });
+  } catch (error) {
+    $notify.error({
+      title: "导出失败",
+      error
+    });
+  } finally {
+    exporting.value = false;
+  }
+};
+
 const handleSearch = () => {
   state.page = 1;
   loadData();
@@ -342,7 +379,13 @@ const handleDelete = (e: NavigationWebsiteItem) => {
     @refresh="loadData"
   >
     <template #header-left>
-      <UButton icon="lucide:plus" @click="handleOpenFormModal()">新增</UButton>
+      <div class="flex items-center gap-4">
+        <UButton icon="lucide:plus" @click="handleOpenFormModal()">新增</UButton>
+        <UButton icon="lucide:upload" @click="handleImportData">导入</UButton>
+        <UButton icon="lucide:download" :loading="exporting" @click="handleExportData">
+          导出
+        </UButton>
+      </div>
     </template>
 
     <template #header-right>

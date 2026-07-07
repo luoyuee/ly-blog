@@ -7,3 +7,4 @@ export { default as SearchEngineSection } from "./components/SearchEngineSection
 export { default as ShortcutFormModal } from "./modals/ShortcutFormModal.vue";
 export { default as SearchEngineFormModal } from "./modals/SearchEngineFormModal.vue";
 export { default as NavigationWebsiteFormModal } from "./modals/NavigationWebsiteFormModal.vue";
+export { default as NavigationWebsiteImportModal } from "./modals/NavigationWebsiteImportModal.vue";
