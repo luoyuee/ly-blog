@@ -21,7 +21,7 @@ const visible = defineModel<boolean>("visible", {
 });
 
 const emits = defineEmits<{
-  resolve: [result: { action: "sent" } | { action: "cancelled" }];
+  close: [result: { action: "sent" } | { action: "cancelled" }];
 }>();
 
 const formData = ref<SendEmailForm>({
@@ -67,7 +67,7 @@ const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => 
     $notify.success({ title: "已提交发送请求" });
 
     visible.value = false;
-    emits("resolve", { action: "sent" });
+    emits("close", { action: "sent" });
   } catch (error) {
     $notify.error({ title: "发送失败", error });
   } finally {
@@ -77,7 +77,7 @@ const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => 
 
 const handleCancel = () => {
   visible.value = false;
-  emits("resolve", { action: "cancelled" });
+  emits("close", { action: "cancelled" });
 };
 
 const onCreate = (item: string) => {

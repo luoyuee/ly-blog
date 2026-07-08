@@ -14,7 +14,7 @@ const visible = defineModel<boolean>("visible", {
 });
 
 const props = defineProps({
-  payload: {
+  record: {
     type: Object as PropType<ImageFolder | undefined>,
     default: undefined
   }
@@ -27,7 +27,7 @@ interface FormData {
 }
 
 const emits = defineEmits<{
-  resolve: [
+  close: [
     result:
       | {
           action: "submitted";
@@ -58,8 +58,8 @@ watch(
 
     resetForm();
 
-    if (props.payload) {
-      const { id, name, description } = props.payload;
+    if (props.record) {
+      const { id, name, description } = props.record;
       setForm({ id, name, description });
     }
   },
@@ -97,7 +97,7 @@ const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => 
 
     visible.value = false;
 
-    emits("resolve", {
+    emits("close", {
       action: "submitted"
     });
   } catch (error) {
@@ -116,7 +116,7 @@ const handleConfirm = async () => {
 
 const handleCancel = () => {
   visible.value = false;
-  emits("resolve", {
+  emits("close", {
     action: "cancelled"
   });
 };

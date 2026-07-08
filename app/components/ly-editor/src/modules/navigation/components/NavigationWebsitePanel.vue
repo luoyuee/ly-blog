@@ -6,7 +6,7 @@ import {
   deleteNavigationWebsite,
   exportNavigationWebsiteData
 } from "@/apis/navigation-website";
-import { useLyEditorModal } from "@/composables/useLyEditorModal";
+import { useLyEditorModal } from "@ly-editor";
 import { TabPanelTable } from "@ly-editor/src/components";
 import { useLogger } from "@/composables/useLogger";
 import { downloadFile } from "@/utils/file";
@@ -17,7 +17,8 @@ const logger = useLogger();
 const $notify = useNotification();
 const $msgBox = useMessageBox();
 
-const { openModal } = useLyEditorModal();
+const { open: openWebsiteForm } = useLyEditorModal("navigation-website-form");
+const { open: openImport } = useLyEditorModal("navigation-website-import");
 
 const UButton = resolveComponent("UButton");
 const UDropdownMenu = resolveComponent("UDropdownMenu");
@@ -297,7 +298,7 @@ onMounted(() => {
 });
 
 const handleOpenFormModal = async (e?: NavigationWebsiteItem) => {
-  const result = await openModal("navigation-website-form", {
+  const result = await openWebsiteForm({
     mode: e ? "update" : "create",
     record: e
   });
@@ -308,7 +309,7 @@ const handleOpenFormModal = async (e?: NavigationWebsiteItem) => {
 };
 
 const handleImportData = async () => {
-  const result = await openModal("navigation-website-import", undefined);
+  const result = await openImport(undefined);
 
   if (result.action === "imported") {
     await loadData();

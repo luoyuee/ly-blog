@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { DropdownMenuItem } from "@nuxt/ui";
-import { useLyEditorModal } from "@/composables/useLyEditorModal";
+import { useLyEditorModal } from "@ly-editor";
 import { useLyEditorTabs } from "@/composables/useLyEditorTabs";
 import { useLyEditorStore, useUserStore } from "@/stores";
 import { LyEditorTabPanelEnum } from "#shared/enums";
@@ -9,7 +9,8 @@ import { useFullscreen } from "@vueuse/core";
 const lyEditorStore = useLyEditorStore();
 const userStore = useUserStore();
 
-const { openModal } = useLyEditorModal();
+const { open: openNoticeManager } = useLyEditorModal("notice-manager");
+const { open: openSendEmail } = useLyEditorModal("send-email");
 const { openTabPanel } = useLyEditorTabs();
 
 const dropdownMenu = ref<{ key: number; name: string; items: DropdownMenuItem[] }[]>([
@@ -81,11 +82,11 @@ const userDropdownMenuItem = ref<DropdownMenuItem[][]>([
 ]);
 
 const openNoticeManagerModal = async () => {
-  await openModal("notice-manager", undefined);
+  await openNoticeManager(undefined);
 };
 
 const openSendEmailModal = async () => {
-  await openModal("send-email", undefined);
+  await openSendEmail(undefined);
 };
 </script>
 

@@ -2,7 +2,7 @@
 import type { HitokotoTypeItem } from "#shared/types/hitokoto";
 import { getAllHitokotoType, deleteHitokotoType } from "@/apis/hitokoto";
 import { useLyEditorTabs } from "@/composables/useLyEditorTabs";
-import { useLyEditorModal } from "@/composables/useLyEditorModal";
+import { useLyEditorModal } from "@ly-editor";
 import { LyEditorTabPanelEnum } from "#shared/enums";
 import { SidebarPanel, SidebarPanelListItem } from "@ly-editor/src/components";
 import Scrollbar from "@/components/scrollbar";
@@ -11,7 +11,8 @@ const $notify = useNotification();
 const $msgBox = useMessageBox();
 
 const { openTabPanel } = useLyEditorTabs();
-const { openModal } = useLyEditorModal();
+const { open: openHitokotoTypeForm } = useLyEditorModal("hitokoto-type-form");
+const { open: openHitokotoTypeDetails } = useLyEditorModal("hitokoto-type-details");
 
 const data = ref<HitokotoTypeItem[]>([]);
 const loading = ref(false);
@@ -35,7 +36,7 @@ onMounted(() => {
 });
 
 const handleOpenBaseFormModal = async (e?: HitokotoTypeItem) => {
-  const result = await openModal("hitokoto-type-form", {
+  const result = await openHitokotoTypeForm({
     mode: e ? "update" : "create",
     record: e
   });
@@ -46,7 +47,7 @@ const handleOpenBaseFormModal = async (e?: HitokotoTypeItem) => {
 };
 
 const handleOpenDetailsModal = async (e: HitokotoTypeItem) => {
-  await openModal("hitokoto-type-details", e);
+  await openHitokotoTypeDetails({ record: e });
 };
 
 const handleOpenHitokoto = () => {

@@ -15,14 +15,14 @@ const visible = defineModel<boolean>("visible", {
 });
 
 const props = defineProps({
-  payload: {
+  form: {
     type: Object as PropType<NoteFolderForm | undefined>,
     default: undefined
   }
 });
 
 const emits = defineEmits<{
-  resolve: [
+  close: [
     result:
       | {
           action: "submitted";
@@ -55,8 +55,8 @@ watch(
 
     resetForm();
 
-    if (props.payload) {
-      setForm(props.payload);
+    if (props.form) {
+      setForm(props.form);
     }
 
     folderTree.value = await getFolderTree();
@@ -94,7 +94,7 @@ const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => 
 
     visible.value = false;
 
-    emits("resolve", {
+    emits("close", {
       action: "submitted"
     });
   } catch (error) {
@@ -113,7 +113,7 @@ const handleConfirm = async () => {
 
 const handleCancel = () => {
   visible.value = false;
-  emits("resolve", {
+  emits("close", {
     action: "cancelled"
   });
 };

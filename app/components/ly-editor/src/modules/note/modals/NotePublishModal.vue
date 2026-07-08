@@ -31,14 +31,14 @@ const visible = defineModel<boolean>("visible", {
 });
 
 const props = defineProps({
-  payload: {
+  node: {
     type: Object as PropType<FolderTreeItem>,
     default: undefined
   }
 });
 
 const emits = defineEmits<{
-  resolve: [
+  close: [
     result:
       | {
           action: "published";
@@ -159,7 +159,7 @@ watch(
       return;
     }
 
-    const payload = props.payload;
+    const payload = props.node;
 
     if (!payload || payload.type !== "note") return;
 
@@ -223,7 +223,7 @@ const handleSubmit = async (event: FormSubmitEvent<ArticleForm>) => {
 
     visible.value = false;
 
-    emits("resolve", {
+    emits("close", {
       action: "published",
       articleId
     });
@@ -243,7 +243,7 @@ const handleConfirm = () => {
 
 const handleCancel = () => {
   visible.value = false;
-  emits("resolve", {
+  emits("close", {
     action: "cancelled"
   });
 };

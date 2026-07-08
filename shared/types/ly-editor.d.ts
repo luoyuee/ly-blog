@@ -178,7 +178,7 @@ export type HitokotoTypeFormModalPayload = {
 
 export type HitokotoTypeFormModalResult = { action: "submitted" } | { action: "cancelled" };
 
-export type HitokotoTypeDetailsModalPayload = HitokotoTypeItem;
+export type HitokotoTypeDetailsModalPayload = { record: HitokotoTypeItem };
 
 export type HitokotoTypeDetailsModalResult = { action: "closed" } | { action: "cancelled" };
 
@@ -242,19 +242,19 @@ export type ApiKeyCreatedModalPayload = {
 export type ApiKeyCreatedModalResult = { action: "closed" } | { action: "cancelled" };
 
 export type LyEditorModalPayloadMap = {
-  "note-folder-form": NoteFolderForm | undefined;
-  "note-save": EditorTabItem;
-  "note-publish": FolderTreeItem;
-  "category-form": ArticleCategoryForm | undefined;
-  "category-details": ArticleCategory;
-  "shortcut-form": ShortcutItem | undefined;
-  "search-engine-form": SearchEngineItem | undefined;
+  "note-folder-form": { form?: NoteFolderForm };
+  "note-save": { tab: EditorTabItem };
+  "note-publish": { node: FolderTreeItem };
+  "category-form": { form?: ArticleCategoryForm };
+  "category-details": { category: ArticleCategory };
+  "shortcut-form": { record?: ShortcutItem };
+  "search-engine-form": { record?: SearchEngineItem };
   "navigation-website-form": NavigationWebsiteFormModalPayload;
   "navigation-website-import": undefined;
   "notice-manager": undefined;
   "send-email": undefined;
   "work-form": WorkFormModalPayload;
-  "image-folder-form": ImageFolder | undefined;
+  "image-folder-form": { record?: ImageFolder };
   "attachment-folder-form": AttachmentFolderFormModalPayload;
   "hitokoto-form": HitokotoFormModalPayload;
   "hitokoto-import": undefined;
@@ -288,15 +288,6 @@ export type LyEditorModalResultMap = {
   "hitokoto-type-details": HitokotoTypeDetailsModalResult;
   "api-key-form": ApiKeyFormModalResult;
   "api-key-created": ApiKeyCreatedModalResult;
-};
-
-/**
- * 当前LY Editor 弹窗描述。
- */
-export type LyEditorModalItem = {
-  id: string;
-  key: LyEditorModalKey;
-  payload?: unknown;
 };
 
 /**

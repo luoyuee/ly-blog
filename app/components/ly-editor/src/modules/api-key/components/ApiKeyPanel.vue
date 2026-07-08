@@ -2,7 +2,7 @@
 import type { ApiKeyItem } from "#shared/types/api-key";
 import type { TableColumn } from "@nuxt/ui";
 import { disableApiKey, getPaginatedApiKeys } from "@/apis/api-key";
-import { useLyEditorModal } from "@/composables/useLyEditorModal";
+import { useLyEditorModal } from "@ly-editor";
 import { TabPanelTable } from "@ly-editor/src/components";
 import { h, resolveComponent } from "vue";
 import dayjs from "dayjs";
@@ -10,7 +10,8 @@ import dayjs from "dayjs";
 const $notify = useNotification();
 const $msgBox = useMessageBox();
 
-const { openModal } = useLyEditorModal();
+const { open: openFormModal } = useLyEditorModal("api-key-form");
+const { open: openCreatedModal } = useLyEditorModal("api-key-created");
 
 const UButton = resolveComponent("UButton");
 const UDropdownMenu = resolveComponent("UDropdownMenu");
@@ -231,7 +232,7 @@ onMounted(() => {
  * 打开创建/编辑弹窗。
  */
 const handleOpenFormModal = async (record?: ApiKeyItem) => {
-  const result = await openModal("api-key-form", {
+  const result = await openFormModal({
     mode: record ? "update" : "create",
     record
   });
@@ -240,7 +241,7 @@ const handleOpenFormModal = async (record?: ApiKeyItem) => {
     await loadData();
 
     if (result.data) {
-      await openModal("api-key-created", {
+      await openCreatedModal({
         record: result.data
       });
     }

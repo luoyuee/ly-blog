@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { WorkItem } from "#shared/types/config";
-import { useLyEditorModal } from "@/composables/useLyEditorModal";
+import { useLyEditorModal } from "@ly-editor";
 import { getWorkConfig, updateWorkConfig } from "@/apis/config";
 import { SidebarPanel } from "@ly-editor/src/components";
 import { VueDraggable } from "vue-draggable-plus";
@@ -8,7 +8,7 @@ import Scrollbar from "@/components/scrollbar";
 
 const $notify = useNotification();
 const $msgBox = useMessageBox();
-const { openModal } = useLyEditorModal();
+const { open } = useLyEditorModal("work-form");
 
 const data = ref<WorkItem[]>([]);
 const loading = ref(false);
@@ -32,7 +32,7 @@ onMounted(() => {
 });
 
 const handleOpenFormModal = async (e?: WorkItem) => {
-  const result = await openModal("work-form", {
+  const result = await open({
     mode: e ? "update" : "create",
     record: e,
     works: data.value

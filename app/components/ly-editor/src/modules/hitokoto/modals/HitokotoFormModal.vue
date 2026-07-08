@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { HitokotoFormModalPayload, HitokotoFormModalResult } from "#shared/types/ly-editor";
-import type { HitokotoForm, HitokotoTypeSelectOption } from "#shared/types/hitokoto";
+import type { HitokotoFormModalResult } from "#shared/types/ly-editor";
+import type { HitokotoForm, HitokotoItem, HitokotoTypeSelectOption } from "#shared/types/hitokoto";
 import type { FormSubmitEvent } from "@nuxt/ui";
 import { getHitokotoTypeOptions, createHitokoto, updateHitokoto } from "@/apis/hitokoto";
 import { BasicModal } from "@/components/basic-modal";
@@ -15,17 +15,18 @@ const visible = defineModel<boolean>("visible", {
 });
 
 const props = defineProps({
-  payload: {
-    type: Object as PropType<HitokotoFormModalPayload>,
-    default: () => ({
-      mode: "create",
-      record: undefined
-    })
+  mode: {
+    type: String as PropType<"create" | "update">,
+    default: "create"
+  },
+  record: {
+    type: Object as PropType<HitokotoItem | undefined>,
+    default: undefined
   }
 });
 
 const emits = defineEmits<{
-  resolve: [result: HitokotoFormModalResult];
+  close: [result: HitokotoFormModalResult];
 }>();
 
 const schema = z.object({
@@ -45,7 +46,7 @@ const { formData, formState, resetForm, setForm } = useForm<HitokotoForm>({
 });
 
 const modalTitle = computed(() => {
-  return props.payload.mode === "update" ? "修改语句" : "添加语句";
+  return props.mode === "update" ? "修改语句" : "添加语句";
 });
 
 watch(
@@ -55,8 +56,8 @@ watch(
 
     resetForm();
 
-    if (props.payload.record) {
-      const { id, type, source, author, content } = props.payload.record;
+    if (props.record) {
+      const { id, type, source, author, content } = props.record;
       setForm({ id, type, source, author, content });
     }
   },
@@ -87,7 +88,7 @@ const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => 
 
     visible.value = false;
 
-    emits("resolve", {
+    emits("close", {
       action: "submitted"
     });
   } catch (error) {
@@ -106,7 +107,7 @@ const handleConfirm = async () => {
 
 const handleCancel = () => {
   visible.value = false;
-  emits("resolve", {
+  emits("close", {
     action: "cancelled"
   });
 };

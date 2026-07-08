@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { PropType } from "vue";
+import type { HitokotoTypeItem } from "#shared/types/hitokoto";
 import type {
   HitokotoTypeDetailsModalPayload,
   HitokotoTypeDetailsModalResult
@@ -14,20 +15,20 @@ const visible = defineModel<boolean>("visible", {
 });
 
 const props = defineProps({
-  payload: {
-    type: Object as PropType<HitokotoTypeDetailsModalPayload>,
+  record: {
+    type: Object as PropType<HitokotoTypeDetailsModalPayload["record"]>,
     default: undefined
   }
 });
 
 const emits = defineEmits<{
-  resolve: [result: HitokotoTypeDetailsModalResult];
+  close: [result: HitokotoTypeDetailsModalResult];
 }>();
 
-const data = ref<Partial<HitokotoTypeDetailsModalPayload>>({});
+const data = ref<Partial<HitokotoTypeItem>>({});
 
 watch(
-  [visible, () => props.payload?.id],
+  [visible, () => props.record?.id],
   async ([newVal, id]) => {
     if (!newVal || !id) {
       data.value = {};
@@ -44,7 +45,7 @@ watch(
 
 const handleCancel = () => {
   visible.value = false;
-  emits("resolve", {
+  emits("close", {
     action: "closed"
   });
 };

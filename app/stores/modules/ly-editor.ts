@@ -1,8 +1,6 @@
 import type {
   EditorTabItem,
-  FolderTreeItem,
-  LyEditorModalItem,
-  LyEditorModalKey
+  FolderTreeItem
 } from "#shared/types/ly-editor";
 import { createLogger } from "@/utils/logger";
 import { getFolderTree } from "@/apis/note";
@@ -17,9 +15,6 @@ export interface LyEditorStoreModel {
   };
   tabs: EditorTabItem[];
   currentTab?: string;
-  modalManager: {
-    noteSaveModalVisible?: boolean;
-  };
   noteManager: {
     loading: boolean;
     folderTree: FolderTreeItem[];
@@ -38,9 +33,6 @@ export interface LyEditorStoreModel {
     show: boolean;
     content?: string;
   };
-  modal: {
-    active?: LyEditorModalItem;
-  };
 }
 
 export const lyEditorStore = defineStore("ly-editor", {
@@ -50,7 +42,6 @@ export const lyEditorStore = defineStore("ly-editor", {
     },
     tabs: [],
     currentTab: undefined,
-    modalManager: {},
     noteManager: {
       loading: false,
       folderTree: [],
@@ -66,24 +57,10 @@ export const lyEditorStore = defineStore("ly-editor", {
     },
     preview: {
       show: false
-    },
-    modal: {
-      active: undefined
     }
   }),
-  getters: {
-    hasActiveModal: (state) => Boolean(state.modal.active),
-    activeModalKey: (state): LyEditorModalKey | undefined => state.modal.active?.key,
-    activeModalPayload: (state): unknown => state.modal.active?.payload
-  },
+  getters: {},
   actions: {
-    openModal(item: LyEditorModalItem) {
-      this.modal.active = item;
-    },
-    closeModal() {
-      this.modal.active = undefined;
-    },
-
     async loadNoteFolderTree() {
       try {
         this.noteManager.loading = true;

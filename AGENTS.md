@@ -27,6 +27,7 @@
 - 分号：always
 - 对象和数组：不要尾随逗号
 - 注释：使用JSDoc注释
+- git commit：使用中文并遵循`Conventional Commits`规范
 
 ## 我的习惯
 

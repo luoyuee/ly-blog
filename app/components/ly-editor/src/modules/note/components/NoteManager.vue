@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { SidebarPanel } from "@ly-editor/src/components";
-import { useLyEditorModal } from "@/composables/useLyEditorModal";
+import { useLyEditorModal } from "@ly-editor";
 import { useLyEditorStore } from "@/stores";
 import { lyEditorEmitter } from "@/events";
 import { onMounted, onBeforeUnmount } from "vue";
 import NoteTree from "./NoteTree.vue";
 
 const editorStore = useLyEditorStore();
-const { openModal } = useLyEditorModal();
+const { open: openNoteFolderFormModal } = useLyEditorModal("note-folder-form");
 
 /**
  * 统一加载笔记目录，避免重复散落的调用点。
@@ -38,7 +38,7 @@ onBeforeUnmount(() => {
 });
 
 const handleNewFolder = () => {
-  openModal("note-folder-form", undefined).then((result) => {
+  openNoteFolderFormModal({ form: undefined }).then((result) => {
     if (result.action === "submitted") {
       loadNoteFolderTree();
     }
@@ -68,11 +68,7 @@ const actions = [
 ];
 </script>
 <template>
-  <SidebarPanel
-    title="笔记管理"
-    :loading="editorStore.noteManager.loading"
-    :actions="actions"
-  >
+  <SidebarPanel title="笔记管理" :loading="editorStore.noteManager.loading" :actions="actions">
     <NoteTree v-model="editorStore.noteManager.folderTree" />
   </SidebarPanel>
 </template>

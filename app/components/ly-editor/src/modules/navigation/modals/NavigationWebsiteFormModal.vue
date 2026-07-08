@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { NavigationWebsiteFormModalPayload, NavigationWebsiteFormModalResult } from "#shared/types/ly-editor";
+import type { NavigationWebsiteFormModalResult } from "#shared/types/ly-editor";
 import type { FormSubmitEvent } from "@nuxt/ui";
-import type { NavigationWebsiteForm } from "#shared/types/navigation-website";
+import type { NavigationWebsiteForm, NavigationWebsiteItem } from "#shared/types/navigation-website";
 import { createNavigationWebsite, updateNavigationWebsite } from "@/apis/navigation-website";
 import { BasicModal } from "@/components/basic-modal";
 import { useForm } from "~/composables/useForm";
@@ -15,17 +15,18 @@ const visible = defineModel<boolean>("visible", {
 });
 
 const props = defineProps({
-  payload: {
-    type: Object as PropType<NavigationWebsiteFormModalPayload>,
-    default: () => ({
-      mode: "create",
-      record: undefined
-    })
+  mode: {
+    type: String as PropType<"create" | "update">,
+    default: "create"
+  },
+  record: {
+    type: Object as PropType<NavigationWebsiteItem | undefined>,
+    default: undefined
   }
 });
 
 const emits = defineEmits<{
-  resolve: [result: NavigationWebsiteFormModalResult];
+  close: [result: NavigationWebsiteFormModalResult];
 }>();
 
 const schema = z.object({
@@ -57,7 +58,7 @@ const { formData, formState, resetForm, setForm } = useForm<NavigationWebsiteFor
 });
 
 const modalTitle = computed(() => {
-  return props.payload.mode === "update" ? "编辑网站" : "新增网站";
+  return props.mode === "update" ? "编辑网站" : "新增网站";
 });
 
 watch(
@@ -67,7 +68,7 @@ watch(
 
     resetForm();
 
-    if (props.payload.record) {
+    if (props.record) {
       const {
         id,
         name,
@@ -80,7 +81,7 @@ watch(
         is_favorite,
         is_public,
         status
-      } = props.payload.record;
+      } = props.record;
 
       setForm({
         id,
@@ -147,7 +148,7 @@ const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => 
 
     visible.value = false;
 
-    emits("resolve", {
+    emits("close", {
       action: "submitted"
     });
   } catch (error) {
@@ -166,7 +167,7 @@ const handleConfirm = async () => {
 
 const handleCancel = () => {
   visible.value = false;
-  emits("resolve", {
+  emits("close", {
     action: "cancelled"
   });
 };

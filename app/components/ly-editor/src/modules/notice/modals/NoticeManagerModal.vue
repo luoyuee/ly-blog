@@ -28,7 +28,7 @@ const visible = defineModel<boolean>("visible", {
 });
 
 const emits = defineEmits<{
-  resolve: [result: { action: "saved" } | { action: "cancelled" }];
+  close: [result: { action: "saved" } | { action: "cancelled" }];
 }>();
 
 const formData = ref<NoticeConfig>({
@@ -81,7 +81,7 @@ const handleConfirm = async () => {
     });
 
     visible.value = false;
-    emits("resolve", { action: "saved" });
+    emits("close", { action: "saved" });
   } catch (error) {
     $notify.error({
       title: "操作失败",
@@ -94,7 +94,7 @@ const handleConfirm = async () => {
 
 const handleCancel = () => {
   visible.value = false;
-  emits("resolve", { action: "cancelled" });
+  emits("close", { action: "cancelled" });
 };
 
 const tabItems = [

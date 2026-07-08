@@ -11,14 +11,14 @@ const visible = defineModel<boolean>("visible", {
 });
 
 const props = defineProps({
-  payload: {
+  category: {
     type: Object as PropType<ArticleCategory>,
     default: undefined
   }
 });
 
 const emits = defineEmits<{
-  resolve: [
+  close: [
     result:
       | {
           action: "closed";
@@ -40,9 +40,9 @@ watch(
       return;
     }
 
-    if (!props.payload) return;
+    if (!props.category) return;
 
-    data.value = await getArticleCategoryDetails(props.payload.id);
+    data.value = await getArticleCategoryDetails(props.category.id);
   },
   {
     immediate: true
@@ -51,7 +51,7 @@ watch(
 
 const handleCancel = () => {
   visible.value = false;
-  emits("resolve", {
+  emits("close", {
     action: "closed"
   });
 };

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { AttachmentFolder } from "#shared/types/attachment";
 import { getAllAttachmentFolder, deleteAttachmentFolder } from "@/apis/attachment";
-import { useLyEditorModal } from "@/composables/useLyEditorModal";
+import { useLyEditorModal } from "@ly-editor";
 import { useLyEditorTabs } from "@/composables/useLyEditorTabs";
 import { LyEditorTabPanelEnum } from "#shared/enums";
 import { SidebarPanel, SidebarPanelListItem } from "@ly-editor/src/components";
@@ -12,7 +12,7 @@ const $notify = useNotification();
 const $msgBox = useMessageBox();
 
 const { openTabPanel } = useLyEditorTabs();
-const { openModal } = useLyEditorModal();
+const { open } = useLyEditorModal("attachment-folder-form");
 
 const data = ref<AttachmentFolder[]>([]);
 const loading = ref(false);
@@ -39,7 +39,7 @@ onMounted(() => {
 });
 
 const handleOpenFormModal = async (record?: AttachmentFolder) => {
-  const result = await openModal("attachment-folder-form", {
+  const result = await open({
     mode: record ? "update" : "create",
     record
   });

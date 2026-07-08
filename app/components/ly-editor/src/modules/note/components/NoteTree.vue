@@ -2,12 +2,13 @@
 import type { FolderTreeItem } from "#shared/types/ly-editor";
 import { getEditorFilePath } from "@ly-editor/src/utils";
 import { lyEditorEmitter } from "@/events";
-import { useLyEditorModal } from "@/composables/useLyEditorModal";
+import { useLyEditorModal } from "@ly-editor";
 import { useLyEditorStore } from "@/stores";
 import { getNoteDetail } from "@/apis/note";
 import dayjs from "dayjs";
 
-const { openModal } = useLyEditorModal();
+const { open: openNotePublishModal } = useLyEditorModal("note-publish");
+const { open: openNoteFolderFormModal } = useLyEditorModal("note-folder-form");
 const editorStore = useLyEditorStore();
 
 const modelValue = defineModel<FolderTreeItem[]>({
@@ -72,7 +73,7 @@ const handleOpenFile = async (data: FolderTreeItem) => {
 };
 
 const handlePublishNote = async (data: FolderTreeItem) => {
-  const result = await openModal("note-publish", data);
+  const result = await openNotePublishModal({ node: data });
 
   if (result.action === "published") {
     lyEditorEmitter.emit("cmd.note-manager:reload");
@@ -80,10 +81,12 @@ const handlePublishNote = async (data: FolderTreeItem) => {
 };
 
 const handleRenameFolder = async (data: FolderTreeItem) => {
-  const result = await openModal("note-folder-form", {
-    id: data.id,
-    parent_id: data.parent_id,
-    name: data.name
+  const result = await openNoteFolderFormModal({
+    form: {
+      id: data.id,
+      parent_id: data.parent_id,
+      name: data.name
+    }
   });
 
   if (result.action === "submitted") {

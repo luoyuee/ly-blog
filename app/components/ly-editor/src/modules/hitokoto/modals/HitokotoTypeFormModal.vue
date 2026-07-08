@@ -1,10 +1,7 @@
 <script setup lang="ts">
-import type { HitokotoTypeForm } from "#shared/types/hitokoto";
+import type { HitokotoTypeForm, HitokotoTypeItem } from "#shared/types/hitokoto";
 import type { FormSubmitEvent } from "@nuxt/ui";
-import type {
-  HitokotoTypeFormModalPayload,
-  HitokotoTypeFormModalResult
-} from "#shared/types/ly-editor";
+import type { HitokotoTypeFormModalResult } from "#shared/types/ly-editor";
 import { createHitokotoType, updateHitokotoType } from "@/apis/hitokoto";
 import { BasicModal } from "@/components/basic-modal";
 import { useForm } from "@/composables/useForm";
@@ -18,21 +15,22 @@ const visible = defineModel<boolean>("visible", {
 });
 
 const props = defineProps({
-  payload: {
-    type: Object as PropType<HitokotoTypeFormModalPayload>,
-    default: () => ({
-      mode: "create",
-      record: undefined
-    })
+  mode: {
+    type: String as PropType<"create" | "update">,
+    default: "create"
+  },
+  record: {
+    type: Object as PropType<HitokotoTypeItem | undefined>,
+    default: undefined
   }
 });
 
 const emits = defineEmits<{
-  resolve: [result: HitokotoTypeFormModalResult];
+  close: [result: HitokotoTypeFormModalResult];
 }>();
 
 const modalTitle = computed(() => {
-  return props.payload.mode === "create" ? "新建分类" : "修改分类";
+  return props.mode === "create" ? "新建分类" : "修改分类";
 });
 
 const schema = z.object({
@@ -53,8 +51,8 @@ watch(
 
     resetForm();
 
-    if (props.payload.record) {
-      const { id, name, description } = props.payload.record;
+    if (props.record) {
+      const { id, name, description } = props.record;
       setForm({ id, name, description });
     }
   },
@@ -92,7 +90,7 @@ const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => 
 
     visible.value = false;
 
-    emits("resolve", {
+    emits("close", {
       action: "submitted"
     });
   } catch (error) {
@@ -111,7 +109,7 @@ const handleConfirm = async () => {
 
 const handleCancel = () => {
   visible.value = false;
-  emits("resolve", {
+  emits("close", {
     action: "cancelled"
   });
 };

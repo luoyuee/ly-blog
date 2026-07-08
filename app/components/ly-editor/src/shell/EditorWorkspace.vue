@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import EditorActivityBar from "./EditorActivityBar.vue";
 import EditorMenuBar from "./EditorMenuBar.vue";
-import EditorModalManager from "./EditorModalManager.vue";
 // import EditorPreview from "./EditorPreview.vue";
 import EditorSidebar from "./EditorSidebar.vue";
 import EditorStatusBar from "./EditorStatusBar.vue";
@@ -24,6 +23,5 @@ import EditorTabPane from "./EditorTabPane.vue";
       </main>
     </section>
     <EditorStatusBar />
-    <EditorModalManager />
   </div>
 </template>

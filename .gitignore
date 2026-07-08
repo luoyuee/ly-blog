@@ -44,4 +44,6 @@ prisma/generated
 /scripts/old-icons
 /scripts/old-color-icons
 
+# AI Agent 记忆相关
 .sisyphus
+.workbuddy

@@ -16,14 +16,14 @@ const visible = defineModel<boolean>("visible", {
 });
 
 const props = defineProps({
-  payload: {
+  record: {
     type: Object as PropType<SearchEngineItem | undefined>,
     default: undefined
   }
 });
 
 const emits = defineEmits<{
-  resolve: [
+  close: [
     result:
       | {
           action: "submitted";
@@ -60,8 +60,8 @@ watch(
 
     resetForm();
 
-    if (props.payload) {
-      setForm(props.payload);
+    if (props.record) {
+      setForm(props.record);
     }
   },
   {
@@ -106,7 +106,7 @@ const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => 
 
     visible.value = false;
 
-    emits("resolve", {
+    emits("close", {
       action: "submitted"
     });
   } catch (error) {
@@ -125,7 +125,7 @@ const handleConfirm = async () => {
 
 const handleCancel = () => {
   visible.value = false;
-  emits("resolve", {
+  emits("close", {
     action: "cancelled"
   });
 };

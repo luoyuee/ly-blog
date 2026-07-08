@@ -15,14 +15,14 @@ const visible = defineModel<boolean>("visible", {
 });
 
 const props = defineProps({
-  payload: {
+  tab: {
     type: Object as PropType<EditorTabItem>,
     default: undefined
   }
 });
 
 const emits = defineEmits<{
-  resolve: [
+  close: [
     result:
       | {
           action: "saved";
@@ -69,7 +69,7 @@ watch(
       return;
     }
 
-    const tabItem = props.payload;
+    const tabItem = props.tab;
 
     if (!tabItem || tabItem.type !== "note") {
       visible.value = false;
@@ -127,7 +127,7 @@ const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => 
     if (state.tabItem) {
       const tab = state.tabItem;
       visible.value = false;
-      emits("resolve", {
+      emits("close", {
         action: "saved",
         tab
       });
@@ -152,7 +152,7 @@ const handleConfirm = async () => {
 
 const handleCancel = () => {
   visible.value = false;
-  emits("resolve", {
+  emits("close", {
     action: "cancelled"
   });
 };

@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import type { ImageFolder } from "#shared/types/image";
 import { SidebarPanel, SidebarPanelListItem } from "@ly-editor/src/components";
-import { useLyEditorModal } from "@/composables/useLyEditorModal";
+import { useLyEditorModal } from "@ly-editor";
 import { LyEditorTabPanelEnum } from "#shared/enums";
 import { getAllImageFolder } from "@/apis/image";
 import { useLyEditorStore } from "@/stores";
 import Scrollbar from "@/components/scrollbar";
 
 const lyEditorStore = useLyEditorStore();
-const { openModal } = useLyEditorModal();
+const { open } = useLyEditorModal("image-folder-form");
 
 const data = ref<ImageFolder[]>([]);
 const loading = ref(false);
@@ -34,7 +34,7 @@ onMounted(() => {
 });
 
 const handleOpenFormModal = async (record?: ImageFolder) => {
-  const result = await openModal("image-folder-form", record);
+  const result = await open({ record });
 
   if (result.action === "submitted") {
     await loadData();

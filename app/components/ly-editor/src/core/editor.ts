@@ -7,7 +7,7 @@ import { registerEditorLanguage } from "./language";
 import { initMonaco } from "./monaco";
 import { syncNotePreview } from "./preview-sync";
 import { createLogger } from "@/utils/logger";
-import { useLyEditorModal } from "@/composables/useLyEditorModal";
+import { useLyEditorModal } from "@ly-editor";
 
 const logger = createLogger("ly-editor");
 
@@ -29,8 +29,8 @@ async function handleSaveNote(e: EditorTabItem) {
       logger.error(error);
     }
   } else {
-    const { openModal } = useLyEditorModal();
-    openModal("note-save", e);
+    const { open: openNoteSaveModal } = useLyEditorModal("note-save");
+    openNoteSaveModal({ tab: e });
   }
 }
 

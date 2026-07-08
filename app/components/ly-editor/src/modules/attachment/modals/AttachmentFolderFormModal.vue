@@ -1,10 +1,7 @@
 <script setup lang="ts">
-import type { AttachmentFolderForm } from "#shared/types/attachment";
+import type { AttachmentFolder, AttachmentFolderForm } from "#shared/types/attachment";
 import type { FormSubmitEvent } from "@nuxt/ui";
-import type {
-  AttachmentFolderFormModalPayload,
-  AttachmentFolderFormModalResult
-} from "#shared/types/ly-editor";
+import type { AttachmentFolderFormModalResult } from "#shared/types/ly-editor";
 import { createAttachmentFolder, updateAttachmentFolder } from "@/apis/attachment";
 import { BasicModal } from "@/components/basic-modal";
 import { SelectIcon } from "@/components/form/select";
@@ -19,21 +16,22 @@ const visible = defineModel<boolean>("visible", {
 });
 
 const props = defineProps({
-  payload: {
-    type: Object as PropType<AttachmentFolderFormModalPayload>,
-    default: () => ({
-      mode: "create",
-      record: undefined
-    })
+  mode: {
+    type: String as PropType<"create" | "update">,
+    default: "create"
+  },
+  record: {
+    type: Object as PropType<AttachmentFolder | undefined>,
+    default: undefined
   }
 });
 
 const emits = defineEmits<{
-  resolve: [result: AttachmentFolderFormModalResult];
+  close: [result: AttachmentFolderFormModalResult];
 }>();
 
 const modalTitle = computed(() => {
-  return props.payload.mode === "update" ? "编辑附件目录" : "新建附件目录";
+  return props.mode === "update" ? "编辑附件目录" : "新建附件目录";
 });
 
 const schema = z.object({
@@ -57,8 +55,8 @@ watch(
 
     resetForm();
 
-    if (props.payload.record) {
-      const { id, name, icon, description } = props.payload.record;
+    if (props.record) {
+      const { id, name, icon, description } = props.record;
       setForm({ id, name, icon, description });
     }
   },
@@ -98,7 +96,7 @@ const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => 
 
     visible.value = false;
 
-    emits("resolve", {
+    emits("close", {
       action: "submitted"
     });
   } catch (error) {
@@ -117,7 +115,7 @@ const handleConfirm = async () => {
 
 const handleCancel = () => {
   visible.value = false;
-  emits("resolve", {
+  emits("close", {
     action: "cancelled"
   });
 };

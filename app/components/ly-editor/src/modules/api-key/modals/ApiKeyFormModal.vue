@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { ApiKeyFormModalPayload, ApiKeyFormModalResult } from "#shared/types/ly-editor";
-import type { ApiKeyForm } from "#shared/types/api-key";
+import type { ApiKeyFormModalResult } from "#shared/types/ly-editor";
+import type { ApiKeyForm, ApiKeyItem } from "#shared/types/api-key";
 import type { ApiKeyScope } from "#shared/enums";
 import type { FormSubmitEvent, SelectItem } from "@nuxt/ui";
 import { API_KEY_SCOPES } from "#shared/enums";
@@ -19,17 +19,18 @@ const visible = defineModel<boolean>("visible", {
 });
 
 const props = defineProps({
-  payload: {
-    type: Object as PropType<ApiKeyFormModalPayload>,
-    default: () => ({
-      mode: "create",
-      record: undefined
-    })
+  mode: {
+    type: String as PropType<"create" | "update">,
+    default: "create"
+  },
+  record: {
+    type: Object as PropType<ApiKeyItem>,
+    default: undefined
   }
 });
 
 const emits = defineEmits<{
-  resolve: [result: ApiKeyFormModalResult];
+  close: [result: ApiKeyFormModalResult];
 }>();
 
 const scopeSchema = z.custom<ApiKeyScope>((value) => {
@@ -52,11 +53,11 @@ const { formData, formState, resetForm, setForm } = useForm<ApiKeyForm>({
 });
 
 const modalTitle = computed(() => {
-  return props.payload.mode === "update" ? "编辑 API 密钥" : "新建 API 密钥";
+  return props.mode === "update" ? "编辑 API 密钥" : "新建 API 密钥";
 });
 
 const isEdit = computed(() => {
-  return props.payload.mode === "update";
+  return props.mode === "update";
 });
 
 watch(
@@ -66,8 +67,8 @@ watch(
 
     resetForm();
 
-    if (props.payload.record) {
-      const { id, name, scopes, expires_at, status } = props.payload.record;
+    if (props.record) {
+      const { id, name, scopes, expires_at, status } = props.record;
 
       setForm({
         id,
@@ -113,7 +114,7 @@ const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => 
       });
 
       visible.value = false;
-      emits("resolve", {
+      emits("close", {
         action: "submitted"
       });
       return;
@@ -130,7 +131,7 @@ const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => 
     });
 
     visible.value = false;
-    emits("resolve", {
+    emits("close", {
       action: "submitted",
       data: createdApiKey
     });
@@ -150,7 +151,7 @@ const handleConfirm = async () => {
 
 const handleCancel = () => {
   visible.value = false;
-  emits("resolve", {
+  emits("close", {
     action: "cancelled"
   });
 };
@@ -199,7 +200,7 @@ const scopeOptions = computed<SelectItem[]>(() => {
       </UFormField>
 
       <UAlert
-        v-if="props.payload.mode === 'create'"
+        v-if="props.mode === 'create'"
         color="warning"
         variant="soft"
         icon="lucide:info"

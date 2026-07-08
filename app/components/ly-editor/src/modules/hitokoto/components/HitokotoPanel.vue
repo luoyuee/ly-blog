@@ -2,7 +2,7 @@
 import type { HitokotoItem, HitokotoTypeItem } from "#shared/types/hitokoto";
 import type { TableColumn, SelectItem } from "@nuxt/ui";
 import { TabPanelTable } from "@ly-editor/src/components";
-import { useLyEditorModal } from "@/composables/useLyEditorModal";
+import { useLyEditorModal } from "@ly-editor";
 import { useLogger } from "@/composables/useLogger";
 import { downloadFile } from "@/utils/file";
 import { h, resolveComponent } from "vue";
@@ -20,7 +20,8 @@ const $notify = useNotification();
 const $msgBox = useMessageBox();
 const { t } = useI18n();
 
-const { openModal } = useLyEditorModal();
+const { open: openHitokotoImport } = useLyEditorModal("hitokoto-import");
+const { open: openHitokotoForm } = useLyEditorModal("hitokoto-form");
 
 const UButton = resolveComponent("UButton");
 const UDropdownMenu = resolveComponent("UDropdownMenu");
@@ -219,7 +220,7 @@ onMounted(() => {
 });
 
 const handleImportData = async () => {
-  const result = await openModal("hitokoto-import", undefined);
+  const result = await openHitokotoImport(undefined);
 
   if (result.action === "imported") {
     await loadData();
@@ -250,7 +251,7 @@ const handleExportData = async () => {
 };
 
 const handleOpenHitokotoFormModal = async (mode: "create" | "update", record?: HitokotoItem) => {
-  const result = await openModal("hitokoto-form", { record, mode });
+  const result = await openHitokotoForm({ record, mode });
 
   if (result.action === "submitted") {
     await loadData();

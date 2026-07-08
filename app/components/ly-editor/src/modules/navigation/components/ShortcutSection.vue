@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import type { ShortcutItem } from "#shared/types/navigation-website";
 import { getShortcutList, deleteShortcut } from "~/apis/navigation-website";
-import { useLyEditorModal } from "@/composables/useLyEditorModal";
+import { useLyEditorModal } from "@ly-editor";
 
 const $notify = useNotification();
 const $msgBox = useMessageBox();
-const { openModal } = useLyEditorModal();
+const { open } = useLyEditorModal("shortcut-form");
 
 const shortcuts = ref<ShortcutItem[]>([]);
 
@@ -23,7 +23,7 @@ onMounted(() => {
 });
 
 const handleOpenShortcutFormModal = async (e?: ShortcutItem) => {
-  const result = await openModal("shortcut-form", e);
+  const result = await open({ record: e });
 
   if (result.action === "submitted") {
     await loadShortcuts();

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { WorkForm } from "#shared/types/config";
-import type { WorkFormModalPayload, WorkFormModalResult } from "#shared/types/ly-editor";
+import type { WorkForm, WorkItem } from "#shared/types/config";
+import type { WorkFormModalResult } from "#shared/types/ly-editor";
 import { EmojiOptions } from "#shared/constants/emoji";
 import type { FormSubmitEvent, SelectMenuItem } from "@nuxt/ui";
 import { updateWorkConfig } from "@/apis/config";
@@ -17,18 +17,22 @@ const visible = defineModel<boolean>("visible", {
 });
 
 const props = defineProps({
-  payload: {
-    type: Object as PropType<WorkFormModalPayload>,
-    default: () => ({
-      mode: "create",
-      record: undefined,
-      works: []
-    })
+  mode: {
+    type: String as PropType<"create" | "update">,
+    default: "create"
+  },
+  record: {
+    type: Object as PropType<WorkItem | undefined>,
+    default: undefined
+  },
+  works: {
+    type: Array as PropType<WorkItem[]>,
+    default: () => []
   }
 });
 
 const emits = defineEmits<{
-  resolve: [result: WorkFormModalResult];
+  close: [result: WorkFormModalResult];
 }>();
 
 const schema = z.object({
@@ -50,7 +54,7 @@ const { formData, formState, resetForm, setForm } = useForm<WorkForm>({
 });
 
 const isEdit = computed(() => {
-  return props.payload.mode === "update";
+  return props.mode === "update";
 });
 
 const modalTitle = computed(() => {
@@ -58,11 +62,11 @@ const modalTitle = computed(() => {
 });
 
 const workItems = computed(() => {
-  return props.payload.works;
+  return props.works;
 });
 
 const originalRepoUrl = computed(() => {
-  return props.payload.record?.repoUrl;
+  return props.record?.repoUrl;
 });
 
 watch(
@@ -72,8 +76,8 @@ watch(
 
     resetForm();
 
-    if (props.payload.record) {
-      const { name, icon, description, image, languages, repoUrl } = props.payload.record;
+    if (props.record) {
+      const { name, icon, description, image, languages, repoUrl } = props.record;
       setForm({
         name,
         icon,
@@ -156,7 +160,7 @@ const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => 
 
     visible.value = false;
 
-    emits("resolve", {
+    emits("close", {
       action: "submitted"
     });
   } catch (error) {
@@ -175,7 +179,7 @@ const handleConfirm = async () => {
 
 const handleCancel = () => {
   visible.value = false;
-  emits("resolve", {
+  emits("close", {
     action: "cancelled"
   });
 };

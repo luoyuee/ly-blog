@@ -11,7 +11,7 @@ const visible = defineModel<boolean>("visible", {
 });
 
 const emits = defineEmits<{
-  resolve: [result: HitokotoImportModalResult];
+  close: [result: HitokotoImportModalResult];
 }>();
 
 const { formData, formState, resetForm, setFieldValue } = useForm<{
@@ -50,7 +50,7 @@ const handleConfirm = async () => {
       title: "导入成功"
     });
 
-    emits("resolve", {
+    emits("close", {
       action: "imported"
     });
 
@@ -69,7 +69,7 @@ const handleConfirm = async () => {
 
 const handleCancel = () => {
   visible.value = false;
-  emits("resolve", {
+  emits("close", {
     action: "cancelled"
   });
 };

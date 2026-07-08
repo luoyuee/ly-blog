@@ -3,6 +3,8 @@ import { fileURLToPath } from "node:url";
 import injectMetadata from "./vite-config/inject-metadata";
 import tailwindcss from "@tailwindcss/vite";
 
+const DEV_SERVER_PORT = Number.parseInt(process.env.DEV_SERVER_PORT ?? "3000", 10);
+
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   compatibilityDate: "2025-07-15",
@@ -13,7 +15,7 @@ export default defineNuxtConfig({
   // sourcemap: false,
   devServer: {
     host: "0.0.0.0",
-    port: 3000
+    port: Number.isNaN(DEV_SERVER_PORT) ? 3000 : DEV_SERVER_PORT
   },
   nitro: {
     rollupConfig: {

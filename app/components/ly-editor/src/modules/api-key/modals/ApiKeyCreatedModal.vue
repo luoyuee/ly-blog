@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import type { ApiKeyCreatedModalPayload, ApiKeyCreatedModalResult } from "#shared/types/ly-editor";
+import type { ApiKeyCreatedModalResult } from "#shared/types/ly-editor";
+import type { CreatedApiKey } from "#shared/types/api-key";
 import { writeClipboardText } from "@/utils/clipboard";
 import { BasicModal } from "@/components/basic-modal";
 
@@ -10,20 +11,20 @@ const visible = defineModel<boolean>("visible", {
 });
 
 const props = defineProps({
-  payload: {
-    type: Object as PropType<ApiKeyCreatedModalPayload>,
+  record: {
+    type: Object as PropType<CreatedApiKey>,
     required: true
   }
 });
 
 const emits = defineEmits<{
-  resolve: [result: ApiKeyCreatedModalResult];
+  close: [result: ApiKeyCreatedModalResult];
 }>();
 
 const tokenVisible = ref(false);
 
 const secretKeyPlaintext = computed(() => {
-  return props.payload.record.secret_key;
+  return props.record.secret_key;
 });
 
 const maskedToken = computed(() => {
@@ -81,7 +82,7 @@ const handleCopyToken = async () => {
  */
 const handleClose = () => {
   visible.value = false;
-  emits("resolve", {
+  emits("close", {
     action: "closed"
   });
 };

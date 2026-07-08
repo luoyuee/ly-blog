@@ -11,7 +11,7 @@ const visible = defineModel<boolean>("visible", {
 });
 
 const emits = defineEmits<{
-  resolve: [result: NavigationWebsiteImportModalResult];
+  close: [result: NavigationWebsiteImportModalResult];
 }>();
 
 const { formData, formState, resetForm, setFieldValue } = useForm<{
@@ -51,7 +51,7 @@ const handleConfirm = async () => {
       description: `共 ${result.total} 条，新增 ${result.created} 条，跳过 ${result.skipped} 条`
     });
 
-    emits("resolve", {
+    emits("close", {
       action: "imported"
     });
 
@@ -70,7 +70,7 @@ const handleConfirm = async () => {
 
 const handleCancel = () => {
   visible.value = false;
-  emits("resolve", {
+  emits("close", {
     action: "cancelled"
   });
 };

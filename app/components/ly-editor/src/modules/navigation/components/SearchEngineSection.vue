@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import type { SearchEngineItem } from "#shared/types/navigation-website";
 import { getSearchEngineList, deleteSearchEngine } from "~/apis/navigation-website";
-import { useLyEditorModal } from "@/composables/useLyEditorModal";
+import { useLyEditorModal } from "@ly-editor";
 
 const $notify = useNotification();
 const $msgBox = useMessageBox();
-const { openModal } = useLyEditorModal();
+const { open } = useLyEditorModal("search-engine-form");
 
 const searchEngines = ref<SearchEngineItem[]>([]);
 
@@ -23,7 +23,7 @@ onMounted(() => {
 });
 
 const handleOpenSearchEngineFormModal = async (e?: SearchEngineItem) => {
-  const result = await openModal("search-engine-form", e);
+  const result = await open({ record: e });
 
   if (result.action === "submitted") {
     await loadSearchEngines();

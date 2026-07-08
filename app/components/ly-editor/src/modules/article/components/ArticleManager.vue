@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { ArticleCategory } from "#shared/types/article";
 import { getAllArticleCategory, deleteArticleCategory } from "@/apis/article";
-import { useLyEditorModal } from "@/composables/useLyEditorModal";
+import { useLyEditorModal } from "@ly-editor";
 import { useLyEditorTabs } from "@/composables/useLyEditorTabs";
 import { LyEditorTabPanelEnum } from "#shared/enums";
 import { SidebarPanel } from "@ly-editor/src/components";
@@ -11,7 +11,8 @@ import Scrollbar from "@/components/scrollbar";
 const $notify = useNotification();
 const $msgBox = useMessageBox();
 
-const { openModal } = useLyEditorModal();
+const { open: openCategoryFormModal } = useLyEditorModal("category-form");
+const { open: openCategoryDetailsModal } = useLyEditorModal("category-details");
 const { openTabPanel } = useLyEditorTabs();
 
 const data = ref<ArticleCategory[]>([]);
@@ -29,7 +30,7 @@ onMounted(() => {
 });
 
 const handleOpenFormModal = async (e?: ArticleCategory) => {
-  const result = await openModal("category-form", e);
+  const result = await openCategoryFormModal({ form: e });
 
   if (result.action === "submitted") {
     await loadData();
@@ -37,7 +38,7 @@ const handleOpenFormModal = async (e?: ArticleCategory) => {
 };
 
 const handleOpenDetailsModal = async (e: ArticleCategory) => {
-  await openModal("category-details", e);
+  await openCategoryDetailsModal({ category: e });
 };
 
 const handleOpenPanel = () => {
