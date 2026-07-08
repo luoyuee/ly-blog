@@ -197,7 +197,7 @@ const handleClear = () => {
       >
         <UButton
           color="neutral"
-          variant="subtle"
+          variant="outline"
           icon="lucide:clock"
           :ui="{ leadingIcon: 'text-dimmed' }"
           :disabled="props.disabled"
@@ -216,9 +216,12 @@ const handleClear = () => {
             />
             <UIcon
               v-else
-              class="shrink-0 text-dimmed size-5"
-              :name="open ? 'lucide:chevron-up' : 'lucide:chevron-down'"
-              :class="{ 'opacity-50': props.disabled }"
+              class="shrink-0 text-dimmed size-5 transition-transform duration-200"
+              name="lucide:chevron-down"
+              :class="{
+                'rotate-180': open,
+                'opacity-75': props.disabled
+              }"
             />
           </template>
         </UButton>

@@ -143,7 +143,7 @@ const handleReset = () => {
 
 <template>
   <div class="inline-flex items-center gap-2">
-    <UPopover v-model:open="popoverOpen" :disabled="disabled">
+    <UPopover v-model:open="popoverOpen" :disabled="props.disabled">
       <UButton
         color="neutral"
         variant="outline"
@@ -153,7 +153,7 @@ const handleReset = () => {
         v-bind="$attrs"
       >
         <template #leading>
-          <span :style="chip" class="size-4 rounded-full border border-gray-300"></span>
+          <span :style="chip" class="size-4 rounded-full border border-accented"></span>
         </template>
       </UButton>
 
@@ -172,8 +172,8 @@ const handleReset = () => {
 
           <div class="space-y-2">
             <div class="flex items-center justify-between">
-              <span class="text-xs text-gray-500">透明度</span>
-              <span class="text-xs text-gray-600 font-mono"> {{ tempAlpha }}% </span>
+              <span class="text-xs text-muted">透明度</span>
+              <span class="text-xs text-muted font-mono"> {{ tempAlpha }}% </span>
             </div>
             <div class="relative w-full rounded-lg bg-checker-8 bg-checker-gray">
               <div
@@ -189,7 +189,7 @@ const handleReset = () => {
                   root: 'relative z-10',
                   track: 'bg-transparent h-2',
                   range: 'bg-transparent',
-                  thumb: 'bg-transparent border-2 border-white ring-2 ring-gray-400'
+                  thumb: 'bg-transparent border-2 border-white ring-2 ring-inverted'
                 }"
               />
             </div>
@@ -197,7 +197,7 @@ const handleReset = () => {
 
           <div class="flex items-center gap-2">
             <span class="size-6 rounded shrink-0 bg-checker-8 bg-checker-gray">
-              <span :style="tempChip" class="block size-full rounded"></span>
+              <span :style="tempChip" class="block size-full rounded border border-accented"></span>
             </span>
             <UInput size="sm" readonly class="flex-1" :model-value="tempColorDisplay" />
           </div>

@@ -102,7 +102,7 @@ const handleReset = () => {
         <UInput
           v-model="formData.author.avatar"
           class="w-full"
-          icon="i-lucide-link"
+          icon="lucide:link"
           placeholder="https://... 或 /images/avatar.webp"
         />
       </UFormField>
@@ -188,7 +188,7 @@ const handleReset = () => {
         <UInput
           v-model="formData.github_snake.light"
           class="w-full"
-          icon="i-lucide-link"
+          icon="lucide:link"
           placeholder="https://..."
         />
       </UFormField>
@@ -204,7 +204,7 @@ const handleReset = () => {
         <UInput
           v-model="formData.github_snake.dark"
           class="w-full"
-          icon="i-lucide-link"
+          icon="lucide:link"
           placeholder="https://..."
         />
       </UFormField>

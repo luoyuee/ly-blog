@@ -63,7 +63,7 @@ const handleReset = () => {
 
 <template>
   <div class="inline-flex items-center gap-2">
-    <UPopover v-model:open="popoverOpen" :disabled="disabled">
+    <UPopover v-model:open="popoverOpen" :disabled="props.disabled">
       <UButton
         color="neutral"
         variant="outline"
@@ -73,7 +73,7 @@ const handleReset = () => {
         v-bind="$attrs"
       >
         <template #leading>
-          <span :style="chip" class="size-4 rounded-full border border-gray-300"></span>
+          <span :style="chip" class="size-4 rounded-full border border-accented"></span>
         </template>
       </UButton>
 
@@ -91,7 +91,7 @@ const handleReset = () => {
           />
 
           <div class="flex items-center gap-2">
-            <span :style="tempChip" class="size-6 rounded shrink-0"></span>
+            <span :style="tempChip" class="size-6 rounded shrink-0 border border-accented"></span>
             <UInput size="sm" readonly class="flex-1" :model-value="tempColor" />
           </div>
 

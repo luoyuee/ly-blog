@@ -148,7 +148,7 @@ const handleTestEmail = async () => {
         <UInput
           v-model="formData.host"
           class="w-full"
-          icon="i-lucide-link"
+          icon="lucide:link"
           placeholder="请输入SMTP服务器地址"
         />
       </UFormField>
@@ -184,7 +184,7 @@ const handleTestEmail = async () => {
         <UInput
           v-model="formData.user"
           class="w-full"
-          icon="i-lucide-mail"
+          icon="lucide:mail"
           placeholder="请输入系统邮箱"
         />
       </UFormField>
@@ -199,7 +199,7 @@ const handleTestEmail = async () => {
         <UInput
           v-model="formData.pass"
           class="w-full"
-          icon="i-lucide-lock-keyhole"
+          icon="lucide:lock-keyhole"
           placeholder="请输入系统邮箱授权码"
         />
       </UFormField>
@@ -216,7 +216,7 @@ const handleTestEmail = async () => {
           <UInput
             v-model="formData.notify_email"
             class="w-full"
-            icon="i-lucide-mail"
+            icon="lucide:mail"
             placeholder="请输入通知邮箱"
           />
           <UButton class="shrink-0" :loading="sendLoading" @click="handleTestEmail">

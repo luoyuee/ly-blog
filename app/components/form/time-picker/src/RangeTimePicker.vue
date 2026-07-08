@@ -256,7 +256,7 @@ const displayText = computed(() => {
   >
     <UButton
       color="neutral"
-      variant="subtle"
+      variant="outline"
       icon="lucide:clock"
       class="w-full"
       :ui="{ leadingIcon: 'text-dimmed' }"
@@ -276,17 +276,20 @@ const displayText = computed(() => {
         />
         <UIcon
           v-else
-          class="shrink-0 text-dimmed size-5"
-          :name="popoverOpen ? 'lucide:chevron-up' : 'lucide:chevron-down'"
-          :class="{ 'opacity-50': props.disabled }"
+          class="shrink-0 text-dimmed size-5 transition-transform duration-200"
+          name="lucide:chevron-down"
+          :class="{
+            'rotate-180': popoverOpen,
+            'opacity-75': props.disabled
+          }"
         />
       </template>
     </UButton>
 
     <template #content>
       <div class="flex items-stretch gap-2 p-2">
-        <div class="min-w-0 w-40 overflow-hidden rounded-md border border-slate-200">
-          <div class="border-b border-slate-200 px-3 py-2 text-center text-xs text-slate-500">
+        <div class="min-w-0 w-40 overflow-hidden rounded-md border border-default">
+          <div class="border-b border-default px-3 py-2 text-center text-xs text-muted">
             {{ props.startPlaceholder }}
           </div>
           <PickerPanel
@@ -299,8 +302,8 @@ const displayText = computed(() => {
           />
         </div>
 
-        <div class="min-w-0 w-40 overflow-hidden rounded-md border border-slate-200">
-          <div class="border-b border-slate-200 px-3 py-2 text-center text-xs text-slate-500">
+        <div class="min-w-0 w-40 overflow-hidden rounded-md border border-default">
+          <div class="border-b border-default px-3 py-2 text-center text-xs text-muted">
             {{ props.endPlaceholder }}
           </div>
           <PickerPanel
@@ -314,10 +317,10 @@ const displayText = computed(() => {
         </div>
       </div>
 
-      <div class="flex justify-end gap-2 border-t border-slate-200 p-2">
+      <div class="flex justify-end gap-2 border-t border-default p-2">
         <UButton
           color="neutral"
-          variant="subtle"
+          variant="outline"
           size="xs"
           :label="props.cancelText"
           @click="handleCancel"

@@ -30,22 +30,22 @@ type SettingMenuItemConfig = {
 
 const settingMenuGroups: SettingMenuItemConfig[][] = [
   [
-    { label: "文章设置", icon: "i-lucide-file-text", id: "article-setting" },
-    { label: "作者卡片", icon: "i-lucide-user-round", id: "author-card-setting" },
-    { label: "个人页配置", icon: "i-lucide-id-card", id: "me-page-setting" },
-    { label: "基本信息", icon: "i-lucide-settings-2", id: "basic-setting" },
-    { label: "备案信息", icon: "i-lucide-shield-check", id: "beian-setting" },
-    { label: "顶部背景", icon: "i-lucide-image", id: "hero-setting" },
-    { label: "导航菜单", icon: "i-lucide-panel-top", id: "nav-menu-setting" },
-    { label: "轮播图", icon: "i-lucide-images", id: "swiper-setting" }
+    { label: "文章设置", icon: "lucide:file-text", id: "article-setting" },
+    { label: "作者卡片", icon: "lucide:user-round", id: "author-card-setting" },
+    { label: "个人页配置", icon: "lucide:id-card", id: "me-page-setting" },
+    { label: "基本信息", icon: "lucide:settings-2", id: "basic-setting" },
+    { label: "备案信息", icon: "lucide:shield-check", id: "beian-setting" },
+    { label: "顶部背景", icon: "lucide:image", id: "hero-setting" },
+    { label: "导航菜单", icon: "lucide:panel-top", id: "nav-menu-setting" },
+    { label: "轮播图", icon: "lucide:images", id: "swiper-setting" }
   ],
   [
-    { label: "闪念笔记", icon: "i-lucide-notebook-pen", id: "fleeting-thought-setting" },
-    { label: "留言板", icon: "i-lucide-messages-square", id: "message-board-setting" },
-    { label: "一言", icon: "i-lucide-quote", id: "hitokoto-setting" },
-    { label: "邮件设置", icon: "i-lucide-mail", id: "mailer-setting" },
-    { label: "CZDB 设置", icon: "i-lucide-database", id: "czdb-setting" },
-    { label: "Live2D", icon: "i-lucide-bot", id: "live2d-setting" }
+    { label: "闪念笔记", icon: "lucide:notebook-pen", id: "fleeting-thought-setting" },
+    { label: "留言板", icon: "lucide:messages-square", id: "message-board-setting" },
+    { label: "一言", icon: "lucide:quote", id: "hitokoto-setting" },
+    { label: "邮件设置", icon: "lucide:mail", id: "mailer-setting" },
+    { label: "CZDB 设置", icon: "lucide:database", id: "czdb-setting" },
+    { label: "Live2D", icon: "lucide:bot", id: "live2d-setting" }
   ]
 ] as const;
 
@@ -170,9 +170,11 @@ const state = reactive({
 });
 
 onMounted(() => {
-  Promise.all([configStore.fetch(), mePageConfigStore.fetch(), serverConfigStore.fetch()]).finally(() => {
-    state.initializing = false;
-  });
+  Promise.all([configStore.fetch(), mePageConfigStore.fetch(), serverConfigStore.fetch()]).finally(
+    () => {
+      state.initializing = false;
+    }
+  );
 });
 
 watch(
@@ -218,7 +220,7 @@ onBeforeUnmount(() => {
 <template>
   <div class="h-full p-4">
     <div v-if="state.initializing" class="w-full h-full flex items-center justify-center">
-      <UIcon name="i-lucide-loader-circle" :size="32" class="text-primary animate-spin" />
+      <UIcon name="lucide:loader-circle" :size="32" class="text-primary animate-spin" />
     </div>
     <div v-else class="grid h-full grid-cols-1 gap-4 lg:grid-cols-[240px_minmax(0,1fr)]">
       <aside

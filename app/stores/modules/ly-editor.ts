@@ -1,7 +1,4 @@
-import type {
-  EditorTabItem,
-  FolderTreeItem
-} from "#shared/types/ly-editor";
+import type { EditorTabItem, FolderTreeItem } from "#shared/types/ly-editor";
 import { createLogger } from "@/utils/logger";
 import { getFolderTree } from "@/apis/note";
 import { defineStore } from "pinia";
@@ -73,7 +70,7 @@ export const lyEditorStore = defineStore("ly-editor", {
         toast.add({
           title: "加载目录失败",
           color: "error",
-          icon: "i-lucide-circle-x"
+          icon: "lucide:circle-x"
         });
       } finally {
         this.noteManager.loading = false;

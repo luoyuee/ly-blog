@@ -128,7 +128,7 @@ const columns: TableColumn<SearchHistoryItem>[] = [
           },
           () =>
             h(UButton, {
-              icon: "i-lucide-ellipsis-vertical",
+              icon: "lucide:ellipsis-vertical",
               color: "neutral",
               variant: "ghost",
               class: "ml-auto"

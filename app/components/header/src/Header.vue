@@ -243,8 +243,8 @@ const open = ref(false);
     </nav>
 
     <div class="header__action">
-      <UIcon name="i-lucide-search" :size="20" @click="switchSearch" />
-      <UIcon v-navigate-to="'/admin/login'" name="i-lucide-circle-user-round" :size="20" />
+      <UIcon name="lucide:search" :size="20" @click="switchSearch" />
+      <UIcon v-navigate-to="'/admin/login'" name="lucide:circle-user-round" :size="20" />
       <ThemeSwitch />
     </div>
 
@@ -262,21 +262,21 @@ const open = ref(false);
           <div
             class="flex items-center p-1.5 hover:bg-elevated select-none cursor-pointer text-sm gap-1.5 text-default"
           >
-            <UIcon name="i-lucide-user" class="text-neutral-400" :size="18" />
+            <UIcon name="lucide:user" class="text-neutral-400" :size="18" />
             <span>用户信息</span>
           </div>
           <div
             class="flex items-center p-1.5 hover:bg-elevated select-none cursor-pointer text-sm gap-1.5 text-default"
             @click="toAdmin"
           >
-            <UIcon name="i-lucide-server" class="text-neutral-400" :size="18" />
+            <UIcon name="lucide:server" class="text-neutral-400" :size="18" />
             <span>后台管理</span>
           </div>
           <div
             class="flex items-center p-1.5 hover:bg-elevated select-none cursor-pointer text-sm gap-1.5 text-default"
             @click="logout"
           >
-            <UIcon name="i-lucide-log-out" class="text-neutral-400" :size="18" />
+            <UIcon name="lucide:log-out" class="text-neutral-400" :size="18" />
             <span>退出登录</span>
           </div>
         </div>
@@ -284,7 +284,7 @@ const open = ref(false);
     </UPopover>
 
     <div class="header__search-btn" @click="switchSearch">
-      <UIcon name="i-lucide-search" :size="20" />
+      <UIcon name="lucide:search" :size="20" />
     </div>
   </div>
   <SearchDrawer v-model:visible="showSearch" />

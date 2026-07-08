@@ -92,7 +92,7 @@ const handleReset = () => {
         <USelect
           v-model="formData.type"
           class="w-full"
-          icon="i-lucide-database"
+          icon="lucide:database"
           :placeholder="t('components.settingCard.storage.form.typePlaceholder')"
           :items="['local', 'minio']"
         />
@@ -111,7 +111,7 @@ const handleReset = () => {
         <UInput
           v-model="formData.base_path"
           class="w-full"
-          icon="i-lucide-folder"
+          icon="lucide:folder"
           placeholder="请输入 base path"
           :disabled="isLocal"
         />
@@ -130,7 +130,7 @@ const handleReset = () => {
         <UInput
           v-model="formData.end_point"
           class="w-full"
-          icon="i-lucide-link"
+          icon="lucide:link"
           placeholder="请输入 end point"
           :disabled="isLocal"
         />
@@ -149,7 +149,7 @@ const handleReset = () => {
         <UInput
           v-model="formData.port"
           class="w-full"
-          icon="i-lucide-ethernet-port"
+          icon="lucide:ethernet-port"
           type="number"
           placeholder="请输入 base path"
           :disabled="isLocal"
@@ -192,7 +192,7 @@ const handleReset = () => {
         <UInput
           v-model="formData.url_format"
           class="w-full"
-          icon="i-lucide-link"
+          icon="lucide:link"
           placeholder="请输入 url format"
           :disabled="isLocal"
         />
@@ -211,7 +211,7 @@ const handleReset = () => {
         <UInput
           v-model="formData.region"
           class="w-full"
-          icon="i-lucide-map-pin"
+          icon="lucide:map-pin"
           placeholder="请输入 region"
           :disabled="isLocal"
         />
@@ -230,7 +230,7 @@ const handleReset = () => {
         <UInput
           v-model="formData.bucket"
           class="w-full"
-          icon="i-lucide-server"
+          icon="lucide:server"
           placeholder="请输入 bucket"
           :disabled="isLocal"
         />
@@ -248,7 +248,7 @@ const handleReset = () => {
         <UInput
           v-model="formData.access_key"
           class="w-full"
-          icon="i-lucide-shield-check"
+          icon="lucide:shield-check"
           placeholder="请输入 access key"
           :disabled="isLocal"
         />
@@ -266,7 +266,7 @@ const handleReset = () => {
         <UInput
           v-model="formData.secret_key"
           class="w-full"
-          icon="i-lucide-key-round"
+          icon="lucide:key-round"
           type="password"
           placeholder="请输入 secret key"
           :disabled="isLocal"

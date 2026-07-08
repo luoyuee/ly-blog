@@ -67,7 +67,7 @@ const handleChange = (value: SelectMenuItem | null | undefined) => {
     class="w-full"
     :search-input="{
       placeholder: '搜索...',
-      icon: 'i-lucide-search'
+      icon: 'lucide:search'
     }"
     :items="items"
     :leading-icon="currentValue ? currentValue.icon : undefined"

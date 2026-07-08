@@ -222,7 +222,7 @@ const handleClear = () => {
       :placeholder="props.placeholder"
       :clear="handleClear"
     >
-      <UButton color="neutral" variant="subtle" class="w-full" :disabled="props.disabled">
+      <UButton color="neutral" variant="outline" class="w-full" :disabled="props.disabled">
         <span class="min-w-0 flex-1 truncate text-left">
           {{ displayText }}
         </span>
@@ -236,9 +236,12 @@ const handleClear = () => {
           />
           <UIcon
             v-else
-            class="shrink-0 text-dimmed size-5"
-            :name="popoverOpen ? 'lucide:chevron-up' : 'lucide:chevron-down'"
-            :class="{ 'opacity-50': props.disabled }"
+            class="shrink-0 text-dimmed size-5 transition-transform duration-200"
+            name="lucide:chevron-down"
+            :class="{
+              'rotate-180': popoverOpen,
+              'opacity-75': props.disabled
+            }"
           />
         </template>
       </UButton>
@@ -256,10 +259,10 @@ const handleClear = () => {
           :arrow-control="props.arrowControl"
         />
 
-        <div class="flex justify-end gap-2 p-2 border-t border-muted">
+        <div class="flex justify-end gap-2 p-2 border-t border-default">
           <UButton
             color="neutral"
-            variant="subtle"
+            variant="outline"
             size="xs"
             :label="props.cancelText"
             @click="handleCancel"

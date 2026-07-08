@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { CalendarDateTime } from "@internationalized/date";
 import type { TimeValue } from "reka-ui";
 import type { PropType } from "vue";
 import type {
@@ -7,7 +8,6 @@ import type {
   DatePickerValue,
   DatePickerValueType
 } from "./types";
-import type { CalendarDateTime } from "@internationalized/date";
 import { TimePicker } from "@/components/form/time-picker";
 import { computed, ref, shallowRef, watch } from "vue";
 import {
@@ -156,8 +156,8 @@ const displayDate = computed(() => {
   >
     <UButton
       color="neutral"
-      variant="subtle"
-      icon="i-lucide-calendar"
+      variant="outline"
+      icon="lucide:calendar"
       class="w-full"
       v-bind="$attrs"
       :disabled="props.disabled"
@@ -168,17 +168,19 @@ const displayDate = computed(() => {
 
       <template #trailing>
         <UIcon
-          v-if="dateValue && props.clearable"
+          v-if="dateValue && props.clearable && !props.disabled"
           name="lucide:x"
           class="cursor-pointer shrink-0 text-muted size-5"
-          :class="{ 'opacity-50': props.disabled }"
           @click.stop="handleClear"
         />
         <UIcon
           v-else
-          class="shrink-0 text-dimmed size-5"
-          :name="popoverOpen ? 'lucide:chevron-up' : 'lucide:chevron-down'"
-          :class="{ 'opacity-50': props.disabled }"
+          class="shrink-0 text-dimmed size-5 transition-transform duration-200"
+          name="lucide:chevron-down"
+          :class="{
+            'rotate-180': popoverOpen,
+            'opacity-75': props.disabled
+          }"
         />
       </template>
     </UButton>
@@ -188,20 +190,19 @@ const displayDate = computed(() => {
 
       <UFieldGroup v-if="props.type === 'datetime'" class="p-2 pt-0">
         <UInput
-          variant="subtle"
+          variant="outline"
           icon="lucide:calendar"
-          placeholder="请选择日期"
-          class="w-36"
+          :value="displayDate"
           readonly
-          :model-value="displayDate"
+          class="w-36"
         />
         <TimePicker v-model="timeValue" class="w-36" value-type="time" show-format="HH:mm:ss" />
       </UFieldGroup>
 
-      <div class="flex justify-end gap-2 p-2 border-t border-muted">
+      <div class="flex justify-end gap-2 p-2 border-t border-default">
         <UButton
           color="neutral"
-          variant="subtle"
+          variant="outline"
           size="xs"
           :label="props.cancelText"
           @click="handleCancel"

@@ -24,7 +24,7 @@ export const mePageConfigStore = defineStore("me-page-config", {
         toast.add({
           title: "获取个人页配置失败！",
           color: "error",
-          icon: "i-lucide-circle-x"
+          icon: "lucide:circle-x"
         });
       }
     },
@@ -40,7 +40,7 @@ export const mePageConfigStore = defineStore("me-page-config", {
         toast.add({
           title: "更新个人页配置成功！",
           color: "success",
-          icon: "i-lucide-circle-check"
+          icon: "lucide:circle-check"
         });
       } catch (error) {
         let description: string | undefined = undefined;
@@ -55,7 +55,7 @@ export const mePageConfigStore = defineStore("me-page-config", {
           title: "更新个人页配置失败！",
           description,
           color: "error",
-          icon: "i-lucide-circle-x"
+          icon: "lucide:circle-x"
         });
       }
     }

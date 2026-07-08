@@ -44,12 +44,12 @@ const props = defineProps({
   // 激活状态的颜色（选中星星的颜色）
   color: {
     type: String,
-    default: "text-yellow-400"
+    default: "text-warning"
   },
   // 未激活状态的颜色（未选中星星的颜色）
   voidColor: {
     type: String,
-    default: "text-gray-300"
+    default: "text-dimmed"
   },
   // 激活状态的图标名称
   icon: {
@@ -186,7 +186,7 @@ const scoreText = computed(() => modelValue.value.toFixed(1));
   <!-- 评分组件容器 -->
   <div
     class="inline-flex items-center gap-1"
-    :class="{ 'opacity-50 cursor-not-allowed': disabled }"
+    :class="{ 'opacity-75 cursor-not-allowed': disabled }"
     @mouseleave="handleMouseLeave"
   >
     <!-- 循环渲染每个星星 -->
@@ -199,27 +199,15 @@ const scoreText = computed(() => modelValue.value.toFixed(1));
       @click="handleClick(i, $event)"
     >
       <!-- 空星状态：显示未激活图标 -->
-      <UIcon
-        v-if="getIconType(i) === 'void'"
-        :name="voidIcon"
-        :class="[iconSize, voidColor]"
-      />
+      <UIcon v-if="getIconType(i) === 'void'" :name="voidIcon" :class="[iconSize, voidColor]" />
 
       <!-- 整星状态：显示激活图标 -->
-      <UIcon
-        v-else-if="getIconType(i) === 'full'"
-        :name="icon"
-        :class="[iconSize, color]"
-      />
+      <UIcon v-else-if="getIconType(i) === 'full'" :name="icon" :class="[iconSize, color]" />
 
       <!-- 半星状态：通过叠加两个图标实现 -->
       <div v-else class="relative" :class="iconSize">
         <!-- 底层：未激活图标作为背景 -->
-        <UIcon
-          :name="voidIcon"
-          :class="[iconSize, voidColor]"
-          class="absolute inset-0"
-        />
+        <UIcon :name="voidIcon" :class="[iconSize, voidColor]" class="absolute inset-0" />
         <!-- 上层：激活图标，通过 clip-path 裁剪显示左半部分 -->
         <UIcon
           :name="icon"
@@ -231,7 +219,7 @@ const scoreText = computed(() => modelValue.value.toFixed(1));
     </div>
 
     <!-- 分数显示文本 -->
-    <span v-if="showScore" class="ml-2 text-sm text-gray-600">
+    <span v-if="showScore" class="ml-2 text-sm text-muted">
       {{ scoreText }}
     </span>
   </div>

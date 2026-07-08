@@ -79,7 +79,7 @@ const handleReset = () => {
         <UInput
           v-model="formData.download_url"
           class="w-full"
-          icon="i-lucide-link"
+          icon="lucide:link"
           placeholder="请输入 CZDB 下载链接"
         />
       </UFormField>

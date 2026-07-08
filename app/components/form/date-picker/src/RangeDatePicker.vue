@@ -175,8 +175,8 @@ const displayEndDate = computed(() => {
   >
     <UButton
       color="neutral"
-      variant="subtle"
-      icon="i-lucide-calendar"
+      variant="outline"
+      icon="lucide:calendar"
       class="w-full"
       v-bind="$attrs"
       :disabled="props.disabled"
@@ -187,17 +187,19 @@ const displayEndDate = computed(() => {
 
       <template #trailing>
         <UIcon
-          v-if="(rangeValue?.start || rangeValue?.end) && props.clearable"
+          v-if="(rangeValue?.start || rangeValue?.end) && props.clearable && !props.disabled"
           name="lucide:x"
           class="cursor-pointer shrink-0 text-muted size-5"
-          :class="{ 'opacity-50': props.disabled }"
           @click.stop="handleClear"
         />
         <UIcon
           v-else
-          class="shrink-0 text-dimmed size-5"
-          :name="popoverOpen ? 'lucide:chevron-up' : 'lucide:chevron-down'"
-          :class="{ 'opacity-50': props.disabled }"
+          class="shrink-0 text-dimmed size-5 transition-transform duration-200"
+          name="lucide:chevron-down"
+          :class="{
+            'rotate-180': popoverOpen,
+            'opacity-75': props.disabled
+          }"
         />
       </template>
     </UButton>
@@ -208,7 +210,7 @@ const displayEndDate = computed(() => {
       <div v-if="props.type === 'datetime'" class="flex">
         <UFieldGroup class="p-2 pt-0">
           <UInput
-            variant="subtle"
+            variant="outline"
             icon="lucide:calendar"
             :value="displayStartDate"
             readonly
@@ -223,7 +225,7 @@ const displayEndDate = computed(() => {
         </UFieldGroup>
         <UFieldGroup class="p-2 pt-0">
           <UInput
-            variant="subtle"
+            variant="outline"
             icon="lucide:calendar"
             :value="displayEndDate"
             readonly
@@ -238,10 +240,10 @@ const displayEndDate = computed(() => {
         </UFieldGroup>
       </div>
 
-      <div class="flex justify-end gap-2 p-2 border-t border-muted">
+      <div class="flex justify-end gap-2 p-2 border-t border-default">
         <UButton
           color="neutral"
-          variant="subtle"
+          variant="outline"
           size="xs"
           :label="props.cancelText"
           @click="handleCancel"

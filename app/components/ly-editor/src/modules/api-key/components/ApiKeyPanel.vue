@@ -189,7 +189,7 @@ const columns: TableColumn<ApiKeyItem>[] = [
           },
           () =>
             h(UButton, {
-              icon: "i-lucide-ellipsis-vertical",
+              icon: "lucide:ellipsis-vertical",
               color: "neutral",
               variant: "ghost",
               class: "ml-auto"

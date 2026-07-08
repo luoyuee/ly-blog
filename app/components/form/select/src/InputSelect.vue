@@ -44,7 +44,7 @@ const handleKeydown = (event: KeyboardEvent) => {
     v-model="modelValue"
     v-model:open="open"
     class="w-full"
-    autocomplete
+    autocomplete="on"
     open-on-focus
     ignore-filter
     :value-key="valueKey"

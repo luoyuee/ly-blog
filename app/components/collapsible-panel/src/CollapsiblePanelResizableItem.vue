@@ -61,7 +61,7 @@ onBeforeUnmount(() => {
     <div class="panel-head" @click="ctx.toggle(panelKey)">
       <UIcon v-if="icon" :name="icon" class="panel-icon" />
       <span class="panel-title">{{ title }}</span>
-      <UIcon name="i-lucide-chevron-right" class="panel-arrow" :class="{ 'rotate-90': isOpen }" />
+      <UIcon name="lucide:chevron-right" class="panel-arrow" :class="{ 'rotate-90': isOpen }" />
     </div>
 
     <div class="panel-body" :style="{ height: `${bodyHeight}px` }">

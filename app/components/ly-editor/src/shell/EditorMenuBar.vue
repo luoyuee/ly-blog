@@ -62,7 +62,7 @@ const userDropdownMenuItem = ref<DropdownMenuItem[][]>([
   [
     {
       label: "用户信息",
-      icon: "i-lucide-user",
+      icon: "lucide:user",
       onSelect: () => {
         openTabPanel({
           key: LyEditorTabPanelEnum.UserPanel,
@@ -75,7 +75,7 @@ const userDropdownMenuItem = ref<DropdownMenuItem[][]>([
   [
     {
       label: "退出登录",
-      icon: "i-lucide-log-out",
+      icon: "lucide:log-out",
       onSelect: () => {}
     }
   ]

@@ -41,7 +41,7 @@ const setTextColor = (color: string) => {
   <UPopover :ui="{ content: 'p-2' }">
     <UTooltip text="文字颜色">
       <UButton
-        icon="i-lucide-palette"
+        icon="lucide:palette"
         color="neutral"
         active-color="primary"
         variant="ghost"

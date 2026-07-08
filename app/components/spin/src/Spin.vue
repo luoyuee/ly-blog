@@ -1,8 +1,16 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, watch } from "vue";
 import { useSlotsExist } from "@/composables/useSlots";
 import { twMerge } from "tailwind-merge";
 import { clsx } from "clsx";
+import {
+  computed,
+  defineComponent,
+  h,
+  onBeforeUnmount,
+  resolveComponent,
+  useSlots,
+  watch
+} from "vue";
 
 /**
  * 全局滚动锁计数。
@@ -141,7 +149,7 @@ const wrapperClassName = computed(() => {
 const overlayClassName = computed(() => {
   return mergeTailwindClass(
     props.fullscreen ? "fixed inset-0" : "absolute inset-0",
-    "flex items-center justify-center overflow-hidden rounded-inherit bg-white/70 backdrop-blur-[2px] transition-opacity",
+    "flex items-center justify-center overflow-hidden rounded-inherit bg-default/70 backdrop-blur-[2px] transition-opacity",
     props.overlayClass
   );
 });
@@ -173,6 +181,61 @@ const spinnerClassName = computed(() => {
 const overlayStyle = computed(() => ({
   zIndex: String(props.zIndex)
 }));
+
+const slots = useSlots();
+
+/**
+ * 遮罩层组件。
+ *
+ * 用 defineComponent 包裹，保证 <Transition> 的过渡类名能稳定透传到根元素。
+ * 通过闭包访问外层 Spin 的 props / slots / 响应式类名。
+ *
+ * 插槽优先级：panel > { spinner / title / description }。
+ * - 传入 panel 插槽时整体替换面板内容
+ * - title/description 插槽缺省时回退到 text/description prop 文本
+ * - spinner 插槽缺省时回退到默认 mdi:loading 图标
+ */
+const Overlay = defineComponent({
+  name: "SpinOverlay",
+  setup() {
+    return () => {
+      const panelContent = slots.panel
+        ? slots.panel()
+        : [
+            slots.spinner
+              ? slots.spinner()
+              : h(resolveComponent("UIcon"), {
+                  name: "mdi:loading",
+                  class: spinnerClassName.value
+                }),
+            h("div", { class: "space-y-1" }, [
+              slots.title
+                ? slots.title()
+                : h("div", { class: "text-sm font-medium text-default" }, props.text),
+              slots.description || props.description
+                ? h(
+                    "div",
+                    { class: "text-xs leading-5 text-muted" },
+                    slots.description ? slots.description() : props.description
+                  )
+                : null
+            ])
+          ];
+
+      return h(
+        "div",
+        {
+          class: overlayClassName.value,
+          style: overlayStyle.value,
+          role: "status",
+          "aria-live": "polite",
+          "aria-busy": "true"
+        },
+        [h("div", { class: panelClassName.value }, panelContent)]
+      );
+    };
+  }
+});
 
 const lockBodyScroll = () => {
   if (typeof document === "undefined") {
@@ -246,27 +309,7 @@ onBeforeUnmount(() => {
       leave-from-class="opacity-100"
       leave-to-class="opacity-0"
     >
-      <div
-        v-if="loading && !fullscreen"
-        :class="overlayClassName"
-        :style="overlayStyle"
-        role="status"
-        aria-live="polite"
-        aria-busy="true"
-      >
-        <div :class="panelClassName">
-          <slot name="spinner">
-            <UIcon name="mdi:loading" :class="spinnerClassName" />
-          </slot>
-
-          <div class="space-y-1">
-            <div class="text-sm font-medium text-gray-700">{{ text }}</div>
-            <div v-if="description" class="text-xs leading-5 text-gray-500">
-              {{ description }}
-            </div>
-          </div>
-        </div>
-      </div>
+      <component :is="Overlay" v-if="loading && !fullscreen" />
     </Transition>
 
     <Teleport to="body">
@@ -278,27 +321,7 @@ onBeforeUnmount(() => {
         leave-from-class="opacity-100"
         leave-to-class="opacity-0"
       >
-        <div
-          v-if="isActiveFullscreen"
-          :class="overlayClassName"
-          :style="overlayStyle"
-          role="status"
-          aria-live="polite"
-          aria-busy="true"
-        >
-          <div :class="panelClassName">
-            <slot name="spinner">
-              <UIcon name="mdi:loading" :class="spinnerClassName" />
-            </slot>
-
-            <div class="space-y-1">
-              <div class="text-sm font-medium text-gray-700">{{ text }}</div>
-              <div v-if="description" class="text-xs leading-5 text-gray-500">
-                {{ description }}
-              </div>
-            </div>
-          </div>
-        </div>
+        <component :is="Overlay" v-if="isActiveFullscreen" />
       </Transition>
     </Teleport>
   </div>

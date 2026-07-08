@@ -51,7 +51,7 @@ const handleClick = (label: string) => {
         <div class="tooltip-button-demo__preview">
           <ToolTipButton
             tooltip="顶部提示"
-            icon="i-mdi-home"
+            icon="mdi:home"
             color="primary"
             @click="handleClick('基础用法')"
           >
@@ -118,7 +118,7 @@ const handleClick = (label: string) => {
             tooltip="primary 实心"
             color="primary"
             variant="solid"
-            icon="i-mdi-check"
+            icon="mdi:check"
             @click="handleClick('primary solid')"
           >
             Solid
@@ -127,7 +127,7 @@ const handleClick = (label: string) => {
             tooltip="error 描边"
             color="error"
             variant="outline"
-            icon="i-mdi-close"
+            icon="mdi:close"
             @click="handleClick('error outline')"
           >
             Outline
@@ -136,7 +136,7 @@ const handleClick = (label: string) => {
             tooltip="ghost 虚化"
             color="neutral"
             variant="ghost"
-            icon="i-mdi-dots-horizontal"
+            icon="mdi:dots-horizontal"
             @click="handleClick('ghost')"
           />
           <ToolTipButton
@@ -158,7 +158,7 @@ const handleClick = (label: string) => {
           <ToolTipButton
             color="primary"
             variant="soft"
-            icon="i-mdi-star"
+            icon="mdi:star"
             @click="handleClick('无 tooltip')"
           >
             无提示按钮
@@ -190,7 +190,7 @@ const handleClick = (label: string) => {
         <div class="tooltip-button-demo__preview">
           <ToolTipButton
             tooltip="编辑"
-            icon="i-mdi-pencil"
+            icon="mdi:pencil"
             color="primary"
             variant="ghost"
             size="sm"
@@ -198,7 +198,7 @@ const handleClick = (label: string) => {
           />
           <ToolTipButton
             tooltip="删除"
-            icon="i-mdi-delete"
+            icon="mdi:delete"
             color="error"
             variant="ghost"
             size="sm"
@@ -206,7 +206,7 @@ const handleClick = (label: string) => {
           />
           <ToolTipButton
             tooltip="分享"
-            icon="i-mdi-share"
+            icon="mdi:share"
             color="success"
             variant="ghost"
             size="sm"

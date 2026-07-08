@@ -248,7 +248,7 @@ const handleAddSub = (item: IClientConfigNavMenuItem) => {
           />
           <UIcon
             v-if="item.children && item.children.length > 0"
-            name="i-lucide:chevron-down"
+            name="lucide:chevron-down"
             class="shrink-0 transform transition-transform duration-200 size-5"
             :class="{ 'rotate-180': expanded }"
           />

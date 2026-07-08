@@ -187,11 +187,11 @@ defineExpose({
     <div class="flex items-center justify-between mb-4">
       <SelectLocalFile multiple @change="handleFileChange">
         <template #default="{ triggerSelect }">
-          <UButton icon="i-lucide-folder" @click="triggerSelect"> 选择图片 </UButton>
+          <UButton icon="lucide:folder" @click="triggerSelect"> 选择图片 </UButton>
         </template>
       </SelectLocalFile>
 
-      <UButton icon="i-lucide-trash-2" color="error" variant="outline" @click="clearFileList">
+      <UButton icon="lucide:trash-2" color="error" variant="outline" @click="clearFileList">
         清空列表
       </UButton>
     </div>
@@ -216,7 +216,7 @@ defineExpose({
               {{ item.file.name }}
             </p>
             <UButton
-              icon="i-lucide-trash-2"
+              icon="lucide:trash-2"
               size="sm"
               color="error"
               variant="link"
@@ -257,7 +257,7 @@ defineExpose({
       @dragover="dragover"
       @drop="drop"
     >
-      <UIcon name="i-lucide-upload" :size="48" />
+      <UIcon name="lucide:upload" :size="48" />
     </div>
 
     <template #footer>

@@ -47,7 +47,7 @@ const imageStyle = computed<CSSProperties>(() => ({
 </script>
 
 <template>
-  <div class="flex flex-col items-center justify-center gap-3 text-center text-gray-400">
+  <div class="flex flex-col items-center justify-center gap-3 text-center text-dimmed">
     <slot name="icon" :icon-size="props.iconSize" :image-size="props.imageSize">
       <img
         v-if="props.image"
@@ -61,7 +61,7 @@ const imageStyle = computed<CSSProperties>(() => ({
 
     <div class="flex flex-col items-center gap-2">
       <slot name="title">
-        <p class="text-sm leading-5 text-gray-500">{{ props.title }}</p>
+        <p class="text-sm leading-5 text-muted">{{ props.title }}</p>
       </slot>
 
       <slot></slot>

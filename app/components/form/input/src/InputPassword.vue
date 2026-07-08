@@ -32,6 +32,10 @@ interface PasswordStrengthState {
 
 const showPassword = ref(false);
 
+const handleTogglePasswordVisibility = () => {
+  showPassword.value = !showPassword.value;
+};
+
 const passwordStrength = computed<PasswordStrengthState>(() => {
   const password = modelValue.value;
   // 空值不显示强度；长度不足 6 位直接判为弱。
@@ -50,7 +54,7 @@ const passwordStrength = computed<PasswordStrengthState>(() => {
       level: "weak",
       label: "非常弱",
       filledBlocks: 2,
-      textClass: "text-red-500"
+      textClass: "text-error"
     };
   }
 
@@ -64,7 +68,7 @@ const passwordStrength = computed<PasswordStrengthState>(() => {
       level: "weak",
       label: "非常弱",
       filledBlocks: 2,
-      textClass: "text-red-500"
+      textClass: "text-error"
     };
   }
 
@@ -73,7 +77,7 @@ const passwordStrength = computed<PasswordStrengthState>(() => {
       level: "medium",
       label: "一般",
       filledBlocks: 6,
-      textClass: "text-yellow-500"
+      textClass: "text-warning"
     };
   }
 
@@ -81,13 +85,12 @@ const passwordStrength = computed<PasswordStrengthState>(() => {
     level: "strong",
     label: "非常强",
     filledBlocks: 10,
-    textClass: "text-green-500"
+    textClass: "text-success"
   };
 });
 </script>
 
 <template>
-  <!-- Block: input-password -->
   <div class="input-password w-full flex flex-col gap-1">
     <UInput
       v-model="modelValue"
@@ -102,26 +105,26 @@ const passwordStrength = computed<PasswordStrengthState>(() => {
           variant="link"
           size="sm"
           :icon="showPassword ? 'mdi:eye-outline' : 'mdi:eye-off-outline'"
-          @click="showPassword = !showPassword"
+          @click="handleTogglePasswordVisibility"
         />
       </template>
     </UInput>
 
     <div v-if="props.showStrength" class="flex items-center gap-2">
-      <span class="text-sm text-gray-400 shrink-0">强度：</span>
+      <span class="text-sm text-dimmed shrink-0">强度：</span>
       <!-- 左侧固定渲染 10 个块，通过填充数量表达强度。 -->
       <div class="flex flex-1 items-center gap-1">
         <div
           v-for="i in STRENGTH_BLOCK_COUNT"
           :key="i"
-          class="h-2 flex-1 rounded-xs bg-gray-100 overflow-hidden"
+          class="h-2 flex-1 rounded-xs bg-elevated overflow-hidden"
         >
           <div
             class="size-full rounded-xs transform-gpu transition-opacity duration-300 ease-out"
             :class="[
-              passwordStrength.level === 'weak' ? 'bg-red-500' : '',
-              passwordStrength.level === 'medium' ? 'bg-yellow-500' : '',
-              passwordStrength.level === 'strong' ? 'bg-green-500' : '',
+              passwordStrength.level === 'weak' ? 'bg-error' : '',
+              passwordStrength.level === 'medium' ? 'bg-warning' : '',
+              passwordStrength.level === 'strong' ? 'bg-success' : '',
               passwordStrength.filledBlocks >= i ? 'opacity-100' : 'opacity-0'
             ]"
           ></div>
@@ -145,14 +148,6 @@ const passwordStrength = computed<PasswordStrengthState>(() => {
  * Element: .input-password__control (内部 input 元素)
  * 通过 :deep() 穿透 scoped 样式，隐藏浏览器原生密码显示按钮
  */
-.input-password {
-  /* Block 级样式可在此扩展 */
-}
-
-.input-password :deep(input[type="password"]) {
-  /* Element: 密码输入控件的基础样式 */
-}
-
 /* 隐藏浏览器原生密码显示按钮 */
 .input-password :deep(input[type="password"]::-ms-reveal),
 .input-password :deep(input[type="password"]::-webkit-credentials-auto-fill-button) {

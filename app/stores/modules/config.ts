@@ -45,7 +45,7 @@ export const configStore = defineStore("config", {
         toast.add({
           title: "获取客户端配置失败！",
           color: "error",
-          icon: "i-lucide-circle-x"
+          icon: "lucide:circle-x"
         });
       }
     },
@@ -63,7 +63,7 @@ export const configStore = defineStore("config", {
         toast.add({
           title: "更新客户端配置成功！",
           color: "success",
-          icon: "i-lucide-circle-check"
+          icon: "lucide:circle-check"
         });
       } catch (error) {
         let description: string | undefined = undefined;
@@ -78,7 +78,7 @@ export const configStore = defineStore("config", {
           title: "更新客户端配置失败！",
           description,
           color: "error",
-          icon: "i-lucide-circle-x"
+          icon: "lucide:circle-x"
         });
       }
     },
