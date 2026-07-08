@@ -18,8 +18,6 @@ const route = useRoute();
 
 const article = ref<Article | null>(null);
 
-console.log("route.path", route.path);
-
 const { data: response, status: responseStatus } = await useFetch<Article>("/api/article/query", {
   method: "post",
   body: {
@@ -29,8 +27,6 @@ const { data: response, status: responseStatus } = await useFetch<Article>("/api
     }
   }
 });
-
-console.log("response", response);
 
 if (responseStatus.value === "error" || !response.value) {
   throw createError({

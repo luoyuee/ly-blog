@@ -118,7 +118,7 @@ const columns = computed<TableColumn<SkillItem>[]>(() => {
       },
       cell: () => {
         return h(UIcon, {
-          name: "ep:rank",
+          name: "lucide:grip-vertical",
           size: 16,
           class: `${handleClass} text-muted cursor-grab active:cursor-grabbing`
         });
@@ -156,14 +156,14 @@ const columns = computed<TableColumn<SkillItem>[]>(() => {
             size: "xs",
             color: "primary",
             variant: "ghost",
-            icon: "ep:edit",
+            icon: "lucide:edit",
             onClick: () => openEditModal(idx)
           }),
           h(UButton, {
             size: "xs",
             color: "error",
             variant: "ghost",
-            icon: "ep:delete",
+            icon: "lucide:trash-2",
             onClick: () => handleDelete(id)
           })
         ]);
@@ -197,7 +197,7 @@ onBeforeUnmount(() => {
     }"
   >
     <template #hint>
-      <UButton size="xs" icon="ep:plus" @click="openAddModal"> 添加 </UButton>
+      <UButton size="xs" icon="lucide:plus" @click="openAddModal"> 添加 </UButton>
     </template>
     <div ref="rootRef" class="me-page-skills-sortable-table">
       <div class="border border-muted rounded-md overflow-hidden">

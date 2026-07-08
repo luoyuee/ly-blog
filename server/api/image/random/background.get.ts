@@ -10,15 +10,21 @@ const getImages = defineCachedFunction(
       where: { folder_id: folder },
       select: {
         id: true,
-        hash: true,
-        format: true
+        Asset: {
+          select: {
+            hash: true,
+            ext: true,
+            mime_type: true
+          }
+        }
       }
     });
 
     return images.map((item) => ({
       id: item.id,
-      hash: item.hash,
-      format: item.format
+      hash: item.Asset.hash,
+      format: item.Asset.ext,
+      mime_type: item.Asset.mime_type
     }));
   },
   {
@@ -41,7 +47,7 @@ export default defineEventHandler(async (event) => {
     const filePath = await fileStorage.getPath(filename);
 
     if (await fileStorage.exists(filename)) {
-      event.node.res.setHeader("Content-Type", mime.getType(img.format) ?? "image/webp");
+      event.node.res.setHeader("Content-Type", img.mime_type ?? mime.getType(img.format) ?? "image/webp");
 
       return createReadStream(filePath);
     }

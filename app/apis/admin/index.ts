@@ -1,4 +1,4 @@
-import type { RecipientOption } from "@@/shared/types";
+import type { RecipientOption } from "#shared/types";
 import type { GetTasksResponse, SendEmailForm } from "./models";
 
 export async function getRecipients(): Promise<RecipientOption[]> {

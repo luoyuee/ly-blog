@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ArticleCategoryRootItem } from "@@/shared/types/article";
+import type { ArticleCategoryRootItem } from "#shared/types/article";
 import { useAppStore, useConfigStore } from "@/stores";
 import { useDebounceFn } from "@vueuse/core";
 
@@ -216,7 +216,7 @@ const handleActive = (e: Event) => {
             color="neutral"
             variant="link"
             aria-label="关闭"
-            icon="ep:close"
+            icon="lucide:x"
             @click="close"
           />
         </div>

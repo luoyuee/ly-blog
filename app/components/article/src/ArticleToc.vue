@@ -17,7 +17,7 @@
  * 3. 支持点击目录项快速跳转到对应标题位置
  */
 
-import type { ArticleTOCItem } from "@@/shared/types/article";
+import type { ArticleTOCItem } from "#shared/types/article";
 import type { PropType } from "vue";
 import { MacCard } from "@/components/mac-card";
 import { ref, onMounted, onUnmounted, nextTick, watch } from "vue";

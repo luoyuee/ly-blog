@@ -34,7 +34,7 @@
  * 3. 处理目录项点击事件
  */
 
-import type { ArticleTOCItem } from "@@/shared/types/article";
+import type { ArticleTOCItem } from "#shared/types/article";
 import type { PropType } from "vue";
 
 // 双向绑定的激活项ID

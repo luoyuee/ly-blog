@@ -6,8 +6,23 @@ import { fileURLToPath } from "node:url";
  */
 export const devPages = [
   {
-    name: "dev-descriptions-v2",
-    path: "/test/descriptions-v2",
-    file: fileURLToPath(new URL("./descriptions-v2.vue", import.meta.url))
+    name: "dev-descriptions",
+    path: "/test/descriptions",
+    file: fileURLToPath(new URL("./descriptions.vue", import.meta.url))
+  },
+  {
+    name: "dev-dialog",
+    path: "/test/dialog",
+    file: fileURLToPath(new URL("./dialog.vue", import.meta.url))
+  },
+  {
+    name: "dev-spin",
+    path: "/test/spin",
+    file: fileURLToPath(new URL("./spin.vue", import.meta.url))
+  },
+  {
+    name: "dev-tooltip-button",
+    path: "/test/tooltip-button",
+    file: fileURLToPath(new URL("./tooltip-button.vue", import.meta.url))
   }
 ];

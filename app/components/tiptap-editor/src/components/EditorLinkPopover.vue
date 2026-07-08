@@ -97,7 +97,7 @@ function handleKeyDown(event: KeyboardEvent) {
   <UPopover v-model:open="open" :ui="{ content: 'p-0.5' }">
     <UTooltip text="Link">
       <UButton
-        icon="i-lucide-link"
+        icon="lucide:link"
         color="neutral"
         active-color="primary"
         variant="ghost"
@@ -120,7 +120,7 @@ function handleKeyDown(event: KeyboardEvent) {
       >
         <div class="flex items-center mr-0.5">
           <UButton
-            icon="i-lucide-corner-down-left"
+            icon="lucide:corner-down-left"
             variant="ghost"
             size="sm"
             :disabled="!url && !active"
@@ -131,7 +131,7 @@ function handleKeyDown(event: KeyboardEvent) {
           <USeparator orientation="vertical" class="h-6 mx-1" />
 
           <UButton
-            icon="i-lucide-external-link"
+            icon="lucide:external-link"
             color="neutral"
             variant="ghost"
             size="sm"
@@ -141,7 +141,7 @@ function handleKeyDown(event: KeyboardEvent) {
           />
 
           <UButton
-            icon="i-lucide-trash"
+            icon="lucide:trash"
             color="neutral"
             variant="ghost"
             size="sm"

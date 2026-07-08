@@ -158,7 +158,7 @@ defineExpose({ show });
       </div>
 
       <div class="flex-1 ml-4">
-        <Descriptions>
+        <Descriptions :column="1">
           <DescriptionsItem label="图片ID">{{ image.id }}</DescriptionsItem>
           <DescriptionsItem label="图片像素">
             {{ image.width + " x " + image.height }}
@@ -181,7 +181,7 @@ defineExpose({ show });
               <UButton variant="subtle" label="下载原图" @click="handleDownload()" />
 
               <UDropdownMenu :items="items">
-                <UButton color="neutral" variant="outline" icon="i-lucide-chevron-down" />
+                <UButton color="neutral" variant="outline" icon="lucide:chevron-down" />
               </UDropdownMenu>
             </UFieldGroup>
           </DescriptionsItem>

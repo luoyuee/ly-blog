@@ -63,6 +63,20 @@ export async function uploadHitokotoData(
   }
 }
 
+export async function exportHitokotoData(): Promise<Blob> {
+  try {
+    const response = await serviceAxios({
+      url: "/admin/hitokoto/export",
+      method: "get",
+      responseType: "blob"
+    });
+
+    return response.data;
+  } catch (error) {
+    return Promise.reject(error);
+  }
+}
+
 export async function getHitokotoTypeList(
   params: GetHitokotoTypePaginatedRequest
 ): Promise<GetHitokotoTypePaginatedResponse> {

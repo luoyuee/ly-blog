@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { IClientConfigSwiperItem } from "@@/shared/types/config";
+import type { IClientConfigSwiperItem } from "#shared/types/config";
 import type { FormSubmitEvent, TableColumn } from "@nuxt/ui";
 import { BasicModal } from "@/components/basic-modal";
 import { useForm } from "@/composables/useForm";
@@ -162,7 +162,7 @@ const columns: TableColumn<IClientConfigSwiperItem>[] = [
           size: "xs",
           color: "primary",
           variant: "ghost",
-          icon: "ep:edit",
+          icon: "lucide:edit",
           onClick: () => {
             modalFormData.title = title;
             modalFormData.href = href;
@@ -176,7 +176,7 @@ const columns: TableColumn<IClientConfigSwiperItem>[] = [
           size: "xs",
           color: "error",
           variant: "ghost",
-          icon: "ep:delete",
+          icon: "lucide:trash-2",
           onClick: () => {
             formData.items = formData.items.filter((item) => item.href !== href);
           }
@@ -200,7 +200,7 @@ const columns: TableColumn<IClientConfigSwiperItem>[] = [
     <div class="space-y-2">
       <div class="flex justify-between items-center py-2">
         <span class="text-xs text-gray-400">首页轮播展示的图片列表</span>
-        <UButton size="xs" icon="ep:plus" @click="handleAdd"> 添加 </UButton>
+        <UButton size="xs" icon="lucide:plus" @click="handleAdd"> 添加 </UButton>
       </div>
       <div class="border border-muted rounded-md overflow-hidden">
         <UTable :data="formData.items" :columns="columns" sticky class="max-h-64" />
@@ -225,13 +225,13 @@ const columns: TableColumn<IClientConfigSwiperItem>[] = [
         <UFormField name="href" label="链接">
           <UInput
             v-model="modalFormData.href"
-            icon="ep:link"
+            icon="lucide:link"
             :disabled="modalState.isEdit"
             placeholder="请输入链接"
           />
         </UFormField>
         <UFormField name="image" label="图片">
-          <UInput v-model="modalFormData.image" icon="ep:link" placeholder="请输入图片链接" />
+          <UInput v-model="modalFormData.image" icon="lucide:link" placeholder="请输入图片链接" />
         </UFormField>
       </UForm>
     </BasicModal>

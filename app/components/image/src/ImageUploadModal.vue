@@ -5,11 +5,13 @@ import type { AxiosProgressEvent } from "axios";
 import { SelectLocalFile } from "@/components/form/select";
 import { InputTagArea } from "@/components/form/input";
 import { BasicModal } from "@/components/basic-modal";
+import { useLogger } from "@/composables/useLogger";
 import { uploadImageFile } from "@/apis/image";
 import { ref } from "vue";
 import Viewer from "viewerjs";
 import "viewerjs/dist/viewer.css";
 
+const logger = useLogger();
 const $msgBox = useMessageBox();
 
 const props = defineProps({
@@ -83,7 +85,7 @@ const handleConfirm = async (): Promise<void> => {
 
   for (const fileItem of fileList.value) {
     if (fileItem.status !== "succeed") {
-      console.log(fileItem);
+      logger.debug(fileItem);
 
       fileItem.status = "uploading";
 
@@ -185,11 +187,11 @@ defineExpose({
     <div class="flex items-center justify-between mb-4">
       <SelectLocalFile multiple @change="handleFileChange">
         <template #default="{ triggerSelect }">
-          <UButton icon="i-lucide-folder" @click="triggerSelect"> 选择图片 </UButton>
+          <UButton icon="lucide:folder" @click="triggerSelect"> 选择图片 </UButton>
         </template>
       </SelectLocalFile>
 
-      <UButton icon="i-lucide-trash-2" color="error" variant="outline" @click="clearFileList">
+      <UButton icon="lucide:trash-2" color="error" variant="outline" @click="clearFileList">
         清空列表
       </UButton>
     </div>
@@ -214,7 +216,7 @@ defineExpose({
               {{ item.file.name }}
             </p>
             <UButton
-              icon="i-lucide-trash-2"
+              icon="lucide:trash-2"
               size="sm"
               color="error"
               variant="link"
@@ -255,7 +257,7 @@ defineExpose({
       @dragover="dragover"
       @drop="drop"
     >
-      <UIcon name="i-lucide-upload" :size="48" />
+      <UIcon name="lucide:upload" :size="48" />
     </div>
 
     <template #footer>

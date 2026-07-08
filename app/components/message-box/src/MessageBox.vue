@@ -87,7 +87,7 @@ const handleCancel = () => {
           v-if="props.showCloseButton"
           color="neutral"
           variant="ghost"
-          icon="ep:close"
+          icon="lucide:x"
           class="absolute top-1 right-1"
           size="sm"
           @click="handleClose"

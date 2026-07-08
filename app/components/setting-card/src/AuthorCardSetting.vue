@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { IClientConfigAuthorCard, IClientConfigAuthorCardLink } from "@@/shared/types/config";
+import type { IClientConfigAuthorCard, IClientConfigAuthorCardLink } from "#shared/types/config";
 import type { FormSubmitEvent, TableColumn } from "@nuxt/ui";
 import { BasicModal } from "@/components/basic-modal";
 import { SelectIcon } from "@/components/form/select";
@@ -147,7 +147,7 @@ const linkColumns: TableColumn<IClientConfigAuthorCardLink>[] = [
           size: "xs",
           color: "primary",
           variant: "ghost",
-          icon: "ep:edit",
+          icon: "lucide:edit",
           onClick: () => {
             modalFormData.title = title;
             modalFormData.href = href;
@@ -161,7 +161,7 @@ const linkColumns: TableColumn<IClientConfigAuthorCardLink>[] = [
           size: "xs",
           color: "error",
           variant: "ghost",
-          icon: "ep:delete",
+          icon: "lucide:trash-2",
           onClick: () => {
             if (formData.links) {
               formData.links = formData.links.filter((item) => item.href !== href);
@@ -194,10 +194,10 @@ const linkColumns: TableColumn<IClientConfigAuthorCardLink>[] = [
         <UInput v-model="formData.name" />
       </UFormField>
       <UFormField label="名称链接" prop="name_link">
-        <UInput v-model="formData.name_link" icon="ep:link" />
+        <UInput v-model="formData.name_link" icon="lucide:link" />
       </UFormField>
       <UFormField label="头像" prop="avatar">
-        <UInput v-model="formData.avatar" icon="ep:link" />
+        <UInput v-model="formData.avatar" icon="lucide:link" />
       </UFormField>
       <UFormField label="格言" prop="motto">
         <UTextarea v-model="formData.motto" />
@@ -212,7 +212,7 @@ const linkColumns: TableColumn<IClientConfigAuthorCardLink>[] = [
         }"
       >
         <template #hint>
-          <UButton size="xs" icon="ep:plus" @click="handleAddLink"> 添加 </UButton>
+          <UButton size="xs" icon="lucide:plus" @click="handleAddLink"> 添加 </UButton>
         </template>
         <div class="space-y-2">
           <div class="border border-muted rounded-md overflow-hidden">
@@ -243,7 +243,7 @@ const linkColumns: TableColumn<IClientConfigAuthorCardLink>[] = [
         <UFormField name="href" label="链接">
           <UInput
             v-model="modalFormData.href"
-            icon="ep:link"
+            icon="lucide:link"
             placeholder="请输入链接"
             :disabled="modalState.isEdit"
           />

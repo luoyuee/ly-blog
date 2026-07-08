@@ -5,7 +5,9 @@ import { deleteArticleComment, getArticleCommentList } from "@/apis/article/comm
 import CommentListItem from "./CommentListItem.vue";
 import CommentEditor from "./CommentEditor.vue";
 import { useMessage } from "@/composables/useMessage";
+import { useLogger } from "@/composables/useLogger";
 
+const logger = useLogger();
 const $message = useMessage();
 
 const props = defineProps({
@@ -64,7 +66,7 @@ const loadData = async () => {
     state.page = response.page;
     state.total = response.total;
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     $message.error("加载数据失败");
   }
 };
@@ -110,7 +112,7 @@ const handleDelete = async (id: number) => {
     $message.success("删除成功");
     loadData();
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     $message.error("删除失败");
   }
 };

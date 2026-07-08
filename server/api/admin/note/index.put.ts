@@ -31,7 +31,7 @@ export default defineEventHandler(async (event) => {
         note_id: note.id,
         folder_id: note.folder_id,
         name: note.name,
-        version: note.id,
+        version: note.version,
         extension: note.extension,
         metadata: note.metadata?.toString(),
         content: note.content,

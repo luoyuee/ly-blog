@@ -1,15 +1,21 @@
-import tailwindcss from "@tailwindcss/vite";
 import { devPages } from "./app/dev-pages";
+import { fileURLToPath } from "node:url";
 import injectMetadata from "./vite-config/inject-metadata";
+import tailwindcss from "@tailwindcss/vite";
+
+const DEV_SERVER_PORT = Number.parseInt(process.env.DEV_SERVER_PORT ?? "3000", 10);
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   compatibilityDate: "2025-07-15",
   devtools: { enabled: false },
+  alias: {
+    "@ly-editor": fileURLToPath(new URL("./app/components/ly-editor", import.meta.url))
+  },
   // sourcemap: false,
   devServer: {
     host: "0.0.0.0",
-    port: 3000
+    port: Number.isNaN(DEV_SERVER_PORT) ? 3000 : DEV_SERVER_PORT
   },
   nitro: {
     rollupConfig: {
@@ -39,7 +45,10 @@ export default defineNuxtConfig({
         "@nuxt/ui > prosemirror-view",
         "@nuxt/ui > prosemirror-gapcursor"
       ],
-      exclude: ["oh-my-live2d"] // 排除预构建，让其作为独立 chunk
+      // 排除预构建，让其作为独立 chunk
+      // monaco-editor 自身已是 ESM 且含大量动态 import / worker，
+      // 交给 Vite 预构建容易产生失效 chunk 引用导致 404
+      exclude: ["oh-my-live2d", "monaco-editor", "@monaco-editor/loader"]
     }
   },
   vue: {

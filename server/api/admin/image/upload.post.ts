@@ -1,6 +1,5 @@
 import { getBadResponse, getOKResponse } from "@@/server/utils/response";
-import { useFileStorage } from "@@/server/utils/useFileStorage";
-import { optimizeImage } from "@@/server/utils/image";
+import { uploadImage } from "@@/server/utils/image-upload";
 import { prisma } from "@@/server/db";
 import { readFormData } from "h3";
 
@@ -12,8 +11,6 @@ import { readFormData } from "h3";
  */
 
 export default defineEventHandler(async (event) => {
-  const fileStorage = useFileStorage();
-
   const formData = await readFormData(event);
 
   // 读取目录信息
@@ -36,65 +33,27 @@ export default defineEventHandler(async (event) => {
 
   const tags = formData.get("tags");
   const tagArray = typeof tags === "string" ? tags.split(",") : [];
-
-  // 原始数据
-  const rawBuffer = await file.arrayBuffer();
-
-  const optimized = await optimizeImage(rawBuffer);
-
-  const imageHash = fileStorage.getHash(optimized.content);
-
-  // 查询图片是否已经存在
-  const exist = await prisma.image.findFirst({
-    where: { hash: imageHash, folder_id: folder.id }
+  const result = await uploadImage({
+    folderId: folder.id,
+    file,
+    tags: tagArray,
+    actor: {
+      createdBy: event.context.user.id,
+      updatedBy: event.context.user.id
+    }
   });
 
-  if (!exist) {
-    // 保存原始图片
-    await fileStorage.save(optimized.content, optimized.format);
-
-    // 生成并保存预览图
-    const preview = await optimizeImage(optimized.content, {
-      quality: 20
-    });
-
-    const previewHash = fileStorage.getHash(preview.content);
-
-    await fileStorage.save(preview.content, preview.format);
-
-    const now = new Date();
-
-    const optimizedSize = fileStorage.getSize(optimized.content);
-
-    // 更新数据库
-    const [data] = await prisma.$transaction([
-      prisma.image.create({
-        data: {
-          created_at: now,
-          created_by: event.context.user.id,
-          tags: tagArray,
-          folder_id: folder.id,
-          width: optimized.metadata.width ?? 100,
-          height: optimized.metadata.height ?? 100,
-          size: optimizedSize,
-          format: optimized.format,
-          hash: imageHash,
-          preview: previewHash
-        }
-      }),
-
-      prisma.imageFolder.update({
-        where: { id: folder.id },
-        data: {
-          size: folder.size + optimizedSize,
-          count: folder.count + 1,
-          cover: `${imageHash}.${optimized.format}`
-        }
-      })
-    ]);
-
-    return getOKResponse(event, data);
+  if (!result) {
+    return getBadResponse(event, "目录不存在");
   }
 
-  return getOKResponse(event, exist);
+  return getOKResponse(event, {
+    ...result.image,
+    hash: result.asset.hash,
+    height: result.asset.height,
+    width: result.asset.width,
+    size: result.asset.size,
+    format: result.asset.ext,
+    preview: result.asset.preview
+  });
 });

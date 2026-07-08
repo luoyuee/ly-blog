@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import { createArticleComment } from "@/apis/article/comment";
 import { TipTapEditor } from "@/components/tiptap-editor";
-import { MarkdownSupportURL } from "@@/shared/constants";
+import { MarkdownSupportURL } from "#shared/constants";
 import { useMessage } from "@/composables/useMessage";
+import { useLogger } from "@/composables/useLogger";
 import { useConfigStore } from "@/stores";
 import { getQQInfo, isQQEmail } from "@/utils";
 import { z } from "zod";
 
+const logger = useLogger();
 const $message = useMessage();
 
 const configStore = useConfigStore();
@@ -106,7 +108,7 @@ const handleSubmit = async () => {
     clearData();
     emits("submitted");
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     $message.error("提交失败");
   } finally {
     state.submitting = false;
@@ -145,18 +147,18 @@ const handelEmailChange = () => {
 
       <UForm class="comment-editor__contact-form" :schema="schema" :state="formData">
         <UFormField class="comment-editor__contact-form__item" name="nickname">
-          <UInput v-model="formData.nickname" placeholder="昵称（必填）" icon="i-ep-user" />
+          <UInput v-model="formData.nickname" placeholder="昵称（必填）" icon="lucide:user" />
         </UFormField>
         <UFormField class="comment-editor__contact-form__item" name="email">
           <UInput
             v-model="formData.email"
             placeholder="邮箱（必填，QQ邮箱自动获取信息）"
-            icon="i-ep-message"
+            icon="lucide:mail"
             @blur="handelEmailChange"
           />
         </UFormField>
         <UFormField class="comment-editor__contact-form__item" name="website">
-          <UInput v-model="formData.website" placeholder="网址（选填）" icon="i-ep-link" />
+          <UInput v-model="formData.website" placeholder="网址（选填）" icon="lucide:link" />
         </UFormField>
       </UForm>
     </div>
@@ -181,7 +183,7 @@ const handelEmailChange = () => {
         <UButton
           color="primary"
           :loading="state.submitting"
-          loading-icon="ep:loading"
+          loading-icon="lucide:loader-circle"
           @click="handleSubmit"
         >
           发送评论

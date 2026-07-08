@@ -1,8 +1,13 @@
+overrides:
+  "@tiptap/core": "3.26.1"
+  "@tiptap/pm": "3.26.1"
+  "@tiptap/vue-3": "3.26.1"
+
 onlyBuiltDependencies:
-  - '@parcel/watcher'
-  - '@prisma/client'
-  - '@prisma/engines'
-  - '@tailwindcss/oxide'
+  - "@parcel/watcher"
+  - "@prisma/client"
+  - "@prisma/engines"
+  - "@tailwindcss/oxide"
   - cn-font-split
   - esbuild
   - koffi
@@ -11,3 +16,15 @@ onlyBuiltDependencies:
   - sharp
   - unrs-resolver
   - vue-demi
+
+allowBuilds:
+  "@parcel/watcher": true
+  "@prisma/engines": true
+  cn-font-split: true
+  esbuild: true
+  koffi: true
+  prisma: true
+  protobufjs: true
+  sharp: true
+  unrs-resolver: true
+  vue-demi: true

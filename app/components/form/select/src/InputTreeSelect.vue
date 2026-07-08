@@ -28,7 +28,7 @@ import type { TreeItemSelectEvent } from "reka-ui";
 import type { TreeItem } from "@nuxt/ui";
 import type { PropType } from "vue";
 import { flattenTreeItems, findParentChain, sortByDepth } from "#shared/utils/tree";
-import { isArray, isEmpty, isNil } from "@/utils/typed";
+import { isArray, isNil } from "@/utils/typed";
 import { computed, ref, watch } from "vue";
 
 // ============================================================
@@ -237,6 +237,28 @@ const emptyVal = computed(() => ({
   external: props.multiple ? [] : null
 }));
 
+/**
+ * 判断外部选中值是否为空
+ * 空字符串在本组件中与 null/undefined 一样视为无值，0 仍为有效值
+ */
+const isEmptyValue = (value: string | number | null | undefined) => {
+  return isNil(value) || value === "";
+};
+
+/** 将外部值统一转换为有效值数组，集中处理单选/多选和空字符串 */
+const getValidValues = (value?: ExternalValue) => {
+  if (isNil(value)) return [];
+  const values = isArray(value) ? value : [value];
+  return values.filter((item) => !isEmptyValue(item));
+};
+
+/** 将内部选中项统一转换为有效节点数组，避免空字符串节点回写为有效值 */
+const getSelectedItems = (value: InternalValue) => {
+  if (isNil(value)) return [];
+  const items = isArray(value) ? value : [value];
+  return items.filter((item) => !isEmptyValue(item.value));
+};
+
 // ============================================================
 // 计算属性 - 数据转换
 // ============================================================
@@ -314,12 +336,10 @@ const normalizedMap = computed(() => {
 
 /**
  * 是否有选中值
- * 基于外部值（modelValue）判断，兼容单选和多选
- * 注意：需兼容值为 0 的情况，不能用 !modelValue 判断
+ * 基于归一后的外部值判断，兼容单选/多选和 0 值
  */
 const hasSelected = computed(() => {
-  if (isNil(modelValue.value)) return false;
-  return isArray(modelValue.value) ? modelValue.value.length > 0 : true;
+  return getValidValues(modelValue.value).length > 0;
 });
 
 // ============================================================
@@ -337,19 +357,15 @@ const hasSelected = computed(() => {
  * @returns 外部值（value 或 value[]）
  */
 const convertToExternalValue = (internal: InternalValue): ExternalValue => {
-  // 空值处理
-  if (isNil(internal) || (Array.isArray(internal) && internal.length === 0)) {
-    return null;
-  }
+  // 空值处理：内部空节点或空字符串节点都不回写为有效值
+  const selectedItems = getSelectedItems(internal);
 
-  const items = isArray(internal) ? internal : [internal];
+  if (selectedItems.length === 0) return null;
 
   // 多选模式
   if (props.multiple) {
     // 去重并过滤 null/undefined（保留 0 等 falsy 值）
-    const uniqueValues = Array.from(
-      new Set(items.map((item) => item.value).filter((v) => !isNil(v)))
-    );
+    const uniqueValues = Array.from(new Set(selectedItems.map((item) => item.value)));
 
     // 关联模式下的特殊处理
     if (isRelated.value) {
@@ -375,7 +391,7 @@ const convertToExternalValue = (internal: InternalValue): ExternalValue => {
           chain.forEach((node) => result.add(node.value));
         }
 
-        return [...result].filter((v) => !isNil(v));
+        return [...result].filter((v) => !isEmptyValue(v));
       }
     }
 
@@ -384,7 +400,7 @@ const convertToExternalValue = (internal: InternalValue): ExternalValue => {
   }
 
   // 单选模式：直接返回第一个值
-  return items[0]?.value;
+  return selectedItems[0]?.value;
 };
 
 /**
@@ -403,16 +419,14 @@ const convertToExternalValue = (internal: InternalValue): ExternalValue => {
  * @returns 内部值（TreeItem 或 TreeItem[]）
  */
 const convertToInternalValue = (external?: ExternalValue): InternalValue => {
-  // 空值处理（兼容值为 0 的情况）
-  if (isNil(external) || (isArray(external) && external.length === 0)) {
-    return undefined;
-  }
+  // 空值处理：空字符串视为无值，0 仍为有效值
+  const values = getValidValues(external);
 
-  const items = isArray(external) ? external : [external];
+  if (values.length === 0) return undefined;
 
   // 多选模式
   if (props.multiple) {
-    const uniqueValues = new Set(items);
+    const uniqueValues = new Set(values);
 
     // 关联模式下的特殊处理
     if (isRelated.value) {
@@ -463,7 +477,7 @@ const convertToInternalValue = (external?: ExternalValue): InternalValue => {
   }
 
   // 单选模式：直接返回对应的 TreeItem 对象
-  return normalizedMap.value.get(items[0] as string | number);
+  return normalizedMap.value.get(values[0] as string | number);
 };
 
 // ============================================================
@@ -503,22 +517,24 @@ const showInput = ref(false);
 const showTags = computed(() => {
   const tags: InputItem[] = [];
 
-  if (isArray(modelValue.value)) {
-    modelValue.value.forEach((val) => {
-      // 优先从下拉框数据中查找
-      const item = normalizedMap.value.get(val);
-      if (item) {
-        tags.push({ label: item.label || "", value: item.value });
-        return;
-      }
+  getValidValues(modelValue.value).forEach((val) => {
+    // 优先从下拉框数据中查找
+    const item = normalizedMap.value.get(val);
+    if (item) {
+      tags.push({ label: item.label || "", value: item.value });
+      return;
+    }
 
-      // 从自定义输入项中查找
-      const customItem = inputItems.value.find((tag) => tag.value === val);
-      if (customItem) {
-        tags.push({ label: customItem.label || "", value: customItem.value, isCustom: true });
-      }
-    });
-  }
+    // 从自定义输入项中查找
+    const customItem = inputItems.value.find((tag) => tag.value === val);
+    if (customItem) {
+      tags.push({
+        label: customItem.label || "",
+        value: customItem.value,
+        isCustom: true
+      });
+    }
+  });
 
   return tags;
 });
@@ -584,12 +600,8 @@ const handlePopover = () => {
   if (props.disabled) return;
 
   // 展开下拉面板时，计算需要展开的父节点
-  if (
-    popoverOpen.value === false &&
-    normalizedFlatItems.value.length > 0 &&
-    !isEmpty(modelValue.value)
-  ) {
-    const values = Array.isArray(modelValue.value) ? modelValue.value : [modelValue.value];
+  if (popoverOpen.value === false && normalizedFlatItems.value.length > 0 && hasSelected.value) {
+    const values = getValidValues(modelValue.value);
     const expandedItems: Set<string> = new Set();
 
     // 遍历所有选中值，查找其父节点链
@@ -649,7 +661,7 @@ const showCheckbox = (item: TreeItem) => {
  */
 const handleInputChange = () => {
   internalValue.value = undefined;
-  modelValue.value = inputValue.value || null;
+  modelValue.value = isEmptyValue(inputValue.value) ? null : inputValue.value;
 };
 
 /**
@@ -667,9 +679,9 @@ const blurTagInput = () => {
  * 已存在的值不会重复添加
  */
 const handleTagEnter = () => {
-  if (inputValue.value) {
+  if (!isEmptyValue(inputValue.value)) {
     // 检查是否已存在（同时在 modelValue 和 inputItems 中检查）
-    const existingValues = isArray(modelValue.value) ? modelValue.value : [];
+    const existingValues = getValidValues(modelValue.value);
     if (existingValues.includes(inputValue.value)) {
       blurTagInput();
       return;
@@ -718,14 +730,16 @@ watch(
   modelValue,
   (newValue) => {
     if (props.multiple) {
-      if (isArray(newValue) && newValue.length > 0) {
+      const values = getValidValues(newValue);
+
+      if (values.length > 0) {
         // 将外部值分为下拉框值和自定义值
         const treeValues: Array<string | number> = [];
         const customItems: InputItem[] = [];
 
-        newValue.forEach((val) => {
-          if (normalizedMap.value.has(val as string | number)) {
-            treeValues.push(val as string | number);
+        values.forEach((val) => {
+          if (normalizedMap.value.has(val)) {
+            treeValues.push(val);
           } else {
             const cVal = val.toString();
             customItems.push({
@@ -745,12 +759,15 @@ watch(
         inputItems.value = [];
       }
     } else {
-      const has = normalizedMap.value.has(newValue as string | number);
+      const values = getValidValues(newValue);
+      const value = values[0];
+      const has = !isNil(value) && normalizedMap.value.has(value);
+
       if (has) {
-        internalValue.value = convertToInternalValue(newValue) || emptyVal.value.internal;
+        internalValue.value = convertToInternalValue(value) || emptyVal.value.internal;
       } else {
         internalValue.value = emptyVal.value.internal;
-        inputValue.value = newValue as string;
+        inputValue.value = isNil(value) ? undefined : value.toString();
       }
     }
   },
@@ -761,7 +778,7 @@ watch(
 <template>
   <UPopover
     v-model:open="popoverOpen"
-    class="min-w-[200px]"
+    class="min-w-50"
     :disabled="disabled"
     :content="{
       collisionPadding: {
@@ -786,8 +803,8 @@ watch(
         <UBadge
           v-for="tag in showTags"
           :key="tag.value"
-          :color="tag.isCustom ? 'primary' : 'neutral'"
-          :variant="tag.isCustom ? 'subtle' : 'outline'"
+          color="neutral"
+          variant="subtle"
           size="sm"
           :ui="{
             base: 'py-0 text-sm'
@@ -796,10 +813,10 @@ watch(
           {{ tag.label }}
 
           <!-- 自定义标签显示删除按钮 -->
-          <template #trailing v-if="tag.isCustom">
+          <template #trailing v-if="tag.isCustom && !props.disabled">
             <UIcon
-              name="mdi:close-thick"
-              class="cursor-pointer text-blue-400 hover:text-blue-600"
+              name="lucide:x"
+              class="cursor-pointer text-muted hover:text-highlighted"
               @click.stop="handleDelete(tag)"
             />
           </template>
@@ -823,10 +840,10 @@ watch(
         />
         <!-- 添加标签按钮 -->
         <UBadge
-          v-else
-          icon="ep:plus"
+          v-else-if="!props.disabled"
+          icon="lucide:plus"
           size="sm"
-          color="primary"
+          color="neutral"
           variant="subtle"
           class="shrink-0 justify-center"
           @click.stop="showInput = true"
@@ -836,17 +853,20 @@ watch(
         <div class="ml-auto flex items-center shrink-0">
           <!-- 清除按钮：有选中值且可清除时显示 -->
           <UIcon
-            v-if="hasSelected && props.clearable && !props.disabled"
+            v-if="props.clearable && hasSelected && !props.disabled"
             name="lucide:x"
             class="cursor-pointer shrink-0 text-muted size-5"
             @click.stop="handleClear"
           />
-          <!-- 展开/收起箭头：无选中值时显示 -->
+          <!-- 展开/收起箭头 -->
           <UIcon
-            v-else-if="!hasSelected"
-            class="shrink-0 text-dimmed size-5"
-            :name="popoverOpen ? 'lucide:chevron-up' : 'lucide:chevron-down'"
-            :class="{ 'opacity-50': props.disabled }"
+            v-else
+            class="shrink-0 text-dimmed size-5 transition-transform duration-200"
+            name="lucide:chevron-down"
+            :class="{
+              'rotate-180': popoverOpen,
+              'opacity-75': props.disabled
+            }"
           />
         </div>
       </UButton>
@@ -872,9 +892,12 @@ watch(
           <!-- 展开/收起箭头：无选中值时显示 -->
           <UIcon
             v-else-if="!hasSelected"
-            class="shrink-0 text-dimmed size-5"
-            :name="popoverOpen ? 'lucide:chevron-up' : 'lucide:chevron-down'"
-            :class="{ 'opacity-50': props.disabled }"
+            class="shrink-0 text-dimmed size-5 transition-transform duration-200"
+            name="lucide:chevron-down"
+            :class="{
+              'rotate-180': popoverOpen,
+              'opacity-75': props.disabled
+            }"
           />
         </template>
       </UInput>
@@ -883,10 +906,7 @@ watch(
     <!-- 下拉内容：树形选择器 -->
     <template #content>
       <!-- 有数据时显示树形结构 -->
-      <div
-        v-if="normalizedItems.length > 0"
-        class="p-2 min-w-[200px] max-h-[400px] overflow-y-auto"
-      >
+      <div v-if="normalizedItems.length > 0" class="p-2 min-w-50 max-h-100 overflow-y-auto">
         <UTree
           :key="normalizedFlatItems.length"
           v-model:expanded="expanded"
@@ -896,7 +916,6 @@ watch(
           :bubble-select="isRelated"
           :propagate-select="isRelated"
           :get-key="(item) => item.value"
-          :as="{ link: 'div' }"
           @select="onSelect"
           @update:model-value="updateModelValue"
         >

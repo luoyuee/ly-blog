@@ -31,6 +31,16 @@ export interface UpdateNavigationWebsiteRequest extends CreateNavigationWebsiteR
   id: number;
 }
 
+/** 导航网站导入响应 */
+export interface ImportNavigationWebsiteResponse {
+  /** 导入数据总数 */
+  total: number;
+  /** 新增条数 */
+  created: number;
+  /** 跳过条数（与数据库完全匹配） */
+  skipped: number;
+}
+
 /** 搜索导航网站请求 */
 export interface SearchNavigationWebsiteRequest {
   keyword: string;

@@ -7,6 +7,7 @@ import { prisma } from "@@/server/db";
 import { optimize } from "svgo";
 import chroma from "chroma-js";
 import sharp from "sharp";
+import mime from "mime";
 
 export interface OptimizeOptions {
   size?: {
@@ -144,7 +145,12 @@ export const handleUserAvatar = async (file: File): Promise<string> => {
   const hash = fileStorage.getHash(optimized.content);
 
   const exist = await prisma.image.findFirst({
-    where: { hash, folder_id: ImageFolderEnum.SYSTEM }
+    where: {
+      folder_id: ImageFolderEnum.SYSTEM,
+      Asset: {
+        hash
+      }
+    }
   });
 
   if (exist === null) {
@@ -158,19 +164,39 @@ export const handleUserAvatar = async (file: File): Promise<string> => {
     fileStorage.save(preview.content, preview.format);
 
     const optimizedSize = fileStorage.getSize(optimized.content);
+    const now = new Date();
+
+    const asset = await prisma.asset.upsert({
+      where: { hash },
+      create: {
+        created_at: now,
+        created_by: 0,
+        hash,
+        ext: optimized.format,
+        mime_type: mime.getType(optimized.format),
+        size: optimizedSize,
+        preview: previewHash,
+        width: avatarWidth,
+        height: avatarHeight
+      },
+      update: {
+        updated_at: now,
+        updated_by: 0,
+        preview: previewHash,
+        width: avatarWidth,
+        height: avatarHeight
+      }
+    });
 
     await prisma.image.create({
       data: {
-        created_at: new Date(),
+        created_at: now,
         created_by: 0,
         tags: [],
-        hash,
         folder_id: ImageFolderEnum.SYSTEM,
-        width: avatarWidth,
-        height: avatarHeight,
-        size: optimizedSize,
-        format: optimized.format,
-        preview: previewHash
+        asset_id: asset.id,
+        original_name: `${hash}.${optimized.format}`,
+        filename: `${hash}.${optimized.format}`
       }
     });
 

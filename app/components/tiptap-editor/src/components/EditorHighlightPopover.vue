@@ -41,7 +41,7 @@ const toggleHighlight = (color: string) => {
   <UPopover :ui="{ content: 'p-2' }">
     <UTooltip text="高亮">
       <UButton
-        icon="i-lucide-highlighter"
+        icon="lucide:highlighter"
         color="neutral"
         active-color="primary"
         variant="ghost"

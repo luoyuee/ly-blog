@@ -1,385 +1,214 @@
 <script setup lang="ts">
-import { VueDatePicker } from "@vuepic/vue-datepicker";
-import {zhCN} from "date-fns/locale";
-import "@vuepic/vue-datepicker/dist/main.css";
-import dayjs from "dayjs";
+import type { CalendarDateTime } from "@internationalized/date";
+import type { TimeValue } from "reka-ui";
+import type { PropType } from "vue";
+import type {
+  DatePickerMode,
+  DatePickerShowFormat,
+  DatePickerValue,
+  DatePickerValueType
+} from "./types";
+import { TimePicker } from "@/components/form/time-picker";
+import { computed, ref, shallowRef, watch } from "vue";
+import {
+  createDayjsFromCalendarValue,
+  formatDatePickerValue,
+  parsePickerModelValue,
+  syncSinglePickerValue
+} from "./utils";
 
-/**
- * DatePicker 组件属性接口
- */
-interface Props {
-  /** 是否为范围选择模式 */
-  range?: boolean;
-  /** 显示文本的格式化字符串，使用 dayjs 格式 */
-  format?: string;
-  /** 双向绑定值的格式，支持 dayjs 格式、timestamp 格式，不传则为 Date 对象 */
-  valueFormat?: string;
-  /** 是否禁用 */
-  disabled?: boolean;
-  /** 是否显示此刻按钮，range模式下强制隐藏 */
-  showNowButton?: boolean;
-}
+const modelValue = defineModel<DatePickerValue>({});
 
-const props = withDefaults(defineProps<Props>(), {
-  range: false,
-  format: "YYYY-MM-DD HH:mm:ss",
-  disabled: false,
-  showNowButton: true
+const props = defineProps({
+  disabled: {
+    type: Boolean,
+    default: false
+  },
+  clearable: {
+    type: Boolean,
+    default: false
+  },
+  placeholder: {
+    type: String,
+    default: "请选择日期"
+  },
+  confirmText: {
+    type: String,
+    default: "确定"
+  },
+  cancelText: {
+    type: String,
+    default: "取消"
+  },
+  format: {
+    type: String,
+    default: "YYYY-MM-DD HH:mm:ss"
+  },
+  valueType: {
+    type: String as PropType<DatePickerValueType>,
+    default: "string"
+  },
+  showFormat: {
+    type: Object as PropType<DatePickerShowFormat>,
+    default: () => ({ date: "YYYY-MM-DD", time: "HH:mm:ss" })
+  },
+  type: {
+    type: String as PropType<DatePickerMode>,
+    default: "date"
+  }
 });
 
-/**
- * 模型值的类型定义
- */
-type ModelValue = Date | Date[] | string | string[] | number | number[] | null;
+const popoverOpen = ref(false);
 
-const modelValue = defineModel<ModelValue>({
-  default: null
-});
+const dateValue = shallowRef<CalendarDateTime | null>(null);
+const timeValue = shallowRef<TimeValue | null>(null);
 
-const isOpen = ref(false);
+// 组件内部始终使用 dayjs 做格式化和拼接，避免模板层处理多种日期值类型。
+const createDayjsFromValue = () => {
+  return createDayjsFromCalendarValue(dateValue.value, timeValue.value);
+};
 
-/**
- * 内部使用的日期值，始终为 Date 类型
- */
-const internalValue = ref<Date | Date[] | null>();
+// 只在外部 v-model 变化时同步内部草稿值，弹层内选择不会立即污染表单数据。
+const syncCurrentModelValue = () => {
+  syncSinglePickerValue(
+    parsePickerModelValue(modelValue.value, props.format),
+    (value) => {
+      dateValue.value = value;
+    },
+    (value) => {
+      timeValue.value = value;
+    }
+  );
+};
 
-/**
- * 监听模型值变化，将外部传入的值转换为内部 Date 类型
- */
 watch(
   modelValue,
-  (newValue) => {
-    if (props.disabled) return;
-
-    if (newValue === null || (Array.isArray(newValue) && newValue.length === 0)) {
-      internalValue.value = props.range ? [] : null;
-      return;
-    }
-
-    if (props.range) {
-      const values = Array.isArray(newValue) ? newValue : [];
-      internalValue.value = values.map((item) => convertToDate(item)) as Date[];
-    } else {
-      internalValue.value = convertToDate(newValue);
-    }
+  () => {
+    syncCurrentModelValue();
   },
   { immediate: true }
 );
 
-/**
- * 将外部值转换为内部 Date 类型
- * @param value - 外部传入的值
- * @returns 转换后的 Date 对象
- */
-function convertToDate(value: unknown): Date | null {
-  if (!value) return null;
-
-  if (value instanceof Date) {
-    return value;
-  }
-
-  if (typeof value === "number") {
-    return new Date(value);
-  }
-
-  if (typeof value === "string") {
-    // 如果是时间戳字符串
-    if (/^\d+$/.test(value)) {
-      return new Date(parseInt(value));
-    }
-    // 如果是日期字符串，使用 dayjs 解析
-    const date = dayjs(value, props.valueFormat || undefined);
-    return date.isValid() ? date.toDate() : null;
-  }
-
-  return null;
-}
-
-/**
- * 将内部 Date 类型转换为外部格式
- * @param date - 内部 Date 对象
- * @returns 转换后的外部值
- */
-function convertToExternalFormat(date: Date | null): ModelValue {
-  if (!date) return null;
-
-  if (!props.valueFormat) {
-    return date;
-  }
-
-  if (props.valueFormat === "timestamp") {
-    return date.getTime();
-  }
-
-  return dayjs(date).format(props.valueFormat);
-}
-
-/**
- * 检查是否有选中的值
- */
-const hasSelected = computed(() => {
-  const v = modelValue.value;
-  return Array.isArray(v) ? v.length > 0 : !!v;
-});
-
-/**
- * 是否显示此刻按钮，range模式下强制隐藏
- */
-const showNowButton = computed(() => {
-  return props.showNowButton && !props.range;
-});
-
-/**
- * 显示文本，使用 format 格式化
- */
-const showText = computed(() => {
-  const v = modelValue.value;
-  if (Array.isArray(v)) {
-    return v.length ? v.map((item) => formatDisplayText(item)).join(" ~ ") : "";
-  }
-  return v ? formatDisplayText(v) : "";
-});
-
-/**
- * 内部显示的文本，使用 format 格式化
- */
-const internalText = computed(() => {
-  const v = internalValue.value;
-  if (Array.isArray(v)) {
-    return v && v.length ? v.map((item) => dayjs(item).format(props.format)).join(" ~ ") : "";
-  }
-  return v ? dayjs(v).format(props.format) : "";
-});
-
-/**
- * 格式化显示文本
- * @param value - 需要格式化的值
- * @returns 格式化后的文本
- */
-function formatDisplayText(value: unknown): string {
-  if (!value) return "";
-
-  if (value instanceof Date) {
-    return dayjs(value).format(props.format);
-  }
-
-  if (typeof value === "number") {
-    return dayjs(value).format(props.format);
-  }
-
-  if (typeof value === "string") {
-    // 如果是时间戳字符串
-    if (/^\d+$/.test(value)) {
-      return dayjs(parseInt(value)).format(props.format);
-    }
-    // 如果是日期字符串，先解析再格式化
-    const date = dayjs(value, props.valueFormat || undefined);
-    return date.isValid() ? date.format(props.format) : value;
-  }
-
-  return String(value);
-}
-
-/**
- * 应用确认选择
- */
-function applyConfirm() {
-  if (props.disabled) return;
-
-  if (props.range) {
-    const values = Array.isArray(internalValue.value) ? internalValue.value : [];
-    modelValue.value = values.map((item) => convertToExternalFormat(item)) as ModelValue;
-  } else {
-    modelValue.value = convertToExternalFormat(
-      internalValue.value instanceof Date ? internalValue.value : null
-    );
-  }
-
-  isOpen.value = false;
-}
-
-/**
- * 设置为当前时间
- */
-function setNow() {
-  if (props.disabled) return;
-  const now = new Date();
-  internalValue.value = props.range ? [now, now] : now;
-}
-
-/**
- * 清空选择的值
- */
-function clearValue() {
-  if (props.disabled) return;
-  modelValue.value = props.range ? [] : null;
-  internalValue.value = props.range ? [] : null;
-}
-
-const onClickOutside = (validate: () => boolean, evt: PointerEvent) => {
-  // 检查点击的元素或其父级元素是否包含 date-picker class
-  const target = evt.target as HTMLElement;
-  const hasDatePickerClass = target.closest(".dp-date-picker") !== null;
-
-  // 如果没有找到 date-picker class，则关闭弹窗
-  if (!hasDatePickerClass) {
-    isOpen.value = false;
-  }
+const handleClear = () => {
+  modelValue.value = null;
+  dateValue.value = null;
+  timeValue.value = null;
+  popoverOpen.value = false;
 };
+
+const handleConfirm = () => {
+  const selectedValue = createDayjsFromValue();
+
+  if (selectedValue) {
+    modelValue.value = formatDatePickerValue(selectedValue, props.valueType, props.format);
+  } else if (!props.clearable && modelValue.value) {
+    const currentValue = parsePickerModelValue(modelValue.value, props.format);
+
+    if (currentValue?.isValid()) {
+      syncCurrentModelValue();
+    } else {
+      modelValue.value = null;
+    }
+  } else {
+    modelValue.value = null;
+  }
+
+  popoverOpen.value = false;
+};
+
+const handleCancel = () => {
+  syncCurrentModelValue();
+  popoverOpen.value = false;
+};
+
+const displayText = computed(() => {
+  const selectedValue = parsePickerModelValue(modelValue.value, props.format);
+
+  if (!selectedValue?.isValid()) {
+    return props.placeholder;
+  }
+
+  if (props.type === "date") {
+    return selectedValue.format(props.showFormat.date);
+  }
+
+  return selectedValue.format(`${props.showFormat.date} ${props.showFormat.time}`);
+});
+
+const displayDate = computed(() => {
+  if (!dateValue.value) {
+    return "";
+  }
+
+  const selectedValue = createDayjsFromValue();
+
+  return selectedValue ? selectedValue.format(props.showFormat.date) : "";
+});
 </script>
 
 <template>
   <UPopover
-    v-model:open="isOpen"
-    :ui="{
-      content: 'dp-date-picker'
+    v-model:open="popoverOpen"
+    :disabled="props.disabled"
+    :content="{
+      onOpenAutoFocus: (event) => event.preventDefault()
     }"
   >
     <UButton
-      label="Open"
       color="neutral"
-      variant="subtle"
-      icon="ep:calendar"
-      class="w-full justify-between"
+      variant="outline"
+      icon="lucide:calendar"
+      class="w-full"
+      v-bind="$attrs"
+      :disabled="props.disabled"
     >
-      <div class="flex-1 flex justify-start">
-        {{ showText || "请选择时间" }}
-      </div>
+      <span class="truncate flex-1 text-left">
+        {{ displayText }}
+      </span>
 
       <template #trailing>
         <UIcon
-          v-if="hasSelected"
+          v-if="dateValue && props.clearable && !props.disabled"
           name="lucide:x"
-          class="cursor-pointer"
-          :class="{ 'opacity-50 cursor-not-allowed': props.disabled }"
-          @click.stop="clearValue"
+          class="cursor-pointer shrink-0 text-muted size-5"
+          @click.stop="handleClear"
+        />
+        <UIcon
+          v-else
+          class="shrink-0 text-dimmed size-5 transition-transform duration-200"
+          name="lucide:chevron-down"
+          :class="{
+            'rotate-180': popoverOpen,
+            'opacity-75': props.disabled
+          }"
         />
       </template>
     </UButton>
 
     <template #content>
-      <div class="p-1">
-        <VueDatePicker
-          v-model="internalValue"
-          inline
-          auto-apply
-          enable-seconds
-          :day-names="['一', '二', '三', '四', '五', '六', '日']"
-          :locale="zhCN"
-          :range="props.range"
-          :multi-calendars="props.range"
-          :config="{
-            onClickOutside
-          }"
-        />
+      <UCalendar v-model="dateValue" class="p-2" />
 
-        <div class="flex justify-between p-2">
-          <div class="text-xs text-gray-500 flex items-center">
-            {{ internalText }}
-          </div>
-          <div class="flex gap-2">
-            <UButton v-if="showNowButton" size="sm" color="neutral" variant="ghost" @click="setNow">
-              此刻
-            </UButton>
-            <UButton size="sm" color="primary" variant="solid" @click="applyConfirm">确定</UButton>
-          </div>
-        </div>
+      <UFieldGroup v-if="props.type === 'datetime'" class="p-2 pt-0">
+        <UInput
+          variant="outline"
+          icon="lucide:calendar"
+          :value="displayDate"
+          readonly
+          class="w-36"
+        />
+        <TimePicker v-model="timeValue" class="w-36" value-type="time" show-format="HH:mm:ss" />
+      </UFieldGroup>
+
+      <div class="flex justify-end gap-2 p-2 border-t border-default">
+        <UButton
+          color="neutral"
+          variant="outline"
+          size="xs"
+          :label="props.cancelText"
+          @click="handleCancel"
+        />
+        <UButton color="primary" size="xs" :label="props.confirmText" @click="handleConfirm" />
       </div>
     </template>
   </UPopover>
 </template>
-<style>
-.dp__theme_light,
-.dp__theme_dark {
-  /* 主色调 - 使用项目的主色 */
-  --dp-primary-color: var(--ui-primary);
-  --dp-primary-text-color: var(--white);
-
-  /* 背景色 - 使用项目的背景色 */
-  --dp-background-color: var(--ui-bg);
-  --dp-text-color: var(--text-color-primary);
-
-  /* 悬停状态 */
-  --dp-hover-color: var(--hover-bg-color);
-  --dp-hover-text-color: var(--text-color-primary);
-
-  /* 边框和禁用状态 */
-  --dp-border-color: var(--border-color);
-  --dp-border-color-hover: var(--primary);
-  --dp-disabled-color: var(--bg-color-tertiary);
-  --dp-disabled-color-text: var(--text-color-tertiary);
-
-  /* 图标和辅助色 */
-  --dp-icon-color: var(--text-color-tertiary);
-  --dp-secondary-color: var(--text-color-tertiary);
-
-  /* 成功和危险色 */
-  --dp-success-color: var(--success);
-  --dp-danger-color: var(--danger);
-
-  /* 圆角 - 使用项目的圆角变量 */
-  --dp-border-radius: 6px;
-  --dp-cell-border-radius: 6px;
-
-  /* 字体 */
-  --dp-font-family: inherit;
-  --dp-font-size: 0.875rem;
-
-  /* 间距 */
-  --dp-common-padding: 0.5rem;
-  --dp-cell-padding: 0.25rem;
-
-  /* 阴影 - 使用项目的阴影变量 */
-  --dp-menu-border-color: var(--border-color);
-}
-
-/* 移除默认边框 */
-.dp__menu {
-  border: unset;
-  box-shadow: unset;
-}
-
-/* 调整时间选择器宽度 */
-.dp--tp-wrap {
-  max-width: unset;
-}
-
-/* 确保按钮样式一致 */
-.dp__action_button {
-  font-family: inherit;
-  font-size: 0.875rem;
-}
-
-/* 单元格悬停效果 */
-.dp__cell {
-  transition: var(--dp-common-transition, all 0.1s ease-in);
-}
-
-.dp__cell:hover {
-  background-color: var(--dp-hover-color);
-  color: var(--dp-hover-text-color);
-}
-
-/* 当前日期高亮 */
-.dp__today {
-  border: 1px solid var(--dp-primary-color);
-}
-
-/* 选中日期样式 */
-.dp__active_date {
-  background-color: var(--dp-primary-color);
-  color: var(--dp-primary-text-color);
-}
-
-/* 范围选择样式 */
-.dp__range_between {
-  background-color: var(--dp-hover-color);
-  color: var(--dp-text-color);
-}
-
-.dp__overlay_container {
-  --dp-scroll-bar-background: unset;
-  --dp-scroll-bar-color: rgba(0, 0, 0, 0.4);
-  --dp-scroll-bar-background: transparent;
-}
-</style>

@@ -1,5 +1,5 @@
 import { getOKResponse } from "@@/server/utils/response";
-import { ConfigNameEnum } from "@@/shared/constants";
+import { ConfigNameEnum } from "#shared/enums";
 import { prisma } from "@@/server/db";
 
 export default defineEventHandler(async (event) => {

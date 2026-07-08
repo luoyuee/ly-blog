@@ -26,10 +26,10 @@ const handleCopy = () => {
   <div class="typography copyable">
     {{ props.text }}
     <UTooltip :text="copied ? '已复制' : '复制'" placement="top">
-      <UButton v-if="copied" icon="ep:check" color="success" variant="ghost" size="xs" />
+      <UButton v-if="copied" icon="lucide:check" color="success" variant="ghost" size="xs" />
       <UButton
         v-else
-        icon="ep:copy-document"
+        icon="lucide:copy"
         color="primary"
         variant="ghost"
         size="xs"

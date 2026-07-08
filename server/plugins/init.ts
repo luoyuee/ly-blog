@@ -1,4 +1,7 @@
-import { ConfigNameEnum } from "#shared/constants";
+import { runtimeLogger } from "@@/server/utils/logger";
+import { ConfigNameEnum } from "#shared/enums";
+import { mkdirSync, existsSync } from "fs";
+import { prisma } from "@@/server/db";
 import {
   DefaultArticleCategoryData,
   DefaultClientConfig,
@@ -10,8 +13,6 @@ import {
   DefaultWorkConfig,
   HitokotoTypeData
 } from "#shared/constants/default-configs";
-import { mkdirSync, existsSync } from "fs";
-import { prisma } from "@@/server/db";
 import config from "@@/server/config";
 import dayjs from "dayjs";
 
@@ -38,7 +39,7 @@ export default defineNitroPlugin(async () => {
       return; // 已经初始化过，直接返回
     }
   } catch (error) {
-    console.error("检查配置失败:", error);
+    runtimeLogger.error("检查配置失败:", error);
     return; // 出错时返回，避免继续执行
   }
 
@@ -55,7 +56,7 @@ export default defineNitroPlugin(async () => {
 
     for (const dir of directories) {
       if (!existsSync(dir)) {
-        console.log(`创建目录: ${dir}`);
+        runtimeLogger.info(`创建目录: ${dir}`);
         mkdirSync(dir, { recursive: true });
       }
     }
@@ -65,7 +66,7 @@ export default defineNitroPlugin(async () => {
     const nowStr = dayjs(now).format("YYYY-MM-DD HH:mm:ss");
 
     // 创建配置项
-    console.log("开始初始化数据...");
+    runtimeLogger.info("开始初始化数据...");
     await prisma.config.createMany({
       data: [
         {
@@ -146,10 +147,10 @@ export default defineNitroPlugin(async () => {
       ]
     });
 
-    console.log("初始化完毕");
+    runtimeLogger.info("初始化完毕");
     initState = InitState.COMPLETED; // 标记为已完成
   } catch (error) {
-    console.error("初始化过程失败:", error);
+    runtimeLogger.error("初始化过程失败:", error);
     initState = InitState.NOT_INITIALIZED; // 失败时重置状态
   }
 });

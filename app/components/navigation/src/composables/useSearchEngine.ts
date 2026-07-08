@@ -1,7 +1,7 @@
 import type { SearchEngineItem } from "#shared/types/navigation-website";
 import { computed, onUnmounted, ref } from "vue";
 
-export type SearchEngineOption = Pick<SearchEngineItem, "name" | "icon" | "url">;
+export type SearchEngineOption = Pick<SearchEngineItem, "id" | "name" | "icon" | "url">;
 
 const ENGINE_NAME_VISIBLE_DURATION = 1200;
 const FALLBACK_ENGINE_ICON = "mdi:web";

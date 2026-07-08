@@ -1,6 +1,6 @@
-import type { ArticleCategoryTree } from "@@/shared/types/article";
+import type { ArticleCategoryTree } from "#shared/types/article";
 import { getOKResponse } from "@@/server/utils/response";
-import { toTree } from "@@/shared/utils/convert";
+import { toTree } from "#shared/utils/convert";
 import { prisma } from "@@/server/db";
 
 export default defineEventHandler(async (event) => {

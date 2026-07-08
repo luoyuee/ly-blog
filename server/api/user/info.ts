@@ -1,5 +1,5 @@
 import { getNotAuthResponse, getOKResponse } from "@@/server/utils/response";
-import { UserRoleEnum } from "@@/shared/enums";
+import { UserRoleEnum } from "#shared/enums";
 import { prisma } from "@@/server/db";
 
 export default defineEventHandler(async (event) => {

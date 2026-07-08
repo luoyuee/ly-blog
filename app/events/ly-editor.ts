@@ -1,5 +1,4 @@
 import type { EditorTabItem } from "#shared/types/ly-editor";
-import type { NoteFolderForm } from "#shared/types/note";
 import mitt from "mitt";
 
 /**
@@ -54,13 +53,7 @@ type Events = {
   // 笔记管理器事件
   "note-manager:create": undefined;
   "note-manager:delete": string;
-  "intent.note-manager:new:folder": undefined;
-  "intent.note-manager:rename:folder": NoteFolderForm;
   "cmd.note-manager:reload": undefined;
-  "cmd.note-manager:publish:article": FolderTreeItem;
-
-  // 标签栏事件
-  "tab-bar:change": EditorTabItem;
 
   // 编辑器核心事件
   "intent.editor-core:save:file": EditorTabItem;
@@ -70,39 +63,9 @@ type Events = {
   "cmd.editor-core:close:file": EditorTabItem;
   "cmd.editor-core:switch:file": EditorTabItem;
   "cmd.editor-core:update:file": EditorTabItem;
-  "cmd.editor-core:inster:card": undefined;
-
-  // 预览组件
-  "editor-preview:preview:content": string;
-
-  // Monaco编辑器事件
-  "monaco-editor:open:file": { path: string; content: string };
-  "monaco-editor:close:file": { path: string };
-  "monaco-editor:update:file": { path: string; content: string };
-  "monaco-editor:switch:file": string;
-  "monaco-editor:preview:content": string;
-
-  // 文件浏览器事件
-  "file-explorer:reload": undefined;
 
   // 文章管理器事件
   "cmd.article-manager:reload": undefined;
-
-  // 弹窗管理器
-  "cmd.modal-manager:open:category-form": ArticleCategoryForm | undefined;
-  "cmd.modal-manager:open:category-details": ArticleCategory;
-  "cmd.modal-manager:open:shortcut-form": ShortcutItem | undefined;
-  "cmd.modal-manager:open:search-engine-form": SearchEngineItem | undefined;
-  "cmd.modal-manager:open:navigation-website-form": NavigationWebsiteItem | undefined;
-
-  "state.shortcut-form:cancel": undefined;
-  "notify.shortcut-form:submitted": undefined;
-
-  "state.search-engine-form:cancel": undefined;
-  "notify.search-engine-form:submitted": undefined;
-
-  "state.navigation-website-form:cancel": undefined;
-  "notify.navigation-website-form:submitted": undefined;
 };
 
 const emitter = mitt<Events>();

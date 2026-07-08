@@ -7,9 +7,9 @@ import mime from "mime";
 
 export default defineEventHandler(async (event) => {
   const hash = getRouterParam(event, "hash");
-  const image = await prisma.image.findFirst({ where: { hash, status: 1 } });
+  const asset = await prisma.asset.findFirst({ where: { hash, status: 1 } });
 
-  if (!image) {
+  if (!asset) {
     try {
       return await createPlaceholderImage();
     } catch {
@@ -17,11 +17,11 @@ export default defineEventHandler(async (event) => {
     }
   }
 
-  appendHeader(event, "Content-Type", mime.getType(image.format) ?? "application/octet-stream");
+  appendHeader(event, "Content-Type", asset.mime_type ?? mime.getType(asset.ext) ?? "application/octet-stream");
 
   const { createReadStream, exists } = useFileStorage();
 
-  const filename = `${image.hash}.${image.format}`;
+  const filename = `${asset.hash}.${asset.ext}`;
 
   if (!(await exists(filename))) {
     try {

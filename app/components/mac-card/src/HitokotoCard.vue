@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import type { HitokotoItem } from "#shared/types/hitokoto";
+import { useLogger } from "@/composables/useLogger";
 import { randomHitokoto } from "@/apis/hitokoto";
 import { useConfigStore } from "@/stores";
 import { ref } from "vue";
 import MacCard from "./MacCard.vue";
 
+const logger = useLogger();
 const configStore = useConfigStore();
 
 const contentBorder = ref("border-1");
@@ -28,7 +30,7 @@ const handleChange = async (): Promise<void> => {
     const response = await randomHitokoto(configStore.hitokoto);
     hitokoto.value = response.content;
   } catch (error) {
-    console.error(error);
+    logger.error(error);
   } finally {
     loading.value = false;
   }

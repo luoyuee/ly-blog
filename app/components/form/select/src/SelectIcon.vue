@@ -4,7 +4,7 @@ import type { PropType } from "vue";
 import { SelectIconDefaultOptions } from "#shared/constants/icons";
 import { watch } from "vue";
 
-const selected = defineModel<string>();
+const selected = defineModel<string | undefined>();
 
 const props = defineProps({
   items: {
@@ -49,8 +49,11 @@ onMounted(() => {
   }
 });
 
-const handleChange = (value: SelectMenuItem) => {
-  if (!value) return;
+const handleChange = (value: SelectMenuItem | null | undefined) => {
+  if (!value) {
+    selected.value = undefined;
+    return;
+  }
 
   if (typeof value !== "object") return;
 
@@ -64,7 +67,7 @@ const handleChange = (value: SelectMenuItem) => {
     class="w-full"
     :search-input="{
       placeholder: '搜索...',
-      icon: 'i-lucide-search'
+      icon: 'lucide:search'
     }"
     :items="items"
     :leading-icon="currentValue ? currentValue.icon : undefined"

@@ -2,10 +2,10 @@
 import type { FormSubmitEvent, TableColumn } from "@nuxt/ui";
 import type { IMePageConfigSkillGridItem } from "#shared/types/config";
 import { computed, h, onBeforeUnmount, reactive, ref, resolveComponent, watch } from "vue";
-import { SkillIconNames } from "@@/shared/constants/icon-sets";
 import { useSortable } from "@vueuse/integrations/useSortable";
 import { BasicModal } from "@/components/basic-modal";
 import { SelectIcon } from "@/components/form/select";
+import { SkillIconNames } from "#shared/constants";
 import { z } from "zod";
 
 const handleClass = "me-page-skill-grid-form__handle";
@@ -134,7 +134,7 @@ const columns = computed<TableColumn<RowItem>[]>(() => {
       },
       cell: () => {
         return h(UIcon, {
-          name: "ep:rank",
+          name: "lucide:grip-vertical",
           size: 16,
           class: `${handleClass} text-muted cursor-grab active:cursor-grabbing`
         });
@@ -180,14 +180,14 @@ const columns = computed<TableColumn<RowItem>[]>(() => {
             size: "xs",
             color: "primary",
             variant: "ghost",
-            icon: "ep:edit",
+            icon: "lucide:edit",
             onClick: () => openEditModal(idx)
           }),
           h(UButton, {
             size: "xs",
             color: "error",
             variant: "ghost",
-            icon: "ep:delete",
+            icon: "lucide:trash-2",
             onClick: () => handleDelete(idx)
           })
         ]);
@@ -227,7 +227,7 @@ defineExpose({
     }"
   >
     <template #hint>
-      <UButton size="xs" icon="ep:plus" @click="openAddModal"> 添加 </UButton>
+      <UButton size="xs" icon="lucide:plus" @click="openAddModal"> 添加 </UButton>
     </template>
     <div class="border border-muted rounded-md overflow-hidden">
       <UTable
@@ -261,7 +261,7 @@ defineExpose({
           <SelectIcon v-model="modalForm.icon" :items="SkillIconNames" />
         </UFormField>
         <UFormField name="href" label="链接（可选）">
-          <UInput v-model="modalForm.href" icon="ep:link" placeholder="https://..." />
+          <UInput v-model="modalForm.href" icon="lucide:link" placeholder="https://..." />
         </UFormField>
       </UForm>
     </BasicModal>

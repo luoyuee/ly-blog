@@ -23,7 +23,7 @@ import type { TreeItemSelectEvent } from "reka-ui";
 import type { TreeItem } from "@nuxt/ui";
 import type { PropType } from "vue";
 import { flattenTreeItems, findParentChain, sortByDepth } from "#shared/utils/tree";
-import { isArray, isEmpty, isNil } from "@/utils/typed";
+import { isArray, isNil } from "@/utils/typed";
 import { computed, ref, watch } from "vue";
 
 // ============================================================
@@ -219,6 +219,28 @@ const emptyVal = computed(() => ({
   external: props.multiple ? [] : null
 }));
 
+/**
+ * 判断外部选中值是否为空
+ * 空字符串在本组件中与 null/undefined 一样视为无值，0 仍为有效值
+ */
+const isEmptyValue = (value: string | number | null | undefined) => {
+  return isNil(value) || value === "";
+};
+
+/** 将外部值统一转换为有效值数组，集中处理单选/多选和空字符串 */
+const getValidValues = (value?: ExternalValue) => {
+  if (isNil(value)) return [];
+  const values = isArray(value) ? value : [value];
+  return values.filter((item) => !isEmptyValue(item));
+};
+
+/** 将内部选中项统一转换为有效节点数组，避免空字符串节点回写为有效值 */
+const getSelectedItems = (value: InternalValue) => {
+  if (isNil(value)) return [];
+  const items = isArray(value) ? value : [value];
+  return items.filter((item) => !isEmptyValue(item.value));
+};
+
 // ============================================================
 // 计算属性 - 数据转换
 // ============================================================
@@ -296,39 +318,30 @@ const normalizedMap = computed(() => {
 
 /**
  * 是否有选中值
- * 基于外部值（modelValue）判断，兼容单选和多选
- * 注意：需兼容值为 0 的情况，不能用 !modelValue 判断
+ * 基于归一后的外部值判断，兼容单选/多选和 0 值
  */
 const hasSelected = computed(() => {
-  if (isNil(modelValue.value)) return false;
-  return isArray(modelValue.value) ? modelValue.value.length > 0 : true;
+  return getValidValues(modelValue.value).length > 0;
 });
 
 /**
- * 获取所有选中项的标签
- * 用于在触发按钮中显示选中内容
+ * 获取选中项对应的展示标签
+ * 只处理有效外部值；找不到对应节点时返回空字符串，交给 hasVisibleLabel 判断是否展示
  */
 const selectedLabels = computed(() => {
-  if (isNil(modelValue.value) || (isArray(modelValue.value) && modelValue.value.length === 0)) {
+  const values = getValidValues(modelValue.value);
+
+  if (values.length === 0) {
     return [];
   }
 
-  // 多选模式
-  if (props.multiple) {
-    if (isArray(modelValue.value)) {
-      return modelValue.value.map((item) => normalizedMap.value.get(item)?.label || "");
-    }
-    return [];
-  }
-
-  // 单选模式
-  if (isArray(modelValue.value) && modelValue.value.length > 0) {
-    // TODO: 正常情况下不会出现这种情况，但是为了兼容，这里保留了
-    return [normalizedMap.value.get(modelValue.value[0] as string | number)?.label || ""];
-  }
-
-  return [normalizedMap.value.get(modelValue.value as string | number)?.label || ""];
+  return props.multiple
+    ? values.map((item) => normalizedMap.value.get(item)?.label || "")
+    : [normalizedMap.value.get(values[0] as string | number)?.label || ""];
 });
+
+/** 是否存在可见的展示标签，避免有值但无匹配标签时按钮显示为空白 */
+const hasVisibleLabel = computed(() => selectedLabels.value.some((label) => label.trim() !== ""));
 
 // ============================================================
 // 值转换函数
@@ -345,19 +358,17 @@ const selectedLabels = computed(() => {
  * @returns 外部值（value 或 value[]）
  */
 const convertToExternalValue = (internal: InternalValue): ExternalValue => {
-  // 空值处理
-  if (isNil(internal) || (Array.isArray(internal) && internal.length === 0)) {
+  // 空值处理：内部空节点或空字符串节点都不回写为有效值
+  const selectedItems = getSelectedItems(internal);
+
+  if (selectedItems.length === 0) {
     return null;
   }
-
-  const items = isArray(internal) ? internal : [internal];
 
   // 多选模式
   if (props.multiple) {
     // 去重并过滤 null/undefined（保留 0 等 falsy 值）
-    const uniqueValues = Array.from(
-      new Set(items.map((item) => item.value).filter((v) => !isNil(v)))
-    );
+    const uniqueValues = Array.from(new Set(selectedItems.map((item) => item.value)));
 
     // 关联模式下的特殊处理
     if (isRelated.value) {
@@ -383,7 +394,7 @@ const convertToExternalValue = (internal: InternalValue): ExternalValue => {
           chain.forEach((node) => result.add(node.value));
         }
 
-        return [...result].filter((v) => !isNil(v));
+        return [...result].filter((v) => !isEmptyValue(v));
       }
     }
 
@@ -392,7 +403,7 @@ const convertToExternalValue = (internal: InternalValue): ExternalValue => {
   }
 
   // 单选模式：直接返回第一个值
-  return items[0]?.value;
+  return selectedItems[0]?.value;
 };
 
 /**
@@ -411,16 +422,16 @@ const convertToExternalValue = (internal: InternalValue): ExternalValue => {
  * @returns 内部值（TreeItem 或 TreeItem[]）
  */
 const convertToInternalValue = (external?: ExternalValue): InternalValue => {
-  // 空值处理（兼容值为 0 的情况）
-  if (isNil(external) || (isArray(external) && external.length === 0)) {
+  // 空值处理：空字符串视为无值，0 仍为有效值
+  const values = getValidValues(external);
+
+  if (values.length === 0) {
     return undefined;
   }
 
-  const items = isArray(external) ? external : [external];
-
   // 多选模式
   if (props.multiple) {
-    const uniqueValues = new Set(items);
+    const uniqueValues = new Set(values);
 
     // 关联模式下的特殊处理
     if (isRelated.value) {
@@ -471,7 +482,7 @@ const convertToInternalValue = (external?: ExternalValue): InternalValue => {
   }
 
   // 单选模式：直接返回对应的 TreeItem 对象
-  return normalizedMap.value.get(items[0] as string | number);
+  return normalizedMap.value.get(values[0] as string | number);
 };
 
 // ============================================================
@@ -532,12 +543,8 @@ const handlePopover = () => {
   if (props.disabled) return;
 
   // 展开下拉面板时，计算需要展开的父节点
-  if (
-    popoverOpen.value === false &&
-    normalizedFlatItems.value.length > 0 &&
-    !isEmpty(modelValue.value)
-  ) {
-    const values = Array.isArray(modelValue.value) ? modelValue.value : [modelValue.value];
+  if (popoverOpen.value === false && normalizedFlatItems.value.length > 0 && hasSelected.value) {
+    const values = getValidValues(modelValue.value);
     const expandedItems: Set<string> = new Set();
 
     // 遍历所有选中值，查找其父节点链
@@ -604,7 +611,7 @@ watch(
 <template>
   <UPopover
     v-model:open="popoverOpen"
-    class="min-w-[200px]"
+    class="min-w-50"
     :disabled="disabled"
     :content="{
       collisionPadding: {
@@ -619,14 +626,14 @@ watch(
       <UButton
         color="neutral"
         variant="outline"
-        class="w-full justify-between focus:ring-2 focus:ring-inset focus:ring-primary"
+        class="w-full justify-between"
         :disabled="props.disabled"
         @click="handlePopover"
       >
         <!-- 显示区域 -->
         <div class="truncate pointer-events-none">
           <!-- 多选模式：显示标签列表 -->
-          <template v-if="props.multiple && selectedLabels.length > 0">
+          <template v-if="props.multiple && hasVisibleLabel">
             <div class="flex flex-wrap gap-1 overflow-hidden">
               <UBadge
                 v-for="(label, index) in selectedLabels.slice(0, props.maxTagCount)"
@@ -641,14 +648,14 @@ watch(
                 {{ label }}
               </UBadge>
               <!-- 超出最大显示数量的标签 -->
-              <div v-if="selectedLabels.length > props.maxTagCount" class="opacity-50">
+              <div v-if="selectedLabels.length > props.maxTagCount" class="text-muted">
                 +{{ selectedLabels.length - props.maxTagCount }}
               </div>
             </div>
           </template>
 
           <!-- 单选模式：显示单个标签 -->
-          <template v-else-if="selectedLabels.length > 0">
+          <template v-else-if="hasVisibleLabel">
             {{ selectedLabels[0] }}
           </template>
 
@@ -662,17 +669,20 @@ watch(
         <template #trailing>
           <!-- 清除按钮：有选中值且可清除时显示 -->
           <UIcon
-            v-if="hasSelected && props.clearable && !props.disabled"
+            v-if="props.clearable && hasSelected && !props.disabled"
             name="lucide:x"
             class="cursor-pointer shrink-0 text-muted size-5"
             @click.stop="handleClear"
           />
-          <!-- 展开/收起箭头：无选中值时显示 -->
+          <!-- 展开/收起箭头 -->
           <UIcon
-            v-else-if="!hasSelected"
-            class="shrink-0 text-dimmed size-5"
-            :name="popoverOpen ? 'lucide:chevron-up' : 'lucide:chevron-down'"
-            :class="{ 'opacity-50': props.disabled }"
+            v-else
+            class="shrink-0 text-dimmed size-5 transition-transform duration-200"
+            name="lucide:chevron-down"
+            :class="{
+              'rotate-180': popoverOpen,
+              'opacity-75': props.disabled
+            }"
           />
         </template>
       </UButton>
@@ -681,10 +691,7 @@ watch(
     <!-- 下拉内容：树形选择器 -->
     <template #content>
       <!-- 有数据时显示树形结构 -->
-      <div
-        v-if="normalizedItems.length > 0"
-        class="p-2 min-w-[200px] max-h-[400px] overflow-y-auto"
-      >
+      <div v-if="normalizedItems.length > 0" class="p-2 min-w-50 max-h-100 overflow-y-auto">
         <UTree
           :key="normalizedFlatItems.length"
           v-model:expanded="expanded"
@@ -694,7 +701,6 @@ watch(
           :bubble-select="isRelated"
           :propagate-select="isRelated"
           :get-key="(item) => item.value"
-          :as="{ link: 'div' }"
           @select="onSelect"
           @update:model-value="updateModelValue"
         >

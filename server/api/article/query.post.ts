@@ -1,6 +1,6 @@
 import type { ArticleCategory } from "@@/prisma/generated/client";
 import { getOKResponse, getBadResponse, getNotFoundResponse } from "@@/server/utils/response";
-import { findParentChain } from "@@/shared/utils/tree";
+import { findParentChain } from "#shared/utils/tree";
 import { prisma } from "@@/server/db";
 import { readBody } from "h3";
 import { z } from "zod";

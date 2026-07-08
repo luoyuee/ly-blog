@@ -217,19 +217,19 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="flex gap-4 h-[320px]">
+  <div class="flex gap-4 h-80">
     <!-- 左侧列表 -->
-    <div class="flex-1 flex flex-col border border-gray-200 rounded overflow-hidden">
-      <div class="px-3 py-2 bg-gray-50 border-b border-gray-200 flex items-center justify-between">
+    <div class="flex-1 flex flex-col border border-default rounded overflow-hidden">
+      <div class="px-3 py-2 bg-muted border-b border-default flex items-center justify-between">
         <UCheckbox v-model="leftCheckAll" :label="titles[0]" />
-        <span class="text-xs text-gray-500">{{ leftChecked.size }}/{{ leftData.length }}</span>
+        <span class="text-xs text-muted">{{ leftChecked.size }}/{{ leftData.length }}</span>
       </div>
 
       <div ref="leftContainer" class="flex-1 overflow-y-auto p-1">
         <div
           v-for="item in leftData"
           :key="item.value"
-          class="flex items-center gap-2 px-2 py-1 rounded hover:bg-gray-50"
+          class="flex items-center gap-2 px-2 py-1 rounded hover:bg-elevated"
         >
           <UCheckbox
             :model-value="leftChecked.has(item.value)"
@@ -239,7 +239,7 @@ onUnmounted(() => {
             @update:model-value="handleLeftItemCheck(item.value, $event)"
           />
         </div>
-        <div v-if="leftData.length === 0" class="text-center text-gray-400 text-sm py-8">
+        <div v-if="leftData.length === 0" class="text-center text-dimmed text-sm py-8">
           暂无数据
         </div>
       </div>
@@ -266,17 +266,17 @@ onUnmounted(() => {
     </div>
 
     <!-- 右侧列表 -->
-    <div class="flex-1 flex flex-col border border-gray-200 rounded overflow-hidden">
-      <div class="px-3 py-2 bg-gray-50 border-b border-gray-200 flex items-center justify-between">
+    <div class="flex-1 flex flex-col border border-default rounded overflow-hidden">
+      <div class="px-3 py-2 bg-muted border-b border-default flex items-center justify-between">
         <UCheckbox v-model="rightCheckAll" :label="titles[1]" />
-        <span class="text-xs text-gray-500">{{ rightChecked.size }}/{{ rightData.length }}</span>
+        <span class="text-xs text-muted">{{ rightChecked.size }}/{{ rightData.length }}</span>
       </div>
 
       <div ref="rightContainer" class="flex-1 overflow-y-auto p-1">
         <div
           v-for="item in rightData"
           :key="item.value"
-          class="flex items-center gap-2 px-2 py-1 rounded hover:bg-gray-50"
+          class="flex items-center gap-2 px-2 py-1 rounded hover:bg-elevated"
         >
           <UCheckbox
             :model-value="rightChecked.has(item.value)"
@@ -286,7 +286,7 @@ onUnmounted(() => {
             @update:model-value="handleRightItemCheck(item.value, $event)"
           />
         </div>
-        <div v-if="rightData.length === 0" class="text-center text-gray-400 text-sm py-8">
+        <div v-if="rightData.length === 0" class="text-center text-dimmed text-sm py-8">
           暂无数据
         </div>
       </div>

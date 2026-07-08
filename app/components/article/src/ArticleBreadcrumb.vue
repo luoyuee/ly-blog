@@ -17,7 +17,7 @@
 </template>
 
 <script lang="ts" setup>
-import type { ArticleBreadcrumbItem } from "@@/shared/types/article";
+import type { ArticleBreadcrumbItem } from "#shared/types/article";
 import { computed } from "vue";
 
 const props = defineProps({

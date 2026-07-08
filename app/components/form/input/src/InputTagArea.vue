@@ -18,11 +18,11 @@ const state = reactive<{
   value: undefined
 });
 
-const removeTag = (tag: string): void => {
+const removeTag = (tag: string) => {
   tags.value = tags.value.filter((item) => item !== tag);
 };
 
-const handleChange = (): void => {
+const handleChange = () => {
   if (state.value) {
     if (tags.value) {
       if (tags.value.indexOf(state.value) === -1) {
@@ -37,7 +37,7 @@ const handleChange = (): void => {
 
 const inputRef = useTemplateRef("inputRef");
 
-const showInput = (): void => {
+const showInput = () => {
   state.value = undefined;
   state.showInput = true;
 
@@ -46,41 +46,50 @@ const showInput = (): void => {
   });
 };
 
-const blurInput = (): void => {
+const blurInput = () => {
   if (!state.value) state.showInput = false;
 };
 </script>
 
 <template>
-  <div class="flex items-center gap-1 flex-wrap" @click.stop>
+  <div
+    class="flex min-h-9 w-full flex-wrap items-center gap-2 rounded-md border border-default bg-default px-2 py-2"
+    @click.stop
+  >
     <span
       v-for="tag in tags"
       :key="tag"
-      class="bg-blue-400 text-white rounded-md pl-2 pr-1 py-1 text-xs flex items-center gap-1 shrink-0"
-      @close="removeTag(tag)"
+      class="flex shrink-0 items-center gap-1 rounded-md border border-default bg-elevated px-2 py-1 text-xs font-medium text-toned shadow-xs"
     >
       {{ tag }}
-      <span
-        class="hover:bg-blue-500 rounded-full flex items-center p-[2px]"
+
+      <UButton
+        color="neutral"
+        variant="ghost"
+        icon="lucide:x"
+        size="xs"
+        class="shrink-0"
         @click="removeTag(tag)"
-      >
-        <UIcon name="ep:close" :size="12" class="cursor-pointer" />
-      </span>
+      />
     </span>
+
     <UInput
       v-if="state.showInput"
       ref="inputRef"
       v-model.trim="state.value"
       size="xs"
-      class="w-[90px]"
+      class="w-24"
       @change="handleChange"
       @blur="blurInput"
     />
+
     <UButton
       v-else
-      icon="ep:plus"
+      icon="lucide:plus"
       size="xs"
-      class="w-[90px] shrink-0 justify-center"
+      color="neutral"
+      variant="outline"
+      class="w-24 shrink-0 justify-center"
       @click="showInput"
     >
       {{ props.label }}

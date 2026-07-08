@@ -74,7 +74,7 @@ const handleDelete = (): void => {
         }"
         @click.stop="handleDelete"
       >
-        <UIcon name="ep:delete-filled" />
+        <UIcon name="lucide:trash-2" />
       </span>
     </div>
   </div>

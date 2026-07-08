@@ -1,0 +1,65 @@
+import { getBadResponse, getOKResponse } from "@@/server/utils/response";
+import { requireApiKeyScope } from "@@/server/utils/auth/api-key";
+import { ApiKeyScopeEnum } from "#shared/enums";
+import { readFormData } from "h3";
+import { prisma } from "@@/server/db";
+import { z } from "zod";
+
+export default defineEventHandler(async (event) => {
+  requireApiKeyScope(event, ApiKeyScopeEnum.HITOKOTO_IMPORT);
+
+  const formData = await readFormData(event);
+
+  const file = formData.get("file");
+  if (!file || !(file instanceof File)) {
+    return getBadResponse(event, "数据异常");
+  }
+
+  if (file.type !== "application/json") {
+    return getBadResponse(event, "仅支持 JSON 文件");
+  }
+
+  const arrayBuffer = await file.arrayBuffer();
+  const content = Buffer.from(arrayBuffer).toString("utf8");
+  const jsonData = JSON.parse(content);
+
+  const schema = z
+    .object({
+      type: z.number().int().optional().nullable(),
+      source: z.string().optional().nullable(),
+      author: z.string().optional().nullable(),
+      content: z.string().min(1)
+    })
+    .array();
+
+  const { data, error } = schema.safeParse(jsonData);
+  if (error) return getBadResponse(event, error.message);
+
+  const types = await prisma.hitokotoType.findMany({
+    select: {
+      id: true
+    }
+  });
+
+  const typeMap = types.reduce((map: Record<number, number>, item) => {
+    map[item.id] = item.id;
+    return map;
+  }, {});
+
+  const now = new Date();
+  const result = await prisma.hitokoto.createMany({
+    data: data.map((item) => {
+      return {
+        created_at: now,
+        created_by: null,
+        type: item.type ? (typeMap[item.type] ?? null) : null,
+        source: item.source ? item.source : null,
+        author: item.author ? item.author : null,
+        content: item.content,
+        length: item.content.length
+      };
+    })
+  });
+
+  return getOKResponse(event, { count: result.count });
+});

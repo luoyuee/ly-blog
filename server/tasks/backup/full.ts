@@ -4,8 +4,9 @@
  * - 备份 /data 目录中的文件
  * - 将上述内容压缩为 zip 文件，按时间命名存储到 /data/backup 中
  */
-import { to as copyTo } from "pg-copy-streams";
+import { runtimeLogger } from "@@/server/utils/logger";
 import { pipeline } from "node:stream/promises";
+import { to as copyTo } from "pg-copy-streams";
 import config from "@@/server/config";
 import archiver from "archiver";
 import path from "node:path";
@@ -79,7 +80,7 @@ const backupDatabaseToDirectory = async (client: pg.PoolClient, schema: string, 
   const tables = BACKUP_TABLES;
 
   for (const tableName of tables) {
-    console.log(`开始备份表：${tableName}`);
+    runtimeLogger.info(`开始备份表：${tableName}`);
     const target = `${quoteIdentifier(schema)}.${quoteIdentifier(tableName)}`;
     const filePath = path.join(dir, `${tableName}.csv`);
 
@@ -111,7 +112,7 @@ const copyDataDirectory = async (targetRoot: string, directories: string[]): Pro
   for (const dir of directories) {
     const sourceDir = path.isAbsolute(dir) ? dir : path.join(config.WORK_DIR, dir);
 
-    console.log(`开始备份目录：${sourceDir}`);
+    runtimeLogger.info(`开始备份目录：${sourceDir}`);
 
     if (!fs.existsSync(sourceDir)) {
       continue;
@@ -170,7 +171,7 @@ export default defineTask({
      */
     const timestamp = dayjs().format("YYYY-MM-DD-HH-mm");
 
-    console.log(`执行备份：${timestamp}`);
+    runtimeLogger.info(`执行备份：${timestamp}`);
 
     /**
      * 构造当前备份的临时目录：
@@ -210,18 +211,18 @@ export default defineTask({
         schema = "public";
       }
 
-      console.log(`开始备份数据库`);
+      runtimeLogger.info(`开始备份数据库`);
       const backupDatabaseStartTime = Date.now();
       /**
        * 1. 导出指定 schema 下所有表数据到 dbBackupDir
        */
       await backupDatabaseToDirectory(client, schema, dbBackupDir);
 
-      console.log(
+      runtimeLogger.info(
         `数据库备份完成：${dbBackupDir} (耗时 ${Date.now() - backupDatabaseStartTime}ms)`
       );
 
-      console.log(`开始备份数据目录`);
+      runtimeLogger.info(`开始备份数据目录`);
       const backupDataStartTime = Date.now();
 
       /**
@@ -229,18 +230,20 @@ export default defineTask({
        */
       await copyDataDirectory(tempDir, [config.FILE_PATH, config.LOG_PATH]);
 
-      console.log(`数据目录备份完成：${tempDir} (耗时 ${Date.now() - backupDataStartTime}ms)`);
+      runtimeLogger.info(
+        `数据目录备份完成：${tempDir} (耗时 ${Date.now() - backupDataStartTime}ms)`
+      );
 
       /**
        * 3. 将整个临时目录打包成 zip 压缩文件，放入正式 backup 目录
        */
-      console.log(`开始打包压缩文件`);
+      runtimeLogger.info(`开始打包压缩文件`);
       const backupArchiveStartTime = Date.now();
       const archiveName = `backup-${timestamp}.zip`;
       const archivePath = path.join(config.BACKUP_PATH, archiveName);
 
       await createZipArchive(tempDir, archivePath);
-      console.log(
+      runtimeLogger.info(
         `压缩文件打包完成：${archivePath} (耗时 ${Date.now() - backupArchiveStartTime}ms)`
       );
     } finally {

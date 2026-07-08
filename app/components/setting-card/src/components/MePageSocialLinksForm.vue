@@ -3,7 +3,7 @@ import type { IMePageConfigSocialLinkItem } from "#shared/types/config";
 import type { FormSubmitEvent, TableColumn } from "@nuxt/ui";
 import { computed, h, reactive, ref, resolveComponent, watch } from "vue";
 import { useSortable } from "@vueuse/integrations/useSortable";
-import { SocialIconNames } from "@@/shared/constants/icons";
+import { SocialIconNames } from "#shared/constants/icons";
 import { BasicModal } from "@/components/basic-modal";
 import { SelectIcon } from "@/components/form/select";
 import { z } from "zod";
@@ -142,7 +142,7 @@ const columns = computed<TableColumn<RowItem>[]>(() => {
       },
       cell: () => {
         return h(UIcon, {
-          name: "ep:rank",
+          name: "lucide:grip-vertical",
           size: 16,
           class: `${handleClass} text-muted cursor-grab active:cursor-grabbing`
         });
@@ -188,14 +188,14 @@ const columns = computed<TableColumn<RowItem>[]>(() => {
             size: "xs",
             color: "primary",
             variant: "ghost",
-            icon: "ep:edit",
+            icon: "lucide:edit",
             onClick: () => openEditModal(idx)
           }),
           h(UButton, {
             size: "xs",
             color: "error",
             variant: "ghost",
-            icon: "ep:delete",
+            icon: "lucide:trash-2",
             onClick: () => handleDelete(idx)
           })
         ]);
@@ -231,7 +231,7 @@ onBeforeUnmount(() => {
     }"
   >
     <template #hint>
-      <UButton size="xs" icon="ep:plus" @click="openAddModal"> 添加 </UButton>
+      <UButton size="xs" icon="lucide:plus" @click="openAddModal"> 添加 </UButton>
     </template>
     <div ref="rootRef" class="border border-muted rounded-md overflow-hidden">
       <UTable
@@ -261,7 +261,7 @@ onBeforeUnmount(() => {
           <UInput v-model="modalForm.title" placeholder="例如：GitHub" />
         </UFormField>
         <UFormField name="href" label="链接" required>
-          <UInput v-model="modalForm.href" icon="ep:link" placeholder="https://..." />
+          <UInput v-model="modalForm.href" icon="lucide:link" placeholder="https://..." />
         </UFormField>
         <UFormField name="icon" label="图标" required>
           <SelectIcon v-model="modalForm.icon" :items="SocialIconNames" />

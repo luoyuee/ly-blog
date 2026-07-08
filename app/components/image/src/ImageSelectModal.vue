@@ -2,9 +2,11 @@
 import type { ImageFolder, ImageItem, ImageSelectItem } from "#shared/types/image";
 import { getAllImageFolder, getPaginatedImages } from "@/apis/image";
 import { BasicModal } from "@/components/basic-modal";
+import { useLogger } from "@/composables/useLogger";
 import { Scrollbar } from "@/components/scrollbar";
 import ImageUploadModal from "./ImageUploadModal.vue";
 
+const logger = useLogger();
 const $message = useMessage();
 
 const emits = defineEmits(["cancel", "confirm", "closed"]);
@@ -104,7 +106,7 @@ const loadImages = async (): Promise<void> => {
     });
 
     imageList.value = imageList.value.concat(response.data);
-    console.log(imageList.value);
+    logger.debug(imageList.value);
     state.total = response.total;
 
     state.more = state.page < Math.ceil(response.total / state.per_page);
@@ -192,7 +194,9 @@ const handleSubmit = () => {
   >
     <div class="image-select-modal__body">
       <div class="image-select-modal__toolbar">
-        <UButton icon="ep:upload" variant="outline" @click="handleUploadClick"> 上传图片 </UButton>
+        <UButton icon="lucide:upload" variant="outline" @click="handleUploadClick">
+          上传图片
+        </UButton>
 
         <UFieldGroup class="image-select-modal__filters">
           <USelect
@@ -208,7 +212,7 @@ const handleSubmit = () => {
             class="image-select-modal__keyword-input"
             placeholder="请输入关键词"
           />
-          <UButton icon="ep:search" />
+          <UButton icon="lucide:search" />
         </UFieldGroup>
       </div>
 
@@ -232,7 +236,7 @@ const handleSubmit = () => {
                 :src="`/static/image/${item.preview}.${item.format}`"
               />
               <span class="image-select-modal__selected-item__del" @click.stop="handleDelete(item)">
-                <UIcon name="ep:delete-filled" />
+                <UIcon name="lucide:trash-2" />
               </span>
             </li>
           </ul>

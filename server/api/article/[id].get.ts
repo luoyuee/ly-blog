@@ -1,4 +1,5 @@
 import type { ArticleCategory } from "@@/prisma/generated/client";
+import { findParentChain } from "#shared/utils/tree";
 import { getRouterParam, getQuery } from "h3";
 import { prisma } from "@@/server/db";
 import { z } from "zod";
@@ -8,7 +9,6 @@ import {
   getNotFoundResponse,
   getForbiddenResponse
 } from "@@/server/utils/response";
-import { findParentChain } from "@@/shared/utils/tree";
 
 export default defineEventHandler(async (event) => {
   const { error, data: articleId } = z.coerce.number().int().safeParse(getRouterParam(event, "id"));

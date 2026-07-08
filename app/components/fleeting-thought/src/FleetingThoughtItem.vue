@@ -1,13 +1,15 @@
 <script setup lang="ts">
 import type { FleetingThought } from "#shared/types/fleeting-thought";
-import { PlatformIcon, BrowserIcon } from "#shared/constants";
-import { useConfigStore, useUserStore } from "@/stores";
-import { TiptapRender } from "@/components/tiptap-editor";
 import { deleteFleetingThought, updateFleetingThought } from "@/apis/fleeting-thought";
+import { PlatformIcon, BrowserIcon } from "#shared/constants";
+import { TiptapRender } from "@/components/tiptap-editor";
+import { useConfigStore, useUserStore } from "@/stores";
+import { useLogger } from "@/composables/useLogger";
 import FleetingThoughtEditor from "./FleetingThoughtEditor.vue";
 import Popconfirm from "@/components/popconfirm";
 import dayjs from "dayjs";
 
+const logger = useLogger();
 const $message = useMessage();
 
 const configStore = useConfigStore();
@@ -39,7 +41,7 @@ const state = reactive({
   submitting: false,
   isEdit: false
 });
-
+// TODO: 用户profile被修改过，这里的判断需要重构
 const handleDelete = async () => {
   if (userStore.isAdmin) {
     try {
@@ -47,7 +49,7 @@ const handleDelete = async () => {
       $message.success("删除成功");
       emits("reload");
     } catch (error) {
-      console.log(error);
+      logger.error(error);
       $message.error("删除失败");
     }
   }
@@ -61,7 +63,7 @@ const handleChangePublic = async () => {
       public: modelValue.value.public
     });
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     modelValue.value.public = !modelValue.value.public;
     $message.error("操作失败");
   } finally {
@@ -133,7 +135,7 @@ const handelUpdate = (e: FleetingThought) => {
               @confirm="handleDelete"
             >
               <span class="delete-btn">
-                <UIcon name="ep:delete" />
+                <UIcon name="lucide:trash-2" />
                 删除
               </span>
             </Popconfirm>

@@ -1,5 +1,8 @@
-import { defineStore } from "pinia";
 import type { Profile } from "#shared/types/user";
+import { createLogger } from "@/utils/logger";
+import { defineStore } from "pinia";
+
+const logger = createLogger("user-store");
 
 export interface UserStoreModel {
   profile?: Profile;
@@ -27,7 +30,7 @@ export const userStore = defineStore("user", {
           this.profile = data.value;
         }
       } catch (error) {
-        console.log(error);
+        logger.error(error);
       }
     }
   }

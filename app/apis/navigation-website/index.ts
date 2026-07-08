@@ -17,8 +17,10 @@ import type {
   UpdateShortcutRequest,
   CreateSearchHistoryRequest,
   GetSearchHistoryPaginatedRequest,
-  GetSearchHistoryPaginatedResponse
+  GetSearchHistoryPaginatedResponse,
+  ImportNavigationWebsiteResponse
 } from "./models";
+import type { AxiosProgressEvent } from "axios";
 import { serviceAxios } from "@/utils/request";
 
 export async function getPaginatedNavigationWebsites(
@@ -66,6 +68,50 @@ export async function deleteNavigationWebsite(id: number): Promise<void> {
       url: "/admin/navigation/website/" + id,
       method: "delete"
     });
+  } catch (error) {
+    return Promise.reject(error);
+  }
+}
+
+/**
+ * 导入导航网站数据（JSON 文件）。
+ * @param file - JSON 文件
+ * @param callBack - 上传进度回调
+ */
+export async function importNavigationWebsiteData(
+  file: File,
+  callBack?: (e: AxiosProgressEvent) => void
+): Promise<ImportNavigationWebsiteResponse> {
+  try {
+    const form = new FormData();
+    form.append("file", file as Blob);
+
+    const response = await serviceAxios({
+      url: "/admin/navigation/website/import",
+      method: "post",
+      data: form,
+      onUploadProgress: (progressEvent: AxiosProgressEvent) => {
+        if (callBack) callBack(progressEvent);
+      }
+    });
+    return response.data;
+  } catch (error) {
+    return Promise.reject(error);
+  }
+}
+
+/**
+ * 导出导航网站数据，返回 JSON Blob。
+ */
+export async function exportNavigationWebsiteData(): Promise<Blob> {
+  try {
+    const response = await serviceAxios({
+      url: "/admin/navigation/website/export",
+      method: "get",
+      responseType: "blob"
+    });
+
+    return response.data;
   } catch (error) {
     return Promise.reject(error);
   }

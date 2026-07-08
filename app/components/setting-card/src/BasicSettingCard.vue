@@ -94,7 +94,7 @@ const handleReset = () => {
         <UInput
           v-model="formData.site_url"
           class="w-full"
-          icon="i-lucide-link"
+          icon="lucide:link"
           placeholder="请输入站点名称"
         />
       </UFormField>

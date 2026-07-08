@@ -1,6 +1,9 @@
 import type { EditorTabItem, FolderTreeItem } from "#shared/types/ly-editor";
+import { createLogger } from "@/utils/logger";
 import { getFolderTree } from "@/apis/note";
 import { defineStore } from "pinia";
+
+const logger = createLogger("ly-editor-store");
 
 export interface LyEditorStoreModel {
   editor: {
@@ -9,19 +12,19 @@ export interface LyEditorStoreModel {
   };
   tabs: EditorTabItem[];
   currentTab?: string;
-  modalManager: {
-    noteSaveModalVisible?: boolean;
-  };
   noteManager: {
     loading: boolean;
     folderTree: FolderTreeItem[];
+    /** 展开的节点 key 集合，独立于树数据，避免刷新数据时丢失展开状态 */
+    expandedKeys: Set<string>;
   };
   imageManager: {
     loading: boolean;
   };
   sidebar: {
     show: boolean;
-    active: number;
+    width: number;
+    active: string;
   };
   preview: {
     show: boolean;
@@ -36,22 +39,24 @@ export const lyEditorStore = defineStore("ly-editor", {
     },
     tabs: [],
     currentTab: undefined,
-    modalManager: {},
     noteManager: {
       loading: false,
-      folderTree: []
+      folderTree: [],
+      expandedKeys: new Set<string>()
     },
     imageManager: {
       loading: false
     },
     sidebar: {
       show: true,
-      active: 1
+      width: 280,
+      active: "note-manager"
     },
     preview: {
       show: false
     }
   }),
+  getters: {},
   actions: {
     async loadNoteFolderTree() {
       try {
@@ -60,12 +65,12 @@ export const lyEditorStore = defineStore("ly-editor", {
           "include-file": true
         });
       } catch (error) {
-        console.error(error);
+        logger.error(error);
         const toast = useToast();
         toast.add({
           title: "加载目录失败",
           color: "error",
-          icon: "i-lucide-circle-x"
+          icon: "lucide:circle-x"
         });
       } finally {
         this.noteManager.loading = false;
@@ -92,7 +97,7 @@ export const lyEditorStore = defineStore("ly-editor", {
         // 先删除目标项
         this.tabs.splice(index, 1);
 
-        console.log(this.tabs, index);
+        logger.debug(this.tabs, index);
 
         // 如果删除的是当前打开项，按要求设置新的当前项
         if (isCurrent) {

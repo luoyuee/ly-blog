@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { IClientConfigNavMenuItem } from "@@/shared/types/config";
+import type { IClientConfigNavMenuItem } from "#shared/types/config";
 import type { FormSubmitEvent } from "@nuxt/ui";
 import { SelectIcon } from "@/components/form/select";
 import { BasicModal } from "@/components/basic-modal";
@@ -224,7 +224,7 @@ const handleAddSub = (item: IClientConfigNavMenuItem) => {
     @save="handleSave"
   >
     <div>
-      <UButton icon="ep:plus" @click="handleAddItem"> 添加导航菜单 </UButton>
+      <UButton icon="lucide:plus" @click="handleAddItem"> 添加导航菜单 </UButton>
     </div>
 
     <USeparator type="dashed" class="my-4" />
@@ -234,16 +234,21 @@ const handleAddSub = (item: IClientConfigNavMenuItem) => {
         <div class="flex items-center gap-x-1">
           <UButton
             v-if="level === 1"
-            icon="ep:plus"
+            icon="lucide:plus"
             size="xs"
             variant="ghost"
             @click.stop="handleAddSub(item)"
           />
-          <UButton icon="ep:edit" size="xs" variant="ghost" @click.stop="handleEdit(item)" />
-          <UButton icon="ep:delete" size="xs" variant="ghost" @click.stop="handleDelete(item.id)" />
+          <UButton icon="lucide:edit" size="xs" variant="ghost" @click.stop="handleEdit(item)" />
+          <UButton
+            icon="lucide:trash-2"
+            size="xs"
+            variant="ghost"
+            @click.stop="handleDelete(item.id)"
+          />
           <UIcon
             v-if="item.children && item.children.length > 0"
-            name="i-lucide:chevron-down"
+            name="lucide:chevron-down"
             class="shrink-0 transform transition-transform duration-200 size-5"
             :class="{ 'rotate-180': expanded }"
           />
@@ -280,7 +285,7 @@ const handleAddSub = (item: IClientConfigNavMenuItem) => {
         >
           <UInput
             v-model="modalFormData.href"
-            icon="ep:link"
+            icon="lucide:link"
             :disabled="state.isEdit"
             placeholder="请输入链接"
           />

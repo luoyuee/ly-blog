@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { confirmLikeArticle, cancelLikeArticle } from "@/apis/article";
 import { useMessage } from "@/composables/useMessage";
+import { useLogger } from "@/composables/useLogger";
 import { useLocalStorage } from "@/utils/storage";
 import { useConfigStore } from "@/stores";
 import ArticleReward from "./ArticleReward.vue";
 
+const logger = useLogger();
 const configStore = useConfigStore();
 const localStorage = useLocalStorage("article");
 
@@ -54,7 +56,7 @@ const handleLike = async () => {
   } catch (error) {
     const $message = useMessage();
     $message.error("点赞失败");
-    console.error(error);
+    logger.error(error);
   }
 };
 </script>

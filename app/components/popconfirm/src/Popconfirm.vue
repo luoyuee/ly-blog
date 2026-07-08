@@ -38,7 +38,7 @@
           </UButton>
           <UButton
             size="sm"
-            loading-icon="ep:loading"
+            loading-icon="lucide:loader-circle"
             v-bind="confirmBtnProps"
             :loading="loading"
             @click="handleConfirm"
@@ -92,7 +92,7 @@ const props = defineProps({
   },
   icon: {
     type: String,
-    default: "ep:question-filled"
+    default: "lucide:circle-help"
   },
   iconColor: {
     type: String,

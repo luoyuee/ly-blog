@@ -1,3 +1,7 @@
+/**
+ * 表情选项列表
+ * @description 用于评论、留言等场景的表情选择器
+ */
 export const EmojiOptions = [
   { name: "嘿嘿", font: "😀" },
   { name: "哈哈", font: "😃" },

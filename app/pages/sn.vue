@@ -1,15 +1,17 @@
 <script setup lang="ts">
 import type { GetFleetingThoughtPaginatedResponse } from "@/apis/fleeting-thought/models";
 import type { FleetingThought } from "#shared/types/fleeting-thought";
+import { FleetingThoughtEditor, FleetingThoughtItem } from "@/components/fleeting-thought";
 import { HitokotoCard, NoticeCard, TagCard } from "@/components/mac-card";
 import { getPaginatedFleetingThought } from "@/apis/fleeting-thought";
-import { BannerImage } from "@/components/banner-image";
 import { useConfigStore, useUserStore } from "@/stores";
-import { AuthorCard } from "@/components/user-card";
-import { FleetingThoughtEditor, FleetingThoughtItem } from "@/components/fleeting-thought";
-import { ref } from "vue";
+import { BannerImage } from "@/components/banner-image";
 import { PageFooter } from "@/components/page-footer";
+import { AuthorCard } from "@/components/user-card";
+import { useLogger } from "@/composables/useLogger";
+import { ref } from "vue";
 
+const logger = useLogger();
 const $message = useMessage();
 
 const configStore = useConfigStore();
@@ -60,7 +62,7 @@ const loadData = async () => {
     state.total = response.total;
     state.more = state.page * state.per_page < state.total;
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     $message.error("加载数据失败");
   }
 };

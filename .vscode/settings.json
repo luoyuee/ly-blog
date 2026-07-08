@@ -1,6 +1,36 @@
 {
-    "i18n-ally.localesPaths": [
-        "i18n",
-        "i18n/locales"
-    ]
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+  "eslint.validate": ["javascript", "javascriptreact", "typescript", "typescriptreact", "vue"],
+  "eslint.format.enable": false,
+  "prettier.configPath": ".prettierrc",
+  "prettier.requireConfig": true,
+  "files.eol": "\n",
+  "[vue]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "tailwindCSS.includeLanguages": {
+    "vue": "html"
+  },
+  "tailwindCSS.classAttributes": ["class", "ui"],
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "i18n-ally.localesPaths": ["i18n", "i18n/locales"],
+  "i18n-ally.keystyle": "nested",
+  "i18n-ally.namespace": false,
+  "i18n-ally.pathMatcher": "{locale}.json",
+  "i18n-ally.enabledParsers": ["json"],
+  "i18n-ally.sourceLanguage": "zh-CN",
+  "i18n-ally.displayLanguage": "zh-CN",
+  "i18n-ally.sortKeys": true,
+  "css.lint.unknownAtRules": "ignore",
+  "scss.lint.unknownAtRules": "ignore"
 }

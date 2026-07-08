@@ -21,7 +21,6 @@ model Config {
   name       String    @unique @db.VarChar(255)
   data       Json
 
-  @@index([name])
   @@map("config")
 }
 
@@ -111,6 +110,10 @@ model Article {
 
   articleComments ArticleComment[]
 
+  @@index([category_id])
+  @@index([note_id])
+  @@index([status, custom_url_access_only])
+  @@index([status, category_id])
   @@map("article")
 }
 
@@ -138,6 +141,9 @@ model ArticleComment {
 
   Article Article? @relation(fields: [article_id], references: [id])
 
+  @@index([article_id, status])
+  @@index([parent_id])
+  @@index([reply_id])
   @@map("article_comment")
 }
 
@@ -172,6 +178,11 @@ model Note {
   content            String    @db.Text
   content_updated_at DateTime? @default(now())
   chars              Int
+  source_type        String?   @db.VarChar(64) // 外部来源类型，如 siyuan、obsidian、typora
+  source_id          String?   @db.VarChar(255) // 外部来源内的唯一文章标识，用于重复导入时执行更新
+  source_url         String?   @db.VarChar(512) // 外部来源文章链接或协议地址
+  source_updated_at  DateTime? // 外部来源文章最后更新时间
+  imported_at        DateTime? // 最近一次从外部内容包导入的时间
   metadata           Json? // 通用元数据存储
   status             Int       @default(1) // 0:已删除，1:正常状态
   locked             Boolean   @default(false) // 文件锁定状态
@@ -183,6 +194,8 @@ model Note {
   versions NoteVersion[]
   Article  Article[]
 
+  @@index([folder_id, status])
+  @@unique([source_type, source_id]) // 保证同一外部来源文章只对应一篇笔记
   @@map("note")
 }
 
@@ -205,7 +218,75 @@ model NoteVersion {
 
   Note Note? @relation(fields: [note_id], references: [id])
 
+  @@unique([note_id, version])
+  @@index([note_id, status])
   @@map("note_version")
+}
+
+model Asset {
+  id         Int       @id @default(autoincrement())
+  created_at DateTime? @default(now())
+  created_by Int?
+  updated_at DateTime?
+  updated_by Int?
+  hash       String    @unique @db.VarChar(128) // 物理文件内容哈希，同内容文件只保存一份
+  ext        String    @db.VarChar(64) // 物理文件扩展名，用于按配置拼接存储路径和访问地址
+  mime_type  String?   @db.VarChar(128) // 文件 MIME 类型，用于响应 Content-Type
+  size       Int // 物理文件字节大小
+  preview    String?   @db.VarChar(128) // 图片预览图哈希，非图片资源为空
+  width      Int? // 图片宽度，非图片资源为空
+  height     Int? // 图片高度，非图片资源为空
+  metadata   Json? // 物理资源扩展信息，如导入来源路径、解析结果等
+  status     Int       @default(1) // 0:已删除，1:正常状态
+
+  files  File[] // 引用该物理资源的附件记录
+  images Image[] // 引用该物理资源的图片记录
+
+  @@map("asset")
+}
+
+model FileFolder {
+  id          Int       @id @default(autoincrement())
+  created_at  DateTime? @default(now())
+  created_by  Int?
+  updated_at  DateTime?
+  updated_by  Int?
+  name        String    @db.VarChar(255)
+  icon        String?   @db.VarChar(512)
+  description String?   @db.VarChar(1024)
+  cover       String?   @db.VarChar(512)
+  count       Int       @default(0)
+  size        Int       @default(0)
+  status      Int       @default(1) // 0:已删除，1:正常状态
+
+  files File[]
+
+  @@map("file_folder")
+}
+
+model File {
+  id             Int       @id @default(autoincrement())
+  created_at     DateTime? @default(now())
+  created_by     Int?
+  updated_at     DateTime?
+  updated_by     Int?
+  folder_id      Int // 所属附件目录ID，必填以保证目录内文件名唯一约束有效
+  asset_id       Int // 关联的物理资源ID
+  original_name  String    @db.VarChar(512) // 上传时的原始文件名
+  filename       String    @db.VarChar(512) // 目录内最终展示文件名，重名时由业务层追加后缀
+  tags           Json? // 附件业务标签，用于后台管理和搜索
+  metadata       Json? // 通用元数据存储
+  download_count Int       @default(0)
+  password       String?   @db.VarChar(255)
+  status         Int       @default(1) // 0:已删除，1:正常状态
+
+  FileFolder FileFolder @relation(fields: [folder_id], references: [id], onDelete: Restrict) // 有附件引用时禁止删除目录
+  Asset      Asset      @relation(fields: [asset_id], references: [id], onDelete: Restrict) // 有附件引用时禁止删除物理资源
+
+  @@unique([folder_id, filename]) // 同一目录下展示文件名唯一
+  @@index([folder_id, status]) // 按目录查询正常附件列表
+  @@index([asset_id]) // 按物理资源反查附件记录
+  @@map("file")
 }
 
 model ImageFolder {
@@ -228,66 +309,25 @@ model ImageFolder {
 }
 
 model Image {
-  id         Int       @id @default(autoincrement())
-  created_at DateTime? @default(now())
-  created_by Int?
-  updated_at DateTime?
-  updated_by Int?
-  folder_id  Int?
-  filename   String?   @db.VarChar(512)
-  hash       String    @db.VarChar(128)
-  preview    String?   @db.VarChar(128)
-  format     String    @db.VarChar(64)
-  size       Int
-  tags       Json?
-  width      Int
-  height     Int
-  status     Int       @default(1) // 0:已删除，1:正常状态
+  id            Int       @id @default(autoincrement())
+  created_at    DateTime? @default(now())
+  created_by    Int?
+  updated_at    DateTime?
+  updated_by    Int?
+  folder_id     Int // 所属图片目录ID，必填以保证目录内文件名唯一约束有效
+  asset_id      Int // 关联的物理资源ID
+  original_name String    @db.VarChar(512) // 上传时的原始图片文件名
+  filename      String    @db.VarChar(512) // 图片库中的最终展示文件名，重名时由业务层追加后缀
+  tags          Json? // 图片业务标签，用于图片管理和搜索
+  status        Int       @default(1) // 0:已删除，1:正常状态
 
-  ImageFolder ImageFolder? @relation(fields: [folder_id], references: [id])
+  ImageFolder ImageFolder @relation(fields: [folder_id], references: [id], onDelete: Restrict) // 有图片引用时禁止删除目录
+  Asset       Asset       @relation(fields: [asset_id], references: [id], onDelete: Restrict) // 有图片引用时禁止删除物理资源
 
-  @@index([folder_id, filename, hash])
+  @@unique([folder_id, filename]) // 同一目录下展示文件名唯一
+  @@index([folder_id, status]) // 按目录查询正常图片列表
+  @@index([asset_id]) // 按物理资源反查图片记录
   @@map("image")
-}
-
-model FileFolder {
-  id          Int       @id @default(autoincrement())
-  created_at  DateTime? @default(now())
-  created_by  Int?
-  updated_at  DateTime?
-  updated_by  Int?
-  name        String    @db.VarChar(255)
-  description String?   @db.VarChar(1024)
-  cover       String?   @db.VarChar(512)
-  count       Int       @default(0)
-  size        Int       @default(0)
-  status      Int       @default(1)
-
-  files File[]
-
-  @@map("file_folder")
-}
-
-model File {
-  id             Int       @id @default(autoincrement())
-  created_at     DateTime? @default(now())
-  created_by     Int?
-  updated_at     DateTime?
-  updated_by     Int?
-  folder_id      Int?
-  filename       String?   @db.VarChar(512)
-  hash           String    @db.VarChar(128)
-  metadata       Json? // 通用元数据存储
-  ext            String    @db.VarChar(64)
-  size           Int
-  download_count Int       @default(0)
-  password       String?
-  status         Int       @default(1) // 0:已删除，1:正常状态
-
-  FileFolder FileFolder? @relation(fields: [folder_id], references: [id])
-
-  @@index([folder_id, filename, hash])
-  @@map("file")
 }
 
 model User {
@@ -307,8 +347,27 @@ model User {
   last_login_location String?   @db.VarChar(255)
   status              Int       @default(1) // 0:已删除，1:正常状态
 
-  @@index([username, email])
   @@map("user")
+}
+
+model ApiKey {
+  id           Int       @id @default(autoincrement())
+  created_at   DateTime? @default(now())
+  created_by   Int?
+  updated_at   DateTime?
+  updated_by   Int?
+  name         String    @db.VarChar(255) // API Key 名称，用于后台识别调用方
+  key_hash     String    @unique @db.VarChar(128) // Secret API Key 哈希值，明文只在创建时返回一次
+  scopes       Json // 权限范围，如 hitokoto:import、note:import
+  expires_at   DateTime? // 过期时间，空表示长期有效
+  last_used_at DateTime? // 最近一次使用时间
+  last_used_ip String?   @db.VarChar(64) // 最近一次使用 IP
+  use_count    Int       @default(0) // 使用次数
+  status       Int       @default(1) // 0:已禁用，1:正常状态
+
+  @@index([status])
+  @@index([expires_at])
+  @@map("api_key")
 }
 
 model MessageBoard {
@@ -361,7 +420,6 @@ model SystemRuntimeData {
   name       String    @unique @db.VarChar(255)
   data       Json?
 
-  @@index([name])
   @@map("system_runtime_data")
 }
 
@@ -372,7 +430,6 @@ model Dashboard {
   time       DateTime  @unique
   data       Json
 
-  @@index([time])
   @@map("dashboard")
 }
 
@@ -424,8 +481,8 @@ model NavigationSearchHistory {
 
   NavigationSearchEngine NavigationSearchEngine @relation(fields: [search_engine_id], references: [id])
 
-  @@index([created_by, created_at])
-  @@index([search_engine_id])
+  @@index([created_by, id])
+  @@index([search_engine_id, id])
   @@map("navigation_search_history")
 }
 

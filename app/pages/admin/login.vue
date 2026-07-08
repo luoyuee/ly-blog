@@ -80,7 +80,7 @@ const handleSubmit = async (event: FormSubmitEvent<Schema>) => {
           <UInput
             v-model="formData.username"
             class="w-full"
-            icon="i-ep-user"
+            icon="lucide:user"
             placeholder="用户名或邮箱"
           />
         </UFormField>
@@ -89,13 +89,18 @@ const handleSubmit = async (event: FormSubmitEvent<Schema>) => {
           <UInput
             v-model="formData.password"
             class="w-full"
-            icon="i-ep-lock"
+            icon="lucide:lock"
             type="password"
             placeholder="请输入密码"
           />
         </UFormField>
 
-        <UButton type="submit" block :loading="state.submitting" loading-icon="ep:loading">
+        <UButton
+          type="submit"
+          block
+          :loading="state.submitting"
+          loading-icon="lucide:loader-circle"
+        >
           管理员登录
         </UButton>
 

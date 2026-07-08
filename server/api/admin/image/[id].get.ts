@@ -29,13 +29,19 @@ export default defineEventHandler(async (event) => {
     where: { folder_id: folder.id },
     select: {
       id: true,
-      width: true,
-      height: true,
-      hash: true,
-      format: true,
-      size: true,
-      preview: true,
-      tags: true
+      original_name: true,
+      filename: true,
+      tags: true,
+      Asset: {
+        select: {
+          hash: true,
+          ext: true,
+          size: true,
+          preview: true,
+          width: true,
+          height: true
+        }
+      }
     },
     skip: (queryParams.page - 1) * queryParams.per_page,
     take: queryParams.per_page
@@ -49,6 +55,17 @@ export default defineEventHandler(async (event) => {
     page: queryParams.page,
     per_page: queryParams.per_page,
     total,
-    data: result
+    data: result.map((item) => ({
+      id: item.id,
+      original_name: item.original_name,
+      filename: item.filename,
+      tags: item.tags,
+      hash: item.Asset.hash,
+      format: item.Asset.ext,
+      size: item.Asset.size,
+      preview: item.Asset.preview,
+      width: item.Asset.width,
+      height: item.Asset.height
+    }))
   });
 });

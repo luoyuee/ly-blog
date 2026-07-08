@@ -17,7 +17,7 @@
         class="basic-message__close"
         color="neutral"
         variant="link"
-        icon="ep:close"
+        icon="lucide:x"
         size="sm"
         @click="close"
       />
