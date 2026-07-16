@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import type { ArticleCategory } from "#shared/types/article";
+import { SidebarPanel, SidebarPanelListItem } from "@ly-editor/src/components";
 import { getAllArticleCategory, deleteArticleCategory } from "@/apis/article";
-import { useLyEditorModal } from "@ly-editor";
 import { useLyEditorTabs } from "@/composables/useLyEditorTabs";
 import { LyEditorTabPanelEnum } from "#shared/enums";
-import { SidebarPanel } from "@ly-editor/src/components";
+import { useLyEditorModal } from "@ly-editor";
 import { lyEditorEmitter } from "@/events";
 import Scrollbar from "@/components/scrollbar";
 
@@ -85,68 +85,39 @@ const actions = [
   <SidebarPanel title="文章管理" :actions="actions">
     <div class="flex-1 overflow-hidden">
       <Scrollbar>
-        <div
+        <SidebarPanelListItem
           v-for="item in data"
           :key="item.id"
-          class="px-3 py-2 hover:bg-gray-100/5 cursor-pointer"
+          :icon="item.icon ?? 'colorful:folder'"
+          :title="item.name"
+          :description="item.description"
+          :meta-items="[{ text: item.count ?? 0, icon: 'lucide:file-text' }]"
+          :action-items="[
+            {
+              label: '重命名',
+              icon: 'lucide:edit',
+              onSelect: () => {
+                handleOpenFormModal(item);
+              }
+            },
+            {
+              label: '分类详情',
+              icon: 'lucide:info',
+              onSelect: () => {
+                handleOpenDetailsModal(item);
+              }
+            },
+            {
+              label: '删除分类',
+              icon: 'lucide:trash-2',
+              color: 'error',
+              onSelect: () => {
+                handleDelete(item);
+              }
+            }
+          ]"
           @click="handleOpenPanel"
-        >
-          <div class="flex items-center">
-            <UIcon :name="item.icon ?? 'colorful:folder'" class="mr-1 shrink-0" />
-            <span class="truncate">
-              {{ item.name }}
-            </span>
-          </div>
-          <p class="text-xs text-gray-400 truncate" :title="item.description">
-            {{ item.description }}
-          </p>
-          <div class="flex justify-between items-center leading-none pt-1">
-            <div class="text-xs flex items-center gap-1">
-              <UIcon name="custom:database" />
-              {{ item.count }}
-            </div>
-            <div class="flex items-center gap-1" @click.stop>
-              <UDropdownMenu
-                :items="[
-                  {
-                    label: '重命名',
-                    icon: 'lucide:edit',
-                    onSelect: () => {
-                      handleOpenFormModal(item);
-                    }
-                  },
-                  {
-                    label: '分类详情',
-                    icon: 'lucide:info',
-                    onSelect: () => {
-                      handleOpenDetailsModal(item);
-                    }
-                  },
-                  {
-                    label: '删除分类',
-                    icon: 'lucide:trash-2',
-                    color: 'error',
-                    onSelect: () => {
-                      handleDelete(item);
-                    }
-                  }
-                ]"
-                :content="{
-                  align: 'start',
-                  side: 'bottom',
-                  sideOffset: 8
-                }"
-                :ui="{
-                  content: 'w-48'
-                }"
-              >
-                <UTooltip text="设置">
-                  <UIcon name="custom:setting" class="hover:text-gray-400" :size="16" />
-                </UTooltip>
-              </UDropdownMenu>
-            </div>
-          </div>
-        </div>
+        />
       </Scrollbar>
     </div>
   </SidebarPanel>

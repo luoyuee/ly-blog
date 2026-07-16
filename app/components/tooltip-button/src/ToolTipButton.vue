@@ -45,6 +45,8 @@ const handleClick = (event: MouseEvent) => {
     :disabled="disabledTooltip"
     :text="props.tooltip"
   >
-    <UButton v-bind="attrs" @click="handleClick" />
+    <UButton v-bind="attrs" @click="handleClick">
+      <slot></slot>
+    </UButton>
   </UTooltip>
 </template>

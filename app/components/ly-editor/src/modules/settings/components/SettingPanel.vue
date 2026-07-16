@@ -17,6 +17,7 @@ import {
   Live2dSettingCard
 } from "@/components/setting-card";
 import { useConfigStore, useMePageConfigStore, useServerConfigStore } from "@/stores";
+import SettingConfigTransfer from "./SettingConfigTransfer.vue";
 
 const configStore = useConfigStore();
 const mePageConfigStore = useMePageConfigStore();
@@ -222,9 +223,9 @@ onBeforeUnmount(() => {
     <div v-if="state.initializing" class="w-full h-full flex items-center justify-center">
       <UIcon name="lucide:loader-circle" :size="32" class="text-primary animate-spin" />
     </div>
-    <div v-else class="grid h-full grid-cols-1 gap-4 lg:grid-cols-[240px_minmax(0,1fr)]">
+    <div v-else class="h-full flex gap-4">
       <aside
-        class="hidden overflow-hidden rounded-lg border border-default bg-black/20 p-3 lg:block"
+        class="w-48 overflow-hidden rounded-lg border border-default bg-black/20 p-3 flex flex-col justify-between"
       >
         <UNavigationMenu
           orientation="vertical"
@@ -236,11 +237,16 @@ onBeforeUnmount(() => {
             childLink: 'transition-colors duration-150 rounded-md'
           }"
         />
+
+        <div>
+          <USeparator class="my-2" />
+          <SettingConfigTransfer />
+        </div>
       </aside>
 
       <div
         ref="contentRef"
-        class="space-y-4 overflow-y-auto pr-1"
+        class="space-y-4 overflow-y-auto flex-1"
         @pointerdown="enableScrollSync"
         @wheel="enableScrollSync"
         @touchstart="enableScrollSync"
