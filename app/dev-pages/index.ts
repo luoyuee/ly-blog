@@ -24,5 +24,10 @@ export const devPages = [
     name: "dev-tooltip-button",
     path: "/test/tooltip-button",
     file: fileURLToPath(new URL("./tooltip-button.vue", import.meta.url))
+  },
+  {
+    name: "dev-kanban-dndkit",
+    path: "/test/kanban-dndkit",
+    file: fileURLToPath(new URL("./kanban/kanban-dndkit.vue", import.meta.url))
   }
 ];
