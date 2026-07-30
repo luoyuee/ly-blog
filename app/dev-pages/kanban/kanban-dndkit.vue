@@ -65,28 +65,42 @@ function onDragEnd(event: DragEndEvent) {
 </script>
 
 <template>
-  <ClientOnly>
-    <DragDropProvider
-      :plugins="defaultPreset.plugins"
-      :sensors="sensors"
-      @drag-start="onDragStart"
-      @drag-over="onDragOver"
-      @drag-end="onDragEnd"
-    >
-      <div class="kanban-dndkit">
-        <KanbanColumn
-          v-for="(column, columnIndex) in columns"
-          :id="column"
-          :key="column"
-          :index="columnIndex"
-          :rows="items[column]!"
-        />
-      </div>
-    </DragDropProvider>
-    <template #fallback>
-      <div class="kanban-dndkit">加载中…</div>
-    </template>
-  </ClientOnly>
+  <main class="min-h-screen p-4 md:p-8">
+    <section class="mx-auto mb-6 max-w-240">
+      <p class="mb-2 text-sm uppercase tracking-[0.08em] text-(--text-color-tertiary)">
+        Development Only
+      </p>
+      <h1 class="mb-3 text-2xl font-bold leading-[1.2] text-(--text-color-primary)">
+        Kanban DnD Kit 组件测试页
+      </h1>
+      <p class="text-base leading-[1.75] text-(--text-color-secondary)">
+        用于验证基于 dnd-kit 的看板拖拽交互，支持卡片跨列移动、列整体拖拽、空列投放与取消回滚。
+      </p>
+    </section>
+
+    <ClientOnly>
+      <DragDropProvider
+        :plugins="defaultPreset.plugins"
+        :sensors="sensors"
+        @drag-start="onDragStart"
+        @drag-over="onDragOver"
+        @drag-end="onDragEnd"
+      >
+        <div class="kanban-dndkit">
+          <KanbanColumn
+            v-for="(column, columnIndex) in columns"
+            :id="column"
+            :key="column"
+            :index="columnIndex"
+            :rows="items[column]!"
+          />
+        </div>
+      </DragDropProvider>
+      <template #fallback>
+        <div class="kanban-dndkit">加载中…</div>
+      </template>
+    </ClientOnly>
+  </main>
 </template>
 
 <style scoped>
