@@ -1,21 +1,23 @@
 <script setup lang="ts">
-import { usePhysicsScroll } from "@/composables/usePhysicsScroll";
-import { ref, computed, onMounted, onUnmounted, watch, nextTick, useTemplateRef } from "vue";
+import { computed, nextTick, onBeforeUnmount, onMounted, onUpdated, ref } from "vue";
+import type { PropType } from "vue";
+import { ScrollbarTheme } from "./theme";
+import {
+  BAR_MAP,
+  MIN_SIZE,
+  WHEEL_FRICTION,
+  WHEEL_SPEED_FACTOR,
+  mergeScrollbarClass,
+  renderThumbStyle
+} from "./utils";
+import type { Direction, ScrollbarColorTheme, ScrollbarUi, WheelDirection } from "./types";
 
-interface ScrollState {
-  vertical: { ratio: number; thumbSize: number };
-  horizontal: { ratio: number; thumbSize: number };
-}
-
-interface ScrollbarTheme {
-  trackColor?: string;
-  thumbColor?: string;
-  thumbHoverColor?: string;
-  thumbActiveColor?: string;
-}
+// 滚动完全交给原生 overflow:auto，
+// 这里只自绘滑块（track/thumb）并处理拖拽/轨道点击，不做任何惯性或键盘拦截。
+type Dir = Direction;
 
 const props = defineProps({
-  // 滚动条尺寸
+  // 滚动条粗细
   barSize: {
     type: Number,
     default: 4
@@ -25,20 +27,26 @@ const props = defineProps({
     type: Boolean,
     default: false
   },
-  // 主题配置
+  // 主题色（运行时注入 CSS 变量，仅影响自绘滑块外观）
   theme: {
-    type: Object as () => ScrollbarTheme,
+    type: Object as () => ScrollbarColorTheme,
     default: () => ({})
   },
-  // 是否启用触摸支持
-  touchSupport: {
-    type: Boolean,
-    default: true
+  // 各部件 tailwind class 覆盖（参考 collapsible-panel 的 ui 模式）
+  ui: {
+    type: Object as () => ScrollbarUi,
+    default: () => ({})
   },
-  // 是否启用键盘导航
-  keyboardSupport: {
-    type: Boolean,
-    default: true
+  // 滚动容器是否可聚焦（键盘方向键滚动依赖原生，需容器可聚焦）
+  tabindex: {
+    type: [Number, String] as PropType<number | string>,
+    default: 0
+  },
+  // 鼠标滚轮方向：vertical 走原生（竖滚，Shift+滚轮横滚）；
+  // horizontal 将竖向滚轮量映射为横向滚动（仅在有横向可滚时劫持）
+  wheelDirection: {
+    type: String as PropType<WheelDirection>,
+    default: "vertical"
   }
 });
 
@@ -47,410 +55,296 @@ const emit = defineEmits<{
   dragStateChange: [isDragging: boolean];
 }>();
 
-// 是否显示滚动条
-const showScrollbar = ref(props.always);
-watch(
-  () => props.always,
-  (val) => {
-    showScrollbar.value = val;
-  }
+const wrapRef = ref<HTMLDivElement>();
+const viewRef = ref<HTMLDivElement>();
+const barVerticalRef = ref<HTMLDivElement>();
+const barHorizontalRef = ref<HTMLDivElement>();
+const thumbVerticalRef = ref<HTMLDivElement>();
+const thumbHorizontalRef = ref<HTMLDivElement>();
+
+const moveX = ref(0);
+const moveY = ref(0);
+const sizeWidth = ref("");
+const sizeHeight = ref("");
+const ratioX = ref(1);
+const ratioY = ref(1);
+
+const visible = ref(false);
+const cursorDown = ref(false);
+const cursorLeave = ref(false);
+const thumbState = ref<Partial<Record<"X" | "Y", number>>>({});
+
+const thumbStyleVertical = computed(() =>
+  renderThumbStyle(moveY.value, sizeHeight.value, "vertical")
+);
+const thumbStyleHorizontal = computed(() =>
+  renderThumbStyle(moveX.value, sizeWidth.value, "horizontal")
 );
 
-const containerRef = useTemplateRef("containerRef");
-const contentRef = useTemplateRef("contentRef");
+// 仅当某方向可滚动时才挂载对应滑块
+const hasVertical = computed(() => sizeHeight.value !== "");
+const hasHorizontal = computed(() => sizeWidth.value !== "");
 
-const scrollState = ref<ScrollState>({
-  vertical: { ratio: 0, thumbSize: 0 },
-  horizontal: { ratio: 0, thumbSize: 0 }
-});
-
-const isDragging = ref(false);
-const dragType = ref<"vertical" | "horizontal" | null>(null);
-const startPosition = ref({ x: 0, y: 0 });
-
-// 容器样式
-const containerStyle = computed(() => ({
+const rootStyle = computed(() => ({
   "--bar-size": `${props.barSize}px`,
-  "--track-color": props.theme.trackColor || "rgba(0, 0, 0, 0.1)",
+  "--track-color": props.theme.trackColor || "transparent",
   "--thumb-color": props.theme.thumbColor || "#909399",
   "--thumb-hover-color": props.theme.thumbHoverColor || "#606266",
   "--thumb-active-color": props.theme.thumbActiveColor || "#303133"
 }));
 
-// 垂直滚动条相关计算
-const verticalThumbStyle = computed(() => ({
-  height: `${scrollState.value.vertical.thumbSize}px`,
-  transform: `translateY(${scrollState.value.vertical.ratio}px)`
-}));
+// 滑块位移跟随原生 scrollTop/scrollLeft（无 transition，实时跟手）
+const handleScroll = (e: Event) => {
+  const wrap = wrapRef.value;
+  if (!wrap) return;
+  const offsetHeight = wrap.offsetHeight;
+  const offsetWidth = wrap.offsetWidth;
 
-// 水平滚动条相关计算
-const horizontalThumbStyle = computed(() => ({
-  width: `${scrollState.value.horizontal.thumbSize}px`,
-  transform: `translateX(${scrollState.value.horizontal.ratio}px)`
-}));
-
-// 是否需要显示滚动条
-const showVerticalBar = ref(false);
-const showHorizontalBar = ref(false);
-
-// 计算是否需要显示滚动条
-const calcScrollDirection = () => {
-  if (!containerRef.value || !contentRef.value) return;
-
-  const container = containerRef.value;
-  const content = contentRef.value;
-
-  showVerticalBar.value = content.scrollHeight > container.clientHeight;
-  showHorizontalBar.value = content.scrollWidth > container.clientWidth;
-};
-
-// 初始化滚动条尺寸
-const initScrollbar = () => {
-  if (!containerRef.value) return;
-
-  const container = containerRef.value;
-  const maxThumbSize = props.barSize * 2;
-
-  // 垂直滚动条
-  if (container.scrollHeight > container.clientHeight) {
-    const verticalRatio = container.clientHeight / container.scrollHeight;
-    scrollState.value.vertical.thumbSize = Math.max(
-      maxThumbSize,
-      verticalRatio * container.clientHeight
-    );
-  } else {
-    scrollState.value.vertical.thumbSize = 0;
-  }
-
-  // 水平滚动条
-  if (container.scrollWidth > container.clientWidth) {
-    const horizontalRatio = container.clientWidth / container.scrollWidth;
-    scrollState.value.horizontal.thumbSize = Math.max(
-      maxThumbSize,
-      horizontalRatio * container.clientWidth
-    );
-  } else {
-    scrollState.value.horizontal.thumbSize = 0;
-  }
-};
-
-// 处理内容滚动
-const handleContentScroll = (e: Event) => {
-  const target = e.currentTarget as HTMLDivElement;
-  if (!target) return;
-
-  const scrollTop = target.scrollTop;
-  const scrollLeft = target.scrollLeft;
-
-  // 更新滑块位置
-  const maxScrollTop = Math.max(0, target.scrollHeight - target.clientHeight);
-  const maxScrollLeft = Math.max(0, target.scrollWidth - target.clientWidth);
-
-  if (maxScrollTop > 0) {
-    const availableHeight = target.clientHeight - scrollState.value.vertical.thumbSize;
-    scrollState.value.vertical.ratio = (scrollTop / maxScrollTop) * availableHeight;
-  } else {
-    scrollState.value.vertical.ratio = 0;
-  }
-
-  if (maxScrollLeft > 0) {
-    const availableWidth = target.clientWidth - scrollState.value.horizontal.thumbSize;
-    scrollState.value.horizontal.ratio = (scrollLeft / maxScrollLeft) * availableWidth;
-  } else {
-    scrollState.value.horizontal.ratio = 0;
-  }
-
+  moveY.value = ((wrap.scrollTop * 100) / offsetHeight) * ratioY.value;
+  moveX.value = ((wrap.scrollLeft * 100) / offsetWidth) * ratioX.value;
   emit("scroll", e);
 };
 
+// 横向滚轮惯性：滚轮量累加成速度，松手后按摩擦自然滑停。
+// 仅在 wheelDirection=horizontal 且确有横向可滚时才劫持，否则放行原生，避免吞掉正常竖向滚轮。
+let scrollVelocity = 0;
+let momentumRaf = 0;
+
+const stopMomentum = () => {
+  if (momentumRaf) cancelAnimationFrame(momentumRaf);
+  momentumRaf = 0;
+  scrollVelocity = 0;
+};
+
+const runMomentum = () => {
+  if (momentumRaf) return;
+  const step = () => {
+    const wrap = wrapRef.value;
+    if (!wrap || wrap.scrollWidth <= wrap.clientWidth) return stopMomentum();
+    const max = wrap.scrollWidth - wrap.clientWidth;
+    wrap.scrollLeft = Math.min(max, Math.max(0, wrap.scrollLeft + scrollVelocity));
+    scrollVelocity *= WHEEL_FRICTION; // 摩擦衰减
+    if (Math.abs(scrollVelocity) < 0.5) return stopMomentum();
+    momentumRaf = requestAnimationFrame(step);
+  };
+  momentumRaf = requestAnimationFrame(step);
+};
+
+// 把不同 deltaMode 的滚轮量统一成像素，避免 Firefox 行模式(deltaMode=1)下几乎不动
+const normalizeWheel = (e: WheelEvent): number => {
+  const factor = e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? wrapRef.value!.clientHeight : 1;
+  const dx = e.deltaX * factor;
+  const dy = e.deltaY * factor;
+  return dx !== 0 ? dx : dy; // 横向优先
+};
+
+const handleWheel = (e: WheelEvent) => {
+  if (props.wheelDirection !== "horizontal") return;
+  const wrap = wrapRef.value;
+  if (!wrap || wrap.scrollWidth <= wrap.clientWidth) return;
+  e.preventDefault();
+  // deltaX（触控板横滑）浏览器已自带惯性，直接累加；deltaY（鼠标滚轮）无衰减，靠速度累积出惯性。
+  // 滚轮量先乘缩放系数，避免单个 notch 被惯性放大十几倍滑太远。
+  const raw = normalizeWheel(e);
+  scrollVelocity = Math.max(-120, Math.min(120, scrollVelocity + raw * WHEEL_SPEED_FACTOR));
+  runMomentum();
+};
+
+// 依据容器与内容尺寸重算滑块长度与比例修正系数
+const update = () => {
+  const wrap = wrapRef.value;
+  if (!wrap) return;
+  const offsetHeight = wrap.offsetHeight;
+  const offsetWidth = wrap.offsetWidth;
+
+  const originalHeight = offsetHeight ** 2 / wrap.scrollHeight;
+  const originalWidth = offsetWidth ** 2 / wrap.scrollWidth;
+  const height = Math.max(originalHeight, MIN_SIZE);
+  const width = Math.max(originalWidth, MIN_SIZE);
+
+  ratioY.value =
+    originalHeight / (offsetHeight - originalHeight) / (height / (offsetHeight - height));
+  ratioX.value = originalWidth / (offsetWidth - originalWidth) / (width / (offsetWidth - width));
+
+  sizeHeight.value = height < offsetHeight ? `${height}px` : "";
+  sizeWidth.value = width < offsetWidth ? `${width}px` : "";
+};
+
+const getClientCoord = (e: MouseEvent | TouchEvent, key: "clientX" | "clientY"): number =>
+  e.type.startsWith("touch") ? (e as TouchEvent).touches[0]![key] : (e as MouseEvent)[key];
+
+// 修正滑块自身高度带来的位移偏差（translate% 相对滑块自身尺寸）
+const offsetRatio = (dir: Dir): number => {
+  const wrap = wrapRef.value;
+  const bar = dir === "vertical" ? barVerticalRef.value : barHorizontalRef.value;
+  const thumb = dir === "vertical" ? thumbVerticalRef.value : thumbHorizontalRef.value;
+  if (!wrap || !bar || !thumb) return 1;
+  const b = BAR_MAP[dir];
+  const ratio = dir === "vertical" ? ratioY.value : ratioX.value;
+  return bar[b.offset] ** 2 / wrap[b.scrollSize] / ratio / thumb[b.offset];
+};
+
+let currentDragDir: Dir = "vertical";
 let originalOnSelectStart: ((this: GlobalEventHandlers, ev: Event) => unknown) | null = null;
 
-// 开始拖拽
-const startDrag = (type: "vertical" | "horizontal", e: MouseEvent | TouchEvent) => {
-  e.stopImmediatePropagation();
-  e.preventDefault();
+const clickThumbHandler = (dir: Dir, e: MouseEvent | TouchEvent) => {
+  if (e.type === "mousedown") {
+    const me = e as MouseEvent;
+    if (me.ctrlKey || [1, 2].includes(me.button)) return;
+  }
+  e.stopPropagation();
+  if (e.type.startsWith("touch")) e.preventDefault();
+  window.getSelection()?.removeAllRanges();
+  startDrag(dir, e);
 
-  isDragging.value = true;
-  dragType.value = type;
+  const b = BAR_MAP[dir];
+  const el = e.currentTarget as HTMLElement;
+  const client = getClientCoord(e, b.client);
+  thumbState.value[b.axis] = el[b.offset] - (client - el.getBoundingClientRect()[b.direction]);
+};
+
+const clickTrackHandler = (dir: Dir, e: MouseEvent) => {
+  const wrap = wrapRef.value;
+  const bar = dir === "vertical" ? barVerticalRef.value : barHorizontalRef.value;
+  const thumb = dir === "vertical" ? thumbVerticalRef.value : thumbHorizontalRef.value;
+  if (!wrap || !bar || !thumb) return;
+
+  e.stopPropagation();
+  const b = BAR_MAP[dir];
+  const offset = Math.abs(
+    (e.target as HTMLElement).getBoundingClientRect()[b.direction] - e[b.client]
+  );
+  const thumbHalf = thumb[b.offset] / 2;
+  const ratio = ((offset - thumbHalf) * 100 * offsetRatio(dir)) / bar[b.offset];
+  wrap[b.scroll] = (ratio * wrap[b.scrollSize]) / 100;
+};
+
+const startDrag = (dir: Dir, e: MouseEvent | TouchEvent) => {
+  e.stopImmediatePropagation();
+  cursorDown.value = true;
+  currentDragDir = dir;
+  stopMomentum(); // 抓取滑块即中断惯性，避免与拖拽打架
   emit("dragStateChange", true);
 
-  const clientX = "touches" in e ? e.touches[0]!.clientX : e.clientX;
-  const clientY = "touches" in e ? e.touches[0]!.clientY : e.clientY;
-
-  startPosition.value = { x: clientX, y: clientY };
-
-  if ("touches" in e) {
-    document.addEventListener("touchmove", onDrag, { passive: false });
-    document.addEventListener("touchend", endDrag);
-  } else {
-    document.addEventListener("mousemove", onDrag);
-    document.addEventListener("mouseup", endDrag);
+  const wrap = wrapRef.value;
+  if (wrap) {
+    baseScrollHeight = wrap.scrollHeight;
+    baseScrollWidth = wrap.scrollWidth;
   }
+
+  document.addEventListener("mousemove", onDocumentMove);
+  document.addEventListener("mouseup", onDocumentUp);
+  document.addEventListener("touchmove", onDocumentMove, { passive: false });
+  document.addEventListener("touchend", onDocumentUp);
 
   originalOnSelectStart = document.onselectstart;
   document.onselectstart = () => false;
 };
 
-// 拖拽中
-const onDrag = (e: MouseEvent | TouchEvent) => {
-  if (!isDragging.value || !containerRef.value) return;
+const onDocumentMove = (e: MouseEvent | TouchEvent) => {
+  if (!cursorDown.value) return;
+  if (e.type.startsWith("touch")) e.preventDefault();
 
-  const clientX = "touches" in e ? e.touches[0]!.clientX : e.clientX;
-  const clientY = "touches" in e ? e.touches[0]!.clientY : e.clientY;
+  const dir = currentDragDir;
+  const b = BAR_MAP[dir];
+  const bar = dir === "vertical" ? barVerticalRef.value : barHorizontalRef.value;
+  const thumb = dir === "vertical" ? thumbVerticalRef.value : thumbHorizontalRef.value;
+  const wrap = wrapRef.value;
+  if (!bar || !thumb || !wrap) return;
 
-  const delta = {
-    x: clientX - startPosition.value.x,
-    y: clientY - startPosition.value.y
-  };
+  const prevPage = thumbState.value[b.axis];
+  if (!prevPage) return;
 
-  const container = containerRef.value;
+  const client = getClientCoord(e, b.client);
+  const offset = (bar.getBoundingClientRect()[b.direction] - client) * -1;
+  const thumbClickPosition = thumb[b.offset] - prevPage;
+  const ratio = ((offset - thumbClickPosition) * 100 * offsetRatio(dir)) / bar[b.offset];
 
-  if (dragType.value === "vertical") {
-    const maxScrollTop = Math.max(0, container.scrollHeight - container.clientHeight);
-    const availableHeight = container.clientHeight;
-    const thumbSize = scrollState.value.vertical.thumbSize;
-    const availableTrack = availableHeight - thumbSize;
-
-    if (availableTrack > 0 && maxScrollTop > 0) {
-      const scrollRatio = delta.y / availableTrack;
-      const newScrollTop = container.scrollTop + scrollRatio * maxScrollTop;
-      container.scrollTop = Math.max(0, Math.min(maxScrollTop, newScrollTop));
-    }
+  if (b.scroll === "scrollLeft") {
+    wrap[b.scroll] = (ratio * baseScrollWidth) / 100;
   } else {
-    const maxScrollLeft = Math.max(0, container.scrollWidth - container.clientWidth);
-    const availableWidth = container.clientWidth;
-    const thumbSize = scrollState.value.horizontal.thumbSize;
-    const availableTrack = availableWidth - thumbSize;
-
-    if (availableTrack > 0 && maxScrollLeft > 0) {
-      const scrollRatio = delta.x / availableTrack;
-      const newScrollLeft = container.scrollLeft + scrollRatio * maxScrollLeft;
-      container.scrollLeft = Math.max(0, Math.min(maxScrollLeft, newScrollLeft));
-    }
+    wrap[b.scroll] = (ratio * baseScrollHeight) / 100;
   }
-
-  startPosition.value = { x: clientX, y: clientY };
 };
 
-// 结束拖拽
-const endDrag = () => {
-  isDragging.value = false;
-  emit("dragStateChange", false);
-  document.removeEventListener("mousemove", onDrag);
-  document.removeEventListener("mouseup", endDrag);
-  document.removeEventListener("touchmove", onDrag);
-  document.removeEventListener("touchend", endDrag);
-
+const onDocumentUp = () => {
+  cursorDown.value = false;
+  document.removeEventListener("mousemove", onDocumentMove);
+  document.removeEventListener("mouseup", onDocumentUp);
+  document.removeEventListener("touchmove", onDocumentMove);
+  document.removeEventListener("touchend", onDocumentUp);
   if (document.onselectstart !== originalOnSelectStart) {
     document.onselectstart = originalOnSelectStart;
   }
-
-  if (!isMouseInside.value) {
-    showScrollbar.value = props.always;
-  }
+  if (cursorLeave.value) visible.value = false;
+  emit("dragStateChange", false);
 };
 
-// 点击轨道跳转
-const handleTrackClick = (type: "vertical" | "horizontal", e: MouseEvent) => {
-  if (!containerRef.value || isDragging.value) return;
+let baseScrollHeight = 0;
+let baseScrollWidth = 0;
 
-  const container = containerRef.value;
-  const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
-
-  if (type === "vertical") {
-    const clickY = e.clientY - rect.top;
-    const availableHeight = rect.height;
-
-    // 防止除零错误
-    if (availableHeight <= 0) return;
-
-    // 考虑滑块位置，避免点击滑块时的跳转
-    const thumbTop = scrollState.value.vertical.ratio;
-    const thumbBottom = thumbTop + scrollState.value.vertical.thumbSize;
-
-    // 如果点击在滑块上，不进行跳转
-    if (clickY >= thumbTop && clickY <= thumbBottom) return;
-
-    const scrollRatio = Math.max(0, Math.min(1, clickY / availableHeight));
-    const maxScrollTop = Math.max(0, container.scrollHeight - container.clientHeight);
-    container.scrollTop = scrollRatio * maxScrollTop;
-  } else {
-    const clickX = e.clientX - rect.left;
-    const availableWidth = rect.width;
-
-    // 防止除零错误
-    if (availableWidth <= 0) return;
-
-    // 考虑滑块位置，避免点击滑块时的跳转
-    const thumbLeft = scrollState.value.horizontal.ratio;
-    const thumbRight = thumbLeft + scrollState.value.horizontal.thumbSize;
-
-    // 如果点击在滑块上，不进行跳转
-    if (clickX >= thumbLeft && clickX <= thumbRight) return;
-
-    const scrollRatio = Math.max(0, Math.min(1, clickX / availableWidth));
-    const maxScrollLeft = Math.max(0, container.scrollWidth - container.clientWidth);
-    container.scrollLeft = scrollRatio * maxScrollLeft;
-  }
-};
-// 初始化物理滚动hook
-const physicsScroll = usePhysicsScroll(containerRef, {
-  friction: 0.66,
-  maxVelocity: 50,
-  speedFactor: 0.3,
-  direction: "horizontal",
-  enableBounce: false
-});
-
-// 鼠标滚轮处理
-const handleWheel = (e: WheelEvent) => {
-  if (!containerRef.value) return;
-
-  // 如果有垂直滚动条，优先垂直滚动
-  if (showVerticalBar.value) {
-    // 默认行为即为垂直滚动，不需要额外处理
-    return;
-  }
-
-  // 如果只有水平滚动条，则进行水平滚动
-  if (showHorizontalBar.value) {
-    physicsScroll.handleWheel(e);
-  }
+const onMouseEnter = () => {
+  cursorLeave.value = false;
+  visible.value = true;
 };
 
-// 键盘导航
-const handleKeydown = (e: KeyboardEvent) => {
-  if (!containerRef.value || !props.keyboardSupport) return;
-
-  const container = containerRef.value;
-  const step = 32;
-
-  switch (e.key) {
-    case "ArrowUp":
-      if (showVerticalBar.value) {
-        e.preventDefault();
-        container.scrollTop -= step;
-      }
-      break;
-    case "ArrowDown":
-      if (showVerticalBar.value) {
-        e.preventDefault();
-        container.scrollTop += step;
-      }
-      break;
-    case "ArrowLeft":
-      if (showHorizontalBar.value) {
-        e.preventDefault();
-        container.scrollLeft -= step;
-      }
-      break;
-    case "ArrowRight":
-      if (showHorizontalBar.value) {
-        e.preventDefault();
-        container.scrollLeft += step;
-      }
-      break;
-    case "Home":
-      e.preventDefault();
-      if (e.ctrlKey) {
-        container.scrollTop = 0;
-        container.scrollLeft = 0;
-      } else if (showVerticalBar.value) {
-        container.scrollTop = 0;
-      } else if (showHorizontalBar.value) {
-        container.scrollLeft = 0;
-      }
-      break;
-    case "End":
-      e.preventDefault();
-      if (e.ctrlKey) {
-        container.scrollTop = container.scrollHeight - container.clientHeight;
-        container.scrollLeft = container.scrollWidth - container.clientWidth;
-      } else if (showVerticalBar.value) {
-        container.scrollTop = container.scrollHeight - container.clientHeight;
-      } else if (showHorizontalBar.value) {
-        container.scrollLeft = container.scrollWidth - container.clientWidth;
-      }
-      break;
-    case "PageUp":
-      if (showVerticalBar.value) {
-        e.preventDefault();
-        container.scrollTop -= container.clientHeight;
-      }
-      break;
-    case "PageDown":
-      if (showVerticalBar.value) {
-        e.preventDefault();
-        container.scrollTop += container.clientHeight;
-      }
-      break;
-  }
+const onMouseLeave = () => {
+  cursorLeave.value = true;
+  if (!cursorDown.value) visible.value = props.always;
 };
 
-const isMouseInside = ref(false);
-
-const handleMouseEnter = () => {
-  isMouseInside.value = true;
-  showScrollbar.value = true;
-};
-
-const handleMouseLeave = () => {
-  isMouseInside.value = false;
-
-  if (!isDragging.value) {
-    showScrollbar.value = props.always;
-  }
-};
-
-// 使用单个ResizeObserver监听内容变化
+// 容器尺寸变化时重算滑块（原生 ResizeObserver，不引入额外依赖）
 let resizeObserver: ResizeObserver | null = null;
 
 onMounted(() => {
-  if (containerRef.value && contentRef.value) {
-    nextTick(() => {
-      calcScrollDirection();
-      initScrollbar();
-    });
-
-    resizeObserver = new ResizeObserver(() => {
-      calcScrollDirection();
-      initScrollbar();
-    });
-
-    // 同时监听内容容器和滚动视图
-    resizeObserver.observe(containerRef.value);
-    resizeObserver.observe(contentRef.value);
+  if (wrapRef.value && viewRef.value) {
+    nextTick(update);
+    resizeObserver = new ResizeObserver(() => update());
+    resizeObserver.observe(wrapRef.value);
+    resizeObserver.observe(viewRef.value);
   }
 });
 
-onUnmounted(() => {
-  if (resizeObserver) resizeObserver.disconnect();
-  // 停止物理滚动动画
-  physicsScroll.stopAnimation();
+onUpdated(() => update());
+
+onBeforeUnmount(() => {
+  resizeObserver?.disconnect();
+  stopMomentum();
+  document.removeEventListener("mousemove", onDocumentMove);
+  document.removeEventListener("mouseup", onDocumentUp);
+  document.removeEventListener("touchmove", onDocumentMove);
+  document.removeEventListener("touchend", onDocumentUp);
 });
 
-// 暴露方法
 defineExpose({
-  // 保留wheel方法以保持向后兼容
-  wheel: handleWheel,
-  getScrollElement: () => {
-    return containerRef.value;
-  },
-  // 新增方法
+  getScrollElement: () => wrapRef.value,
   scrollTo: (options: { top?: number; left?: number; behavior?: ScrollBehavior }) => {
-    if (containerRef.value) {
-      containerRef.value.scrollTo(options);
+    wrapRef.value?.scrollTo(options);
+  },
+  // 获取当前滚动位置，容器不存在时返回 undefined，便于调用方区分“未挂载”与“滚到 0”
+  getScrollTo: () => {
+    const wrap = wrapRef.value;
+    if (!wrap) {
+      return undefined;
     }
+    return { scrollTop: wrap.scrollTop, scrollLeft: wrap.scrollLeft };
   },
   scrollToTop: () => {
-    if (containerRef.value) {
-      containerRef.value.scrollTop = 0;
-    }
+    if (wrapRef.value) wrapRef.value.scrollTop = 0;
   },
   scrollToBottom: () => {
-    if (containerRef.value) {
-      containerRef.value.scrollTop =
-        containerRef.value.scrollHeight - containerRef.value.clientHeight;
+    if (wrapRef.value) {
+      wrapRef.value.scrollTop = wrapRef.value.scrollHeight - wrapRef.value.clientHeight;
+    }
+  },
+  // 横向归零，与 scrollToTop 对称
+  scrollToLeft: () => {
+    if (wrapRef.value) wrapRef.value.scrollLeft = 0;
+  },
+  // 横向滚到最右，与 scrollToBottom 对称
+  scrollToRight: () => {
+    if (wrapRef.value) {
+      wrapRef.value.scrollLeft = wrapRef.value.scrollWidth - wrapRef.value.clientWidth;
     }
   }
 });
@@ -458,222 +352,67 @@ defineExpose({
 
 <template>
   <div
-    class="virtual-scrollbar"
-    :style="containerStyle"
-    tabindex="0"
-    role="scrollbar"
-    :aria-orientation="
-      showVerticalBar && showHorizontalBar
-        ? 'vertical'
-        : showVerticalBar
-          ? 'vertical'
-          : 'horizontal'
-    "
-    @mouseenter="handleMouseEnter"
-    @mouseleave="handleMouseLeave"
-    @wheel="handleWheel"
-    @keydown="handleKeydown"
+    :class="mergeScrollbarClass(ScrollbarTheme.root, ui?.root)"
+    :style="rootStyle"
+    @mouseenter="onMouseEnter"
+    @mouseleave="onMouseLeave"
   >
-    <!-- 内容容器 -->
-    <div ref="containerRef" class="virtual-scrollbar__container" @scroll="handleContentScroll">
-      <div ref="contentRef" class="virtual-scrollbar__content">
+    <div
+      ref="wrapRef"
+      :class="mergeScrollbarClass(ScrollbarTheme.wrap, ui?.wrap)"
+      :tabindex="tabindex"
+      @scroll="handleScroll"
+      @wheel="handleWheel"
+    >
+      <div ref="viewRef" :class="mergeScrollbarClass(ScrollbarTheme.view, ui?.view)">
         <slot></slot>
       </div>
     </div>
 
-    <!-- 垂直滚动条 -->
-    <div
-      v-if="showVerticalBar"
-      class="virtual-scrollbar__track virtual-scrollbar__track--vertical"
-      :class="{ 'virtual-scrollbar__track--active': showScrollbar }"
-      role="scrollbar"
-      aria-orientation="vertical"
-      :aria-valuenow="
-        Math.round((scrollState.vertical.ratio / (containerRef?.clientHeight || 1)) * 100)
-      "
-      aria-valuemin="0"
-      aria-valuemax="100"
-      @click="handleTrackClick('vertical', $event)"
+    <transition
+      enter-active-class="transition-opacity duration-[340ms] ease-out"
+      leave-active-class="transition-opacity duration-[120ms] ease-out"
+      enter-from-class="opacity-0"
+      leave-to-class="opacity-0"
     >
       <div
-        class="virtual-scrollbar__thumb"
-        :style="verticalThumbStyle"
-        role="slider"
-        tabindex="0"
-        @mousedown="startDrag('vertical', $event)"
-        @touchstart="startDrag('vertical', $event)"
-      ></div>
-    </div>
+        v-if="hasVertical"
+        v-show="always || visible"
+        ref="barVerticalRef"
+        :class="mergeScrollbarClass(ScrollbarTheme.barVertical, ui?.barVertical)"
+        @mousedown="clickTrackHandler('vertical', $event)"
+      >
+        <div
+          ref="thumbVerticalRef"
+          :class="mergeScrollbarClass(ScrollbarTheme.thumb, ui?.thumb)"
+          :style="thumbStyleVertical"
+          @mousedown="clickThumbHandler('vertical', $event)"
+          @touchstart="clickThumbHandler('vertical', $event)"
+        ></div>
+      </div>
+    </transition>
 
-    <!-- 水平滚动条 -->
-    <div
-      v-if="showHorizontalBar"
-      class="virtual-scrollbar__track virtual-scrollbar__track--horizontal"
-      :class="{ 'virtual-scrollbar__track--active': showScrollbar }"
-      role="scrollbar"
-      aria-orientation="horizontal"
-      :aria-valuenow="
-        Math.round((scrollState.horizontal.ratio / (containerRef?.clientWidth || 1)) * 100)
-      "
-      aria-valuemin="0"
-      aria-valuemax="100"
-      @click="handleTrackClick('horizontal', $event)"
+    <transition
+      enter-active-class="transition-opacity duration-[340ms] ease-out"
+      leave-active-class="transition-opacity duration-[120ms] ease-out"
+      enter-from-class="opacity-0"
+      leave-to-class="opacity-0"
     >
       <div
-        class="virtual-scrollbar__thumb"
-        :style="horizontalThumbStyle"
-        role="slider"
-        tabindex="0"
-        @mousedown="startDrag('horizontal', $event)"
-        @touchstart="startDrag('horizontal', $event)"
-      ></div>
-    </div>
+        v-if="hasHorizontal"
+        v-show="always || visible"
+        ref="barHorizontalRef"
+        :class="mergeScrollbarClass(ScrollbarTheme.barHorizontal, ui?.barHorizontal)"
+        @mousedown="clickTrackHandler('horizontal', $event)"
+      >
+        <div
+          ref="thumbHorizontalRef"
+          :class="mergeScrollbarClass(ScrollbarTheme.thumb, ui?.thumb)"
+          :style="thumbStyleHorizontal"
+          @mousedown="clickThumbHandler('horizontal', $event)"
+          @touchstart="clickThumbHandler('horizontal', $event)"
+        ></div>
+      </div>
+    </transition>
   </div>
 </template>
-
-<style scoped>
-.virtual-scrollbar {
-  --bar-size: 4px;
-  --track-color: rgba(0, 0, 0, 0.1);
-  --thumb-color: #909399;
-  --thumb-hover-color: #606266;
-  --thumb-active-color: #303133;
-  position: relative;
-  overflow: hidden;
-  outline: none;
-}
-
-.virtual-scrollbar__container {
-  height: 100%;
-  width: 100%;
-  overflow: auto;
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE */
-}
-
-.virtual-scrollbar__container::-webkit-scrollbar {
-  display: none; /* Chrome/Safari */
-}
-
-.virtual-scrollbar__content {
-  min-width: 100%;
-  min-height: 100%;
-}
-
-/* 滚动条轨道基础样式 */
-.virtual-scrollbar__track {
-  position: absolute;
-  opacity: 0;
-  transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  pointer-events: none;
-  background: var(--track-color);
-  border-radius: calc(var(--bar-size) / 2);
-}
-
-.virtual-scrollbar__track::before {
-  content: "";
-  position: absolute;
-  border-radius: calc(var(--bar-size) / 2);
-}
-
-/* 垂直滚动条轨道 */
-.virtual-scrollbar__track--vertical {
-  top: 0;
-  right: 0;
-  bottom: 0;
-  width: var(--bar-size);
-}
-
-.virtual-scrollbar__track--vertical::before {
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-}
-
-/* 水平滚动条轨道 */
-.virtual-scrollbar__track--horizontal {
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: var(--bar-size);
-}
-
-.virtual-scrollbar__track--horizontal::before {
-  left: 0;
-  right: 0;
-  top: 0;
-  bottom: 0;
-}
-
-/* 滚动条滑块 */
-.virtual-scrollbar__thumb {
-  position: absolute;
-  background: var(--thumb-color);
-  border-radius: calc(var(--bar-size) / 2);
-  cursor: pointer;
-  transition: background 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  opacity: 0.5;
-  outline: none;
-}
-
-.virtual-scrollbar__thumb:hover {
-  opacity: 0.8;
-  background: var(--thumb-hover-color);
-}
-
-.virtual-scrollbar__thumb:active,
-.virtual-scrollbar__thumb:focus {
-  opacity: 1;
-  background: var(--thumb-active-color);
-}
-
-/* 垂直滚动条滑块定位 */
-.virtual-scrollbar__track--vertical .virtual-scrollbar__thumb {
-  width: 100%;
-  left: 0;
-}
-
-/* 水平滚动条滑块定位 */
-.virtual-scrollbar__track--horizontal .virtual-scrollbar__thumb {
-  height: 100%;
-  top: 0;
-}
-
-/* 激活状态 */
-.virtual-scrollbar__track--active {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-/* 触摸设备优化 */
-@media (hover: none) and (pointer: coarse) {
-  .virtual-scrollbar__thumb {
-    opacity: 0.7;
-  }
-
-  .virtual-scrollbar__track--active {
-    opacity: 0.8;
-  }
-}
-
-/* 高对比度模式支持 */
-@media (prefers-contrast: high) {
-  .virtual-scrollbar__track {
-    background: rgba(0, 0, 0, 0.3);
-  }
-
-  .virtual-scrollbar__thumb {
-    background: #000;
-    opacity: 0.8;
-  }
-}
-
-/* 减少动画偏好 */
-@media (prefers-reduced-motion: reduce) {
-  .virtual-scrollbar__track,
-  .virtual-scrollbar__thumb {
-    transition: none;
-  }
-}
-</style>

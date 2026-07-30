@@ -40,10 +40,10 @@ export type PickerColumn = PickerNode[];
 // 每一列的值都允许暂时为空，便于在归一化和级联回填过程中逐步补全。
 export type PickerSelectionState = Array<PickerPrimitive | undefined>;
 
-// Scrollbar 组件暴露给 Picker 的最小控制面，只保留滚动定位和读取原生滚动容器能力。
+// Scrollbar 组件暴露给 Picker 的最小控制面，只保留滚动定位和读取当前滚动位置能力。
 export interface PickerScrollbarExposed {
   scrollTo: (options: { top?: number; left?: number; behavior?: ScrollBehavior }) => void;
-  getScrollElement: () => HTMLElement | null | undefined;
+  getScrollTo: () => { scrollTop: number; scrollLeft: number } | undefined;
 }
 
 // 单列的交互状态目前只记录滚动条拖拽，用于暂停自动吸附。
