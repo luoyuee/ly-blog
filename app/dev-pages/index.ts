@@ -108,5 +108,83 @@ export const devPages = [
         order: 7
       }
     }
+  },
+  {
+    name: "dev-time-picker",
+    path: "/test/time-picker",
+    file: fileURLToPath(new URL("./time-picker.vue", import.meta.url)),
+    meta: {
+      layout: "test",
+      devPage: {
+        label: "TimePicker",
+        icon: "lucide:clock",
+        order: 8
+      }
+    }
+  },
+  {
+    name: "dev-transfer",
+    path: "/test/transfer",
+    file: fileURLToPath(new URL("./transfer.vue", import.meta.url)),
+    meta: {
+      layout: "test",
+      devPage: {
+        label: "Transfer",
+        icon: "lucide:arrow-left-right",
+        order: 9
+      }
+    }
+  },
+  {
+    name: "dev-picker",
+    path: "/test/picker",
+    file: fileURLToPath(new URL("./picker.vue", import.meta.url)),
+    meta: {
+      layout: "test",
+      devPage: {
+        label: "Picker",
+        icon: "lucide:list-ordered",
+        order: 10
+      }
+    }
+  },
+  {
+    name: "dev-date-picker",
+    path: "/test/date-picker",
+    file: fileURLToPath(new URL("./date-picker.vue", import.meta.url)),
+    meta: {
+      layout: "test",
+      devPage: {
+        label: "DatePicker",
+        icon: "lucide:calendar",
+        order: 11
+      }
+    }
+  },
+  {
+    name: "dev-color-picker",
+    path: "/test/color-picker",
+    file: fileURLToPath(new URL("./color-picker.vue", import.meta.url)),
+    meta: {
+      layout: "test",
+      devPage: {
+        label: "ColorPicker",
+        icon: "lucide:palette",
+        order: 12
+      }
+    }
+  },
+  {
+    name: "dev-cascader",
+    path: "/test/cascader",
+    file: fileURLToPath(new URL("./cascader.vue", import.meta.url)),
+    meta: {
+      layout: "test",
+      devPage: {
+        label: "Cascader",
+        icon: "lucide:list-tree",
+        order: 13
+      }
+    }
   }
 ];
