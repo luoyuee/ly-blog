@@ -21,6 +21,8 @@ export const LyEditorActivityMenuEnum = {
   WorkManager: "work-manager",
   /** API Key 管理 */
   ApiKeyManager: "api-key-manager",
+  /** 白板管理 */
+  WhiteboardManager: "whiteboard-manager",
   /** 仪表盘面板 */
   DashboardPanel: "dashboard-panel",
   /** 定时任务面板 */
@@ -30,7 +32,8 @@ export const LyEditorActivityMenuEnum = {
 } as const;
 
 /** 编辑器活动菜单类型 */
-export type LyEditorActivityMenu = (typeof LyEditorActivityMenuEnum)[keyof typeof LyEditorActivityMenuEnum];
+export type LyEditorActivityMenu =
+  (typeof LyEditorActivityMenuEnum)[keyof typeof LyEditorActivityMenuEnum];
 
 /**
  * 编辑器标签面板枚举
@@ -53,6 +56,8 @@ export const LyEditorTabPanelEnum = {
   NavigationHistoryPanel: "navigation-history-panel",
   /** API Key 面板 */
   ApiKeyPanel: "api-key-panel",
+  /** 白板面板 */
+  WhiteboardPanel: "whiteboard-panel",
   /** 用户面板 */
   UserPanel: "user-panel",
   /** 仪表盘面板 */

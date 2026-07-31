@@ -45,7 +45,8 @@ const emit = defineEmits<{
   zoomOut: [];
   resetZoom: [];
   fit: [];
-  open: [];
+  import: [];
+  export: [];
   save: [];
 }>();
 
@@ -140,24 +141,88 @@ const onPenWidthInput = (event: Event): void => {
     </div>
 
     <div class="whiteboard-toolbar__actions">
-      <button class="whiteboard-toolbar__icon-button" type="button" title="撤销 (Ctrl+Z)" aria-label="撤销" :disabled="!canUndo" @click="emit('undo')">
+      <button
+        class="whiteboard-toolbar__icon-button"
+        type="button"
+        title="撤销 (Ctrl+Z)"
+        aria-label="撤销"
+        :disabled="!canUndo"
+        @click="emit('undo')"
+      >
         <UIcon name="lucide:undo-2" class="size-5" />
       </button>
-      <button class="whiteboard-toolbar__icon-button" type="button" title="重做 (Ctrl+Shift+Z)" aria-label="重做" :disabled="!canRedo" @click="emit('redo')">
+      <button
+        class="whiteboard-toolbar__icon-button"
+        type="button"
+        title="重做 (Ctrl+Shift+Z)"
+        aria-label="重做"
+        :disabled="!canRedo"
+        @click="emit('redo')"
+      >
         <UIcon name="lucide:redo-2" class="size-5" />
       </button>
       <div class="whiteboard-toolbar__zoom">
-        <button class="whiteboard-toolbar__zoom-button" type="button" title="缩小" aria-label="缩小" @click="emit('zoomOut')"><UIcon name="lucide:zoom-out" class="size-4" /></button>
-        <button class="whiteboard-toolbar__zoom-label" type="button" title="重置为 100%" aria-label="重置缩放" @click="emit('resetZoom')">{{ zoomLabel }}</button>
-        <button class="whiteboard-toolbar__zoom-button" type="button" title="放大" aria-label="放大" @click="emit('zoomIn')"><UIcon name="lucide:zoom-in" class="size-4" /></button>
-        <button class="whiteboard-toolbar__zoom-button" type="button" title="适应内容" aria-label="适应内容" @click="emit('fit')"><UIcon name="lucide:scan" class="size-4" /></button>
+        <button
+          class="whiteboard-toolbar__zoom-button"
+          type="button"
+          title="缩小"
+          aria-label="缩小"
+          @click="emit('zoomOut')"
+          ><UIcon name="lucide:zoom-out" class="size-4"
+        /></button>
+        <button
+          class="whiteboard-toolbar__zoom-label"
+          type="button"
+          title="重置为 100%"
+          aria-label="重置缩放"
+          @click="emit('resetZoom')"
+          >{{ zoomLabel }}</button
+        >
+        <button
+          class="whiteboard-toolbar__zoom-button"
+          type="button"
+          title="放大"
+          aria-label="放大"
+          @click="emit('zoomIn')"
+          ><UIcon name="lucide:zoom-in" class="size-4"
+        /></button>
+        <button
+          class="whiteboard-toolbar__zoom-button"
+          type="button"
+          title="适应内容"
+          aria-label="适应内容"
+          @click="emit('fit')"
+          ><UIcon name="lucide:scan" class="size-4"
+        /></button>
       </div>
-      <button class="whiteboard-toolbar__ghost" type="button" title="打开白板 JSON 文件" aria-label="打开白板" @click="emit('open')">
-        <UIcon name="lucide:folder-open" class="size-4" />
-        打开
+      <button
+        class="whiteboard-toolbar__ghost"
+        type="button"
+        title="导入白板 JSON 文件"
+        aria-label="导入白板"
+        @click="emit('import')"
+      >
+        <UIcon name="lucide:upload" class="size-4" />
+        导入
       </button>
-      <button class="whiteboard-toolbar__primary" type="button" title="保存白板 JSON 文件" aria-label="保存白板" @click="emit('save')">
+      <button
+        class="whiteboard-toolbar__ghost"
+        type="button"
+        title="导出白板 JSON 文件"
+        aria-label="导出白板"
+        @click="emit('export')"
+      >
         <UIcon name="lucide:download" class="size-4" />
+        导出
+      </button>
+      <button
+        class="whiteboard-toolbar__primary"
+        type="button"
+        title="保存白板到服务器"
+        aria-label="保存白板"
+        @click="emit('save')"
+      >
+        <UIcon name="lucide:save" class="size-4" />
         保存
       </button>
     </div>

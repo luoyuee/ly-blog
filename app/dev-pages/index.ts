@@ -195,7 +195,7 @@ export const devPages = [
       layout: "test",
       devPage: {
         label: "Whiteboard",
-        icon: "lucide:presentation",
+        icon: "lucide:pencil-sparkles",
         order: 14
       }
     }

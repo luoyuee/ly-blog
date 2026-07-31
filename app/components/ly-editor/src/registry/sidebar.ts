@@ -9,7 +9,8 @@ import {
   HitokotoManager,
   ImageManager,
   NavigationWebsiteManager,
-  WorkManager
+  WorkManager,
+  WhiteboardManager
 } from "@ly-editor/src/modules";
 
 /**
@@ -46,6 +47,9 @@ export const lyEditorSidebarRegistry = {
   },
   [LyEditorActivityMenuEnum.ApiKeyManager]: {
     component: ApiKeyManager
+  },
+  [LyEditorActivityMenuEnum.WhiteboardManager]: {
+    component: WhiteboardManager
   }
 } satisfies Record<string, LyEditorSidebarRegistryItem>;
 

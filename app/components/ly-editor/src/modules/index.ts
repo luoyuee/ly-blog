@@ -10,4 +10,5 @@ export * from "./notice";
 export * from "./cron";
 export * from "./settings";
 export * from "./user";
+export * from "./whiteboard";
 export * from "./work";

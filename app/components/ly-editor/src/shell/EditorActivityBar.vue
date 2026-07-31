@@ -55,6 +55,11 @@ const activityMenu = ref<ActivityMenuItem[]>([
     label: "API 密钥管理",
     icon: "lucide:key",
     panel: LyEditorTabPanelEnum.ApiKeyPanel
+  },
+  {
+    key: LyEditorActivityMenuEnum.WhiteboardManager,
+    label: "白板管理",
+    icon: "lucide:pencil-sparkles"
   }
 ]);
 

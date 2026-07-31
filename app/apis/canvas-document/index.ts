@@ -3,7 +3,8 @@ import type {
   GetCanvasDocumentPaginatedResponse,
   CreateCanvasDocumentRequest,
   UpdateCanvasDocumentRequest,
-  CanvasDocumentDetail
+  CanvasDocumentDetail,
+  CanvasDocumentListItem
 } from "./models";
 import { serviceAxios } from "@/utils/request";
 
@@ -141,6 +142,19 @@ export async function deleteWhiteboard(id: number): Promise<void> {
       url: "/admin/canvas-document/whiteboard/" + id,
       method: "delete"
     });
+  } catch (error) {
+    return Promise.reject(error);
+  }
+}
+
+/** 获取全部白板列表（不分页，不含核心数据 data） */
+export async function getAllWhiteboards(): Promise<CanvasDocumentListItem[]> {
+  try {
+    const response = await serviceAxios({
+      url: "/admin/canvas-document/whiteboard/all",
+      method: "get"
+    });
+    return response.data;
   } catch (error) {
     return Promise.reject(error);
   }

@@ -21,6 +21,7 @@ import {
   SearchEngineFormModal,
   SendEmailModal,
   ShortcutFormModal,
+  WhiteboardFormModal,
   WorkFormModal
 } from "@ly-editor/src/modules";
 
@@ -48,6 +49,7 @@ export const lyEditorModalRegistry = {
   "note-folder-form": NoteFolderFormModal,
   "note-publish": NotePublishModal,
   "note-save": NoteSaveModal,
+  "whiteboard-form": WhiteboardFormModal,
   "work-form": WorkFormModal,
   "send-email": SendEmailModal
 } satisfies Partial<Record<LyEditorModalKey, Component>>;

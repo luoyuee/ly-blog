@@ -11,7 +11,8 @@ import {
   SearchHistoryPanel,
   NavigationWebsitePanel,
   SettingPanel,
-  UserPanel
+  UserPanel,
+  WhiteboardPanel
 } from "@ly-editor/src/modules";
 
 /**
@@ -60,6 +61,10 @@ export const lyEditorPanelRegistry = {
   },
   [LyEditorTabPanelEnum.UserPanel]: {
     component: UserPanel,
+    keepAlive: true
+  },
+  [LyEditorTabPanelEnum.WhiteboardPanel]: {
+    component: WhiteboardPanel,
     keepAlive: true
   }
 } satisfies Record<string, LyEditorPanelRegistryItem>;

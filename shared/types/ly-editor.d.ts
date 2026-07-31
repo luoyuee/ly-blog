@@ -7,6 +7,23 @@ import type { AttachmentFolder } from "./attachment";
 import type { WorkItem } from "./config";
 import type { ApiKeyItem, CreatedApiKey } from "./api-key";
 
+/**
+ * 白板列表项（不含核心数据 data）
+ * @description 与 CanvasDocumentListItem 结构保持一致，用于标签页数据传递
+ */
+export interface WhiteboardItem {
+  id: number;
+  created_at: string | null;
+  created_by: number | null;
+  updated_at: string | null;
+  updated_by: number | null;
+  type: string;
+  title: string;
+  description: string | null;
+  cover: string | null;
+  status: number;
+}
+
 export interface NoteData {
   id?: number;
   folder_id?: number;
@@ -21,6 +38,9 @@ export interface ImagePreviewData {
 export type ImageManagerData = ImageFolder;
 
 export type AttachmentManagerData = AttachmentFolder;
+
+/** 白板标签页数据，使用列表项结构 */
+export type WhiteboardPanelData = WhiteboardItem;
 
 export type EditorTabItem = {
   key: string;
@@ -70,6 +90,10 @@ export type EditorTabItem = {
     }
   | {
       type: "api-key-panel";
+    }
+  | {
+      type: "whiteboard-panel";
+      data: WhiteboardPanelData;
     }
 );
 
@@ -150,7 +174,8 @@ export type LyEditorModalKey =
   | "hitokoto-type-form"
   | "hitokoto-type-details"
   | "api-key-form"
-  | "api-key-created";
+  | "api-key-created"
+  | "whiteboard-form";
 
 /**
  * LY Editor 弹窗参数映射。
@@ -226,8 +251,7 @@ export type ApiKeyFormModalPayload = {
  * API Key 表单弹窗结果。
  */
 export type ApiKeyFormModalResult =
-  | { action: "submitted"; data?: CreatedApiKey }
-  | { action: "cancelled" };
+  { action: "submitted"; data?: CreatedApiKey } | { action: "cancelled" };
 
 /**
  * Secret API Key 明文展示弹窗参数。
@@ -240,6 +264,19 @@ export type ApiKeyCreatedModalPayload = {
  * Secret API Key 明文展示弹窗结果。
  */
 export type ApiKeyCreatedModalResult = { action: "closed" } | { action: "cancelled" };
+
+/**
+ * 白板表单弹窗参数。
+ */
+export type WhiteboardFormModalPayload = {
+  mode: "create" | "update";
+  record?: WhiteboardItem;
+};
+
+/**
+ * 白板表单弹窗结果。
+ */
+export type WhiteboardFormModalResult = { action: "submitted" } | { action: "cancelled" };
 
 export type LyEditorModalPayloadMap = {
   "note-folder-form": { form?: NoteFolderForm };
@@ -262,6 +299,7 @@ export type LyEditorModalPayloadMap = {
   "hitokoto-type-details": HitokotoTypeDetailsModalPayload;
   "api-key-form": ApiKeyFormModalPayload;
   "api-key-created": ApiKeyCreatedModalPayload;
+  "whiteboard-form": WhiteboardFormModalPayload;
 };
 
 /**
@@ -288,6 +326,7 @@ export type LyEditorModalResultMap = {
   "hitokoto-type-details": HitokotoTypeDetailsModalResult;
   "api-key-form": ApiKeyFormModalResult;
   "api-key-created": ApiKeyCreatedModalResult;
+  "whiteboard-form": WhiteboardFormModalResult;
 };
 
 /**
