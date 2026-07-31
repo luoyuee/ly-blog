@@ -73,7 +73,7 @@ export const devPages = [
   {
     name: "dev-kanban-dndkit",
     path: "/test/kanban-dndkit",
-    file: fileURLToPath(new URL("./kanban/kanban-dndkit.vue", import.meta.url)),
+    file: fileURLToPath(new URL("./kanban-dndkit.vue", import.meta.url)),
     meta: {
       layout: "test",
       devPage: {
@@ -190,7 +190,7 @@ export const devPages = [
   {
     name: "dev-whiteboard",
     path: "/test/whiteboard",
-    file: fileURLToPath(new URL("./whiteboard/whiteboard.vue", import.meta.url)),
+    file: fileURLToPath(new URL("./whiteboard.vue", import.meta.url)),
     meta: {
       layout: "test",
       devPage: {

@@ -1,28 +1,42 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
+import type { PropType } from "vue";
 import { useSortable } from "@dnd-kit/vue/sortable";
+import type { KanbanItem } from "./types";
 
 /**
- * 看板卡片：拖拽逻辑照搬 demo/SortableItem.vue，样式恢复项目原暗色风格。
+ * 看板卡片
  * - feedback: 'clone' 拖拽生成克隆反馈，源卡保持原位不塌陷
- * - data 透传 group，供 droppable 跨列判定
- * - type/accept='item' 与列隔离
- * 样式不参照 demo：无 handle（整卡可拖）、暗色背景、isDragging class 标记拖拽态。
+ * - type/accept='item' 与列拖拽隔离
+ * - 透传默认插槽，供外部自定义卡片内容渲染
  */
 const props = defineProps({
+  /** 卡片唯一 id（跨列全局唯一） */
   id: {
     type: String,
     required: true
   },
+  /** 所属列 id */
   column: {
     type: String,
     required: true
   },
+  /** 卡片在当前列中的索引 */
   index: {
     type: Number,
     required: true
+  },
+  /** 卡片透传数据，用于插槽作用域渲染 */
+  item: {
+    type: [Object, String, Number] as PropType<KanbanItem>,
+    default: null
   }
 });
+
+defineSlots<{
+  /** 卡片内容插槽，作用域暴露 id/column/index/item */
+  default(props: { id: string; column: string; index: number; item: KanbanItem }): void;
+}>();
 
 const element = ref<HTMLElement | null>(null);
 
@@ -33,14 +47,15 @@ const { isDragging } = useSortable({
   element,
   accept: "item",
   type: "item",
-  // feedback: "clone",
   data: computed(() => ({ group: props.column }))
 });
 </script>
 
 <template>
   <article ref="element" class="kanban-card" :class="{ 'kanban-card--dragging': isDragging }">
-    {{ id }}
+    <slot :id="id" :column="column" :index="index" :item="item">
+      {{ id }}
+    </slot>
   </article>
 </template>
 
@@ -51,9 +66,9 @@ const { isDragging } = useSortable({
   padding: 10px 12px;
   cursor: grab;
   color: var(--text-color-5, #e5e5e5);
-  /* 显式继承父级系统字体，避免卡片自身在拖拽时触发 web 字体回退闪烁 */
+  /* 显式继承父级系统字体，避免拖拽时触发 web 字体回退闪烁 */
   font-family: inherit;
-  /* 拖拽时禁止选中文字、禁止触摸滚动，避免与拖拽冲突 */
+  /* 禁止选中文字、禁止触摸滚动，避免与拖拽冲突 */
   user-select: none;
   touch-action: none;
   transition:
