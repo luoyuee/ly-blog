@@ -23,6 +23,8 @@ export const LyEditorActivityMenuEnum = {
   ApiKeyManager: "api-key-manager",
   /** 白板管理 */
   WhiteboardManager: "whiteboard-manager",
+  /** 看板管理 */
+  KanbanManager: "kanban-manager",
   /** 仪表盘面板 */
   DashboardPanel: "dashboard-panel",
   /** 定时任务面板 */
@@ -58,6 +60,8 @@ export const LyEditorTabPanelEnum = {
   ApiKeyPanel: "api-key-panel",
   /** 白板面板 */
   WhiteboardPanel: "whiteboard-panel",
+  /** 看板面板 */
+  KanbanPanel: "kanban-panel",
   /** 用户面板 */
   UserPanel: "user-panel",
   /** 仪表盘面板 */

@@ -4,6 +4,7 @@ export * from "./article";
 export * from "./dashboard";
 export * from "./hitokoto";
 export * from "./image";
+export * from "./kanban";
 export * from "./navigation";
 export * from "./note";
 export * from "./notice";

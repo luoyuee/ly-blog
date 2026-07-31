@@ -12,6 +12,7 @@ import {
   HitokotoTypeDetailsModal,
   HitokotoTypeFormModal,
   ImageFolderFormModal,
+  KanbanFormModal,
   NavigationWebsiteFormModal,
   NavigationWebsiteImportModal,
   NoticeManagerModal,
@@ -50,6 +51,7 @@ export const lyEditorModalRegistry = {
   "note-publish": NotePublishModal,
   "note-save": NoteSaveModal,
   "whiteboard-form": WhiteboardFormModal,
+  "kanban-form": KanbanFormModal,
   "work-form": WorkFormModal,
   "send-email": SendEmailModal
 } satisfies Partial<Record<LyEditorModalKey, Component>>;

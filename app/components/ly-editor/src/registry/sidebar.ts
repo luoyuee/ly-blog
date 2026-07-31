@@ -8,6 +8,7 @@ import {
   ArticleManager,
   HitokotoManager,
   ImageManager,
+  KanbanManager,
   NavigationWebsiteManager,
   WorkManager,
   WhiteboardManager
@@ -50,6 +51,9 @@ export const lyEditorSidebarRegistry = {
   },
   [LyEditorActivityMenuEnum.WhiteboardManager]: {
     component: WhiteboardManager
+  },
+  [LyEditorActivityMenuEnum.KanbanManager]: {
+    component: KanbanManager
   }
 } satisfies Record<string, LyEditorSidebarRegistryItem>;
 

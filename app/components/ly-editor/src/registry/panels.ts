@@ -8,6 +8,7 @@ import {
   DashboardPanel,
   HitokotoPanel,
   ImageFolderPanel,
+  KanbanPanel,
   SearchHistoryPanel,
   NavigationWebsitePanel,
   SettingPanel,
@@ -65,6 +66,10 @@ export const lyEditorPanelRegistry = {
   },
   [LyEditorTabPanelEnum.WhiteboardPanel]: {
     component: WhiteboardPanel,
+    keepAlive: true
+  },
+  [LyEditorTabPanelEnum.KanbanPanel]: {
+    component: KanbanPanel,
     keepAlive: true
   }
 } satisfies Record<string, LyEditorPanelRegistryItem>;

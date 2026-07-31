@@ -80,6 +80,19 @@ export async function deleteKanban(id: number): Promise<void> {
   }
 }
 
+/** 获取全部看板列表（不分页，不含核心数据 data） */
+export async function getAllKanbans(): Promise<CanvasDocumentListItem[]> {
+  try {
+    const response = await serviceAxios({
+      url: "/admin/canvas-document/kanban/all",
+      method: "get"
+    });
+    return response.data;
+  } catch (error) {
+    return Promise.reject(error);
+  }
+}
+
 /** 分页查询白板列表 */
 export async function getPaginatedWhiteboards(
   params: GetCanvasDocumentPaginatedRequest

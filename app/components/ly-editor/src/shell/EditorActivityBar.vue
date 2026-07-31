@@ -59,7 +59,12 @@ const activityMenu = ref<ActivityMenuItem[]>([
   {
     key: LyEditorActivityMenuEnum.WhiteboardManager,
     label: "白板管理",
-    icon: "lucide:pencil-sparkles"
+    icon: "lucide:square-pen"
+  },
+  {
+    key: LyEditorActivityMenuEnum.KanbanManager,
+    label: "看板管理",
+    icon: "lucide:square-kanban"
   }
 ]);
 

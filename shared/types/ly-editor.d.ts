@@ -8,10 +8,10 @@ import type { WorkItem } from "./config";
 import type { ApiKeyItem, CreatedApiKey } from "./api-key";
 
 /**
- * 白板列表项（不含核心数据 data）
+ * 画布文档列表项（不含核心数据 data）
  * @description 与 CanvasDocumentListItem 结构保持一致，用于标签页数据传递
  */
-export interface WhiteboardItem {
+export interface CanvasDocumentItem {
   id: number;
   created_at: string | null;
   created_by: number | null;
@@ -23,6 +23,12 @@ export interface WhiteboardItem {
   cover: string | null;
   status: number;
 }
+
+/** 白板列表项 */
+export type WhiteboardItem = CanvasDocumentItem;
+
+/** 看板列表项 */
+export type KanbanItem = CanvasDocumentItem;
 
 export interface NoteData {
   id?: number;
@@ -41,6 +47,9 @@ export type AttachmentManagerData = AttachmentFolder;
 
 /** 白板标签页数据，使用列表项结构 */
 export type WhiteboardPanelData = WhiteboardItem;
+
+/** 看板标签页数据，使用列表项结构 */
+export type KanbanPanelData = KanbanItem;
 
 export type EditorTabItem = {
   key: string;
@@ -94,6 +103,10 @@ export type EditorTabItem = {
   | {
       type: "whiteboard-panel";
       data: WhiteboardPanelData;
+    }
+  | {
+      type: "kanban-panel";
+      data: KanbanPanelData;
     }
 );
 
@@ -175,7 +188,8 @@ export type LyEditorModalKey =
   | "hitokoto-type-details"
   | "api-key-form"
   | "api-key-created"
-  | "whiteboard-form";
+  | "whiteboard-form"
+  | "kanban-form";
 
 /**
  * LY Editor 弹窗参数映射。
@@ -278,6 +292,19 @@ export type WhiteboardFormModalPayload = {
  */
 export type WhiteboardFormModalResult = { action: "submitted" } | { action: "cancelled" };
 
+/**
+ * 看板表单弹窗参数。
+ */
+export type KanbanFormModalPayload = {
+  mode: "create" | "update";
+  record?: KanbanItem;
+};
+
+/**
+ * 看板表单弹窗结果。
+ */
+export type KanbanFormModalResult = { action: "submitted" } | { action: "cancelled" };
+
 export type LyEditorModalPayloadMap = {
   "note-folder-form": { form?: NoteFolderForm };
   "note-save": { tab: EditorTabItem };
@@ -300,6 +327,7 @@ export type LyEditorModalPayloadMap = {
   "api-key-form": ApiKeyFormModalPayload;
   "api-key-created": ApiKeyCreatedModalPayload;
   "whiteboard-form": WhiteboardFormModalPayload;
+  "kanban-form": KanbanFormModalPayload;
 };
 
 /**
@@ -327,6 +355,7 @@ export type LyEditorModalResultMap = {
   "api-key-form": ApiKeyFormModalResult;
   "api-key-created": ApiKeyCreatedModalResult;
   "whiteboard-form": WhiteboardFormModalResult;
+  "kanban-form": KanbanFormModalResult;
 };
 
 /**
