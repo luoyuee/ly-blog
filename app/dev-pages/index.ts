@@ -186,5 +186,18 @@ export const devPages = [
         order: 13
       }
     }
+  },
+  {
+    name: "dev-whiteboard",
+    path: "/test/whiteboard",
+    file: fileURLToPath(new URL("./whiteboard/whiteboard.vue", import.meta.url)),
+    meta: {
+      layout: "test",
+      devPage: {
+        label: "Whiteboard",
+        icon: "lucide:presentation",
+        order: 14
+      }
+    }
   }
 ];

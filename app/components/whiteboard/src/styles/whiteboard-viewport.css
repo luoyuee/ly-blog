@@ -1,0 +1,63 @@
+.whiteboard-viewport {
+  position: relative;
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  background: var(--whiteboard-canvas);
+  touch-action: none;
+}
+
+.whiteboard-viewport--pan {
+  cursor: grab;
+}
+
+.whiteboard-viewport--note,
+.whiteboard-viewport--pen,
+.whiteboard-viewport--eraser,
+.whiteboard-viewport--connect {
+  cursor: crosshair;
+}
+
+.whiteboard-viewport__canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.whiteboard-viewport__world {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  transform-origin: 0 0;
+  will-change: transform;
+}
+
+.whiteboard-viewport__hint {
+  position: absolute;
+  left: var(--whiteboard-space-16);
+  bottom: var(--whiteboard-space-16);
+  margin: 0;
+  padding: 7px var(--whiteboard-space-12);
+  color: var(--whiteboard-text-hint);
+  border: 1px solid var(--whiteboard-hint-line);
+  border-radius: var(--whiteboard-radius-8);
+  background: var(--whiteboard-hint);
+  font-size: var(--whiteboard-font-caption);
+  line-height: 1.5;
+  pointer-events: none;
+}
+
+.whiteboard-viewport__hint b {
+  color: var(--whiteboard-text-strong);
+}
+
+@media (max-width: 700px) {
+  .whiteboard-viewport__hint {
+    display: none;
+  }
+}

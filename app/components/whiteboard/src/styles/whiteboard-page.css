@@ -1,0 +1,57 @@
+.whiteboard-page {
+  --whiteboard-toolbar-height: 52px;
+  --whiteboard-space-4: 4px;
+  --whiteboard-space-8: 8px;
+  --whiteboard-space-12: 12px;
+  --whiteboard-space-16: 16px;
+  --whiteboard-radius-8: 8px;
+  --whiteboard-radius-12: 12px;
+  --whiteboard-font-family:
+    system-ui, -apple-system, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+  --whiteboard-font-caption: 12px;
+  --whiteboard-font-body: 15px;
+  --whiteboard-font-note: 15px;
+  --whiteboard-bar: #1c1d22;
+  --whiteboard-bar-raised: #232429;
+  --whiteboard-bar-line: #33343b;
+  --whiteboard-bar-overlay: rgba(255, 255, 255, 0.04);
+  --whiteboard-control-hover: rgba(255, 255, 255, 0.08);
+  --whiteboard-text: #e8e9ee;
+  --whiteboard-text-muted: #9aa0ad;
+  --whiteboard-text-hint: #94a3b8;
+  --whiteboard-text-strong: #475569;
+  --whiteboard-ink: #1f2937;
+  --whiteboard-accent: #5b8cff;
+  --whiteboard-accent-soft: rgba(91, 140, 255, 0.16);
+  --whiteboard-accent-line: rgba(91, 140, 255, 0.35);
+  --whiteboard-focus: #93b4ff;
+  --whiteboard-canvas: #fff;
+  --whiteboard-grid: rgba(15, 23, 42, 0.08);
+  --whiteboard-connection: #94a3b8;
+  --whiteboard-panel-line: #e3e6ec;
+  --whiteboard-minimap: rgba(255, 255, 255, 0.92);
+  --whiteboard-hint: rgba(255, 255, 255, 0.8);
+  --whiteboard-hint-line: #eef0f4;
+  --whiteboard-note-control: rgba(15, 23, 42, 0.1);
+  --whiteboard-danger: #ef4444;
+  --whiteboard-shadow-note: 0 8px 20px rgba(15, 23, 42, 0.14), 0 2px 4px rgba(15, 23, 42, 0.08);
+  --whiteboard-shadow-panel: 0 8px 26px rgba(15, 23, 42, 0.14);
+  --whiteboard-shadow-accent: 0 2px 10px rgba(91, 140, 255, 0.35);
+  --whiteboard-shadow-handle: 0 1px 3px rgba(0, 0, 0, 0.25);
+  --whiteboard-transition: 150ms ease;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  background: var(--whiteboard-canvas);
+  font-family: var(--whiteboard-font-family);
+  user-select: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .whiteboard-page {
+    --whiteboard-transition: 0ms;
+  }
+}

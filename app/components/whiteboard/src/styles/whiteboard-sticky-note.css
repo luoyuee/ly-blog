@@ -1,0 +1,66 @@
+.whiteboard-note {
+  position: absolute;
+  border-radius: var(--whiteboard-radius-12);
+  box-shadow: var(--whiteboard-shadow-note);
+}
+
+.whiteboard-note--selected {
+  outline: 2px solid var(--whiteboard-accent);
+  outline-offset: 3px;
+}
+
+.whiteboard-note__text {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  padding: var(--whiteboard-space-16);
+  overflow: hidden;
+  color: var(--whiteboard-ink);
+  border: 0;
+  outline: 0;
+  resize: none;
+  background: transparent;
+  font: 600 var(--whiteboard-font-note)/1.45 var(--whiteboard-font-family);
+  pointer-events: none;
+}
+
+.whiteboard-note--editing .whiteboard-note__text {
+  pointer-events: auto;
+}
+
+.whiteboard-note__delete,
+.whiteboard-note__resize {
+  position: absolute;
+  display: grid;
+  border: 0;
+  cursor: pointer;
+  place-items: center;
+}
+
+.whiteboard-note__delete {
+  top: var(--whiteboard-space-8);
+  right: var(--whiteboard-space-8);
+  width: 22px;
+  height: 22px;
+  color: var(--whiteboard-ink);
+  border-radius: var(--whiteboard-radius-8);
+  background: var(--whiteboard-note-control);
+}
+
+.whiteboard-note__delete:hover {
+  color: var(--whiteboard-canvas);
+  background: var(--whiteboard-danger);
+}
+
+.whiteboard-note__resize {
+  right: -7px;
+  bottom: -7px;
+  width: 15px;
+  height: 15px;
+  border: 2px solid var(--whiteboard-canvas);
+  border-radius: 50%;
+  background: var(--whiteboard-accent);
+  box-shadow: var(--whiteboard-shadow-handle);
+  cursor: nwse-resize;
+}
