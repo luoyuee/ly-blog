@@ -194,8 +194,8 @@ model Note {
   versions NoteVersion[]
   Article  Article[]
 
-  @@index([folder_id, status])
   @@unique([source_type, source_id]) // 保证同一外部来源文章只对应一篇笔记
+  @@index([folder_id, status])
   @@map("note")
 }
 
@@ -500,4 +500,22 @@ model NavigationShortcut {
   status      Int       @default(1) // 0:已删除，1:正常状态，2:禁用状态
 
   @@map("navigation_shortcut")
+}
+
+model CanvasDocument {
+  id          Int       @id @default(autoincrement())
+  created_at  DateTime? @default(now())
+  created_by  Int?
+  updated_at  DateTime?
+  updated_by  Int?
+  type        String    @db.VarChar(32) // 板块类型：kanban | whiteboard 等，由前端组件按类型自治 data 结构
+  title       String    @db.VarChar(255)
+  description String?   @db.VarChar(1024)
+  data        Json // 核心业务数据，结构由前端组件按 type 自行定义
+  cover       String?   @db.VarChar(512) // 封面缩略图，便于列表展示
+  status      Int       @default(1) // 0:已删除，1:正常状态，2:锁定状态
+
+  @@index([type, status])
+  @@index([status, created_at])
+  @@map("canvas_document")
 }
