@@ -199,5 +199,31 @@ export const devPages = [
         order: 14
       }
     }
+  },
+  {
+    name: "dev-flowchart",
+    path: "/test/flowchart",
+    file: fileURLToPath(new URL("./flowchart.vue", import.meta.url)),
+    meta: {
+      layout: "test",
+      devPage: {
+        label: "Flowchart",
+        icon: "lucide:workflow",
+        order: 15
+      }
+    }
+  },
+  {
+    name: "dev-mindmap",
+    path: "/test/mindmap",
+    file: fileURLToPath(new URL("./mindmap.vue", import.meta.url)),
+    meta: {
+      layout: "test",
+      devPage: {
+        label: "Mindmap",
+        icon: "lucide:brain",
+        order: 16
+      }
+    }
   }
 ];

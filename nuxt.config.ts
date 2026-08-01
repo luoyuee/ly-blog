@@ -43,7 +43,10 @@ export default defineNuxtConfig({
         "@nuxt/ui > prosemirror-transform",
         "@nuxt/ui > prosemirror-model",
         "@nuxt/ui > prosemirror-view",
-        "@nuxt/ui > prosemirror-gapcursor"
+        "@nuxt/ui > prosemirror-gapcursor",
+        // @antv/x6 v3 的 ESM 入口包含目录式 import（如 es/shape），
+        // Node 原生 ESM 无法解析，交给 Vite 预构建转换为兼容格式
+        "@antv/x6"
       ],
       // 排除预构建，让其作为独立 chunk
       // monaco-editor 自身已是 ESM 且含大量动态 import / worker，
