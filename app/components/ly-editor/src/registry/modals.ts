@@ -7,12 +7,14 @@ import {
   AttachmentFolderFormModal,
   CategoryDetailsModal,
   CategoryFormModal,
+  FlowchartFormModal,
   HitokotoFormModal,
   HitokotoImportModal,
   HitokotoTypeDetailsModal,
   HitokotoTypeFormModal,
   ImageFolderFormModal,
   KanbanFormModal,
+  MindmapFormModal,
   NavigationWebsiteFormModal,
   NavigationWebsiteImportModal,
   NoticeManagerModal,
@@ -52,6 +54,8 @@ export const lyEditorModalRegistry = {
   "note-save": NoteSaveModal,
   "whiteboard-form": WhiteboardFormModal,
   "kanban-form": KanbanFormModal,
+  "flowchart-form": FlowchartFormModal,
+  "mindmap-form": MindmapFormModal,
   "work-form": WorkFormModal,
   "send-email": SendEmailModal
 } satisfies Partial<Record<LyEditorModalKey, Component>>;

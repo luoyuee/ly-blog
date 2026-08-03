@@ -1,13 +1,19 @@
 import type { Prisma } from "@@/prisma/generated/client";
 import { getBadResponse, getOKResponse } from "@@/server/utils/response";
 import { prisma } from "@@/server/db";
-import { CanvasDocumentTypeEnum } from "#shared/enums";
+import {
+  CANVAS_DOCUMENT_TYPES,
+  CanvasDocumentTypeEnum,
+  CanvasDocumentTypeLabelMap,
+  type CanvasDocumentType
+} from "#shared/enums";
 import { isNil } from "#shared/utils/typed";
+import { getRouterParam } from "h3";
 import { z } from "zod";
 
 /**
- * 白板列表查询
- * @description 分页返回白板列表；列表不返回核心数据(data)字段，避免响应体过大
+ * 画布文档分页列表查询
+ * @description 按路径 type 过滤分页返回列表；列表不返回核心数据(data)字段，避免响应体过大
  */
 const schema = z.object({
   page: z.coerce.number().int(),
@@ -17,12 +23,19 @@ const schema = z.object({
 });
 
 export default defineEventHandler(async (event) => {
+  // 校验路径参数 type 是否为合法的画布文档类型
+  const { data: type, error: typeError } = z
+    .enum(CANVAS_DOCUMENT_TYPES as [CanvasDocumentType, ...CanvasDocumentType[]])
+    .safeParse(getRouterParam(event, "type"));
+
+  if (typeError) return getBadResponse(event, "文档类型不合法");
+
   const { error, data: params } = schema.safeParse(getQuery(event));
 
   if (error) return getBadResponse(event, error.message);
 
   const where: Prisma.CanvasDocumentWhereInput = {
-    type: CanvasDocumentTypeEnum.WHITEBOARD,
+    type: type as CanvasDocumentType,
     status: { not: 0 }
   };
 

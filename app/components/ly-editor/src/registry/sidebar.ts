@@ -6,9 +6,11 @@ import {
   AttachmentManager,
   NoteManager,
   ArticleManager,
+  FlowchartManager,
   HitokotoManager,
   ImageManager,
   KanbanManager,
+  MindmapManager,
   NavigationWebsiteManager,
   WorkManager,
   WhiteboardManager
@@ -54,6 +56,12 @@ export const lyEditorSidebarRegistry = {
   },
   [LyEditorActivityMenuEnum.KanbanManager]: {
     component: KanbanManager
+  },
+  [LyEditorActivityMenuEnum.FlowchartManager]: {
+    component: FlowchartManager
+  },
+  [LyEditorActivityMenuEnum.MindmapManager]: {
+    component: MindmapManager
   }
 } satisfies Record<string, LyEditorSidebarRegistryItem>;
 

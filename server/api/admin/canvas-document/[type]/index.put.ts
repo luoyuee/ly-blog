@@ -4,8 +4,8 @@ import { readBody } from "h3";
 import { z } from "zod";
 
 /**
- * 看板更新
- * @description 更新看板元信息或核心数据；type 不可变更
+ * 画布文档更新
+ * @description 更新画布文档元信息或核心数据；type 不可变更
  */
 const schema = z.object({
   id: z.number().int(),

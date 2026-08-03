@@ -9,8 +9,8 @@ import type {
 import { serviceAxios } from "@/utils/request";
 
 /**
- * 画布文档（看板/白板）接口封装
- * @description 看板与白板共用同一套接口签名，仅路径不同；type 由服务端按路由固定，前端无需传递
+ * 画布文档（看板/白板/流程图/思维导图）接口封装
+ * @description 各类型共用同一套接口签名，仅路径不同；type 由服务端按路由固定，前端无需传递
  */
 
 /** 分页查询看板列表 */
@@ -165,6 +165,166 @@ export async function getAllWhiteboards(): Promise<CanvasDocumentListItem[]> {
   try {
     const response = await serviceAxios({
       url: "/admin/canvas-document/whiteboard/all",
+      method: "get"
+    });
+    return response.data;
+  } catch (error) {
+    return Promise.reject(error);
+  }
+}
+
+/** 分页查询流程图列表 */
+export async function getPaginatedFlowcharts(
+  params: GetCanvasDocumentPaginatedRequest
+): Promise<GetCanvasDocumentPaginatedResponse> {
+  try {
+    const response = await serviceAxios({
+      url: "/admin/canvas-document/flowchart",
+      method: "get",
+      params
+    });
+    return response.data;
+  } catch (error) {
+    return Promise.reject(error);
+  }
+}
+
+/** 获取流程图详情（含核心数据 data） */
+export async function getFlowchartDetail(id: number): Promise<CanvasDocumentDetail> {
+  try {
+    const response = await serviceAxios({
+      url: "/admin/canvas-document/flowchart/" + id,
+      method: "get"
+    });
+    return response.data;
+  } catch (error) {
+    return Promise.reject(error);
+  }
+}
+
+/** 创建流程图 */
+export async function createFlowchart(data: CreateCanvasDocumentRequest): Promise<void> {
+  try {
+    await serviceAxios({
+      url: "/admin/canvas-document/flowchart",
+      method: "post",
+      data
+    });
+  } catch (error) {
+    return Promise.reject(error);
+  }
+}
+
+/** 更新流程图 */
+export async function updateFlowchart(data: UpdateCanvasDocumentRequest): Promise<void> {
+  try {
+    await serviceAxios({
+      url: "/admin/canvas-document/flowchart",
+      method: "put",
+      data
+    });
+  } catch (error) {
+    return Promise.reject(error);
+  }
+}
+
+/** 删除流程图（软删除） */
+export async function deleteFlowchart(id: number): Promise<void> {
+  try {
+    await serviceAxios({
+      url: "/admin/canvas-document/flowchart/" + id,
+      method: "delete"
+    });
+  } catch (error) {
+    return Promise.reject(error);
+  }
+}
+
+/** 获取全部流程图列表（不分页，不含核心数据 data） */
+export async function getAllFlowcharts(): Promise<CanvasDocumentListItem[]> {
+  try {
+    const response = await serviceAxios({
+      url: "/admin/canvas-document/flowchart/all",
+      method: "get"
+    });
+    return response.data;
+  } catch (error) {
+    return Promise.reject(error);
+  }
+}
+
+/** 分页查询思维导图列表 */
+export async function getPaginatedMindmaps(
+  params: GetCanvasDocumentPaginatedRequest
+): Promise<GetCanvasDocumentPaginatedResponse> {
+  try {
+    const response = await serviceAxios({
+      url: "/admin/canvas-document/mindmap",
+      method: "get",
+      params
+    });
+    return response.data;
+  } catch (error) {
+    return Promise.reject(error);
+  }
+}
+
+/** 获取思维导图详情（含核心数据 data） */
+export async function getMindmapDetail(id: number): Promise<CanvasDocumentDetail> {
+  try {
+    const response = await serviceAxios({
+      url: "/admin/canvas-document/mindmap/" + id,
+      method: "get"
+    });
+    return response.data;
+  } catch (error) {
+    return Promise.reject(error);
+  }
+}
+
+/** 创建思维导图 */
+export async function createMindmap(data: CreateCanvasDocumentRequest): Promise<void> {
+  try {
+    await serviceAxios({
+      url: "/admin/canvas-document/mindmap",
+      method: "post",
+      data
+    });
+  } catch (error) {
+    return Promise.reject(error);
+  }
+}
+
+/** 更新思维导图 */
+export async function updateMindmap(data: UpdateCanvasDocumentRequest): Promise<void> {
+  try {
+    await serviceAxios({
+      url: "/admin/canvas-document/mindmap",
+      method: "put",
+      data
+    });
+  } catch (error) {
+    return Promise.reject(error);
+  }
+}
+
+/** 删除思维导图（软删除） */
+export async function deleteMindmap(id: number): Promise<void> {
+  try {
+    await serviceAxios({
+      url: "/admin/canvas-document/mindmap/" + id,
+      method: "delete"
+    });
+  } catch (error) {
+    return Promise.reject(error);
+  }
+}
+
+/** 获取全部思维导图列表（不分页，不含核心数据 data） */
+export async function getAllMindmaps(): Promise<CanvasDocumentListItem[]> {
+  try {
+    const response = await serviceAxios({
+      url: "/admin/canvas-document/mindmap/all",
       method: "get"
     });
     return response.data;

@@ -6,9 +6,11 @@ import {
   ArticlePanel,
   CronJobPanel,
   DashboardPanel,
+  FlowchartPanel,
   HitokotoPanel,
   ImageFolderPanel,
   KanbanPanel,
+  MindmapPanel,
   SearchHistoryPanel,
   NavigationWebsitePanel,
   SettingPanel,
@@ -70,6 +72,14 @@ export const lyEditorPanelRegistry = {
   },
   [LyEditorTabPanelEnum.KanbanPanel]: {
     component: KanbanPanel,
+    keepAlive: true
+  },
+  [LyEditorTabPanelEnum.FlowchartPanel]: {
+    component: FlowchartPanel,
+    keepAlive: true
+  },
+  [LyEditorTabPanelEnum.MindmapPanel]: {
+    component: MindmapPanel,
     keepAlive: true
   }
 } satisfies Record<string, LyEditorPanelRegistryItem>;

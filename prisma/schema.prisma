@@ -508,7 +508,7 @@ model CanvasDocument {
   created_by  Int?
   updated_at  DateTime?
   updated_by  Int?
-  type        String    @db.VarChar(32) // 板块类型：kanban | whiteboard 等，由前端组件按类型自治 data 结构
+  type        String    @db.VarChar(32) // 板块类型：kanban | whiteboard | flowchart | mindmap 等，由前端组件按类型自治 data 结构
   title       String    @db.VarChar(255)
   description String?   @db.VarChar(1024)
   data        Json // 核心业务数据，结构由前端组件按 type 自行定义

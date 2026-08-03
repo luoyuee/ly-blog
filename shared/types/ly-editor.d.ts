@@ -30,6 +30,12 @@ export type WhiteboardItem = CanvasDocumentItem;
 /** 看板列表项 */
 export type KanbanItem = CanvasDocumentItem;
 
+/** 流程图列表项 */
+export type FlowchartItem = CanvasDocumentItem;
+
+/** 思维导图列表项 */
+export type MindmapItem = CanvasDocumentItem;
+
 export interface NoteData {
   id?: number;
   folder_id?: number;
@@ -50,6 +56,12 @@ export type WhiteboardPanelData = WhiteboardItem;
 
 /** 看板标签页数据，使用列表项结构 */
 export type KanbanPanelData = KanbanItem;
+
+/** 流程图标签页数据，使用列表项结构 */
+export type FlowchartPanelData = FlowchartItem;
+
+/** 思维导图标签页数据，使用列表项结构 */
+export type MindmapPanelData = MindmapItem;
 
 export type EditorTabItem = {
   key: string;
@@ -189,7 +201,9 @@ export type LyEditorModalKey =
   | "api-key-form"
   | "api-key-created"
   | "whiteboard-form"
-  | "kanban-form";
+  | "kanban-form"
+  | "flowchart-form"
+  | "mindmap-form";
 
 /**
  * LY Editor 弹窗参数映射。
@@ -305,6 +319,32 @@ export type KanbanFormModalPayload = {
  */
 export type KanbanFormModalResult = { action: "submitted" } | { action: "cancelled" };
 
+/**
+ * 流程图表单弹窗参数。
+ */
+export type FlowchartFormModalPayload = {
+  mode: "create" | "update";
+  record?: FlowchartItem;
+};
+
+/**
+ * 流程图表单弹窗结果。
+ */
+export type FlowchartFormModalResult = { action: "submitted" } | { action: "cancelled" };
+
+/**
+ * 思维导图表单弹窗参数。
+ */
+export type MindmapFormModalPayload = {
+  mode: "create" | "update";
+  record?: MindmapItem;
+};
+
+/**
+ * 思维导图表单弹窗结果。
+ */
+export type MindmapFormModalResult = { action: "submitted" } | { action: "cancelled" };
+
 export type LyEditorModalPayloadMap = {
   "note-folder-form": { form?: NoteFolderForm };
   "note-save": { tab: EditorTabItem };
@@ -328,6 +368,8 @@ export type LyEditorModalPayloadMap = {
   "api-key-created": ApiKeyCreatedModalPayload;
   "whiteboard-form": WhiteboardFormModalPayload;
   "kanban-form": KanbanFormModalPayload;
+  "flowchart-form": FlowchartFormModalPayload;
+  "mindmap-form": MindmapFormModalPayload;
 };
 
 /**
@@ -356,6 +398,8 @@ export type LyEditorModalResultMap = {
   "api-key-created": ApiKeyCreatedModalResult;
   "whiteboard-form": WhiteboardFormModalResult;
   "kanban-form": KanbanFormModalResult;
+  "flowchart-form": FlowchartFormModalResult;
+  "mindmap-form": MindmapFormModalResult;
 };
 
 /**

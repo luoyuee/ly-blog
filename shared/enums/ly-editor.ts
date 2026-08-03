@@ -25,6 +25,10 @@ export const LyEditorActivityMenuEnum = {
   WhiteboardManager: "whiteboard-manager",
   /** 看板管理 */
   KanbanManager: "kanban-manager",
+  /** 流程图管理 */
+  FlowchartManager: "flowchart-manager",
+  /** 思维导图管理 */
+  MindmapManager: "mindmap-manager",
   /** 仪表盘面板 */
   DashboardPanel: "dashboard-panel",
   /** 定时任务面板 */
@@ -62,6 +66,10 @@ export const LyEditorTabPanelEnum = {
   WhiteboardPanel: "whiteboard-panel",
   /** 看板面板 */
   KanbanPanel: "kanban-panel",
+  /** 流程图面板 */
+  FlowchartPanel: "flowchart-panel",
+  /** 思维导图面板 */
+  MindmapPanel: "mindmap-panel",
   /** 用户面板 */
   UserPanel: "user-panel",
   /** 仪表盘面板 */
