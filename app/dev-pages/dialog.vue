@@ -3,10 +3,6 @@ import type { DialogResult } from "@/components/dialog";
 import { useDialog } from "@/composables/useDialog";
 import { h } from "vue";
 
-definePageMeta({
-  layout: "blank"
-});
-
 /** 事件日志，最近的交互记录置顶 */
 const log = ref<string[]>([]);
 
@@ -151,212 +147,218 @@ const openDestroy = () => {
 </script>
 
 <template>
-  <main class="dialog-demo">
-    <section class="dialog-demo__hero">
-      <p class="dialog-demo__eyebrow">Development Only</p>
-      <h1 class="dialog-demo__title">useDialog 测试页</h1>
-      <p class="dialog-demo__subtitle">
+  <main class="min-h-screen p-4 md:p-8">
+    <section class="mx-auto mb-6 max-w-240">
+      <p class="mb-2 text-sm uppercase tracking-[0.08em] text-(--text-color-tertiary)">
+        Development Only
+      </p>
+      <h1 class="mb-3 text-2xl font-bold leading-[1.2] text-(--text-color-primary)">
+        useDialog 测试页
+      </h1>
+      <p class="text-base leading-[1.75] text-(--text-color-secondary)">
         用于验证 useDialog 组合式函数的各项配置：按钮显隐、关闭策略、 beforeClose
         拦截、自定义内容、全屏、Promise 结果与 destroyOnClose。
       </p>
     </section>
 
-    <section class="dialog-demo__grid">
-      <div class="dialog-demo__card">
-        <h2 class="dialog-demo__card-title">基础对话框</h2>
-        <p class="dialog-demo__card-desc">默认结构，closeOnConfirm=false，点击确定不关闭。</p>
-        <UButton color="primary" variant="outline" @click="basicDialog.open()">打开</UButton>
-      </div>
+    <section
+      class="mx-auto mb-4 grid max-w-240 grid-cols-1 gap-4 md:grid-cols-[repeat(auto-fill,minmax(260px,1fr))]"
+    >
+      <UCard>
+        <div class="flex h-full flex-col gap-3">
+          <h2 class="font-semibold text-(--text-color-primary)">基础对话框</h2>
+          <p class="flex-1 text-sm leading-[1.6] text-(--text-color-secondary)">
+            默认结构，closeOnConfirm=false，点击确定不关闭。
+          </p>
+          <UButton
+            color="primary"
+            variant="outline"
+            @click="
+              () => {
+                basicDialog.open();
+              }
+            "
+          >
+            打开
+          </UButton>
+        </div>
+      </UCard>
 
-      <div class="dialog-demo__card">
-        <h2 class="dialog-demo__card-title">确认即关闭</h2>
-        <p class="dialog-demo__card-desc">closeOnConfirm=true，确定后自动关闭。</p>
-        <UButton color="primary" variant="outline" @click="confirmCloseDialog.open()">打开</UButton>
-      </div>
+      <UCard>
+        <div class="flex h-full flex-col gap-3">
+          <h2 class="font-semibold text-(--text-color-primary)">确认即关闭</h2>
+          <p class="flex-1 text-sm leading-[1.6] text-(--text-color-secondary)">
+            closeOnConfirm=true，确定后自动关闭。
+          </p>
+          <UButton
+            color="primary"
+            variant="outline"
+            @click="
+              () => {
+                confirmCloseDialog.open();
+              }
+            "
+          >
+            打开
+          </UButton>
+        </div>
+      </UCard>
 
-      <div class="dialog-demo__card">
-        <h2 class="dialog-demo__card-title">仅确定按钮</h2>
-        <p class="dialog-demo__card-desc">showCancelButton=false。</p>
-        <UButton color="primary" variant="outline" @click="onlyConfirmDialog.open()">打开</UButton>
-      </div>
+      <UCard>
+        <div class="flex h-full flex-col gap-3">
+          <h2 class="font-semibold text-(--text-color-primary)">仅确定按钮</h2>
+          <p class="flex-1 text-sm leading-[1.6] text-(--text-color-secondary)">
+            showCancelButton=false。
+          </p>
+          <UButton
+            color="primary"
+            variant="outline"
+            @click="
+              () => {
+                onlyConfirmDialog.open();
+              }
+            "
+          >
+            打开
+          </UButton>
+        </div>
+      </UCard>
 
-      <div class="dialog-demo__card">
-        <h2 class="dialog-demo__card-title">无底部 + 自定义内容</h2>
-        <p class="dialog-demo__card-desc">showFooter=false，content 渲染函数提供按钮。</p>
-        <UButton color="primary" variant="outline" @click="noFooterDialog.open()">打开</UButton>
-      </div>
+      <UCard>
+        <div class="flex h-full flex-col gap-3">
+          <h2 class="font-semibold text-(--text-color-primary)">无底部 + 自定义内容</h2>
+          <p class="flex-1 text-sm leading-[1.6] text-(--text-color-secondary)">
+            showFooter=false，content 渲染函数提供按钮。
+          </p>
+          <UButton
+            color="primary"
+            variant="outline"
+            @click="
+              () => {
+                noFooterDialog.open();
+              }
+            "
+          >
+            打开
+          </UButton>
+        </div>
+      </UCard>
 
-      <div class="dialog-demo__card">
-        <h2 class="dialog-demo__card-title">自定义按钮</h2>
-        <p class="dialog-demo__card-desc">文案、颜色、变体自定义。</p>
-        <UButton color="primary" variant="outline" @click="customButtonDialog.open()">打开</UButton>
-      </div>
+      <UCard>
+        <div class="flex h-full flex-col gap-3">
+          <h2 class="font-semibold text-(--text-color-primary)">自定义按钮</h2>
+          <p class="flex-1 text-sm leading-[1.6] text-(--text-color-secondary)">
+            文案、颜色、变体自定义。
+          </p>
+          <UButton
+            color="primary"
+            variant="outline"
+            @click="
+              () => {
+                customButtonDialog.open();
+              }
+            "
+          >
+            打开
+          </UButton>
+        </div>
+      </UCard>
 
-      <div class="dialog-demo__card">
-        <h2 class="dialog-demo__card-title">beforeClose 拦截</h2>
-        <p class="dialog-demo__card-desc">延迟 800ms 后才放行关闭。</p>
-        <UButton color="primary" variant="outline" @click="beforeCloseDialog.open()">打开</UButton>
-      </div>
+      <UCard>
+        <div class="flex h-full flex-col gap-3">
+          <h2 class="font-semibold text-(--text-color-primary)">beforeClose 拦截</h2>
+          <p class="flex-1 text-sm leading-[1.6] text-(--text-color-secondary)">
+            延迟 800ms 后才放行关闭。
+          </p>
+          <UButton
+            color="primary"
+            variant="outline"
+            @click="
+              () => {
+                beforeCloseDialog.open();
+              }
+            "
+          >
+            打开
+          </UButton>
+        </div>
+      </UCard>
 
-      <div class="dialog-demo__card">
-        <h2 class="dialog-demo__card-title">全屏</h2>
-        <p class="dialog-demo__card-desc">fullscreen=true。</p>
-        <UButton color="primary" variant="outline" @click="fullscreenDialog.open()">打开</UButton>
-      </div>
+      <UCard>
+        <div class="flex h-full flex-col gap-3">
+          <h2 class="font-semibold text-(--text-color-primary)">全屏</h2>
+          <p class="flex-1 text-sm leading-[1.6] text-(--text-color-secondary)">
+            fullscreen=true。
+          </p>
+          <UButton
+            color="primary"
+            variant="outline"
+            @click="
+              () => {
+                fullscreenDialog.open();
+              }
+            "
+          >
+            打开
+          </UButton>
+        </div>
+      </UCard>
 
-      <div class="dialog-demo__card">
-        <h2 class="dialog-demo__card-title">不可遮罩关闭</h2>
-        <p class="dialog-demo__card-desc">dismissible=false。</p>
-        <UButton color="primary" variant="outline" @click="nonDismissDialog.open()">打开</UButton>
-      </div>
+      <UCard>
+        <div class="flex h-full flex-col gap-3">
+          <h2 class="font-semibold text-(--text-color-primary)">不可遮罩关闭</h2>
+          <p class="flex-1 text-sm leading-[1.6] text-(--text-color-secondary)">
+            dismissible=false。
+          </p>
+          <UButton
+            color="primary"
+            variant="outline"
+            @click="
+              () => {
+                nonDismissDialog.open();
+              }
+            "
+            >打开</UButton
+          >
+        </div>
+      </UCard>
 
-      <div class="dialog-demo__card">
-        <h2 class="dialog-demo__card-title">Promise 结果</h2>
-        <p class="dialog-demo__card-desc">await open() 获取关闭结果。</p>
-        <UButton color="primary" variant="outline" @click="openPromise">打开</UButton>
-      </div>
+      <UCard>
+        <div class="flex h-full flex-col gap-3">
+          <h2 class="font-semibold text-(--text-color-primary)">Promise 结果</h2>
+          <p class="flex-1 text-sm leading-[1.6] text-(--text-color-secondary)">
+            await open() 获取关闭结果。
+          </p>
+          <UButton color="primary" variant="outline" @click="openPromise">打开</UButton>
+        </div>
+      </UCard>
 
-      <div class="dialog-demo__card">
-        <h2 class="dialog-demo__card-title">destroyOnClose</h2>
-        <p class="dialog-demo__card-desc">关闭后销毁实例，每次新建。</p>
-        <UButton color="primary" variant="outline" @click="openDestroy">打开</UButton>
-      </div>
+      <UCard>
+        <div class="flex h-full flex-col gap-3">
+          <h2 class="font-semibold text-(--text-color-primary)">destroyOnClose</h2>
+          <p class="flex-1 text-sm leading-[1.6] text-(--text-color-secondary)">
+            关闭后销毁实例，每次新建。
+          </p>
+          <UButton color="primary" variant="outline" @click="openDestroy">打开</UButton>
+        </div>
+      </UCard>
     </section>
 
-    <section class="dialog-demo__log">
-      <div class="dialog-demo__log-header">
-        <h2 class="dialog-demo__log-title">事件日志</h2>
+    <UCard class="mx-auto max-w-240">
+      <div class="mb-3 flex items-center justify-between">
+        <h2 class="font-semibold text-(--text-color-primary)">事件日志</h2>
         <UButton size="sm" variant="ghost" @click="clearLog">清空</UButton>
       </div>
-      <ul class="dialog-demo__log-list">
-        <li v-for="item in log" :key="item" class="dialog-demo__log-item">{{ item }}</li>
-        <li v-if="!log.length" class="dialog-demo__log-empty">暂无日志</li>
+      <ul class="m-0 max-h-80 list-none space-y-0 overflow-y-auto p-0">
+        <li
+          v-for="item in log"
+          :key="item"
+          class="border-b border-dashed border-(--text-color-5) py-1.5 font-mono text-[0.8125rem] text-(--text-color-secondary)"
+        >
+          {{ item }}
+        </li>
+        <li v-if="!log.length" class="py-2 text-sm text-(--text-color-tertiary)">暂无日志</li>
       </ul>
-    </section>
+    </UCard>
   </main>
 </template>
-
-<style scoped lang="scss">
-.dialog-demo {
-  min-height: 100vh;
-  padding: 2rem;
-  background: var(--background-color);
-
-  &__hero {
-    max-width: 960px;
-    margin: 0 auto 1.5rem;
-  }
-
-  &__eyebrow {
-    margin-bottom: 0.5rem;
-    color: var(--text-color-tertiary);
-    font-size: 0.875rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-  }
-
-  &__title {
-    margin-bottom: 0.75rem;
-    color: var(--text-color-primary);
-    font-size: clamp(1.75rem, 3vw, 2.5rem);
-    font-weight: 700;
-    line-height: 1.2;
-  }
-
-  &__subtitle {
-    color: var(--text-color-secondary);
-    font-size: 1rem;
-    line-height: 1.75;
-  }
-
-  &__grid {
-    max-width: 960px;
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: 1rem;
-  }
-
-  &__card {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-    padding: 1.25rem;
-    border: 1px solid var(--text-color-5);
-    border-radius: var(--radius-wrap);
-    background: var(--background-color-box);
-  }
-
-  &__card-title {
-    color: var(--text-color-primary);
-    font-size: 1rem;
-    font-weight: 600;
-  }
-
-  &__card-desc {
-    flex: 1;
-    color: var(--text-color-secondary);
-    font-size: 0.875rem;
-    line-height: 1.6;
-  }
-
-  &__log {
-    max-width: 960px;
-    margin: 1.5rem auto 0;
-    padding: 1.25rem;
-    border: 1px solid var(--text-color-5);
-    border-radius: var(--radius-wrap);
-    background: var(--background-color-box);
-  }
-
-  &__log-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 0.75rem;
-  }
-
-  &__log-title {
-    color: var(--text-color-primary);
-    font-size: 1rem;
-    font-weight: 600;
-  }
-
-  &__log-list {
-    max-height: 320px;
-    overflow-y: auto;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  &__log-item {
-    padding: 0.375rem 0;
-    border-bottom: 1px dashed var(--text-color-5);
-    color: var(--text-color-secondary);
-    font-size: 0.8125rem;
-    font-family: ui-monospace, monospace;
-  }
-
-  &__log-empty {
-    padding: 0.5rem 0;
-    color: var(--text-color-tertiary);
-    font-size: 0.875rem;
-  }
-}
-
-@media (max-width: 768px) {
-  .dialog-demo {
-    padding: 1rem;
-
-    &__grid {
-      grid-template-columns: 1fr;
-    }
-
-    &__card,
-    &__log {
-      padding: 1rem;
-    }
-  }
-}
-</style>

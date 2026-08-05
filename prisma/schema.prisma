@@ -12,6 +12,7 @@ datasource db {
   provider = "postgresql"
 }
 
+// 系统配置表：按名称存储客户端、服务端及功能模块的 JSON 配置。
 model Config {
   id         Int       @id @default(autoincrement())
   created_at DateTime? @default(now())
@@ -24,6 +25,7 @@ model Config {
   @@map("config")
 }
 
+// 一言分类表：维护一言内容的分类名称与说明。
 model HitokotoType {
   id          Int       @id @default(autoincrement())
   created_at  DateTime? @default(now())
@@ -38,6 +40,7 @@ model HitokotoType {
   @@map("hitokoto_type")
 }
 
+// 一言内容表：存储短句正文、来源、作者及所属分类。
 model Hitokoto {
   id         Int       @id @default(autoincrement())
   created_at DateTime? @default(now())
@@ -57,6 +60,7 @@ model Hitokoto {
   @@map("hitokoto")
 }
 
+// 文章分类表：维护文章分类及其层级、图标和状态。
 model ArticleCategory {
   id          Int       @id @default(autoincrement())
   created_at  DateTime? @default(now())
@@ -74,6 +78,7 @@ model ArticleCategory {
   @@map("article_category")
 }
 
+// 文章表：存储由笔记发布的文章内容、展示配置及统计数据。
 model Article {
   id                     Int       @id @default(autoincrement())
   created_at             DateTime? @default(now())
@@ -117,6 +122,7 @@ model Article {
   @@map("article")
 }
 
+// 文章评论表：存储文章评论、回复关系及访客环境信息。
 model ArticleComment {
   id             Int       @id @default(autoincrement())
   created_at     DateTime? @default(now())
@@ -147,6 +153,7 @@ model ArticleComment {
   @@map("article_comment")
 }
 
+// 笔记目录表：维护笔记目录层级、状态及锁定信息。
 model NoteFolder {
   id         Int       @id @default(autoincrement())
   created_at DateTime? @default(now())
@@ -165,6 +172,7 @@ model NoteFolder {
   @@map("note_folder")
 }
 
+// 笔记表：存储可编辑的笔记正文、来源信息及当前版本。
 model Note {
   id                 Int       @id @default(autoincrement())
   created_at         DateTime? @default(now())
@@ -194,11 +202,12 @@ model Note {
   versions NoteVersion[]
   Article  Article[]
 
-  @@index([folder_id, status])
   @@unique([source_type, source_id]) // 保证同一外部来源文章只对应一篇笔记
+  @@index([folder_id, status])
   @@map("note")
 }
 
+// 笔记版本表：保存笔记各历史版本的内容快照。
 model NoteVersion {
   id                 Int       @id @default(autoincrement())
   created_at         DateTime? @default(now())
@@ -223,6 +232,7 @@ model NoteVersion {
   @@map("note_version")
 }
 
+// 物理资源表：按内容哈希管理去重后的文件及图片实体。
 model Asset {
   id         Int       @id @default(autoincrement())
   created_at DateTime? @default(now())
@@ -245,6 +255,7 @@ model Asset {
   @@map("asset")
 }
 
+// 附件目录表：维护附件分组及目录容量统计。
 model FileFolder {
   id          Int       @id @default(autoincrement())
   created_at  DateTime? @default(now())
@@ -264,6 +275,7 @@ model FileFolder {
   @@map("file_folder")
 }
 
+// 附件表：记录附件业务信息并关联所属目录和物理资源。
 model File {
   id             Int       @id @default(autoincrement())
   created_at     DateTime? @default(now())
@@ -289,6 +301,7 @@ model File {
   @@map("file")
 }
 
+// 图片目录表：维护图片分组、封面及容量统计。
 model ImageFolder {
   id          Int       @id @default(autoincrement())
   created_at  DateTime? @default(now())
@@ -308,6 +321,7 @@ model ImageFolder {
   @@map("image_folder")
 }
 
+// 图片表：记录图片业务信息并关联所属目录和物理资源。
 model Image {
   id            Int       @id @default(autoincrement())
   created_at    DateTime? @default(now())
@@ -330,6 +344,7 @@ model Image {
   @@map("image")
 }
 
+// 用户表：存储账号资料、角色、登录信息及账号状态。
 model User {
   id                  Int       @id @default(autoincrement())
   created_at          DateTime? @default(now())
@@ -350,6 +365,7 @@ model User {
   @@map("user")
 }
 
+// API 密钥表：管理外部调用凭证、权限范围及使用记录。
 model ApiKey {
   id           Int       @id @default(autoincrement())
   created_at   DateTime? @default(now())
@@ -370,6 +386,7 @@ model ApiKey {
   @@map("api_key")
 }
 
+// 留言板表：存储站点留言、回复关系及访客环境信息。
 model MessageBoard {
   id             Int       @id @default(autoincrement())
   created_at     DateTime? @default(now())
@@ -394,6 +411,7 @@ model MessageBoard {
   @@map("message_board")
 }
 
+// 闪念表：存储用户发布的短内容及其公开状态。
 model FleetingThought {
   id         Int       @id @default(autoincrement())
   created_at DateTime? @default(now())
@@ -411,6 +429,7 @@ model FleetingThought {
   @@map("fleeting_thought")
 }
 
+// 系统运行数据表：按名称保存运行过程中产生的动态 JSON 数据。
 model SystemRuntimeData {
   id         Int       @id @default(autoincrement())
   created_at DateTime? @default(now())
@@ -423,6 +442,7 @@ model SystemRuntimeData {
   @@map("system_runtime_data")
 }
 
+// 仪表盘统计表：按时间保存站点访问和业务统计快照。
 model Dashboard {
   id         Int       @id @default(autoincrement())
   created_at DateTime? @default(now())
@@ -433,6 +453,7 @@ model Dashboard {
   @@map("dashboard")
 }
 
+// 导航网站表：管理网站与书签的链接、标签和展示状态。
 model NavigationWebsite {
   id          Int       @id @default(autoincrement())
   created_at  DateTime? @default(now())
@@ -453,6 +474,7 @@ model NavigationWebsite {
   @@map("navigation_website")
 }
 
+// 导航搜索引擎表：管理可用搜索引擎及其查询地址。
 model NavigationSearchEngine {
   id          Int       @id @default(autoincrement())
   created_at  DateTime? @default(now())
@@ -471,6 +493,7 @@ model NavigationSearchEngine {
   @@map("navigation_search_engine")
 }
 
+// 导航搜索历史表：记录用户使用搜索引擎提交的关键词。
 model NavigationSearchHistory {
   id               Int       @id @default(autoincrement())
   created_at       DateTime? @default(now())
@@ -486,6 +509,7 @@ model NavigationSearchHistory {
   @@map("navigation_search_history")
 }
 
+// 导航快捷方式表：管理导航页快捷入口及公开状态。
 model NavigationShortcut {
   id          Int       @id @default(autoincrement())
   created_at  DateTime? @default(now())
@@ -500,4 +524,62 @@ model NavigationShortcut {
   status      Int       @default(1) // 0:已删除，1:正常状态，2:禁用状态
 
   @@map("navigation_shortcut")
+}
+
+// 画布文档表：统一存储看板、白板、流程图和思维导图等数据。
+model CanvasDocument {
+  id          Int       @id @default(autoincrement())
+  created_at  DateTime? @default(now())
+  created_by  Int?
+  updated_at  DateTime?
+  updated_by  Int?
+  type        String    @db.VarChar(32) // 板块类型：kanban | whiteboard | flowchart | mindmap 等，由前端组件按类型自治 data 结构
+  title       String    @db.VarChar(255)
+  description String?   @db.VarChar(1024)
+  data        Json // 核心业务数据，结构由前端组件按 type 自行定义
+  cover       String?   @db.VarChar(512) // 封面缩略图，便于列表展示
+  status      Int       @default(1) // 0:已删除，1:正常状态，2:锁定状态
+
+  @@index([type, status])
+  @@index([status, created_at])
+  @@map("canvas_document")
+}
+
+// 日程事件表：存储普通及周期日程，并支持 iCalendar 导入导出。
+model CalendarEvent {
+  id               Int       @id @default(autoincrement())
+  created_at       DateTime? @default(now())
+  created_by       Int?
+  updated_at       DateTime?
+  updated_by       Int?
+  uid              String    @unique @default(uuid()) @db.Uuid // iCalendar UID，用于跨系统唯一识别事件
+  title            String    @db.VarChar(255)
+  description      String?   @db.Text
+  location         String?   @db.VarChar(512)
+  color            String?   @db.VarChar(32)
+  start_at         DateTime  @db.Timestamptz(3) // 首次发生时间，统一按 UTC 保存
+  end_at           DateTime  @db.Timestamptz(3) // 首次结束时间，统一按 UTC 保存
+  all_day          Boolean   @default(false)
+  timezone         String    @default("Asia/Shanghai") @db.VarChar(64) // 事件原始时区
+  recurrence_rule  String?   @db.Text // 标准 iCalendar RRULE，普通事件为空
+  recurrence_until DateTime? @db.Timestamptz(3) // 周期截止时间；无限周期或按次数结束时为空
+  status           Int       @default(1) // 0:已删除，1:正常状态
+
+  @@index([created_by, status])
+  @@index([created_by, start_at, end_at])
+  @@index([created_by, recurrence_until])
+  @@index([status, start_at])
+  @@map("calendar_event")
+}
+
+// 日期拓展属性表：按公历日期存储农历、干支、黄历和节气等只读属性。
+model DateAttribute {
+  id    Int  @id @default(autoincrement())
+  year  Int // 公历年份
+  month Int // 公历月份，1-12
+  day   Int // 公历日期，1-31
+  extra Json @default("{}") // 农历、干支、黄历、节气等可扩展日期属性
+
+  @@unique([year, month, day], map: "date_attributes_year_month_day_key")
+  @@map("date_attributes")
 }

@@ -16,208 +16,132 @@ import type {
   ArticleCategoryTree,
   Article
 } from "#shared/types/article";
-import { serviceAxios } from "@/utils/request";
+import request from "@/utils/request";
 
-export async function getAllArticleCategory(): Promise<ArticleCategory[]> {
-  try {
-    const response = await serviceAxios({
-      url: "/admin/article/category/all",
-      method: "get"
-    });
-    return response.data;
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const getAllArticleCategory = (): Promise<ArticleCategory[]> => {
+  return request({
+    url: "/admin/article/category/all",
+    method: "get"
+  });
+};
 
-export async function getArticleCategoryOptions(): Promise<ArticleCategoryOption[]> {
-  try {
-    const response = await serviceAxios({
-      url: "/admin/article/category/options",
-      method: "get"
-    });
-    return response.data;
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const getArticleCategoryOptions = (): Promise<ArticleCategoryOption[]> => {
+  return request({
+    url: "/admin/article/category/options",
+    method: "get"
+  });
+};
 
-export async function getArticleCategoryTree(): Promise<ArticleCategoryTree> {
-  try {
-    const response = await serviceAxios({
-      url: "/admin/article/category/tree",
-      method: "get"
-    });
-    return response.data;
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const getArticleCategoryTree = (): Promise<ArticleCategoryTree> => {
+  return request({
+    url: "/admin/article/category/tree",
+    method: "get"
+  });
+};
 
-export async function createArticleCategory(
+export const createArticleCategory = (
   data: CreateArticleCategoryRequest
-): Promise<ArticleCategory> {
-  try {
-    const response = await serviceAxios({
-      url: "/article/category",
-      method: "post",
-      data
-    });
-    return response.data;
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+): Promise<ArticleCategory> => {
+  return request({
+    url: "/article/category",
+    method: "post",
+    data
+  });
+};
 
-export async function updateArticleCategory(data: UpdateArticleCategoryRequest): Promise<void> {
-  try {
-    const response = await serviceAxios({
-      url: "/article/category",
-      method: "put",
-      data
-    });
-    return response.data;
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const updateArticleCategory = (data: UpdateArticleCategoryRequest): Promise<void> => {
+  return request({
+    url: "/article/category",
+    method: "put",
+    data
+  });
+};
 
-export async function getArticleCategoryDetails(id: number): Promise<ArticleCategory> {
-  try {
-    const response = await serviceAxios({
-      url: "/admin/article/category/" + id,
-      method: "get"
-    });
-    return response.data;
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const getArticleCategoryDetails = (id: number): Promise<ArticleCategory> => {
+  return request({
+    url: "/admin/article/category/" + id,
+    method: "get"
+  });
+};
 
-export async function deleteArticleCategory(id: number): Promise<void> {
-  try {
-    await serviceAxios({
-      url: "/admin/article/category/" + id,
-      method: "delete"
-    });
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const deleteArticleCategory = (id: number): Promise<void> => {
+  return request({
+    url: "/admin/article/category/" + id,
+    method: "delete"
+  });
+};
 
-export async function publishArticle(data: PublishArticleRequest): Promise<void> {
-  try {
-    await serviceAxios({
-      url: "/admin/article/publish",
-      method: "post",
-      data
-    });
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const publishArticle = (data: PublishArticleRequest): Promise<void> => {
+  return request({
+    url: "/admin/article/publish",
+    method: "post",
+    data
+  });
+};
 
-export async function updatedPublishArticle(data: UpdateArticleRequest): Promise<void> {
-  try {
-    await serviceAxios({
-      url: "/admin/article/publish",
-      method: "put",
-      data
-    });
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const updatedPublishArticle = (data: UpdateArticleRequest): Promise<void> => {
+  return request({
+    url: "/admin/article/publish",
+    method: "put",
+    data
+  });
+};
 
 // 获取文章详情
-export async function getArticleDetail(id: number): Promise<Article> {
-  try {
-    const response = await serviceAxios({
-      url: "/admin/article/detail/" + id,
-      method: "get"
-    });
-    return response.data;
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const getArticleDetail = (id: number): Promise<Article> => {
+  return request({
+    url: "/admin/article/detail/" + id,
+    method: "get"
+  });
+};
 
-export async function getPaginatedArticles(
+export const getPaginatedArticles = (
   params: GetArticlePaginatedRequest
-): Promise<GetArticlePaginatedResponse> {
-  try {
-    const response = await serviceAxios({
-      url: "/article",
-      method: "get",
-      params
-    });
-    return response.data;
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+): Promise<GetArticlePaginatedResponse> => {
+  return request({
+    url: "/article",
+    method: "get",
+    params
+  });
+};
 
-export async function getAdminPaginatedArticles(
+export const getAdminPaginatedArticles = (
   params: GetAdminArticlePaginatedRequest
-): Promise<GetAdminArticlePaginatedResponse> {
-  try {
-    const response = await serviceAxios({
-      url: "/admin/article",
-      method: "get",
-      params
-    });
-    return response.data;
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+): Promise<GetAdminArticlePaginatedResponse> => {
+  return request({
+    url: "/admin/article",
+    method: "get",
+    params
+  });
+};
 
-export async function deleteArticle(id: number): Promise<void> {
-  try {
-    await serviceAxios({
-      url: "/admin/article/" + id,
-      method: "delete"
-    });
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const deleteArticle = (id: number): Promise<void> => {
+  return request({
+    url: "/admin/article/" + id,
+    method: "delete"
+  });
+};
 
-export async function searchArticle(
+export const searchArticle = (
   params: SearchArticleRequest
-): Promise<GetArticlePaginatedResponse> {
-  try {
-    const response = await serviceAxios({
-      url: "/article/search",
-      method: "get",
-      params
-    });
-    return response.data;
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+): Promise<GetArticlePaginatedResponse> => {
+  return request({
+    url: "/article/search",
+    method: "get",
+    params
+  });
+};
 
-export async function confirmLikeArticle(id: number): Promise<LikeResponse> {
-  try {
-    const response = await serviceAxios({
-      url: "/article/like/" + id,
-      method: "post"
-    });
-    return response.data;
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const confirmLikeArticle = (id: number): Promise<LikeResponse> => {
+  return request({
+    url: "/article/like/" + id,
+    method: "post"
+  });
+};
 
-export async function cancelLikeArticle(id: number): Promise<LikeResponse> {
-  try {
-    const response = await serviceAxios({
-      url: "/article/like/" + id,
-      method: "delete"
-    });
-    return response.data;
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const cancelLikeArticle = (id: number): Promise<LikeResponse> => {
+  return request({
+    url: "/article/like/" + id,
+    method: "delete"
+  });
+};

@@ -6,10 +6,15 @@ import {
   AttachmentManager,
   NoteManager,
   ArticleManager,
+  CalendarManager,
+  FlowchartManager,
   HitokotoManager,
   ImageManager,
+  KanbanManager,
+  MindmapManager,
   NavigationWebsiteManager,
-  WorkManager
+  WorkManager,
+  WhiteboardManager
 } from "@ly-editor/src/modules";
 
 /**
@@ -46,6 +51,21 @@ export const lyEditorSidebarRegistry = {
   },
   [LyEditorActivityMenuEnum.ApiKeyManager]: {
     component: ApiKeyManager
+  },
+  [LyEditorActivityMenuEnum.WhiteboardManager]: {
+    component: WhiteboardManager
+  },
+  [LyEditorActivityMenuEnum.KanbanManager]: {
+    component: KanbanManager
+  },
+  [LyEditorActivityMenuEnum.FlowchartManager]: {
+    component: FlowchartManager
+  },
+  [LyEditorActivityMenuEnum.MindmapManager]: {
+    component: MindmapManager
+  },
+  [LyEditorActivityMenuEnum.CalendarManager]: {
+    component: CalendarManager
   }
 } satisfies Record<string, LyEditorSidebarRegistryItem>;
 

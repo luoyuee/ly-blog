@@ -1,14 +1,9 @@
 import type { VisitsStats } from "./models";
-import { serviceAxios } from "@/utils/request";
+import request from "@/utils/request";
 
-export async function getVisitsStats(): Promise<VisitsStats> {
-  try {
-    const response = await serviceAxios({
-      url: "/stats/visits",
-      method: "get"
-    });
-    return response.data;
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const getVisitsStats = (): Promise<VisitsStats> => {
+  return request({
+    url: "/stats/visits",
+    method: "get"
+  });
+};

@@ -55,6 +55,32 @@ const activityMenu = ref<ActivityMenuItem[]>([
     label: "API 密钥管理",
     icon: "lucide:key",
     panel: LyEditorTabPanelEnum.ApiKeyPanel
+  },
+  {
+    key: LyEditorActivityMenuEnum.WhiteboardManager,
+    label: "白板管理",
+    icon: "lucide:pencil-sparkles"
+  },
+  {
+    key: LyEditorActivityMenuEnum.KanbanManager,
+    label: "看板管理",
+    icon: "lucide:square-kanban"
+  },
+  {
+    key: LyEditorActivityMenuEnum.FlowchartManager,
+    label: "流程图管理",
+    icon: "lucide:workflow"
+  },
+  {
+    key: LyEditorActivityMenuEnum.MindmapManager,
+    label: "思维导图管理",
+    icon: "lucide:network"
+  },
+  {
+    key: LyEditorActivityMenuEnum.CalendarManager,
+    label: "日历管理",
+    icon: "lucide:calendar",
+    panel: LyEditorTabPanelEnum.CalendarPanel
   }
 ]);
 

@@ -70,6 +70,7 @@ const emit = defineEmits<{
 // 上层如需“确认后提交”，应像 Picker.vue 一样把它绑定到临时 draft。
 const columnRefs = ref<Array<PickerScrollbarExposed | null>>([]);
 const scrollSnapTimers = ref<Array<ReturnType<typeof setTimeout> | null>>([]);
+const pendingScrollToSelectionSkipCount = ref(0);
 
 // 拖拽滚动条时不立即做吸附，避免“用户还在拖，组件又把位置拉回去”的抢控制问题。
 const columnInteractionStates = ref<PickerColumnInteractionState[]>([]);
@@ -206,6 +207,11 @@ watch(
 watch(
   modelValue,
   () => {
+    if (pendingScrollToSelectionSkipCount.value > 0) {
+      pendingScrollToSelectionSkipCount.value -= 1;
+      return;
+    }
+
     nextTick(scrollToSelection);
   },
   { immediate: true, deep: true }
@@ -244,6 +250,10 @@ const clearAllScrollSnapTimers = () => {
   scrollSnapTimers.value.forEach((_, columnIndex) => {
     clearScrollSnapTimer(columnIndex);
   });
+};
+
+const skipNextScrollToSelection = () => {
+  pendingScrollToSelectionSkipCount.value += 1;
 };
 
 const snapColumnToSelection = (columnIndex: number) => {
@@ -291,22 +301,39 @@ const handleScrollbarDragStateChange = (columnIndex: number, isDragging: boolean
   scheduleScrollSnap(columnIndex);
 };
 
-const updateSelectionAt = (columnIndex: number, value: PickerPrimitive) => {
+const updateSelectionAt = (
+  columnIndex: number,
+  value: PickerPrimitive,
+  shouldScrollToSelectedItem = true
+) => {
   const nextSelection = getResolvedSelection(modelValue.value).slice();
 
   if (props.mode === "columns") {
     // 多列模式各列独立，只替换当前列即可。
     nextSelection[columnIndex] = value;
+    if (!shouldScrollToSelectedItem) {
+      skipNextScrollToSelection();
+    }
     syncModelValue(nextSelection);
-    nextTick(scrollToSelection);
+
+    if (shouldScrollToSelectedItem) {
+      nextTick(scrollToSelection);
+    }
+
     return;
   }
 
   // 级联模式下改动某一层后，下游路径必须全部丢弃并重新推导，才能匹配新的 children 链路。
   const baseSelection = nextSelection.slice(0, columnIndex);
   baseSelection[columnIndex] = value;
+  if (!shouldScrollToSelectedItem) {
+    skipNextScrollToSelection();
+  }
   syncModelValue(baseSelection);
-  nextTick(scrollToSelection);
+
+  if (shouldScrollToSelectedItem) {
+    nextTick(scrollToSelection);
+  }
 };
 
 // 滚动选中依赖“离当前中心线最近的项”，因此使用四舍五入映射到最近一项。
@@ -329,7 +356,7 @@ const syncSelectionByScrollTop = (columnIndex: number, scrollTop: number) => {
     return;
   }
 
-  updateSelectionAt(columnIndex, option.value);
+  updateSelectionAt(columnIndex, option.value, false);
 };
 
 const handleScrollbarScroll = (columnIndex: number) => {
@@ -338,13 +365,13 @@ const handleScrollbarScroll = (columnIndex: number) => {
     return;
   }
 
-  const scrollElement = columnRefs.value[columnIndex]?.getScrollElement();
+  const scrollPosition = columnRefs.value[columnIndex]?.getScrollTo();
 
-  if (!scrollElement) {
+  if (!scrollPosition) {
     return;
   }
 
-  syncSelectionByScrollTop(columnIndex, scrollElement.scrollTop);
+  syncSelectionByScrollTop(columnIndex, scrollPosition.scrollTop);
   scheduleScrollSnap(columnIndex);
 };
 

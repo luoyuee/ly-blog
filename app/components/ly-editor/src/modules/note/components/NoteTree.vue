@@ -140,7 +140,7 @@ const handleRenameFolder = async (data: FolderTreeItem) => {
         :ui="{ content: 'w-48' }"
       >
         <div
-          class="hover:bg-white/10 rounded cursor-pointer flex items-center gap-1 px-1"
+          class="hover:bg-white/10 rounded cursor-pointer flex items-center gap-1 px-1 pr-3"
           @dblclick="handleOpenFile(item)"
         >
           <div :style="{ width: 24 * props.depth + 'px' }" class="flex self-stretch relative">
@@ -154,7 +154,11 @@ const handleRenameFolder = async (data: FolderTreeItem) => {
           <UIcon class="shrink-0 size-5 text-slate-500/50" name="mdi:dot" />
           <UIcon class="shrink-0 size-5" name="material-icon-theme:markdown" />
           <span class="truncate flex-1">{{ `${item.name}${item.data?.extension ?? ""}` }}</span>
-          <UIcon class="shrink-0" name="material-symbols:square-dot-rounded" />
+          <UIcon
+            v-if="item.data.is_published"
+            class="shrink-0"
+            name="lucide:square-arrow-out-up-right"
+          />
         </div>
       </UContextMenu>
 

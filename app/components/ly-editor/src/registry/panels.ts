@@ -4,14 +4,19 @@ import {
   ApiKeyPanel,
   AttachmentFolderPanel,
   ArticlePanel,
+  CalendarPanel,
   CronJobPanel,
   DashboardPanel,
+  FlowchartPanel,
   HitokotoPanel,
   ImageFolderPanel,
+  KanbanPanel,
+  MindmapPanel,
   SearchHistoryPanel,
   NavigationWebsitePanel,
   SettingPanel,
-  UserPanel
+  UserPanel,
+  WhiteboardPanel
 } from "@ly-editor/src/modules";
 
 /**
@@ -60,6 +65,26 @@ export const lyEditorPanelRegistry = {
   },
   [LyEditorTabPanelEnum.UserPanel]: {
     component: UserPanel,
+    keepAlive: true
+  },
+  [LyEditorTabPanelEnum.WhiteboardPanel]: {
+    component: WhiteboardPanel,
+    keepAlive: true
+  },
+  [LyEditorTabPanelEnum.KanbanPanel]: {
+    component: KanbanPanel,
+    keepAlive: true
+  },
+  [LyEditorTabPanelEnum.FlowchartPanel]: {
+    component: FlowchartPanel,
+    keepAlive: true
+  },
+  [LyEditorTabPanelEnum.MindmapPanel]: {
+    component: MindmapPanel,
+    keepAlive: true
+  },
+  [LyEditorTabPanelEnum.CalendarPanel]: {
+    component: CalendarPanel,
     keepAlive: true
   }
 } satisfies Record<string, LyEditorPanelRegistryItem>;

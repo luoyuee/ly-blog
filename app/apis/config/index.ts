@@ -5,146 +5,95 @@ import type {
   UpdateMePageConfigRequest,
   UpdateServerConfigRequest
 } from "./models";
-import { serviceAxios } from "@/utils/request";
 import type { IServerConfig, NoticeConfig, WorkItem } from "#shared/types/config";
+import request from "@/utils/request";
 
-export async function getClientConfig(): Promise<GetClientConfigResponse> {
-  try {
-    const response = await serviceAxios({
-      url: "/config/client",
-      method: "get"
-    });
-    return response.data;
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const getClientConfig = (): Promise<GetClientConfigResponse> => {
+  return request({
+    url: "/config/client",
+    method: "get"
+  });
+};
 
-export async function updateClientConfig(data: UpdateClientConfigRequest): Promise<void> {
-  try {
-    const response = await serviceAxios({
-      url: "/admin/config/client",
-      method: "patch",
-      data
-    });
-    return response.data;
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const updateClientConfig = (data: UpdateClientConfigRequest): Promise<void> => {
+  return request({
+    url: "/admin/config/client",
+    method: "patch",
+    data
+  });
+};
 
-export async function getMePageConfig(): Promise<GetMePageConfigResponse> {
-  try {
-    const response = await serviceAxios({
-      url: "/config/me-page",
-      method: "get"
-    });
-    return response.data;
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const getMePageConfig = (): Promise<GetMePageConfigResponse> => {
+  return request({
+    url: "/config/me-page",
+    method: "get"
+  });
+};
 
-export async function updateMePageConfig(data: UpdateMePageConfigRequest): Promise<void> {
-  try {
-    await serviceAxios({
-      url: "/admin/config/me-page",
-      method: "put",
-      data
-    });
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const updateMePageConfig = (data: UpdateMePageConfigRequest): Promise<void> => {
+  return request({
+    url: "/admin/config/me-page",
+    method: "put",
+    data
+  });
+};
 
-export async function getServerConfig(): Promise<IServerConfig> {
-  try {
-    const response = await serviceAxios({
-      url: "/admin/config/server",
-      method: "get"
-    });
-    return response.data;
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const getServerConfig = (): Promise<IServerConfig> => {
+  return request({
+    url: "/admin/config/server",
+    method: "get"
+  });
+};
 
-export async function updateServerConfig(data: UpdateServerConfigRequest): Promise<void> {
-  try {
-    const response = await serviceAxios({
-      url: "/admin/config/server",
-      method: "patch",
-      data
-    });
-    return response.data;
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const updateServerConfig = (data: UpdateServerConfigRequest): Promise<void> => {
+  return request({
+    url: "/admin/config/server",
+    method: "patch",
+    data
+  });
+};
 
-export async function verifyEmailConfig(data: {
+export const verifyEmailConfig = (data: {
   host?: string;
   port?: number;
   tls?: boolean;
   user?: string;
   pass?: string;
   notify_email?: string;
-}): Promise<void> {
-  try {
-    await serviceAxios({
-      url: "/admin/config/verify-emailer",
-      method: "post",
-      data
-    });
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+}): Promise<void> => {
+  return request({
+    url: "/admin/config/verify-emailer",
+    method: "post",
+    data
+  });
+};
 
-export async function getWorkConfig(): Promise<WorkItem[]> {
-  try {
-    const response = await serviceAxios({
-      url: "/config/work",
-      method: "get"
-    });
-    return response.data;
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const getWorkConfig = (): Promise<WorkItem[]> => {
+  return request({
+    url: "/config/work",
+    method: "get"
+  });
+};
 
-export async function updateWorkConfig(data: WorkItem[]): Promise<void> {
-  try {
-    await serviceAxios({
-      url: "/admin/config/work",
-      method: "put",
-      data
-    });
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const updateWorkConfig = (data: WorkItem[]): Promise<void> => {
+  return request({
+    url: "/admin/config/work",
+    method: "put",
+    data
+  });
+};
 
-export async function getNoticeConfig(): Promise<NoticeConfig> {
-  try {
-    const response = await serviceAxios({
-      url: "/config/notice",
-      method: "get"
-    });
-    return response.data;
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const getNoticeConfig = (): Promise<NoticeConfig> => {
+  return request({
+    url: "/config/notice",
+    method: "get"
+  });
+};
 
-export async function updateNoticeConfig(data: NoticeConfig): Promise<void> {
-  try {
-    await serviceAxios({
-      url: "/admin/config/notice",
-      method: "put",
-      data
-    });
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const updateNoticeConfig = (data: NoticeConfig): Promise<void> => {
+  return request({
+    url: "/admin/config/notice",
+    method: "put",
+    data
+  });
+};

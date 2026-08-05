@@ -6,169 +6,114 @@ import type {
   UploadImageRequest,
   UploadImageResponse
 } from "./models";
-import { serviceAxios } from "@/utils/request";
+import request from "@/utils/request";
 
-export async function getAllImageFolder(): Promise<ImageFolder[]> {
-  try {
-    const response = await serviceAxios({
-      url: "/admin/image/folder/all",
-      method: "get"
-    });
-    return response.data;
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const getAllImageFolder = (): Promise<ImageFolder[]> => {
+  return request({
+    url: "/admin/image/folder/all",
+    method: "get"
+  });
+};
 
-export async function createImageFolder(data: {
+export const createImageFolder = (data: {
   name: string;
   description?: string;
-}): Promise<ImageFolder> {
-  try {
-    const response = await serviceAxios({
-      url: "/admin/image/folder",
-      method: "post",
-      data
-    });
-    return response.data;
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+}): Promise<ImageFolder> => {
+  return request({
+    url: "/admin/image/folder",
+    method: "post",
+    data
+  });
+};
 
-export async function updateImageFolder(data: {
+export const updateImageFolder = (data: {
   id: number;
   name: string;
   description?: string;
-}): Promise<void> {
-  try {
-    const response = await serviceAxios({
-      url: "/admin/image/folder",
-      method: "put",
-      data
-    });
-    return response.data;
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+}): Promise<void> => {
+  return request({
+    url: "/admin/image/folder",
+    method: "put",
+    data
+  });
+};
 
-export async function getImageFolderDetail(id: number): Promise<ImageFolder> {
-  try {
-    const response = await serviceAxios({
-      url: "/admin/image/folder/detail/" + id,
-      method: "delete"
-    });
-    return response.data;
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const getImageFolderDetail = (id: number): Promise<ImageFolder> => {
+  return request({
+    url: "/admin/image/folder/detail/" + id,
+    method: "delete"
+  });
+};
 
-export async function deleteImageFolder(id: number): Promise<void> {
-  try {
-    await serviceAxios({
-      url: "/admin/image/folder/" + id,
-      method: "delete"
-    });
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const deleteImageFolder = (id: number): Promise<void> => {
+  return request({
+    url: "/admin/image/folder/" + id,
+    method: "delete"
+  });
+};
 
-export const uploadImageFile = async (
+export const uploadImageFile = (
   data: UploadImageRequest,
   callBack: (e: AxiosProgressEvent) => void
 ): Promise<UploadImageResponse> => {
-  try {
-    const form = new FormData();
-    form.append("folder", data.folder.toString());
-    form.append("file", data.file as Blob);
-    if (data.tags && data.tags.length > 0) {
-      form.append("tags", data.tags.join(","));
-    }
-
-    const response = await serviceAxios({
-      url: "/admin/image/upload",
-      method: "post",
-      data: form,
-      onUploadProgress: (progressEvent: AxiosProgressEvent) => {
-        callBack(progressEvent);
-      }
-    });
-    return response.data;
-  } catch (error) {
-    return Promise.reject(error);
+  const form = new FormData();
+  form.append("folder", data.folder.toString());
+  form.append("file", data.file as Blob);
+  if (data.tags && data.tags.length > 0) {
+    form.append("tags", data.tags.join(","));
   }
+
+  return request({
+    url: "/admin/image/upload",
+    method: "post",
+    data: form,
+    onUploadProgress: callBack
+  });
 };
 
-export async function getPaginatedImages(
+export const getPaginatedImages = (
   params: GetPaginatedImagesRequest
-): Promise<GetPaginatedImagesResponse> {
-  try {
-    const { folder, ...rest } = params;
-    const response = await serviceAxios({
-      url: "/admin/image/" + folder,
-      method: "get",
-      params: rest
-    });
-    return response.data;
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
-
-export const getImageDetail = async (id: number): Promise<Image> => {
-  try {
-    const response = await serviceAxios({
-      url: "/admin/image/detail/" + id,
-      method: "get"
-    });
-    return response.data;
-  } catch (error) {
-    return Promise.reject(error);
-  }
+): Promise<GetPaginatedImagesResponse> => {
+  const { folder, ...rest } = params;
+  return request({
+    url: "/admin/image/" + folder,
+    method: "get",
+    params: rest
+  });
 };
 
-export async function downloadImageFile(
+export const getImageDetail = (id: number): Promise<Image> => {
+  return request({
+    url: "/admin/image/detail/" + id,
+    method: "get"
+  });
+};
+
+export const downloadImageFile = (
   id: number,
   format?: "webp" | "jpg" | "png",
   callBack?: (e: AxiosProgressEvent) => void
-): Promise<Blob> {
-  try {
-    const response = await serviceAxios({
-      url: `/admin/image/download/${id}`,
-      method: "get",
-      params: { format },
-      responseType: "blob",
-      onUploadProgress: callBack
-    });
-    return response.data;
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+): Promise<Blob> => {
+  return request({
+    url: `/admin/image/download/${id}`,
+    method: "get",
+    params: { format },
+    responseType: "blob",
+    onDownloadProgress: callBack
+  });
+};
 
-export async function deleteImageFile(id: number): Promise<void> {
-  try {
-    await serviceAxios({
-      url: "/admin/image/" + id,
-      method: "delete"
-    });
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const deleteImageFile = (id: number): Promise<void> => {
+  return request({
+    url: "/admin/image/" + id,
+    method: "delete"
+  });
+};
 
-export async function updateImageTags(data: { id: number; tags?: string[] }): Promise<Image> {
-  try {
-    const response = await serviceAxios({
-      url: "/admin/image",
-      method: "patch",
-      data
-    });
-    return response.data;
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const updateImageTags = (data: { id: number; tags?: string[] }): Promise<Image> => {
+  return request({
+    url: "/admin/image",
+    method: "patch",
+    data
+  });
+};

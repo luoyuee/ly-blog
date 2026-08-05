@@ -7,6 +7,50 @@ import type { AttachmentFolder } from "./attachment";
 import type { WorkItem } from "./config";
 import type { ApiKeyItem, CreatedApiKey } from "./api-key";
 
+/**
+ * 画布文档列表项（不含核心数据 data）
+ * @description 与 CanvasDocumentListItem 结构保持一致，用于标签页数据传递
+ */
+export interface CanvasDocumentItem {
+  id: number;
+  created_at: string | null;
+  created_by: number | null;
+  updated_at: string | null;
+  updated_by: number | null;
+  type: string;
+  title: string;
+  description: string | null;
+  cover: string | null;
+  status: number;
+}
+
+/** 白板列表项 */
+export type WhiteboardItem = CanvasDocumentItem;
+
+/** 看板列表项 */
+export type KanbanItem = CanvasDocumentItem;
+
+/** 流程图列表项 */
+export type FlowchartItem = CanvasDocumentItem;
+
+/** 思维导图列表项 */
+export type MindmapItem = CanvasDocumentItem;
+
+/**
+ * 日历列表项
+ * @description 暂未接入接口，仅作为侧边栏列表项的本地占位结构
+ */
+export interface CalendarItem {
+  /** 日历唯一标识 */
+  id: number;
+  /** 日历标题 */
+  title: string;
+  /** 日历描述 */
+  description: string | null;
+  /** 日历预设颜色，支持任意合法 CSS 颜色 */
+  color?: string;
+}
+
 export interface NoteData {
   id?: number;
   folder_id?: number;
@@ -21,6 +65,18 @@ export interface ImagePreviewData {
 export type ImageManagerData = ImageFolder;
 
 export type AttachmentManagerData = AttachmentFolder;
+
+/** 白板标签页数据，使用列表项结构 */
+export type WhiteboardPanelData = WhiteboardItem;
+
+/** 看板标签页数据，使用列表项结构 */
+export type KanbanPanelData = KanbanItem;
+
+/** 流程图标签页数据，使用列表项结构 */
+export type FlowchartPanelData = FlowchartItem;
+
+/** 思维导图标签页数据，使用列表项结构 */
+export type MindmapPanelData = MindmapItem;
 
 export type EditorTabItem = {
   key: string;
@@ -70,6 +126,17 @@ export type EditorTabItem = {
     }
   | {
       type: "api-key-panel";
+    }
+  | {
+      type: "whiteboard-panel";
+      data: WhiteboardPanelData;
+    }
+  | {
+      type: "kanban-panel";
+      data: KanbanPanelData;
+    }
+  | {
+      type: "calendar-panel";
     }
 );
 
@@ -150,7 +217,12 @@ export type LyEditorModalKey =
   | "hitokoto-type-form"
   | "hitokoto-type-details"
   | "api-key-form"
-  | "api-key-created";
+  | "api-key-created"
+  | "whiteboard-form"
+  | "kanban-form"
+  | "flowchart-form"
+  | "mindmap-form"
+  | "calendar-form";
 
 /**
  * LY Editor 弹窗参数映射。
@@ -226,8 +298,7 @@ export type ApiKeyFormModalPayload = {
  * API Key 表单弹窗结果。
  */
 export type ApiKeyFormModalResult =
-  | { action: "submitted"; data?: CreatedApiKey }
-  | { action: "cancelled" };
+  { action: "submitted"; data?: CreatedApiKey } | { action: "cancelled" };
 
 /**
  * Secret API Key 明文展示弹窗参数。
@@ -240,6 +311,71 @@ export type ApiKeyCreatedModalPayload = {
  * Secret API Key 明文展示弹窗结果。
  */
 export type ApiKeyCreatedModalResult = { action: "closed" } | { action: "cancelled" };
+
+/**
+ * 白板表单弹窗参数。
+ */
+export type WhiteboardFormModalPayload = {
+  mode: "create" | "update";
+  record?: WhiteboardItem;
+};
+
+/**
+ * 白板表单弹窗结果。
+ */
+export type WhiteboardFormModalResult = { action: "submitted" } | { action: "cancelled" };
+
+/**
+ * 看板表单弹窗参数。
+ */
+export type KanbanFormModalPayload = {
+  mode: "create" | "update";
+  record?: KanbanItem;
+};
+
+/**
+ * 看板表单弹窗结果。
+ */
+export type KanbanFormModalResult = { action: "submitted" } | { action: "cancelled" };
+
+/**
+ * 流程图表单弹窗参数。
+ */
+export type FlowchartFormModalPayload = {
+  mode: "create" | "update";
+  record?: FlowchartItem;
+};
+
+/**
+ * 流程图表单弹窗结果。
+ */
+export type FlowchartFormModalResult = { action: "submitted" } | { action: "cancelled" };
+
+/**
+ * 思维导图表单弹窗参数。
+ */
+export type MindmapFormModalPayload = {
+  mode: "create" | "update";
+  record?: MindmapItem;
+};
+
+/**
+ * 思维导图表单弹窗结果。
+ */
+export type MindmapFormModalResult = { action: "submitted" } | { action: "cancelled" };
+
+/**
+ * 日历表单弹窗参数。
+ */
+export type CalendarFormModalPayload = {
+  mode: "create" | "update";
+  record?: CalendarItem;
+};
+
+/**
+ * 日历表单弹窗结果。
+ */
+export type CalendarFormModalResult = { action: "submitted" } | { action: "cancelled" };
 
 export type LyEditorModalPayloadMap = {
   "note-folder-form": { form?: NoteFolderForm };
@@ -262,6 +398,11 @@ export type LyEditorModalPayloadMap = {
   "hitokoto-type-details": HitokotoTypeDetailsModalPayload;
   "api-key-form": ApiKeyFormModalPayload;
   "api-key-created": ApiKeyCreatedModalPayload;
+  "whiteboard-form": WhiteboardFormModalPayload;
+  "kanban-form": KanbanFormModalPayload;
+  "flowchart-form": FlowchartFormModalPayload;
+  "mindmap-form": MindmapFormModalPayload;
+  "calendar-form": CalendarFormModalPayload;
 };
 
 /**
@@ -288,6 +429,11 @@ export type LyEditorModalResultMap = {
   "hitokoto-type-details": HitokotoTypeDetailsModalResult;
   "api-key-form": ApiKeyFormModalResult;
   "api-key-created": ApiKeyCreatedModalResult;
+  "whiteboard-form": WhiteboardFormModalResult;
+  "kanban-form": KanbanFormModalResult;
+  "flowchart-form": FlowchartFormModalResult;
+  "mindmap-form": MindmapFormModalResult;
+  "calendar-form": CalendarFormModalResult;
 };
 
 /**

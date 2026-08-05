@@ -32,5 +32,8 @@
   "i18n-ally.displayLanguage": "zh-CN",
   "i18n-ally.sortKeys": true,
   "css.lint.unknownAtRules": "ignore",
-  "scss.lint.unknownAtRules": "ignore"
+  "scss.lint.unknownAtRules": "ignore",
+  "[prisma]": {
+    "editor.defaultFormatter": "Prisma.prisma-insider"
+  }
 }

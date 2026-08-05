@@ -4,9 +4,14 @@ export interface SendEmailForm {
   content: string;
 }
 
+export interface NitroTasksRawResponse {
+  tasks: Record<string, { description?: string }>;
+  scheduledTasks: ScheduledTask[];
+}
+
 export interface Task {
   name: string;
-  description: string;
+  description?: string;
 }
 
 export interface ScheduledTask {

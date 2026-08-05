@@ -15,189 +15,122 @@ import type {
   UpdateHitokotoTypeResquest
 } from "./models";
 import type { AxiosProgressEvent } from "axios";
-import { serviceAxios } from "@/utils/request";
+import request from "@/utils/request";
 
-export async function getAllHitokotoType(): Promise<HitokotoTypeItem[]> {
-  try {
-    const response = await serviceAxios({
-      url: "/admin/hitokoto/type/all",
-      method: "get"
-    });
-    return response.data;
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const getAllHitokotoType = (): Promise<HitokotoTypeItem[]> => {
+  return request({
+    url: "/admin/hitokoto/type/all",
+    method: "get"
+  });
+};
 
-export async function getHitokotoDetails(id: number): Promise<HitokotoTypeItem> {
-  try {
-    const response = await serviceAxios({
-      url: "/admin/hitokoto/type/" + id,
-      method: "get"
-    });
-    return response.data;
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const getHitokotoDetails = (id: number): Promise<HitokotoTypeItem> => {
+  return request({
+    url: "/admin/hitokoto/type/" + id,
+    method: "get"
+  });
+};
 
-export async function uploadHitokotoData(
+export const uploadHitokotoData = (
   file: File,
   callBack?: (e: AxiosProgressEvent) => void
-): Promise<void> {
-  try {
-    const form = new FormData();
-    form.append("file", file as Blob);
+): Promise<void> => {
+  const form = new FormData();
+  form.append("file", file as Blob);
 
-    const response = await serviceAxios({
-      url: "/admin/hitokoto/import",
-      method: "post",
-      data: form,
-      onUploadProgress: (progressEvent: AxiosProgressEvent) => {
-        if (callBack) callBack(progressEvent);
-      }
-    });
-    return response.data;
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+  return request({
+    url: "/admin/hitokoto/import",
+    method: "post",
+    data: form,
+    onUploadProgress: callBack
+  });
+};
 
-export async function exportHitokotoData(): Promise<Blob> {
-  try {
-    const response = await serviceAxios({
-      url: "/admin/hitokoto/export",
-      method: "get",
-      responseType: "blob"
-    });
+export const exportHitokotoData = (): Promise<Blob> => {
+  return request({
+    url: "/admin/hitokoto/export",
+    method: "get",
+    responseType: "blob"
+  });
+};
 
-    return response.data;
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
-
-export async function getHitokotoTypeList(
+export const getHitokotoTypeList = (
   params: GetHitokotoTypePaginatedRequest
-): Promise<GetHitokotoTypePaginatedResponse> {
-  try {
-    const response = await serviceAxios({
-      url: "/admin/hitokoto/type",
-      method: "get",
-      params
-    });
-    return response.data;
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+): Promise<GetHitokotoTypePaginatedResponse> => {
+  return request({
+    url: "/admin/hitokoto/type",
+    method: "get",
+    params
+  });
+};
 
-export async function getHitokotoTypeOptions(): Promise<HitokotoTypeSelectOption[]> {
-  try {
-    const response = await serviceAxios({
-      url: "/admin/hitokoto/type/options",
-      method: "get"
-    });
-    return response.data;
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const getHitokotoTypeOptions = (): Promise<HitokotoTypeSelectOption[]> => {
+  return request({
+    url: "/admin/hitokoto/type/options",
+    method: "get"
+  });
+};
 
-export async function createHitokotoType(data: CreateHitokotoTypeRequest): Promise<void> {
-  try {
-    await serviceAxios({
-      url: "/admin/hitokoto/type",
-      method: "post",
-      data
-    });
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const createHitokotoType = (data: CreateHitokotoTypeRequest): Promise<void> => {
+  return request({
+    url: "/admin/hitokoto/type",
+    method: "post",
+    data
+  });
+};
 
-export async function updateHitokotoType(data: UpdateHitokotoTypeResquest): Promise<void> {
-  try {
-    await serviceAxios({
-      url: "/admin/hitokoto/type",
-      method: "put",
-      data
-    });
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const updateHitokotoType = (data: UpdateHitokotoTypeResquest): Promise<void> => {
+  return request({
+    url: "/admin/hitokoto/type",
+    method: "put",
+    data
+  });
+};
 
-export async function deleteHitokotoType(id: number): Promise<void> {
-  try {
-    await serviceAxios({
-      url: "/admin/hitokoto/type/" + id,
-      method: "delete"
-    });
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const deleteHitokotoType = (id: number): Promise<void> => {
+  return request({
+    url: "/admin/hitokoto/type/" + id,
+    method: "delete"
+  });
+};
 
-export async function randomHitokoto(data: RandomHitokotoRequest): Promise<RandomHitokotoResponse> {
-  try {
-    const response = await serviceAxios({
-      url: "/hitokoto/random",
-      method: "post",
-      data
-    });
-    return response.data;
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const randomHitokoto = (data: RandomHitokotoRequest): Promise<RandomHitokotoResponse> => {
+  return request({
+    url: "/hitokoto/random",
+    method: "post",
+    data
+  });
+};
 
-export async function getPaginatedHitokotos(
+export const getPaginatedHitokotos = (
   params: GetHitokotoPaginatedRequest
-): Promise<GetHitokotoPaginatedResponse> {
-  try {
-    const response = await serviceAxios({
-      url: "/admin/hitokoto",
-      method: "get",
-      params
-    });
-    return response.data;
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+): Promise<GetHitokotoPaginatedResponse> => {
+  return request({
+    url: "/admin/hitokoto",
+    method: "get",
+    params
+  });
+};
 
-export async function deleteHitokoto(id: number): Promise<void> {
-  try {
-    await serviceAxios({
-      url: "/admin/hitokoto/" + id,
-      method: "delete"
-    });
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const deleteHitokoto = (id: number): Promise<void> => {
+  return request({
+    url: "/admin/hitokoto/" + id,
+    method: "delete"
+  });
+};
 
-export async function createHitokoto(data: HitokotoForm): Promise<void> {
-  try {
-    await serviceAxios({
-      url: "/admin/hitokoto",
-      method: "post",
-      data
-    });
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const createHitokoto = (data: HitokotoForm): Promise<void> => {
+  return request({
+    url: "/admin/hitokoto",
+    method: "post",
+    data
+  });
+};
 
-export async function updateHitokoto(data: RequiredKeys<HitokotoForm, "id">): Promise<void> {
-  try {
-    await serviceAxios({
-      url: "/admin/hitokoto",
-      method: "put",
-      data
-    });
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const updateHitokoto = (data: RequiredKeys<HitokotoForm, "id">): Promise<void> => {
+  return request({
+    url: "/admin/hitokoto",
+    method: "put",
+    data
+  });
+};

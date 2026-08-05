@@ -1,3 +1,4 @@
+import type { ArticleComment } from "#shared/types/article";
 import type {
   CreateArticleCommentRequest,
   GetAdminArticleCommentListRequest,
@@ -5,72 +6,49 @@ import type {
   GetArticleCommentListResponse,
   UpdateArticleCommentContentRequest
 } from "./models";
-import { serviceAxios } from "@/utils/request";
+import request from "@/utils/request";
 
-export async function createArticleComment(data: CreateArticleCommentRequest): Promise<any> {
-  try {
-    const response = await serviceAxios({
-      url: "/article/comment",
-      method: "post",
-      data
-    });
-    return response.data;
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const createArticleComment = (
+  data: CreateArticleCommentRequest
+): Promise<ArticleComment> => {
+  return request({
+    url: "/article/comment",
+    method: "post",
+    data
+  });
+};
 
-export async function getArticleCommentList(
+export const getArticleCommentList = (
   params: GetArticleCommentListRequest
-): Promise<GetArticleCommentListResponse> {
-  try {
-    const response = await serviceAxios({
-      url: "/article/comment",
-      method: "get",
-      params
-    });
-    return response.data;
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+): Promise<GetArticleCommentListResponse> => {
+  return request({
+    url: "/article/comment",
+    method: "get",
+    params
+  });
+};
 
-export async function getAdminArticleCommentList(
+export const getAdminArticleCommentList = (
   params: GetAdminArticleCommentListRequest
-): Promise<GetArticleCommentListResponse> {
-  try {
-    const response = await serviceAxios({
-      url: "/admin/article/comment",
-      method: "get",
-      params
-    });
-    return response.data;
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+): Promise<GetArticleCommentListResponse> => {
+  return request({
+    url: "/admin/article/comment",
+    method: "get",
+    params
+  });
+};
 
-export async function deleteArticleComment(id: number): Promise<void> {
-  try {
-    await serviceAxios({
-      url: "/admin/article/comment/" + id,
-      method: "delete"
-    });
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const deleteArticleComment = (id: number): Promise<void> => {
+  return request({
+    url: "/admin/article/comment/" + id,
+    method: "delete"
+  });
+};
 
-export async function updateCommentContent(
-  data: UpdateArticleCommentContentRequest
-): Promise<void> {
-  try {
-    await serviceAxios({
-      url: "/admin/article/comment/content",
-      method: "patch",
-      data
-    });
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const updateCommentContent = (data: UpdateArticleCommentContentRequest): Promise<void> => {
+  return request({
+    url: "/admin/article/comment/content",
+    method: "patch",
+    data
+  });
+};

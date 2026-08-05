@@ -21,306 +21,204 @@ import type {
   ImportNavigationWebsiteResponse
 } from "./models";
 import type { AxiosProgressEvent } from "axios";
-import { serviceAxios } from "@/utils/request";
+import request from "@/utils/request";
 
-export async function getPaginatedNavigationWebsites(
+export const getPaginatedNavigationWebsites = (
   params: GetNavigationWebsitePaginatedRequest
-): Promise<GetNavigationWebsitePaginatedResponse> {
-  try {
-    const response = await serviceAxios({
-      url: "/admin/navigation/website",
-      method: "get",
-      params
-    });
-    return response.data;
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+): Promise<GetNavigationWebsitePaginatedResponse> => {
+  return request({
+    url: "/admin/navigation/website",
+    method: "get",
+    params
+  });
+};
 
-export async function createNavigationWebsite(data: CreateNavigationWebsiteRequest): Promise<void> {
-  try {
-    await serviceAxios({
-      url: "/admin/navigation/website",
-      method: "post",
-      data
-    });
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const createNavigationWebsite = (data: CreateNavigationWebsiteRequest): Promise<void> => {
+  return request({
+    url: "/admin/navigation/website",
+    method: "post",
+    data
+  });
+};
 
-export async function updateNavigationWebsite(data: UpdateNavigationWebsiteRequest): Promise<void> {
-  try {
-    await serviceAxios({
-      url: "/admin/navigation/website",
-      method: "put",
-      data
-    });
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const updateNavigationWebsite = (data: UpdateNavigationWebsiteRequest): Promise<void> => {
+  return request({
+    url: "/admin/navigation/website",
+    method: "put",
+    data
+  });
+};
 
-export async function deleteNavigationWebsite(id: number): Promise<void> {
-  try {
-    await serviceAxios({
-      url: "/admin/navigation/website/" + id,
-      method: "delete"
-    });
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const deleteNavigationWebsite = (id: number): Promise<void> => {
+  return request({
+    url: "/admin/navigation/website/" + id,
+    method: "delete"
+  });
+};
 
 /**
  * 导入导航网站数据（JSON 文件）。
  * @param file - JSON 文件
  * @param callBack - 上传进度回调
  */
-export async function importNavigationWebsiteData(
+export const importNavigationWebsiteData = (
   file: File,
   callBack?: (e: AxiosProgressEvent) => void
-): Promise<ImportNavigationWebsiteResponse> {
-  try {
-    const form = new FormData();
-    form.append("file", file as Blob);
+): Promise<ImportNavigationWebsiteResponse> => {
+  const form = new FormData();
+  form.append("file", file as Blob);
 
-    const response = await serviceAxios({
-      url: "/admin/navigation/website/import",
-      method: "post",
-      data: form,
-      onUploadProgress: (progressEvent: AxiosProgressEvent) => {
-        if (callBack) callBack(progressEvent);
-      }
-    });
-    return response.data;
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+  return request({
+    url: "/admin/navigation/website/import",
+    method: "post",
+    data: form,
+    onUploadProgress: callBack
+  });
+};
 
 /**
  * 导出导航网站数据，返回 JSON Blob。
  */
-export async function exportNavigationWebsiteData(): Promise<Blob> {
-  try {
-    const response = await serviceAxios({
-      url: "/admin/navigation/website/export",
-      method: "get",
-      responseType: "blob"
-    });
-
-    return response.data;
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const exportNavigationWebsiteData = (): Promise<Blob> => {
+  return request({
+    url: "/admin/navigation/website/export",
+    method: "get",
+    responseType: "blob"
+  });
+};
 
 /** 搜索导航网站 */
-export async function searchNavigationWebsites(
+export const searchNavigationWebsites = (
   params: SearchNavigationWebsiteRequest
-): Promise<SearchNavigationWebsiteResponse> {
-  try {
-    const response = await serviceAxios({
-      url: "/navigation/website/search",
-      method: "get",
-      params
-    });
-    return response.data;
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+): Promise<SearchNavigationWebsiteResponse> => {
+  return request({
+    url: "/navigation/website/search",
+    method: "get",
+    params
+  });
+};
 
 /** 获取全部搜索引擎 */
-export async function getSearchEngineList(): Promise<GetSearchEngineListResponse> {
-  try {
-    const response = await serviceAxios({
-      url: "/admin/navigation/search-engine/all",
-      method: "get"
-    });
-    return response.data;
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const getSearchEngineList = (): Promise<GetSearchEngineListResponse> => {
+  return request({
+    url: "/admin/navigation/search-engine/all",
+    method: "get"
+  });
+};
 
 /** 获取前台可见搜索引擎 */
-export async function getPublicSearchEngineList(): Promise<GetSearchEngineListResponse> {
-  try {
-    const response = await serviceAxios({
-      url: "/navigation/search-engine/all",
-      method: "get"
-    });
-    return response.data;
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const getPublicSearchEngineList = (): Promise<GetSearchEngineListResponse> => {
+  return request({
+    url: "/navigation/search-engine/all",
+    method: "get"
+  });
+};
 
 /** 获取分页搜索引擎 */
-export async function getPaginatedSearchEngines(
+export const getPaginatedSearchEngines = (
   params: GetSearchEnginePaginatedRequest
-): Promise<GetSearchEnginePaginatedResponse> {
-  try {
-    const response = await serviceAxios({
-      url: "/admin/navigation/search-engine",
-      method: "get",
-      params
-    });
-    return response.data;
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+): Promise<GetSearchEnginePaginatedResponse> => {
+  return request({
+    url: "/admin/navigation/search-engine",
+    method: "get",
+    params
+  });
+};
 
-export async function createSearchEngine(data: CreateSearchEngineRequest): Promise<void> {
-  try {
-    await serviceAxios({
-      url: "/admin/navigation/search-engine",
-      method: "post",
-      data
-    });
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const createSearchEngine = (data: CreateSearchEngineRequest): Promise<void> => {
+  return request({
+    url: "/admin/navigation/search-engine",
+    method: "post",
+    data
+  });
+};
 
-export async function updateSearchEngine(data: UpdateSearchEngineRequest): Promise<void> {
-  try {
-    await serviceAxios({
-      url: "/admin/navigation/search-engine",
-      method: "put",
-      data
-    });
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const updateSearchEngine = (data: UpdateSearchEngineRequest): Promise<void> => {
+  return request({
+    url: "/admin/navigation/search-engine",
+    method: "put",
+    data
+  });
+};
 
-export async function deleteSearchEngine(id: number): Promise<void> {
-  try {
-    await serviceAxios({
-      url: "/admin/navigation/search-engine/" + id,
-      method: "delete"
-    });
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const deleteSearchEngine = (id: number): Promise<void> => {
+  return request({
+    url: "/admin/navigation/search-engine/" + id,
+    method: "delete"
+  });
+};
 
 /** 获取全部快捷方式 */
-export async function getShortcutList(): Promise<GetShortcutListResponse> {
-  try {
-    const response = await serviceAxios({
-      url: "/admin/navigation/shortcut/all",
-      method: "get"
-    });
-    return response.data;
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const getShortcutList = (): Promise<GetShortcutListResponse> => {
+  return request({
+    url: "/admin/navigation/shortcut/all",
+    method: "get"
+  });
+};
 
 /** 获取前台可见快捷方式 */
-export async function getPublicShortcutList(): Promise<GetShortcutListResponse> {
-  try {
-    const response = await serviceAxios({
-      url: "/navigation/shortcut/all",
-      method: "get"
-    });
-    return response.data;
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const getPublicShortcutList = (): Promise<GetShortcutListResponse> => {
+  return request({
+    url: "/navigation/shortcut/all",
+    method: "get"
+  });
+};
 
 /** 获取分页快捷方式 */
-export async function getPaginatedShortcuts(
+export const getPaginatedShortcuts = (
   params: GetShortcutPaginatedRequest
-): Promise<GetShortcutPaginatedResponse> {
-  try {
-    const response = await serviceAxios({
-      url: "/admin/navigation/shortcut",
-      method: "get",
-      params
-    });
-    return response.data;
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+): Promise<GetShortcutPaginatedResponse> => {
+  return request({
+    url: "/admin/navigation/shortcut",
+    method: "get",
+    params
+  });
+};
 
-export async function createShortcut(data: CreateShortcutRequest): Promise<void> {
-  try {
-    await serviceAxios({
-      url: "/admin/navigation/shortcut",
-      method: "post",
-      data
-    });
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const createShortcut = (data: CreateShortcutRequest): Promise<void> => {
+  return request({
+    url: "/admin/navigation/shortcut",
+    method: "post",
+    data
+  });
+};
 
-export async function updateShortcut(data: UpdateShortcutRequest): Promise<void> {
-  try {
-    await serviceAxios({
-      url: "/admin/navigation/shortcut",
-      method: "put",
-      data
-    });
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const updateShortcut = (data: UpdateShortcutRequest): Promise<void> => {
+  return request({
+    url: "/admin/navigation/shortcut",
+    method: "put",
+    data
+  });
+};
 
-export async function deleteShortcut(id: number): Promise<void> {
-  try {
-    await serviceAxios({
-      url: "/admin/navigation/shortcut/" + id,
-      method: "delete"
-    });
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const deleteShortcut = (id: number): Promise<void> => {
+  return request({
+    url: "/admin/navigation/shortcut/" + id,
+    method: "delete"
+  });
+};
 
-export async function createSearchHistory(data: CreateSearchHistoryRequest): Promise<void> {
-  try {
-    await serviceAxios({
-      url: "/navigation/search-history",
-      method: "post",
-      data
-    });
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const createSearchHistory = (data: CreateSearchHistoryRequest): Promise<void> => {
+  return request({
+    url: "/navigation/search-history",
+    method: "post",
+    data
+  });
+};
 
-export async function getPaginatedSearchHistories(
+export const getPaginatedSearchHistories = (
   params: GetSearchHistoryPaginatedRequest
-): Promise<GetSearchHistoryPaginatedResponse> {
-  try {
-    const response = await serviceAxios({
-      url: "/navigation/search-history",
-      method: "get",
-      params
-    });
-    return response.data;
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+): Promise<GetSearchHistoryPaginatedResponse> => {
+  return request({
+    url: "/navigation/search-history",
+    method: "get",
+    params
+  });
+};
 
-export async function deleteSearchHistory(id: number): Promise<void> {
-  try {
-    await serviceAxios({
-      url: "/navigation/search-history/" + id,
-      method: "delete"
-    });
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const deleteSearchHistory = (id: number): Promise<void> => {
+  return request({
+    url: "/navigation/search-history/" + id,
+    method: "delete"
+  });
+};

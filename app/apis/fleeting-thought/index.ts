@@ -5,60 +5,41 @@ import type {
   GetFleetingThoughtPaginatedResponse,
   UpdateFleetingThoughtRequest
 } from "./models";
-import { serviceAxios } from "@/utils/request";
+import request from "@/utils/request";
 
-export async function createFleetingThought(
+export const createFleetingThought = (
   data: CreateFleetingThoughtRequest
-): Promise<FleetingThought> {
-  try {
-    const response = await serviceAxios({
-      url: "/admin/thought",
-      method: "post",
-      data
-    });
-    return response.data;
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+): Promise<FleetingThought> => {
+  return request({
+    url: "/admin/thought",
+    method: "post",
+    data
+  });
+};
 
-export async function getPaginatedFleetingThought(
+export const getPaginatedFleetingThought = (
   params: GetFleetingThoughtPaginatedRequest
-): Promise<GetFleetingThoughtPaginatedResponse> {
-  try {
-    const response = await serviceAxios({
-      url: "/thought",
-      method: "get",
-      params
-    });
-    return response.data;
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+): Promise<GetFleetingThoughtPaginatedResponse> => {
+  return request({
+    url: "/thought",
+    method: "get",
+    params
+  });
+};
 
-export async function deleteFleetingThought(id: number): Promise<void> {
-  try {
-    await serviceAxios({
-      url: "/admin/thought/" + id,
-      method: "delete"
-    });
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const deleteFleetingThought = (id: number): Promise<void> => {
+  return request({
+    url: "/admin/thought/" + id,
+    method: "delete"
+  });
+};
 
-export async function updateFleetingThought(
+export const updateFleetingThought = (
   data: UpdateFleetingThoughtRequest
-): Promise<FleetingThought> {
-  try {
-    const response = await serviceAxios({
-      url: "/admin/thought",
-      method: "patch",
-      data
-    });
-    return response.data;
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+): Promise<FleetingThought> => {
+  return request({
+    url: "/admin/thought",
+    method: "patch",
+    data
+  });
+};

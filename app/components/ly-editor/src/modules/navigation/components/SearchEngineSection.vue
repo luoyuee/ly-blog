@@ -47,63 +47,53 @@ const handleDeleteSearchEngine = (e: SearchEngineItem) => {
     }
   });
 };
+
+defineExpose({
+  openForm: () => handleOpenSearchEngineFormModal()
+});
 </script>
 <template>
-  <div class="flex-1 flex flex-col min-h-0">
-    <div class="flex items-center justify-between px-2 py-1.5 shrink-0 border-b border-gray-700">
-      <span class="text-xs font-medium text-gray-400">搜索引擎</span>
-      <UTooltip text="新增搜索引擎">
-        <UButton
-          size="xs"
-          icon="lucide:plus"
-          color="neutral"
-          variant="ghost"
-          @click="handleOpenSearchEngineFormModal()"
-        />
-      </UTooltip>
-    </div>
-    <div class="flex-1 overflow-y-auto px-1 py-2">
+  <div class="flex-1 min-h-0 overflow-y-auto px-1 py-2">
+    <div
+      v-for="item in searchEngines"
+      :key="item.id"
+      class="group flex items-center gap-2 px-2 py-1.5 hover:bg-white/5 rounded cursor-pointer"
+    >
+      <UIcon :name="item.icon" :size="20" class="shrink-0" />
+
+      <div class="text-sm truncate flex-1">{{ item.name }}</div>
+
+      <UBadge :color="item.is_public ? 'success' : 'neutral'" variant="subtle" size="xs">
+        {{ item.is_public ? "公开" : "私有" }}
+      </UBadge>
+
       <div
-        v-for="item in searchEngines"
-        :key="item.id"
-        class="group flex items-center gap-2 px-2 py-1.5 hover:bg-white/5 rounded cursor-pointer"
+        class="opacity-0 group-hover:opacity-100 flex items-center gap-0.5 transition-opacity shrink-0"
+        @click.stop
       >
-        <UIcon :name="item.icon" :size="20" class="shrink-0" />
-
-        <div class="text-sm truncate flex-1">{{ item.name }}</div>
-
-        <UBadge :color="item.is_public ? 'success' : 'neutral'" variant="subtle" size="xs">
-          {{ item.is_public ? "公开" : "私有" }}
-        </UBadge>
-
-        <div
-          class="opacity-0 group-hover:opacity-100 flex items-center gap-0.5 transition-opacity shrink-0"
-          @click.stop
-        >
-          <UTooltip text="编辑">
-            <UButton
-              icon="lucide:edit"
-              size="xs"
-              variant="ghost"
-              @click="handleOpenSearchEngineFormModal(item)"
-            />
-          </UTooltip>
-          <UTooltip text="删除">
-            <UButton
-              icon="lucide:trash-2"
-              size="xs"
-              variant="ghost"
-              color="error"
-              @click="handleDeleteSearchEngine(item)"
-            />
-          </UTooltip>
-        </div>
-
-        <UChip standalone inset :color="item.status === 1 ? 'success' : 'error'" />
+        <UTooltip text="编辑">
+          <UButton
+            icon="lucide:edit"
+            size="xs"
+            variant="ghost"
+            @click="handleOpenSearchEngineFormModal(item)"
+          />
+        </UTooltip>
+        <UTooltip text="删除">
+          <UButton
+            icon="lucide:trash-2"
+            size="xs"
+            variant="ghost"
+            color="error"
+            @click="handleDeleteSearchEngine(item)"
+          />
+        </UTooltip>
       </div>
-      <div v-if="searchEngines.length === 0" class="text-xs text-gray-500 text-center py-4">
-        暂无数据，点击上方 + 新增
-      </div>
+
+      <UChip standalone inset :color="item.status === 1 ? 'success' : 'error'" />
+    </div>
+    <div v-if="searchEngines.length === 0" class="text-xs text-gray-500 text-center py-4">
+      暂无数据，点击上方 + 新增
     </div>
   </div>
 </template>

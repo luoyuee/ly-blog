@@ -47,3 +47,4 @@ prisma/generated
 # AI Agent 记忆相关
 .sisyphus
 .workbuddy
+.omo

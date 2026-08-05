@@ -1,23 +1,24 @@
 <script setup lang="ts">
 import { Descriptions, DescriptionsItem } from "@/components/descriptions";
-
-definePageMeta({
-  layout: "blank"
-});
 </script>
 
 <template>
-  <main class="descriptions-v2-demo">
-    <section class="descriptions-v2-demo__hero">
-      <p class="descriptions-v2-demo__eyebrow">Development Only</p>
-      <h1 class="descriptions-v2-demo__title">Descriptions 组件测试页</h1>
-      <p class="descriptions-v2-demo__subtitle">
-        该页面仅在开发环境注入，用于手动验证 descriptions-v2
+  <main class="min-h-screen p-8">
+    <section class="mx-auto mb-6 max-w-240">
+      <p class="mb-2 text-sm uppercase tracking-[0.08em] text-(--text-color-tertiary)">
+        Development Only
+      </p>
+
+      <h1 class="mb-3 text-2xl font-bold leading-[1.2] text-(--text-color-primary)">
+        Descriptions 组件测试页
+      </h1>
+      <p class="text-base leading-[1.75] text-(--text-color-secondary)">
+        该页面仅在开发环境注入，用于手动验证 descriptions
         当前版本的插槽结构、横向布局、纵向布局和边框表现。
       </p>
     </section>
 
-    <section class="descriptions-v2-demo__section">
+    <UCard class="mx-auto mb-4 max-w-240">
       <Descriptions title="基础横向布局" extra="column 响应式" :column="1">
         <DescriptionsItem label="站点名称">Ly Blog</DescriptionsItem>
         <DescriptionsItem label="Nuxt 版本">4</DescriptionsItem>
@@ -27,9 +28,9 @@ definePageMeta({
           Nuxt 4、Vue 3、TypeScript、Tailwind CSS V4
         </DescriptionsItem>
       </Descriptions>
-    </section>
+    </UCard>
 
-    <section class="descriptions-v2-demo__section">
+    <UCard class="mx-auto mb-4 max-w-240">
       <Descriptions title="垂直布局" extra="vertical" vertical :column="2">
         <DescriptionsItem label="作者">Sisyphus</DescriptionsItem>
         <DescriptionsItem label="组件导出">Descriptions / DescriptionsItem</DescriptionsItem>
@@ -38,9 +39,9 @@ definePageMeta({
         </DescriptionsItem>
         <DescriptionsItem label="备注">生产构建不会注册该页面路由。</DescriptionsItem>
       </Descriptions>
-    </section>
+    </UCard>
 
-    <section class="descriptions-v2-demo__section">
+    <UCard class="mx-auto mb-4 max-w-240">
       <Descriptions size="sm" :column="1">
         <template #title>自定义标题插槽</template>
         <template #extra>
@@ -49,83 +50,15 @@ definePageMeta({
 
         <DescriptionsItem>
           <template #label>
-            <span class="descriptions-v2-demo__label">自定义标签</span>
+            <span class="font-semibold text-(--text-color-primary)">自定义标签</span>
           </template>
-          <span class="descriptions-v2-demo__content">通过 label 插槽替换默认标题文本。</span>
+          <span class="text-(--text-color-secondary)">通过 label 插槽替换默认标题文本。</span>
         </DescriptionsItem>
 
         <DescriptionsItem label="内容插槽">
           验证简化后仅保留表格主体和默认内容插槽。
         </DescriptionsItem>
       </Descriptions>
-    </section>
+    </UCard>
   </main>
 </template>
-
-<style scoped lang="scss">
-.descriptions-v2-demo {
-  min-height: 100vh;
-  padding: 2rem;
-  background: var(--background-color);
-
-  &__hero {
-    max-width: 960px;
-    margin: 0 auto 1.5rem;
-  }
-
-  &__eyebrow {
-    margin-bottom: 0.5rem;
-    color: var(--text-color-tertiary);
-    font-size: 0.875rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-  }
-
-  &__title {
-    margin-bottom: 0.75rem;
-    color: var(--text-color-primary);
-    font-size: clamp(1.75rem, 3vw, 2.5rem);
-    font-weight: 700;
-    line-height: 1.2;
-  }
-
-  &__subtitle {
-    color: var(--text-color-secondary);
-    font-size: 1rem;
-    line-height: 1.75;
-  }
-
-  &__section {
-    max-width: 960px;
-    margin: 0 auto 1rem;
-    padding: 1.25rem;
-    border: 1px solid var(--text-color-5);
-    border-radius: var(--radius-wrap);
-    background: var(--background-color-box);
-  }
-
-  &__label {
-    color: var(--text-color-primary);
-    font-weight: 600;
-  }
-
-  &__content {
-    color: var(--text-color-secondary);
-  }
-
-  &__extra {
-    color: var(--text-color-secondary);
-    font-size: 0.875rem;
-  }
-}
-
-@media (max-width: 768px) {
-  .descriptions-v2-demo {
-    padding: 1rem;
-
-    &__section {
-      padding: 1rem;
-    }
-  }
-}
-</style>

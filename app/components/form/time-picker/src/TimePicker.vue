@@ -130,8 +130,6 @@ const displayText = computed(() => {
   return formatTimePickerDisplay(selectedTime.value, props.showFormat, props.placeholder);
 });
 
-const hasValue = computed(() => modelValue.value !== null);
-
 watch(
   modelValue,
   (newVal) => {
@@ -203,7 +201,7 @@ const handleClear = () => {
           :disabled="props.disabled"
           v-bind="attrs"
         >
-          <span class="min-w-0 flex-1 truncate text-left" :class="{ 'text-dimmed': !hasValue }">
+          <span class="min-w-0 flex-1 truncate text-left">
             {{ displayText }}
           </span>
 
