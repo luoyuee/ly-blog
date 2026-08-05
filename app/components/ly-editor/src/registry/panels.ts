@@ -4,6 +4,7 @@ import {
   ApiKeyPanel,
   AttachmentFolderPanel,
   ArticlePanel,
+  CalendarPanel,
   CronJobPanel,
   DashboardPanel,
   FlowchartPanel,
@@ -80,6 +81,10 @@ export const lyEditorPanelRegistry = {
   },
   [LyEditorTabPanelEnum.MindmapPanel]: {
     component: MindmapPanel,
+    keepAlive: true
+  },
+  [LyEditorTabPanelEnum.CalendarPanel]: {
+    component: CalendarPanel,
     keepAlive: true
   }
 } satisfies Record<string, LyEditorPanelRegistryItem>;

@@ -29,6 +29,8 @@ export const LyEditorActivityMenuEnum = {
   FlowchartManager: "flowchart-manager",
   /** 思维导图管理 */
   MindmapManager: "mindmap-manager",
+  /** 日历管理 */
+  CalendarManager: "calendar-manager",
   /** 仪表盘面板 */
   DashboardPanel: "dashboard-panel",
   /** 定时任务面板 */
@@ -70,6 +72,8 @@ export const LyEditorTabPanelEnum = {
   FlowchartPanel: "flowchart-panel",
   /** 思维导图面板 */
   MindmapPanel: "mindmap-panel",
+  /** 日历面板 */
+  CalendarPanel: "calendar-panel",
   /** 用户面板 */
   UserPanel: "user-panel",
   /** 仪表盘面板 */

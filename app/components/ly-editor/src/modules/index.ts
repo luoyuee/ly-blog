@@ -1,6 +1,7 @@
 export * from "./api-key";
 export * from "./attachment";
 export * from "./article";
+export * from "./calendar";
 export * from "./dashboard";
 export * from "./flowchart";
 export * from "./hitokoto";

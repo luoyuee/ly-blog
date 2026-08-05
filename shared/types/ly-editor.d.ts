@@ -36,6 +36,21 @@ export type FlowchartItem = CanvasDocumentItem;
 /** 思维导图列表项 */
 export type MindmapItem = CanvasDocumentItem;
 
+/**
+ * 日历列表项
+ * @description 暂未接入接口，仅作为侧边栏列表项的本地占位结构
+ */
+export interface CalendarItem {
+  /** 日历唯一标识 */
+  id: number;
+  /** 日历标题 */
+  title: string;
+  /** 日历描述 */
+  description: string | null;
+  /** 日历预设颜色，支持任意合法 CSS 颜色 */
+  color?: string;
+}
+
 export interface NoteData {
   id?: number;
   folder_id?: number;
@@ -120,6 +135,9 @@ export type EditorTabItem = {
       type: "kanban-panel";
       data: KanbanPanelData;
     }
+  | {
+      type: "calendar-panel";
+    }
 );
 
 export type FolderTreeItem = {
@@ -203,7 +221,8 @@ export type LyEditorModalKey =
   | "whiteboard-form"
   | "kanban-form"
   | "flowchart-form"
-  | "mindmap-form";
+  | "mindmap-form"
+  | "calendar-form";
 
 /**
  * LY Editor 弹窗参数映射。
@@ -345,6 +364,19 @@ export type MindmapFormModalPayload = {
  */
 export type MindmapFormModalResult = { action: "submitted" } | { action: "cancelled" };
 
+/**
+ * 日历表单弹窗参数。
+ */
+export type CalendarFormModalPayload = {
+  mode: "create" | "update";
+  record?: CalendarItem;
+};
+
+/**
+ * 日历表单弹窗结果。
+ */
+export type CalendarFormModalResult = { action: "submitted" } | { action: "cancelled" };
+
 export type LyEditorModalPayloadMap = {
   "note-folder-form": { form?: NoteFolderForm };
   "note-save": { tab: EditorTabItem };
@@ -370,6 +402,7 @@ export type LyEditorModalPayloadMap = {
   "kanban-form": KanbanFormModalPayload;
   "flowchart-form": FlowchartFormModalPayload;
   "mindmap-form": MindmapFormModalPayload;
+  "calendar-form": CalendarFormModalPayload;
 };
 
 /**
@@ -400,6 +433,7 @@ export type LyEditorModalResultMap = {
   "kanban-form": KanbanFormModalResult;
   "flowchart-form": FlowchartFormModalResult;
   "mindmap-form": MindmapFormModalResult;
+  "calendar-form": CalendarFormModalResult;
 };
 
 /**

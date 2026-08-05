@@ -225,5 +225,18 @@ export const devPages = [
         order: 16
       }
     }
+  },
+  {
+    name: "dev-calendar",
+    path: "/test/calendar",
+    file: fileURLToPath(new URL("./calendar.vue", import.meta.url)),
+    meta: {
+      layout: "test",
+      devPage: {
+        label: "Calendar",
+        icon: "lucide:calendar-days",
+        order: 17
+      }
+    }
   }
 ];

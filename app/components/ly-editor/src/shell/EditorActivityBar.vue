@@ -75,6 +75,12 @@ const activityMenu = ref<ActivityMenuItem[]>([
     key: LyEditorActivityMenuEnum.MindmapManager,
     label: "思维导图管理",
     icon: "lucide:network"
+  },
+  {
+    key: LyEditorActivityMenuEnum.CalendarManager,
+    label: "日历管理",
+    icon: "lucide:calendar",
+    panel: LyEditorTabPanelEnum.CalendarPanel
   }
 ]);
 

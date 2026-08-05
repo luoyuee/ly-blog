@@ -6,6 +6,7 @@ import {
   AttachmentManager,
   NoteManager,
   ArticleManager,
+  CalendarManager,
   FlowchartManager,
   HitokotoManager,
   ImageManager,
@@ -62,6 +63,9 @@ export const lyEditorSidebarRegistry = {
   },
   [LyEditorActivityMenuEnum.MindmapManager]: {
     component: MindmapManager
+  },
+  [LyEditorActivityMenuEnum.CalendarManager]: {
+    component: CalendarManager
   }
 } satisfies Record<string, LyEditorSidebarRegistryItem>;
 

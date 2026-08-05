@@ -5,6 +5,7 @@ import {
   ApiKeyCreatedModal,
   ApiKeyFormModal,
   AttachmentFolderFormModal,
+  CalendarFormModal,
   CategoryDetailsModal,
   CategoryFormModal,
   FlowchartFormModal,
@@ -56,6 +57,7 @@ export const lyEditorModalRegistry = {
   "kanban-form": KanbanFormModal,
   "flowchart-form": FlowchartFormModal,
   "mindmap-form": MindmapFormModal,
+  "calendar-form": CalendarFormModal,
   "work-form": WorkFormModal,
   "send-email": SendEmailModal
 } satisfies Partial<Record<LyEditorModalKey, Component>>;
