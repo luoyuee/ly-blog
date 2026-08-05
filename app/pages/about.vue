@@ -25,9 +25,7 @@ const baseInfo = [
   },
   {
     title: "构建时间",
-    content: __LY_BLOG_METADATA__?.buildTime
-      ? new Date(__LY_BLOG_METADATA__?.buildTime).toLocaleString()
-      : "Unknown"
+    content: __LY_BLOG_METADATA__?.buildTime || "Unknown"
   },
   {
     title: "开源许可协议",
