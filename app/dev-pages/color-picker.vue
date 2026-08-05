@@ -1,5 +1,10 @@
 <script setup lang="ts">
-import { ColorPicker, ColorPickerWithAlpha } from "@/components/form/color-picker";
+import {
+  ColorPicker,
+  ColorPickerWithAlpha,
+  PresetColorPicker
+} from "@/components/form/color-picker";
+import type { PresetColorOption } from "@/components/form/color-picker";
 
 /** 基础颜色 */
 const baseColor = ref<string | undefined>("#3B82F6");
@@ -23,6 +28,27 @@ const disabledColor = ref<string | undefined>("#EF4444");
 const xsColor = ref<string | undefined>("#8B5CF6");
 const lgColor = ref<string | undefined>("#EC4899");
 
+/** 预设颜色 - 圆形 */
+const presetCircleColor = ref<string | undefined>("#3b82f6");
+
+/** 预设颜色 - 圆角方形 */
+const presetRoundedColor = ref<string | undefined>("#22c55e");
+
+/** 自定义颜色（含浅色，用于验证勾选图标颜色自适应） */
+const customOptions: PresetColorOption[] = [
+  { label: "白色", value: "#ffffff" },
+  { label: "浅黄", value: "#fef3c7" },
+  { label: "浅蓝", value: "#dbeafe" },
+  { label: "浅绿", value: "#dcfce7" },
+  { label: "浅粉", value: "#fce7f3" },
+  { label: "深灰", value: "#1f2937" },
+  { label: "深棕", value: "#7c2d12" },
+  { label: "深蓝", value: "#1e3a8a" }
+];
+
+/** 预设颜色 - 自定义浅深色 */
+const presetCustomColor = ref<string | undefined>("#ffffff");
+
 /** 事件日志 */
 const eventLogs = ref<string[]>([]);
 
@@ -45,7 +71,8 @@ const logEvent = (msg: string) => {
         ColorPicker 组件测试页
       </h1>
       <p class="text-base leading-[1.75] text-(--text-color-secondary)">
-        用于验证 ColorPicker 与 ColorPickerWithAlpha 的多种颜色格式、透明度调节、可清空、禁用及尺寸等能力。
+        用于验证 ColorPicker 与 ColorPickerWithAlpha
+        的多种颜色格式、透明度调节、可清空、禁用及尺寸等能力。
       </p>
     </section>
 
@@ -157,6 +184,61 @@ const logEvent = (msg: string) => {
           </div>
           <p class="text-xs text-(--text-color-tertiary) break-all">
             XS: {{ xsColor ?? "空" }} | LG: {{ lgColor ?? "空" }}
+          </p>
+        </div>
+      </UCard>
+
+      <!-- 8. 预设颜色 - 圆形 -->
+      <UCard>
+        <div class="flex flex-col gap-3">
+          <h2 class="font-semibold text-(--text-color-primary)">预设颜色（圆形）</h2>
+          <p class="text-sm leading-[1.6] text-(--text-color-secondary)">
+            shape=circle 时色块为圆形（默认）。
+          </p>
+          <PresetColorPicker
+            v-model="presetCircleColor"
+            shape="circle"
+            @update:model-value="(v) => logEvent(`预设圆形: ${v ?? '空'}`)"
+          />
+          <p class="text-xs text-(--text-color-tertiary) break-all">
+            当前值: {{ presetCircleColor ?? "空" }}
+          </p>
+        </div>
+      </UCard>
+
+      <!-- 9. 预设颜色 - 圆角方形 -->
+      <UCard>
+        <div class="flex flex-col gap-3">
+          <h2 class="font-semibold text-(--text-color-primary)">预设颜色（圆角方形）</h2>
+          <p class="text-sm leading-[1.6] text-(--text-color-secondary)">
+            shape=rounded 时色块为圆角方形。
+          </p>
+          <PresetColorPicker
+            v-model="presetRoundedColor"
+            shape="rounded"
+            @update:model-value="(v) => logEvent(`预设圆角: ${v ?? '空'}`)"
+          />
+          <p class="text-xs text-(--text-color-tertiary) break-all">
+            当前值: {{ presetRoundedColor ?? "空" }}
+          </p>
+        </div>
+      </UCard>
+
+      <!-- 10. 自定义颜色（含浅色） -->
+      <UCard>
+        <div class="flex flex-col gap-3">
+          <h2 class="font-semibold text-(--text-color-primary)">自定义颜色（含浅色）</h2>
+          <p class="text-sm leading-[1.6] text-(--text-color-secondary)">
+            传入 options 自定义颜色列表，浅色背景显示黑色勾选图标，深色背景显示白色勾选图标。
+          </p>
+          <PresetColorPicker
+            v-model="presetCustomColor"
+            :options="customOptions"
+            shape="rounded"
+            @update:model-value="(v) => logEvent(`自定义颜色: ${v ?? '空'}`)"
+          />
+          <p class="text-xs text-(--text-color-tertiary) break-all">
+            当前值: {{ presetCustomColor ?? "空" }}
           </p>
         </div>
       </UCard>
