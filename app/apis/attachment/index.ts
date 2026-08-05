@@ -6,171 +6,121 @@ import type {
   UploadAttachmentRequest,
   UploadAttachmentResponse
 } from "./models";
-import { serviceAxios } from "@/utils/request";
+import request from "@/utils/request";
 
 /**
  * 获取全部附件目录。
  */
-export async function getAllAttachmentFolder(): Promise<AttachmentFolder[]> {
-  try {
-    const response = await serviceAxios({
-      url: "/admin/attachment/folder/all",
-      method: "get"
-    });
-
-    return response.data;
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const getAllAttachmentFolder = (): Promise<AttachmentFolder[]> => {
+  return request({
+    url: "/admin/attachment/folder/all",
+    method: "get"
+  });
+};
 
 /**
  * 创建附件目录。
  */
-export async function createAttachmentFolder(data: {
+export const createAttachmentFolder = (data: {
   name: string;
   icon?: string;
   description?: string;
-}): Promise<AttachmentFolder> {
-  try {
-    const response = await serviceAxios({
-      url: "/admin/attachment/folder",
-      method: "post",
-      data
-    });
-
-    return response.data;
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+}): Promise<AttachmentFolder> => {
+  return request({
+    url: "/admin/attachment/folder",
+    method: "post",
+    data
+  });
+};
 
 /**
  * 更新附件目录。
  */
-export async function updateAttachmentFolder(data: {
+export const updateAttachmentFolder = (data: {
   id: number;
   name: string;
   icon?: string;
   description?: string;
-}): Promise<void> {
-  try {
-    const response = await serviceAxios({
-      url: "/admin/attachment/folder",
-      method: "put",
-      data
-    });
-
-    return response.data;
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+}): Promise<void> => {
+  return request({
+    url: "/admin/attachment/folder",
+    method: "put",
+    data
+  });
+};
 
 /**
  * 删除附件目录。
  */
-export async function deleteAttachmentFolder(id: number): Promise<void> {
-  try {
-    await serviceAxios({
-      url: "/admin/attachment/folder/" + id,
-      method: "delete"
-    });
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const deleteAttachmentFolder = (id: number): Promise<void> => {
+  return request({
+    url: "/admin/attachment/folder/" + id,
+    method: "delete"
+  });
+};
 
 /**
  * 获取附件目录详情。
  */
-export async function getAttachmentFolderDetail(id: number): Promise<AttachmentFolder> {
-  try {
-    const response = await serviceAxios({
-      url: "/admin/attachment/folder/detail/" + id,
-      method: "get"
-    });
-
-    return response.data;
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const getAttachmentFolderDetail = (id: number): Promise<AttachmentFolder> => {
+  return request({
+    url: "/admin/attachment/folder/detail/" + id,
+    method: "get"
+  });
+};
 
 /**
  * 获取附件分页列表。
  */
-export async function getPaginatedAttachments(
+export const getPaginatedAttachments = (
   params: GetPaginatedAttachmentsRequest
-): Promise<GetPaginatedAttachmentsResponse> {
-  try {
-    const response = await serviceAxios({
-      url: "/admin/attachment",
-      method: "get",
-      params
-    });
-
-    return response.data;
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+): Promise<GetPaginatedAttachmentsResponse> => {
+  return request({
+    url: "/admin/attachment",
+    method: "get",
+    params
+  });
+};
 
 /**
  * 删除附件文件。
  */
-export async function deleteAttachment(id: number): Promise<void> {
-  try {
-    await serviceAxios({
-      url: "/admin/attachment/" + id,
-      method: "delete"
-    });
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const deleteAttachment = (id: number): Promise<void> => {
+  return request({
+    url: "/admin/attachment/" + id,
+    method: "delete"
+  });
+};
 
 /**
  * 获取附件详情。
  */
-export async function getAttachmentDetail(id: number): Promise<AttachmentItem> {
-  try {
-    const response = await serviceAxios({
-      url: "/admin/attachment/" + id,
-      method: "get"
-    });
-
-    return response.data;
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const getAttachmentDetail = (id: number): Promise<AttachmentItem> => {
+  return request({
+    url: "/admin/attachment/" + id,
+    method: "get"
+  });
+};
 
 /**
  * 上传附件文件。
  */
-export const uploadAttachmentFile = async (
+export const uploadAttachmentFile = (
   data: UploadAttachmentRequest,
   callBack: UploadAttachmentProgressCallback
 ): Promise<UploadAttachmentResponse> => {
-  try {
-    const form = new FormData();
-    form.append("folder", data.folder.toString());
-    form.append("file", data.file as Blob);
+  const form = new FormData();
+  form.append("folder", data.folder.toString());
+  form.append("file", data.file as Blob);
 
-    if (data.tags && data.tags.length > 0) {
-      form.append("tags", data.tags.join(","));
-    }
-
-    const response = await serviceAxios({
-      url: "/admin/attachment/upload",
-      method: "post",
-      data: form,
-      onUploadProgress: callBack
-    });
-
-    return response.data;
-  } catch (error) {
-    return Promise.reject(error);
+  if (data.tags && data.tags.length > 0) {
+    form.append("tags", data.tags.join(","));
   }
+
+  return request({
+    url: "/admin/attachment/upload",
+    method: "post",
+    data: form,
+    onUploadProgress: callBack
+  });
 };

@@ -1,61 +1,45 @@
+import type { GetTasksResponse, NitroTasksRawResponse, SendEmailForm } from "./models";
 import type { RecipientOption } from "#shared/types";
-import type { GetTasksResponse, SendEmailForm } from "./models";
+import request from "@/utils/request";
 
-export async function getRecipients(): Promise<RecipientOption[]> {
-  try {
-    const response = await serviceAxios({
-      url: "/admin/email/recipients",
-      method: "get"
-    });
+export const getRecipients = (): Promise<RecipientOption[]> => {
+  return request({
+    url: "/admin/email/recipients",
+    method: "get"
+  });
+};
 
-    return response.data;
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const sendEmail = (data: SendEmailForm): Promise<void> => {
+  return request({
+    url: "/admin/email/send",
+    method: "post",
+    data
+  });
+};
 
-export async function sendEmail(data: SendEmailForm): Promise<void> {
-  try {
-    await serviceAxios({
-      url: "/admin/email/send",
-      method: "post",
-      data
-    });
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const getTasks = async (): Promise<GetTasksResponse> => {
+  const data = (await request({
+    baseURL: "",
+    url: "/_nitro/tasks",
+    method: "get"
+  })) as unknown as NitroTasksRawResponse;
 
-export async function getTasks(): Promise<GetTasksResponse> {
-  try {
-    const response = await serviceAxios({
-      baseURL: "",
-      url: "/_nitro/tasks",
-      method: "get"
-    });
+  const tasks = { ...(data.tasks || {}) };
 
-    const tasks = { ...(response.data.tasks || {}) };
-
-    response.data.tasks = Object.keys(tasks).map((key) => ({
+  return {
+    scheduledTasks: data.scheduledTasks,
+    tasks: Object.keys(tasks).map((key) => ({
       name: key,
-      description: tasks[key].description
-    }));
+      description: tasks[key]?.description
+    }))
+  };
+};
 
-    return response.data;
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
-
-export async function runTask(taskName: string, payload?: object): Promise<void> {
-  try {
-    await serviceAxios({
-      baseURL: "",
-      url: `/_nitro/tasks/${taskName}`,
-      method: "post",
-      data: payload,
-    });
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const runTask = (taskName: string, payload?: object): Promise<void> => {
+  return request({
+    baseURL: "",
+    url: `/_nitro/tasks/${taskName}`,
+    method: "post",
+    data: payload
+  });
+};

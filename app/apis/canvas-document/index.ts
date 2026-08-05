@@ -6,7 +6,7 @@ import type {
   CanvasDocumentDetail,
   CanvasDocumentListItem
 } from "./models";
-import { serviceAxios } from "@/utils/request";
+import request from "@/utils/request";
 
 /**
  * 画布文档（看板/白板/流程图/思维导图）接口封装
@@ -14,321 +14,213 @@ import { serviceAxios } from "@/utils/request";
  */
 
 /** 分页查询看板列表 */
-export async function getPaginatedKanbans(
+export const getPaginatedKanbans = (
   params: GetCanvasDocumentPaginatedRequest
-): Promise<GetCanvasDocumentPaginatedResponse> {
-  try {
-    const response = await serviceAxios({
-      url: "/admin/canvas-document/kanban",
-      method: "get",
-      params
-    });
-    return response.data;
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+): Promise<GetCanvasDocumentPaginatedResponse> => {
+  return request({
+    url: "/admin/canvas-document/kanban",
+    method: "get",
+    params
+  });
+};
 
 /** 获取看板详情（含核心数据 data） */
-export async function getKanbanDetail(id: number): Promise<CanvasDocumentDetail> {
-  try {
-    const response = await serviceAxios({
-      url: "/admin/canvas-document/kanban/" + id,
-      method: "get"
-    });
-    return response.data;
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const getKanbanDetail = (id: number): Promise<CanvasDocumentDetail> => {
+  return request({
+    url: "/admin/canvas-document/kanban/" + id,
+    method: "get"
+  });
+};
 
 /** 创建看板 */
-export async function createKanban(data: CreateCanvasDocumentRequest): Promise<void> {
-  try {
-    await serviceAxios({
-      url: "/admin/canvas-document/kanban",
-      method: "post",
-      data
-    });
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const createKanban = (data: CreateCanvasDocumentRequest): Promise<void> => {
+  return request({
+    url: "/admin/canvas-document/kanban",
+    method: "post",
+    data
+  });
+};
 
 /** 更新看板 */
-export async function updateKanban(data: UpdateCanvasDocumentRequest): Promise<void> {
-  try {
-    await serviceAxios({
-      url: "/admin/canvas-document/kanban",
-      method: "put",
-      data
-    });
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const updateKanban = (data: UpdateCanvasDocumentRequest): Promise<void> => {
+  return request({
+    url: "/admin/canvas-document/kanban",
+    method: "put",
+    data
+  });
+};
 
 /** 删除看板（软删除） */
-export async function deleteKanban(id: number): Promise<void> {
-  try {
-    await serviceAxios({
-      url: "/admin/canvas-document/kanban/" + id,
-      method: "delete"
-    });
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const deleteKanban = (id: number): Promise<void> => {
+  return request({
+    url: "/admin/canvas-document/kanban/" + id,
+    method: "delete"
+  });
+};
 
 /** 获取全部看板列表（不分页，不含核心数据 data） */
-export async function getAllKanbans(): Promise<CanvasDocumentListItem[]> {
-  try {
-    const response = await serviceAxios({
-      url: "/admin/canvas-document/kanban/all",
-      method: "get"
-    });
-    return response.data;
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const getAllKanbans = (): Promise<CanvasDocumentListItem[]> => {
+  return request({
+    url: "/admin/canvas-document/kanban/all",
+    method: "get"
+  });
+};
 
 /** 分页查询白板列表 */
-export async function getPaginatedWhiteboards(
+export const getPaginatedWhiteboards = (
   params: GetCanvasDocumentPaginatedRequest
-): Promise<GetCanvasDocumentPaginatedResponse> {
-  try {
-    const response = await serviceAxios({
-      url: "/admin/canvas-document/whiteboard",
-      method: "get",
-      params
-    });
-    return response.data;
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+): Promise<GetCanvasDocumentPaginatedResponse> => {
+  return request({
+    url: "/admin/canvas-document/whiteboard",
+    method: "get",
+    params
+  });
+};
 
 /** 获取白板详情（含核心数据 data） */
-export async function getWhiteboardDetail(id: number): Promise<CanvasDocumentDetail> {
-  try {
-    const response = await serviceAxios({
-      url: "/admin/canvas-document/whiteboard/" + id,
-      method: "get"
-    });
-    return response.data;
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const getWhiteboardDetail = (id: number): Promise<CanvasDocumentDetail> => {
+  return request({
+    url: "/admin/canvas-document/whiteboard/" + id,
+    method: "get"
+  });
+};
 
 /** 创建白板 */
-export async function createWhiteboard(data: CreateCanvasDocumentRequest): Promise<void> {
-  try {
-    await serviceAxios({
-      url: "/admin/canvas-document/whiteboard",
-      method: "post",
-      data
-    });
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const createWhiteboard = (data: CreateCanvasDocumentRequest): Promise<void> => {
+  return request({
+    url: "/admin/canvas-document/whiteboard",
+    method: "post",
+    data
+  });
+};
 
 /** 更新白板 */
-export async function updateWhiteboard(data: UpdateCanvasDocumentRequest): Promise<void> {
-  try {
-    await serviceAxios({
-      url: "/admin/canvas-document/whiteboard",
-      method: "put",
-      data
-    });
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const updateWhiteboard = (data: UpdateCanvasDocumentRequest): Promise<void> => {
+  return request({
+    url: "/admin/canvas-document/whiteboard",
+    method: "put",
+    data
+  });
+};
 
 /** 删除白板（软删除） */
-export async function deleteWhiteboard(id: number): Promise<void> {
-  try {
-    await serviceAxios({
-      url: "/admin/canvas-document/whiteboard/" + id,
-      method: "delete"
-    });
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const deleteWhiteboard = (id: number): Promise<void> => {
+  return request({
+    url: "/admin/canvas-document/whiteboard/" + id,
+    method: "delete"
+  });
+};
 
 /** 获取全部白板列表（不分页，不含核心数据 data） */
-export async function getAllWhiteboards(): Promise<CanvasDocumentListItem[]> {
-  try {
-    const response = await serviceAxios({
-      url: "/admin/canvas-document/whiteboard/all",
-      method: "get"
-    });
-    return response.data;
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const getAllWhiteboards = (): Promise<CanvasDocumentListItem[]> => {
+  return request({
+    url: "/admin/canvas-document/whiteboard/all",
+    method: "get"
+  });
+};
 
 /** 分页查询流程图列表 */
-export async function getPaginatedFlowcharts(
+export const getPaginatedFlowcharts = (
   params: GetCanvasDocumentPaginatedRequest
-): Promise<GetCanvasDocumentPaginatedResponse> {
-  try {
-    const response = await serviceAxios({
-      url: "/admin/canvas-document/flowchart",
-      method: "get",
-      params
-    });
-    return response.data;
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+): Promise<GetCanvasDocumentPaginatedResponse> => {
+  return request({
+    url: "/admin/canvas-document/flowchart",
+    method: "get",
+    params
+  });
+};
 
 /** 获取流程图详情（含核心数据 data） */
-export async function getFlowchartDetail(id: number): Promise<CanvasDocumentDetail> {
-  try {
-    const response = await serviceAxios({
-      url: "/admin/canvas-document/flowchart/" + id,
-      method: "get"
-    });
-    return response.data;
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const getFlowchartDetail = (id: number): Promise<CanvasDocumentDetail> => {
+  return request({
+    url: "/admin/canvas-document/flowchart/" + id,
+    method: "get"
+  });
+};
 
 /** 创建流程图 */
-export async function createFlowchart(data: CreateCanvasDocumentRequest): Promise<void> {
-  try {
-    await serviceAxios({
-      url: "/admin/canvas-document/flowchart",
-      method: "post",
-      data
-    });
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const createFlowchart = (data: CreateCanvasDocumentRequest): Promise<void> => {
+  return request({
+    url: "/admin/canvas-document/flowchart",
+    method: "post",
+    data
+  });
+};
 
 /** 更新流程图 */
-export async function updateFlowchart(data: UpdateCanvasDocumentRequest): Promise<void> {
-  try {
-    await serviceAxios({
-      url: "/admin/canvas-document/flowchart",
-      method: "put",
-      data
-    });
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const updateFlowchart = (data: UpdateCanvasDocumentRequest): Promise<void> => {
+  return request({
+    url: "/admin/canvas-document/flowchart",
+    method: "put",
+    data
+  });
+};
 
 /** 删除流程图（软删除） */
-export async function deleteFlowchart(id: number): Promise<void> {
-  try {
-    await serviceAxios({
-      url: "/admin/canvas-document/flowchart/" + id,
-      method: "delete"
-    });
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const deleteFlowchart = (id: number): Promise<void> => {
+  return request({
+    url: "/admin/canvas-document/flowchart/" + id,
+    method: "delete"
+  });
+};
 
 /** 获取全部流程图列表（不分页，不含核心数据 data） */
-export async function getAllFlowcharts(): Promise<CanvasDocumentListItem[]> {
-  try {
-    const response = await serviceAxios({
-      url: "/admin/canvas-document/flowchart/all",
-      method: "get"
-    });
-    return response.data;
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const getAllFlowcharts = (): Promise<CanvasDocumentListItem[]> => {
+  return request({
+    url: "/admin/canvas-document/flowchart/all",
+    method: "get"
+  });
+};
 
 /** 分页查询思维导图列表 */
-export async function getPaginatedMindmaps(
+export const getPaginatedMindmaps = (
   params: GetCanvasDocumentPaginatedRequest
-): Promise<GetCanvasDocumentPaginatedResponse> {
-  try {
-    const response = await serviceAxios({
-      url: "/admin/canvas-document/mindmap",
-      method: "get",
-      params
-    });
-    return response.data;
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+): Promise<GetCanvasDocumentPaginatedResponse> => {
+  return request({
+    url: "/admin/canvas-document/mindmap",
+    method: "get",
+    params
+  });
+};
 
 /** 获取思维导图详情（含核心数据 data） */
-export async function getMindmapDetail(id: number): Promise<CanvasDocumentDetail> {
-  try {
-    const response = await serviceAxios({
-      url: "/admin/canvas-document/mindmap/" + id,
-      method: "get"
-    });
-    return response.data;
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const getMindmapDetail = (id: number): Promise<CanvasDocumentDetail> => {
+  return request({
+    url: "/admin/canvas-document/mindmap/" + id,
+    method: "get"
+  });
+};
 
 /** 创建思维导图 */
-export async function createMindmap(data: CreateCanvasDocumentRequest): Promise<void> {
-  try {
-    await serviceAxios({
-      url: "/admin/canvas-document/mindmap",
-      method: "post",
-      data
-    });
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const createMindmap = (data: CreateCanvasDocumentRequest): Promise<void> => {
+  return request({
+    url: "/admin/canvas-document/mindmap",
+    method: "post",
+    data
+  });
+};
 
 /** 更新思维导图 */
-export async function updateMindmap(data: UpdateCanvasDocumentRequest): Promise<void> {
-  try {
-    await serviceAxios({
-      url: "/admin/canvas-document/mindmap",
-      method: "put",
-      data
-    });
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const updateMindmap = (data: UpdateCanvasDocumentRequest): Promise<void> => {
+  return request({
+    url: "/admin/canvas-document/mindmap",
+    method: "put",
+    data
+  });
+};
 
 /** 删除思维导图（软删除） */
-export async function deleteMindmap(id: number): Promise<void> {
-  try {
-    await serviceAxios({
-      url: "/admin/canvas-document/mindmap/" + id,
-      method: "delete"
-    });
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const deleteMindmap = (id: number): Promise<void> => {
+  return request({
+    url: "/admin/canvas-document/mindmap/" + id,
+    method: "delete"
+  });
+};
 
 /** 获取全部思维导图列表（不分页，不含核心数据 data） */
-export async function getAllMindmaps(): Promise<CanvasDocumentListItem[]> {
-  try {
-    const response = await serviceAxios({
-      url: "/admin/canvas-document/mindmap/all",
-      method: "get"
-    });
-    return response.data;
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const getAllMindmaps = (): Promise<CanvasDocumentListItem[]> => {
+  return request({
+    url: "/admin/canvas-document/mindmap/all",
+    method: "get"
+  });
+};

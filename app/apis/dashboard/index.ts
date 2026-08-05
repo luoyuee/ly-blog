@@ -3,114 +3,69 @@ import type {
   NoteDashboard,
   ImageDashboard,
   OverviewDashboard,
-  DashboardData,
+  DashboardData
 } from "./models";
-import { serviceAxios } from "@/utils/request";
+import request from "@/utils/request";
 
-export async function getArticleDashboard(): Promise<ArticleDashboard> {
-  try {
-    const response = await serviceAxios({
-      url: "/admin/dashboard/article",
-      method: "get",
-    });
-    return response.data;
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const getArticleDashboard = (): Promise<ArticleDashboard> => {
+  return request({
+    url: "/admin/dashboard/article",
+    method: "get"
+  });
+};
 
-export async function getNoteDashboard(): Promise<NoteDashboard> {
-  try {
-    const response = await serviceAxios({
-      url: "/admin/dashboard/note",
-      method: "get",
-    });
-    return response.data;
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const getNoteDashboard = (): Promise<NoteDashboard> => {
+  return request({
+    url: "/admin/dashboard/note",
+    method: "get"
+  });
+};
 
-export async function getImageDashboard(): Promise<ImageDashboard> {
-  try {
-    const response = await serviceAxios({
-      url: "/admin/dashboard/image",
-      method: "get",
-    });
-    return response.data;
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const getImageDashboard = (): Promise<ImageDashboard> => {
+  return request({
+    url: "/admin/dashboard/image",
+    method: "get"
+  });
+};
 
-export async function getLikeDashboard(): Promise<DashboardData> {
-  try {
-    const response = await serviceAxios({
-      url: "/admin/dashboard/like",
-      method: "get",
-    });
-    return response.data;
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const getLikeDashboard = (): Promise<DashboardData> => {
+  return request({
+    url: "/admin/dashboard/like",
+    method: "get"
+  });
+};
 
-export async function getViewDashboard(): Promise<DashboardData> {
-  try {
-    const response = await serviceAxios({
-      url: "/admin/dashboard/view",
-      method: "get",
-    });
-    return response.data;
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const getViewDashboard = (): Promise<DashboardData> => {
+  return request({
+    url: "/admin/dashboard/view",
+    method: "get"
+  });
+};
 
-export async function getCommentDashboard(): Promise<DashboardData> {
-  try {
-    const response = await serviceAxios({
-      url: "/admin/dashboard/comment",
-      method: "get",
-    });
-    return response.data;
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const getCommentDashboard = (): Promise<DashboardData> => {
+  return request({
+    url: "/admin/dashboard/comment",
+    method: "get"
+  });
+};
 
-export async function getMessageDashboard(): Promise<DashboardData> {
-  try {
-    const response = await serviceAxios({
-      url: "/admin/dashboard/message",
-      method: "get",
-    });
-    return response.data;
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const getMessageDashboard = (): Promise<DashboardData> => {
+  return request({
+    url: "/admin/dashboard/message",
+    method: "get"
+  });
+};
 
-export async function getFleetingThoughtDashboard(): Promise<DashboardData> {
-  try {
-    const response = await serviceAxios({
-      url: "/admin/dashboard/thought",
-      method: "get",
-    });
-    return response.data;
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const getFleetingThoughtDashboard = (): Promise<DashboardData> => {
+  return request({
+    url: "/admin/dashboard/thought",
+    method: "get"
+  });
+};
 
-export async function getOverViewDashboard(): Promise<OverviewDashboard> {
-  try {
-    const response = await serviceAxios({
-      url: "/admin/dashboard/overview",
-      method: "get",
-    });
-    return response.data;
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
+export const getOverViewDashboard = (): Promise<OverviewDashboard> => {
+  return request({
+    url: "/admin/dashboard/overview",
+    method: "get"
+  });
+};
