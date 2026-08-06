@@ -1,12 +1,16 @@
 <script setup lang="ts">
 import type { EditorTabItem } from "#shared/types/ly-editor";
 import type { ContextMenuItem } from "@nuxt/ui";
-import { VueDraggable } from "vue-draggable-plus";
+import type { SortableEvent } from "sortablejs";
+import { useSortable } from "@vueuse/integrations/useSortable";
 import { useLyEditorStore } from "@/stores";
 import { lyEditorEmitter } from "@/events";
+import { onBeforeUnmount } from "vue";
+import { storeToRefs } from "pinia";
 import Scrollbar from "@/components/scrollbar";
 
 const lyEditorStore = useLyEditorStore();
+const { tabs } = storeToRefs(lyEditorStore);
 
 const handleChangeTab = (e: EditorTabItem) => {
   lyEditorStore.currentTab = e.key;
@@ -93,46 +97,81 @@ const getContextMenuItems = (e: EditorTabItem): ContextMenuItem[] => {
   ];
 };
 
-const scrollbarRef = useTemplateRef("scrollbarRef");
+const sortableRef = useTemplateRef<HTMLElement>("sortableRef");
 
-const handleWheel = (e: WheelEvent) => {
-  scrollbarRef.value?.wheel(e);
-};
+// 标签拖拽排序：storeToRefs 拿到的 tabs 是可写 ref，拖拽完成时由 useSortable 原地写回，Pinia 自动同步
+const sortable = useSortable(sortableRef, tabs, {
+  animation: 150,
+  // 显式声明横向，避免在滚动容器内被自动检测误判为竖向导致阈值算错方向
+  direction: "horizontal",
+  // 交换区缩到目标 tab 的中央 50%，两侧各 25% 为死区，
+  // 短 tab 拖入长 tab 边缘时不会立即换位，需更深拖入才交换
+  swapThreshold: 0.5,
+  // 被选中拖拽的元素背景高亮
+  chosenClass: "editor-tab-bar__item--dragging",
+  // 原位置占位符半透明
+  ghostClass: "editor-tab-bar__item--ghost",
+  forceFallback: true,
+  fallbackClass: "editor-tab-bar__item--dragging-cloned",
+  onStart: (evt) => {
+    const { item, originalEvent } = evt as SortableEvent & { originalEvent: PointerEvent };
+    // 容器标记拖拽中，禁用所有 tab 的 hover 样式
+    sortableRef.value?.classList.add("editor-tab-bar--dragging");
+    // 通过 body 上的状态类配合全局 CSS 强制 move 光标，不直接改内联样式，
+    // 避免覆盖其它代码在 body 上设置的 cursor，结束时移除类即可还原
+    document.body.classList.add("editor-tab-bar-dragging");
+    // 计算鼠标相对 tab 左上角的偏移（即 SortableJS 内部的 tapDistanceLeft/Top）
+    // 通过 CSS variable 传给 .fallback，用 margin 补偿 SortableJS 的「点击位置偏移」
+    const rect = item.getBoundingClientRect();
+
+    sortableRef.value?.style.setProperty(
+      "--dragging-cloned-offset-x",
+      `${originalEvent.clientX - rect.left - 10}px`
+    );
+    sortableRef.value?.style.setProperty(
+      "--dragging-cloned-offset-y",
+      `${originalEvent.clientY - rect.top - 10}px`
+    );
+  },
+  onEnd: () => {
+    sortableRef.value?.classList.remove("editor-tab-bar--dragging");
+    document.body.classList.remove("editor-tab-bar-dragging");
+  }
+});
+
+onBeforeUnmount(() => {
+  sortable.stop?.();
+});
 </script>
 
 <template>
   <div>
-    <Scrollbar ref="scrollbarRef" :height="34" class="w-full" mouse-wheel="horizontal">
-      <VueDraggable v-model="lyEditorStore.tabs" target=".editor-tab-bar" :animation="150">
-        <div class="editor-tab-bar" @wheel="handleWheel">
-          <UContextMenu
-            v-for="item in lyEditorStore.tabs"
-            :key="item.key"
-            :items="getContextMenuItems(item)"
+    <Scrollbar class="h-8.5 w-full" wheel-direction="horizontal">
+      <div ref="sortableRef" class="editor-tab-bar">
+        <UContextMenu
+          v-for="item in lyEditorStore.tabs"
+          :key="item.key"
+          :items="getContextMenuItems(item)"
+        >
+          <div
+            class="editor-tab-bar__item"
+            :class="{
+              'editor-tab-bar__item--active': lyEditorStore.currentTab === item.key,
+              'editor-tab-bar__item--changed': item.isChange
+            }"
+            @click="handleChangeTab(item)"
           >
-            <div
-              class="editor-tab-bar__item"
-              :class="{
-                'editor-tab-bar__item--active': lyEditorStore.currentTab === item.key,
-                'editor-tab-bar__item--changed': item.isChange
-              }"
-              @click="handleChangeTab(item)"
-            >
-              <span class="editor-tab-bar__item-label">{{ item.label }}</span>
-              <span class="editor-tab-bar__item-action" @click.stop="handleCloseTab(item)">
-                <UIcon
-                  class="editor-tab-bar__icon editor-tab-bar__icon--change"
-                  name="custom:dot"
-                />
-                <UIcon
-                  class="editor-tab-bar__icon editor-tab-bar__icon--close"
-                  name="custom:close-small"
-                />
-              </span>
-            </div>
-          </UContextMenu>
-        </div>
-      </VueDraggable>
+            <span class="editor-tab-bar__item-label">{{ item.label }}</span>
+            <span class="editor-tab-bar__item-action" @click.stop="handleCloseTab(item)">
+              <UIcon class="editor-tab-bar__icon editor-tab-bar__icon--change" name="custom:dot" />
+              <UIcon
+                class="editor-tab-bar__icon editor-tab-bar__icon--close"
+                name="custom:close-small"
+              />
+            </span>
+          </div>
+        </UContextMenu>
+      </div>
     </Scrollbar>
   </div>
 </template>
@@ -143,7 +182,6 @@ const handleWheel = (e: WheelEvent) => {
   height: 34px;
   color: #c1c1c1;
   display: flex;
-  width: max-content;
 
   &__item {
     display: flex;
@@ -155,8 +193,8 @@ const handleWheel = (e: WheelEvent) => {
     cursor: pointer;
     flex-shrink: 0;
 
-    &:hover {
-      background-color: #1f1f1f;
+    .editor-tab-bar:not(.editor-tab-bar--dragging) &:hover {
+      background-color: rgba(255, 255, 255, 0.05);
     }
   }
 
@@ -173,6 +211,15 @@ const handleWheel = (e: WheelEvent) => {
       top: 0;
       left: 0;
     }
+  }
+
+  &__item--ghost {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+
+  &__item--dragging-cloned {
+    background-color: rgba(255, 255, 255, 0.05);
+    transform: translate(var(--dragging-cloned-offset-x, 0), var(--dragging-cloned-offset-y, 0));
   }
 
   &__item-label {
@@ -214,5 +261,14 @@ const handleWheel = (e: WheelEvent) => {
       }
     }
   }
+}
+</style>
+
+<style lang="scss">
+// 拖拽期间全局锁定光标，使用 !important 覆盖子元素自身的 cursor，
+// 类移除后自动失效，不会留下任何内联样式副作用
+body.editor-tab-bar-dragging,
+body.editor-tab-bar-dragging * {
+  cursor: move !important;
 }
 </style>
