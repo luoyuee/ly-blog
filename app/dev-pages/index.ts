@@ -238,5 +238,18 @@ export const devPages = [
         order: 17
       }
     }
+  },
+  {
+    name: "dev-message",
+    path: "/test/message",
+    file: fileURLToPath(new URL("./message.vue", import.meta.url)),
+    meta: {
+      layout: "test",
+      devPage: {
+        label: "Message",
+        icon: "lucide:message-square",
+        order: 18
+      }
+    }
   }
 ];

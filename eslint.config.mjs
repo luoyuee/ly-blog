@@ -76,6 +76,9 @@ export default withNuxt([
         }
       ],
 
+      // Vue 组件块顺序规则
+      "vue/block-order": ["warn", { order: ["script", "template", "style"] }],
+
       // Vue 属性顺序规则
       "vue/attributes-order": [
         "warn",
