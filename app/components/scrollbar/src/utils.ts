@@ -1,14 +1,8 @@
-import { clsx } from "clsx";
-import { twMerge } from "tailwind-merge";
-import type { Direction, TailwindClassValue } from "./types";
-
-/** 合并 tailwind class（参考 collapsible-panel 的 mergeTailwindClass） */
-export const mergeScrollbarClass = (...classNames: TailwindClassValue[]): string =>
-  twMerge(clsx(classNames));
+import type { Direction } from "./types";
 
 // 滑块最小长度，避免内容极长时滑块缩成一条线
 export const MIN_SIZE = 20;
-// 滚轮量→初速度缩放：越小每格滑得越近
+// 滚轮量->初速度缩放：越小每格滑得越近
 export const WHEEL_SPEED_FACTOR = 0.15;
 // 每帧速度衰减：越小停得越快
 export const WHEEL_FRICTION = 0.9;

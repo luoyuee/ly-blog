@@ -1,10 +1,7 @@
+import type { ComponentUI } from "@/utils/tw-merge";
 import type { ScrollbarTheme } from "./theme";
-import type { clsx } from "clsx";
 
-export type TailwindClassValue = Parameters<typeof clsx>[0];
-
-/** 各部件可被外部覆盖的 tailwind class（参考 collapsible-panel 的 Ui 模式） */
-export type ScrollbarUi = Partial<Record<keyof typeof ScrollbarTheme, TailwindClassValue>>;
+export type ScrollbarUI = ComponentUI<typeof ScrollbarTheme>;
 
 /** 自绘滑块主题色（运行时通过 CSS 变量注入，保留旧版 theme 入参形状以便逐步替换） */
 export interface ScrollbarColorTheme {
