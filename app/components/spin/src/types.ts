@@ -1,3 +1,5 @@
+import type { ComponentUI } from "@/utils/tw-merge";
+import type { SpinTheme } from "./theme";
 import type { VNode } from "vue";
 
 /**
@@ -7,6 +9,8 @@ import type { VNode } from "vue";
  * - 函数：渲染函数，返回 VNode
  */
 export type SpinRenderable = string | VNode | (() => VNode);
+
+export type SpinUI = ComponentUI<typeof SpinTheme>;
 
 export interface UseSpinOptions {
   /** 主提示文案。字符串走 text prop；VNode/渲染函数走 title 插槽 */
@@ -21,14 +25,7 @@ export interface UseSpinOptions {
   lockScroll?: boolean;
   /** 遮罩层层级，默认 40 */
   zIndex?: number;
-  /** 包裹容器额外类名 */
-  wrapperClass?: string;
-  /** 遮罩层额外类名 */
-  overlayClass?: string;
-  /** 中间内容面板额外类名 */
-  panelClass?: string;
-  /** Spinner 图标额外类名 */
-  spinnerClass?: string;
+  ui?: SpinUI;
 }
 
 export interface CreateSpinOptions extends UseSpinOptions {

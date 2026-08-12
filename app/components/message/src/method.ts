@@ -5,7 +5,7 @@ import { instances } from "./instance";
 import { useNuxtApp } from "#app";
 import MessageContractor from "./Message.vue";
 
-export type MessageType = "primary" | "success" | "error" | "warning" | "info";
+export type MessageType = "primary" | "success" | "error" | "warning" | "info" | "loading";
 
 let seed = 1;
 let zIndex = 2000;
@@ -16,6 +16,7 @@ export type CreateMessageOptions = {
   duration?: number;
   offset?: number;
   showClose?: boolean;
+  spin?: boolean;
   icon?: string;
   onClose?: () => void;
 };
@@ -28,25 +29,35 @@ const createMessage = (options: CreateMessageOptions) => {
 
     switch (options.type) {
       case "primary":
-        return "lucide:info";
+        return "mdi:information-variant-circle";
       case "success":
-        return "lucide:circle-check";
+        return "mdi:check-circle";
       case "error":
-        return "lucide:circle-x";
+        return "mdi:close-circle";
       case "warning":
-        return "lucide:info";
+        return "mdi:warning-circle";
       case "info":
-        return "lucide:info";
+        return "mdi:information-variant-circle";
+      case "loading":
+        return "mdi:loading";
       default:
-        return "lucide:info";
+        return "mdi:information-variant-circle";
     }
   });
+
+  // loading 类型默认 duration 为 0（不自动关闭），保留用户传入值
+  const duration = options.duration ?? (options.type === "loading" ? 0 : undefined);
+
+  // spin 默认 false，type 为 loading 时默认 true，保留用户传入值
+  const spin = options.spin ?? options.type === "loading";
 
   const container = document.createElement("div");
 
   const vnode = createVNode(MessageContractor, {
     ...options,
     id,
+    duration,
+    spin,
     zIndex: zIndex++,
     icon: icon.value,
     onClose: () => {

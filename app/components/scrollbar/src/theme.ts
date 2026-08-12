@@ -1,4 +1,4 @@
-// 滚动条各部件的 tailwind class 字典（参考 collapsible-panel 的 CollapsiblePanelTheme）。
+// 滚动条各部件的 tailwind class 字典。
 // 动态尺寸/颜色通过根节点的 CSS 变量注入：--bar-size / --track-color / --thumb-*。
 // 隐藏原生滚动条用 tailwind 任意变体：[&::-webkit-scrollbar]:hidden / [scrollbar-width:none] / [-ms-overflow-style:none]。
 export const ScrollbarTheme = {

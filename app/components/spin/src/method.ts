@@ -33,14 +33,6 @@ const resolveTarget = (target?: HTMLElement | string): HTMLElement | null => {
   return target;
 };
 
-/**
- * 局部模式下根容器类名。
- * 用 absolute inset-0 h-full 覆盖 Spin 默认的 relative h-32 w-full，使遮罩充满目标节点。
- */
-const buildLocalWrapperClass = (extra?: string): string => {
-  return ["absolute inset-0 h-full", extra].filter(Boolean).join(" ");
-};
-
 /** 将渲染内容归一化为插槽函数 */
 const toSlotFn = (content: SpinRenderable): (() => VNode) => {
   if (typeof content === "function") return content as () => VNode;
@@ -62,12 +54,7 @@ export const createSpin = (options: CreateSpinOptions = {}): SpinHandler => {
     spinner: options.spinner,
     panel: options.panel,
     zIndex: options.zIndex ?? 40,
-    wrapperClass: fullscreen
-      ? (options.wrapperClass ?? "")
-      : buildLocalWrapperClass(options.wrapperClass),
-    overlayClass: options.overlayClass ?? "",
-    panelClass: options.panelClass ?? "",
-    spinnerClass: options.spinnerClass ?? ""
+    ui: options.ui ?? {}
   });
 
   /**
@@ -81,10 +68,7 @@ export const createSpin = (options: CreateSpinOptions = {}): SpinHandler => {
       fullscreen: state.fullscreen,
       lockScroll: state.lockScroll,
       zIndex: state.zIndex,
-      wrapperClass: state.wrapperClass,
-      overlayClass: state.overlayClass,
-      panelClass: state.panelClass,
-      spinnerClass: state.spinnerClass
+      ui: state.ui
     };
 
     // text：string → prop；VNode/fn → title 插槽（prop 置空避免双重显示）；undefined → 默认文案

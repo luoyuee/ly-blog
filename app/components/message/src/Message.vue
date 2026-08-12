@@ -1,29 +1,3 @@
-<template>
-  <Transition name="message-fade" @before-leave="emits('close')" @after-leave="emits('destroy')">
-    <div
-      v-show="visible"
-      :id="id"
-      ref="messageRef"
-      class="basic-message"
-      :class="[props.type]"
-      :style="styles"
-      @mouseenter="handleMouseenter"
-      @mouseleave="handleMouseleave"
-    >
-      <UIcon class="basic-message__icon" :name="props.icon" :size="14" />
-      <ContentRender class="basic-message__content" />
-      <UButton
-        v-if="props.showClose"
-        class="basic-message__close"
-        color="neutral"
-        variant="link"
-        icon="lucide:x"
-        size="sm"
-        @click="close"
-      />
-    </div>
-  </Transition>
-</template>
 <script setup lang="ts">
 import type { PropType, VNode } from "vue";
 import { onMounted, onBeforeMount, ref, computed, h, isVNode, useTemplateRef } from "vue";
@@ -53,9 +27,13 @@ const props = defineProps({
     type: Boolean,
     default: false
   },
+  spin: {
+    type: Boolean,
+    default: false
+  },
   type: {
     type: String,
-    values: ["primary", "success", "info", "warning", "error"],
+    values: ["primary", "success", "info", "warning", "error", "loading"],
     default: "primary"
   },
   zIndex: {
@@ -148,6 +126,37 @@ defineExpose({
   close
 });
 </script>
+<template>
+  <Transition name="message-fade" @before-leave="emits('close')" @after-leave="emits('destroy')">
+    <div
+      v-show="visible"
+      :id="id"
+      ref="messageRef"
+      class="basic-message"
+      :class="[props.type]"
+      :style="styles"
+      @mouseenter="handleMouseenter"
+      @mouseleave="handleMouseleave"
+    >
+      <UIcon
+        class="basic-message__icon"
+        :class="{ 'basic-message__icon--spin': props.spin }"
+        :name="props.icon"
+        :size="14"
+      />
+      <ContentRender class="basic-message__content" />
+      <UButton
+        v-if="props.showClose"
+        class="basic-message__close"
+        color="neutral"
+        variant="link"
+        icon="lucide:x"
+        size="sm"
+        @click="close"
+      />
+    </div>
+  </Transition>
+</template>
 <style scoped lang="scss">
 .message-fade-enter-active,
 .message-fade-leave-active {
@@ -185,10 +194,23 @@ defineExpose({
 
   &__icon {
     flex-shrink: 0;
+
+    &--spin {
+      animation: basic-message-icon-spin 1s linear infinite;
+    }
   }
 
   &__content {
     flex: 1;
+  }
+}
+
+@keyframes basic-message-icon-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
   }
 }
 
@@ -221,5 +243,11 @@ defineExpose({
   --basic-message-bg-color: #fef0f0;
   --basic-message-border-color: #fde2e2;
   --basic-message-text-color: #f56c6c;
+}
+
+.basic-message.loading {
+  --basic-message-bg-color: #e4f2ff;
+  --basic-message-border-color: #cde7ff;
+  --basic-message-text-color: #409eff;
 }
 </style>

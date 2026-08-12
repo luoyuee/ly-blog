@@ -1,6 +1,19 @@
 import type { InjectionKey } from "vue";
 import { inject, provide } from "vue";
 
+export interface CreateScopedContextOptions {
+  /**
+   * InjectionKey 的 Symbol 创建模式。
+   *
+   * - unique: 默认模式，每次 createScopedContext 调用都会创建独立 Symbol，推荐用于模块顶层导出复用。
+   * - global: 使用 Symbol.for(name)，仅适用于无法从独立模块导入同一组 provide/use 方法的极端场景。
+   *
+   * 不推荐使用 global 模式，因为它依赖全局 Symbol 注册表；如果 name 不够唯一，
+   * 不同业务上下文可能因为同名而复用同一个 key，导致上下文冲突。
+   */
+  symbolMode?: "unique" | "global";
+}
+
 /**
  * 创建组件作用域内的共享上下文。
  *
@@ -14,6 +27,9 @@ import { inject, provide } from "vue";
  * - createScopedContext 只会创建一对固定的 provide / use 方法，以及对应的 InjectionKey。
  * - 真正的业务状态应当在组件实例内部创建，然后通过 provideContext 提供给后代组件。
  * - 即使多个组件实例共用同一个 InjectionKey，也不会共享状态；后代组件会拿到离自己最近的 provider。
+ * - 默认使用 Symbol(name) 创建唯一 key；只有在无法从独立模块导入同一组 provide / use 方法时，
+ *   才考虑通过 options.symbolMode = "global" 使用 Symbol.for(name)。该模式不推荐常规使用，
+ *   因为它依赖全局 Symbol 注册表，name 必须足够唯一以避免上下文冲突。
  *
  * 不要这样使用：
  * ```ts
@@ -78,12 +94,17 @@ import { inject, provide } from "vue";
  * - 需要跨页面长期共享或持久化的数据。
  *
  * @param name 用于生成 Symbol 和错误提示的上下文名称，建议使用明确的业务名，例如 ArchiveTableContext。
+ * @param options 可选配置。默认使用 unique 模式；global 模式仅用于无法共享模块导出的极端场景。
  * @returns [provideContext, useContext]
  * provideContext: 在上层组件中提供上下文。
  * useContext: 在后代组件中消费上下文；若当前组件树中未提供该上下文，会直接抛错。
  */
-export const createScopedContext = <T extends object>(name: string) => {
-  const contextKey: InjectionKey<T> = Symbol(name);
+export const createScopedContext = <T extends object>(
+  name: string,
+  options: CreateScopedContextOptions = {}
+) => {
+  const contextKey: InjectionKey<T> =
+    options.symbolMode === "global" ? Symbol.for(name) : Symbol(name);
 
   /**
    * 在当前组件实例中提供上下文。

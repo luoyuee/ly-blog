@@ -1,16 +1,10 @@
 <script setup lang="ts">
-import { computed, nextTick, onBeforeUnmount, onMounted, onUpdated, ref } from "vue";
+import type { Direction, ScrollbarColorTheme, ScrollbarUI, WheelDirection } from "./types";
 import type { PropType } from "vue";
+import { BAR_MAP, MIN_SIZE, WHEEL_FRICTION, WHEEL_SPEED_FACTOR, renderThumbStyle } from "./utils";
+import { computed, nextTick, onBeforeUnmount, onMounted, onUpdated, ref } from "vue";
+import { twMerge } from "@/utils/tw-merge";
 import { ScrollbarTheme } from "./theme";
-import {
-  BAR_MAP,
-  MIN_SIZE,
-  WHEEL_FRICTION,
-  WHEEL_SPEED_FACTOR,
-  mergeScrollbarClass,
-  renderThumbStyle
-} from "./utils";
-import type { Direction, ScrollbarColorTheme, ScrollbarUi, WheelDirection } from "./types";
 
 // 滚动完全交给原生 overflow:auto，
 // 这里只自绘滑块（track/thumb）并处理拖拽/轨道点击，不做任何惯性或键盘拦截。
@@ -32,9 +26,9 @@ const props = defineProps({
     type: Object as () => ScrollbarColorTheme,
     default: () => ({})
   },
-  // 各部件 tailwind class 覆盖（参考 collapsible-panel 的 ui 模式）
+  // 各部件 tailwind class 覆盖
   ui: {
-    type: Object as () => ScrollbarUi,
+    type: Object as () => ScrollbarUI,
     default: () => ({})
   },
   // 滚动容器是否可聚焦（键盘方向键滚动依赖原生，需容器可聚焦）
@@ -91,6 +85,22 @@ const rootStyle = computed(() => ({
   "--thumb-color": props.theme.thumbColor || "#909399",
   "--thumb-hover-color": props.theme.thumbHoverColor || "#606266",
   "--thumb-active-color": props.theme.thumbActiveColor || "#303133"
+}));
+
+// 合并默认主题与外部 ui 覆盖，模板直接消费 mergedUI.xxx
+const mergedUI = computed(() => ({
+  // 根容器：relative + 高撑满 + 隐藏溢出
+  root: twMerge(ScrollbarTheme.root, props.ui?.root),
+  // 原生滚动容器：隐藏原生滚动条，content 区由 overflow:auto 驱动
+  wrap: twMerge(ScrollbarTheme.wrap, props.ui?.wrap),
+  // 视图层：min-w-full min-h-full 保证内容撑开滚动
+  view: twMerge(ScrollbarTheme.view, props.ui?.view),
+  // 竖向滑块轨道
+  barVertical: twMerge(ScrollbarTheme.barVertical, props.ui?.barVertical),
+  // 横向滑块轨道
+  barHorizontal: twMerge(ScrollbarTheme.barHorizontal, props.ui?.barHorizontal),
+  // 滑块本体：拖拽/悬停/激活态通过 CSS 变量控制颜色与透明度
+  thumb: twMerge(ScrollbarTheme.thumb, props.ui?.thumb)
 }));
 
 // 滑块位移跟随原生 scrollTop/scrollLeft（无 transition，实时跟手）
@@ -352,19 +362,19 @@ defineExpose({
 
 <template>
   <div
-    :class="mergeScrollbarClass(ScrollbarTheme.root, ui?.root)"
+    :class="mergedUI.root"
     :style="rootStyle"
     @mouseenter="onMouseEnter"
     @mouseleave="onMouseLeave"
   >
     <div
       ref="wrapRef"
-      :class="mergeScrollbarClass(ScrollbarTheme.wrap, ui?.wrap)"
+      :class="mergedUI.wrap"
       :tabindex="tabindex"
       @scroll="handleScroll"
       @wheel="handleWheel"
     >
-      <div ref="viewRef" :class="mergeScrollbarClass(ScrollbarTheme.view, ui?.view)">
+      <div ref="viewRef" :class="mergedUI.view">
         <slot></slot>
       </div>
     </div>
@@ -379,12 +389,12 @@ defineExpose({
         v-if="hasVertical"
         v-show="always || visible"
         ref="barVerticalRef"
-        :class="mergeScrollbarClass(ScrollbarTheme.barVertical, ui?.barVertical)"
+        :class="mergedUI.barVertical"
         @mousedown="clickTrackHandler('vertical', $event)"
       >
         <div
           ref="thumbVerticalRef"
-          :class="mergeScrollbarClass(ScrollbarTheme.thumb, ui?.thumb)"
+          :class="mergedUI.thumb"
           :style="thumbStyleVertical"
           @mousedown="clickThumbHandler('vertical', $event)"
           @touchstart="clickThumbHandler('vertical', $event)"
@@ -402,12 +412,12 @@ defineExpose({
         v-if="hasHorizontal"
         v-show="always || visible"
         ref="barHorizontalRef"
-        :class="mergeScrollbarClass(ScrollbarTheme.barHorizontal, ui?.barHorizontal)"
+        :class="mergedUI.barHorizontal"
         @mousedown="clickTrackHandler('horizontal', $event)"
       >
         <div
           ref="thumbHorizontalRef"
-          :class="mergeScrollbarClass(ScrollbarTheme.thumb, ui?.thumb)"
+          :class="mergedUI.thumb"
           :style="thumbStyleHorizontal"
           @mousedown="clickThumbHandler('horizontal', $event)"
           @touchstart="clickThumbHandler('horizontal', $event)"

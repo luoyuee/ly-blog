@@ -1,7 +1,9 @@
 <script setup lang="ts">
+import type { PropType } from "vue";
+import type { SpinUI } from "./types";
 import { useSlotsExist } from "@/composables/useSlots";
-import { twMerge } from "tailwind-merge";
-import { clsx } from "clsx";
+import { twMerge } from "@/utils/tw-merge";
+import { SpinTheme } from "./theme";
 import {
   computed,
   defineComponent,
@@ -73,45 +75,13 @@ const props = defineProps({
     default: 40
   },
   /**
-   * 包裹容器的额外类名。
-   * 普通模式下通常用于控制高度、圆角、边框等。
+   * 各部件样式
    */
-  wrapperClass: {
-    type: String,
-    default: ""
-  },
-  /**
-   * 遮罩层的额外类名。
-   */
-  overlayClass: {
-    type: String,
-    default: ""
-  },
-  /**
-   * 中间内容面板的额外类名。
-   */
-  panelClass: {
-    type: String,
-    default: ""
-  },
-  /**
-   * Spinner 图标的额外类名。
-   */
-  spinnerClass: {
-    type: String,
-    default: ""
+  ui: {
+    type: Object as PropType<SpinUI>,
+    default: () => ({})
   }
 });
-
-/**
- * 合并 Tailwind 类名。
- *
- * 使用 clsx 整理条件类名，再用 tailwind-merge 处理冲突类，
- * 确保调用方传入同类工具类时能覆盖默认值。
- */
-const mergeTailwindClass = (...classNames: Array<string | boolean | undefined>): string => {
-  return twMerge(clsx(classNames));
-};
 
 /**
  * 是否处于“激活的全屏遮罩”状态。
@@ -127,51 +97,33 @@ const isActiveFullscreen = computed(() => props.loading && props.fullscreen);
 const hasDefaultSlot = useSlotsExist("default");
 
 /**
- * 普通模式下的包裹容器类名。
+ * 合并默认主题、外部 ui 覆盖与运行时条件类，模板/Overlay 直接消费 mergedUI.xxx。
  *
- * 组件版局部遮罩依赖父容器 `relative` 定位，
- * 因此在非 fullscreen 模式下始终补上该定位能力。
+ * - wrapper：非 fullscreen 且无默认插槽时（如 createSpin + target），自动追加 absolute inset-0 h-full
+ * - overlay：fullscreen 用 fixed inset-0，局部用 absolute inset-0
  */
-const wrapperClassName = computed(() => {
-  return mergeTailwindClass(
-    "relative",
-    !hasDefaultSlot.value && !props.fullscreen && "h-32 w-full",
-    props.wrapperClass
-  );
-});
-
-/**
- * 遮罩层基础类名。
- *
- * - fullscreen 使用 fixed 覆盖整个视口
- * - 局部遮罩使用 absolute 覆盖当前内容区域
- */
-const overlayClassName = computed(() => {
-  return mergeTailwindClass(
+const mergedUI = computed(() => ({
+  // 包裹容器：非 fullscreen 且无默认插槽时（如 createSpin + target），用 absolute inset-0 h-full 充满目标节点
+  wrapper: twMerge(
+    SpinTheme.wrapper,
+    !hasDefaultSlot.value && !props.fullscreen && "absolute inset-0 h-full",
+    props.ui?.wrapper
+  ),
+  // 遮罩层：fullscreen 使用 fixed 覆盖整个视口，局部遮罩使用 absolute 覆盖当前内容区域
+  overlay: twMerge(
+    SpinTheme.overlay,
     props.fullscreen ? "fixed inset-0" : "absolute inset-0",
-    "flex items-center justify-center overflow-hidden rounded-inherit bg-default/70 backdrop-blur-[2px] transition-opacity",
-    props.overlayClass
-  );
-});
-
-/**
- * 中间加载面板样式。
- *
- * 默认保持轻量，仅负责居中排列。需要更强视觉风格时可通过 panelClass 覆盖。
- */
-const panelClassName = computed(() => {
-  return mergeTailwindClass(
-    "flex min-w-32 max-w-full flex-col items-center gap-2 px-4 py-3 text-center",
-    props.panelClass
-  );
-});
-
-/**
- * Spinner 默认样式。
- */
-const spinnerClassName = computed(() => {
-  return mergeTailwindClass("size-8 animate-spin text-primary", props.spinnerClass);
-});
+    props.ui?.overlay
+  ),
+  // 中间加载面板：默认保持轻量，仅负责居中排列。需要更强视觉风格时可通过 ui.panel 覆盖
+  panel: twMerge(SpinTheme.panel, props.ui?.panel),
+  // Spinner 图标
+  spinner: twMerge(SpinTheme.spinner, props.ui?.spinner),
+  // 主文案
+  title: twMerge(SpinTheme.title, props.ui?.title),
+  // 次级文案
+  description: twMerge(SpinTheme.description, props.ui?.description)
+}));
 
 /**
  * 遮罩层行内层级。
@@ -206,16 +158,14 @@ const Overlay = defineComponent({
               ? slots.spinner()
               : h(resolveComponent("UIcon"), {
                   name: "mdi:loading",
-                  class: spinnerClassName.value
+                  class: mergedUI.value.spinner
                 }),
             h("div", { class: "space-y-1" }, [
-              slots.title
-                ? slots.title()
-                : h("div", { class: "text-sm font-medium text-default" }, props.text),
+              slots.title ? slots.title() : h("div", { class: mergedUI.value.title }, props.text),
               slots.description || props.description
                 ? h(
                     "div",
-                    { class: "text-xs leading-5 text-muted" },
+                    { class: mergedUI.value.description },
                     slots.description ? slots.description() : props.description
                   )
                 : null
@@ -225,13 +175,13 @@ const Overlay = defineComponent({
       return h(
         "div",
         {
-          class: overlayClassName.value,
+          class: mergedUI.value.overlay,
           style: overlayStyle.value,
           role: "status",
           "aria-live": "polite",
           "aria-busy": "true"
         },
-        [h("div", { class: panelClassName.value }, panelContent)]
+        [h("div", { class: mergedUI.value.panel }, panelContent)]
       );
     };
   }
@@ -298,7 +248,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div :class="wrapperClassName">
+  <div :class="mergedUI.wrapper">
     <slot></slot>
 
     <Transition
