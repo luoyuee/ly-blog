@@ -251,5 +251,18 @@ export const devPages = [
         order: 18
       }
     }
+  },
+  {
+    name: "dev-message-box",
+    path: "/test/message-box",
+    file: fileURLToPath(new URL("./message-box.vue", import.meta.url)),
+    meta: {
+      layout: "test",
+      devPage: {
+        label: "MessageBox",
+        icon: "lucide:message-square-warning",
+        order: 19
+      }
+    }
   }
 ];

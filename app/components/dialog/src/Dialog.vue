@@ -105,11 +105,13 @@ const props = defineProps({
   }
 });
 
+// 必须使用调用签名语法声明 emits：useOverlay 的 open() 通过条件类型从组件 $emit
+// 提取 close 事件的 payload 作为 Promise resolve 类型，而对象/元组语法生成的 $emit
+// 交叉类型中 close 不是最后一个重载，TS 条件类型只匹配最后一个签名
+//（microsoft/TypeScript#32164），会导致 await dialog.open() 被推断为 never
 const emit = defineEmits<{
-  confirm: [];
-  cancel: [];
-  close: [result: DialogResult];
-  afterLeave: [];
+  (e: "confirm" | "cancel" | "afterLeave"): void;
+  (e: "close", result: DialogResult): void;
 }>();
 
 let settled = false;

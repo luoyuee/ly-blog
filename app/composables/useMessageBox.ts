@@ -1,58 +1,32 @@
-import type { CreateMessageBoxOptions } from "@/components/message-box";
-import { createMessageBox } from "@/components/message-box";
+import type { MessageBoxOptions, MessageBoxType } from "@/components/message-box";
+import { MessageBox } from "@/components/message-box";
+import { useOverlay } from "@nuxt/ui/composables";
 
-export type MessageBoxOptions = Omit<CreateMessageBoxOptions, "type">;
+export type UseMessageBoxOptions = Omit<MessageBoxOptions, "type">;
 
 export const useMessageBox = () => {
-  const primary = (options: MessageBoxOptions) => {
-    const { show } = createMessageBox({
-      ...options,
-      type: "primary"
+  const overlay = useOverlay();
+
+  const build = (type: MessageBoxType, options: UseMessageBoxOptions) => {
+    const modal = overlay.create(MessageBox, {
+      destroyOnClose: true,
+      props: { ...options, type }
     });
-    show();
+
+    const instance = modal.open();
+
+    return {
+      modal,
+      instance
+    };
   };
 
-  const success = (options: MessageBoxOptions) => {
-    const { show } = createMessageBox({
-      ...options,
-      type: "success"
-    });
-    show();
+  return {
+    primary: (options: UseMessageBoxOptions) => build("primary", options),
+    success: (options: UseMessageBoxOptions) => build("success", options),
+    warning: (options: UseMessageBoxOptions) => build("warning", options),
+    info: (options: UseMessageBoxOptions) => build("info", options),
+    question: (options: UseMessageBoxOptions) => build("question", options),
+    error: (options: UseMessageBoxOptions) => build("error", options)
   };
-
-  const warning = (options: MessageBoxOptions) => {
-    const { show } = createMessageBox({
-      ...options,
-      type: "warning"
-    });
-    show();
-  };
-
-  const info = (options: MessageBoxOptions) => {
-    const { show } = createMessageBox({
-      ...options,
-      type: "info"
-    });
-    show();
-  };
-
-  const question = (options: MessageBoxOptions) => {
-    const { show } = createMessageBox({
-      ...options,
-      type: "question"
-    });
-    show();
-  };
-
-  const error = (options: MessageBoxOptions) => {
-    const { show } = createMessageBox({
-      ...options,
-      type: "error"
-    });
-    show();
-  };
-
-  return { primary, success, warning, info, question, error };
 };
-
-// const $msgBox = useMessageBox();

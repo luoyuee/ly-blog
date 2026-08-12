@@ -1,3 +1,5 @@
-export type { MessageBoxType, CreateMessageBoxOptions } from "./src/method";
+import MessageBox from "./src/MessageBox.vue";
 
-export { createMessageBox } from "./src/method";
+export type * from "./src/types";
+
+export { MessageBox };
