@@ -3,14 +3,7 @@ import type { ArticleItem } from "#shared/types/article";
 import { TagColors } from "#shared/constants";
 import { getColorForTag } from "@/utils/color";
 
-const props = defineProps({
-  visible: {
-    type: Boolean,
-    default: false
-  }
-});
-
-const emits = defineEmits(["update:visible"]);
+const open = defineModel("open", { type: Boolean, default: false });
 
 const { data: tags } = await useFetch("/api/article/tags", {
   method: "get"
@@ -22,7 +15,7 @@ const { data: rank } = await useFetch<ArticleItem[]>("/api/article/hot", {
 });
 
 const hide = () => {
-  emits("update:visible", false);
+  open.value = false;
 };
 
 const formatNumber = (num: number): string => {
@@ -36,7 +29,7 @@ const formatNumber = (num: number): string => {
 };
 </script>
 <template>
-  <div class="search-box" :class="{ 'search-box--active': props.visible }">
+  <div class="search-box" :class="{ 'search-box--active': open }">
     <div class="search-box__search">
       <div class="search-box__title">
         <UIcon name="colorful:record-outline" :size="18" />
@@ -79,11 +72,7 @@ const formatNumber = (num: number): string => {
       </ul>
     </div>
   </div>
-  <div
-    class="search-overlay"
-    :class="{ 'search-overlay--active': props.visible }"
-    @click="hide"
-  ></div>
+  <div class="search-overlay" :class="{ 'search-overlay--active': open }" @click="hide"></div>
 </template>
 <style scoped lang="scss">
 .search-box {

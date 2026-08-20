@@ -8,7 +8,7 @@ import { z } from "zod";
 
 const $notify = useNotification();
 
-const visible = defineModel<boolean>("visible", {
+const open = defineModel<boolean>("open", {
   default: false
 });
 
@@ -58,7 +58,7 @@ const modalTitle = computed(() => {
 
 // 监听弹窗显示，初始化表单与回填数据
 watch(
-  visible,
+  open,
   (newVal) => {
     if (!newVal) return;
 
@@ -90,7 +90,7 @@ const handleSubmit = async (event: { data: z.output<typeof schema> }) => {
       title: isEdit.value ? "修改成功" : "创建成功"
     });
 
-    visible.value = false;
+    open.value = false;
 
     emits("close", {
       action: "submitted"
@@ -110,7 +110,7 @@ const handleConfirm = async () => {
 };
 
 const handleCancel = () => {
-  visible.value = false;
+  open.value = false;
   emits("close", {
     action: "cancelled"
   });
@@ -118,7 +118,7 @@ const handleCancel = () => {
 </script>
 <template>
   <BasicModal
-    v-model:visible="visible"
+    v-model:open="open"
     :title="modalTitle"
     :submitting="formState.submitting"
     @cancel="handleCancel"

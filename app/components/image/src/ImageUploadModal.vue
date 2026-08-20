@@ -21,7 +21,7 @@ const props = defineProps({
   }
 });
 
-const visible = ref(false);
+const open = ref(false);
 
 const emits = defineEmits(["submit", "close", "uploaded", "failed"]);
 
@@ -125,7 +125,7 @@ const handleClose = () => {
 
 const handleCancel = () => {
   handleBeforeClose(() => {
-    visible.value = false;
+    open.value = false;
   });
 };
 
@@ -167,7 +167,7 @@ const handleDeleteItem = (index: number) => {
 const handleOpen = () => {
   fileList.value = [];
 
-  visible.value = true;
+  open.value = true;
 };
 
 defineExpose({
@@ -176,7 +176,7 @@ defineExpose({
 </script>
 <template>
   <BasicModal
-    v-model:visible="visible"
+    v-model:open="open"
     content-class="max-w-[640px]"
     :title="`上传图片至「${props.folder.name}」`"
     :before-close="handleBeforeClose"

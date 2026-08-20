@@ -240,7 +240,7 @@ const handleLogout = () => {
     </div>
 
     <BasicModal
-      v-model:visible="passwordVisible"
+      v-model:open="passwordVisible"
       title="修改密码"
       @confirm="handleConfirmPassword"
       @cancel="handleCancelPassword"

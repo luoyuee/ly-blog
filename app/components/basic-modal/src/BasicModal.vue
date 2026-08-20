@@ -6,8 +6,8 @@ import { useI18n } from "vue-i18n";
 
 const { t } = useI18n();
 
-// BasicModal 通过 v-model:visible 进行双向绑定使用，内部关闭会同步回写外部 visible。
-const visible = defineModel("visible", { type: Boolean, default: false });
+// BasicModal 通过 v-model:open 进行双向绑定使用，内部关闭会同步回写外部 open。
+const open = defineModel("open", { type: Boolean, default: false });
 
 const props = defineProps({
   title: {
@@ -94,7 +94,7 @@ const handleAfterLeave = () => {
 // 统一执行真正的关闭动作：先关闭弹窗，再按触发来源抛出对应事件。
 // 这里不再做 beforeClose 判断，确保所有需要关闭的入口都必须先经过 handleBeforeClose。
 const proceedClose = (action: BasicModalAction) => {
-  visible.value = false;
+  open.value = false;
 
   switch (action) {
     case "confirm":
@@ -155,7 +155,7 @@ const handleUpdate = (e: boolean) => {
 </script>
 <template>
   <UModal
-    :open="visible"
+    :open="open"
     :description="props.description"
     :ui="{
       header: 'p-2 sm:px-4 min-h-12',

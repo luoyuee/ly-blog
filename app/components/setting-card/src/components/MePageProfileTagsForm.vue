@@ -242,7 +242,7 @@ defineExpose({
     </div>
 
     <BasicModal
-      v-model:visible="modalState.visible"
+      v-model:open="modalState.visible"
       :title="modalState.editingIndex === null ? '添加标签' : '编辑标签'"
       @confirm="confirmModal"
     >

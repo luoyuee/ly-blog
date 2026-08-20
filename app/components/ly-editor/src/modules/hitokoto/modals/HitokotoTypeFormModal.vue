@@ -10,7 +10,7 @@ import { z } from "zod";
 
 const $notify = useNotification();
 
-const visible = defineModel<boolean>("visible", {
+const open = defineModel<boolean>("open", {
   default: false
 });
 
@@ -45,7 +45,7 @@ const { formData, formState, resetForm, setForm } = useForm<HitokotoTypeForm>({
 });
 
 watch(
-  visible,
+  open,
   (newVal) => {
     if (!newVal) return;
 
@@ -88,7 +88,7 @@ const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => 
       });
     }
 
-    visible.value = false;
+    open.value = false;
 
     emits("close", {
       action: "submitted"
@@ -108,14 +108,14 @@ const handleConfirm = async () => {
 };
 
 const handleCancel = () => {
-  visible.value = false;
+  open.value = false;
   emits("close", {
     action: "cancelled"
   });
 };
 </script>
 <template>
-  <BasicModal v-model:visible="visible" :title="modalTitle">
+  <BasicModal v-model:open="open" :title="modalTitle">
     <UForm
       ref="formRef"
       :schema="schema"

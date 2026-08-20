@@ -10,7 +10,7 @@ import { getHitokotoDetails } from "@/apis/hitokoto";
 import { BasicModal } from "@/components/basic-modal";
 import dayjs from "dayjs";
 
-const visible = defineModel<boolean>("visible", {
+const open = defineModel<boolean>("open", {
   default: false
 });
 
@@ -28,11 +28,11 @@ const emits = defineEmits<{
 const data = ref<Partial<HitokotoTypeItem>>({});
 
 watch(
-  [visible, () => props.record?.id],
+  [open, () => props.record?.id],
   async ([newVal, id]) => {
     if (!newVal || !id) {
       data.value = {};
-      visible.value = false;
+      open.value = false;
       return;
     }
 
@@ -44,14 +44,14 @@ watch(
 );
 
 const handleCancel = () => {
-  visible.value = false;
+  open.value = false;
   emits("close", {
     action: "closed"
   });
 };
 </script>
 <template>
-  <BasicModal v-model:visible="visible" title="分类详情">
+  <BasicModal v-model:open="open" title="分类详情">
     <Descriptions class="w-full" :column="1">
       <DescriptionsItem label="分类名称">{{ data.name }}</DescriptionsItem>
       <DescriptionsItem label="分类描述">{{ data.description }}</DescriptionsItem>

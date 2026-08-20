@@ -26,7 +26,7 @@ const userStore = useUserStore();
 
 const $notify = useNotification();
 
-const visible = defineModel<boolean>("visible", {
+const open = defineModel<boolean>("open", {
   default: false
 });
 
@@ -148,7 +148,7 @@ const initData = async () => {
 
 // 监听弹窗显示，加载笔记/文章数据
 watch(
-  visible,
+  open,
   (newVal) => {
     if (!newVal) {
       state.note_id = undefined;
@@ -221,7 +221,7 @@ const handleSubmit = async (event: FormSubmitEvent<ArticleForm>) => {
 
     const articleId = article.value?.id;
 
-    visible.value = false;
+    open.value = false;
 
     emits("close", {
       action: "published",
@@ -242,7 +242,7 @@ const handleConfirm = () => {
 };
 
 const handleCancel = () => {
-  visible.value = false;
+  open.value = false;
   emits("close", {
     action: "cancelled"
   });
@@ -277,7 +277,7 @@ const handleChangePinned = () => {
 <template>
   <ClientOnly>
     <BasicModal
-      v-model:visible="visible"
+      v-model:open="open"
       content-class="max-w-[1080px] h-[80vh]"
       :title="article ? '更新文章' : '发布文章'"
       @confirm="handleConfirm"

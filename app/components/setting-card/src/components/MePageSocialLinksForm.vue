@@ -246,7 +246,7 @@ onBeforeUnmount(() => {
     </div>
 
     <BasicModal
-      v-model:visible="modalState.visible"
+      v-model:open="modalState.visible"
       :title="modalState.editingIndex === null ? '添加社交链接' : '编辑社交链接'"
       @confirm="confirmModal"
     >

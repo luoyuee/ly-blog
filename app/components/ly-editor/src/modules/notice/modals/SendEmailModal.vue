@@ -16,7 +16,7 @@ const schema = z.object({
 
 const $notify = useNotification();
 
-const visible = defineModel<boolean>("visible", {
+const open = defineModel<boolean>("open", {
   default: false
 });
 
@@ -32,7 +32,7 @@ const formData = ref<SendEmailForm>({
 
 // 监听弹窗显示，初始化表单并加载收件人选项
 watch(
-  visible,
+  open,
   async (newVal) => {
     if (!newVal) return;
 
@@ -66,7 +66,7 @@ const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => 
 
     $notify.success({ title: "已提交发送请求" });
 
-    visible.value = false;
+    open.value = false;
     emits("close", { action: "sent" });
   } catch (error) {
     $notify.error({ title: "发送失败", error });
@@ -76,7 +76,7 @@ const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => 
 };
 
 const handleCancel = () => {
-  visible.value = false;
+  open.value = false;
   emits("close", { action: "cancelled" });
 };
 
@@ -90,7 +90,7 @@ const onCreate = (item: string) => {
 </script>
 <template>
   <BasicModal
-    v-model:visible="visible"
+    v-model:open="open"
     title="发送邮件"
     confirm-button-text="发送"
     :submitting="submitting"

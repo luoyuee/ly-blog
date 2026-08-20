@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import type { NavigationWebsiteFormModalResult } from "#shared/types/ly-editor";
 import type { FormSubmitEvent } from "@nuxt/ui";
-import type { NavigationWebsiteForm, NavigationWebsiteItem } from "#shared/types/navigation-website";
+import type {
+  NavigationWebsiteForm,
+  NavigationWebsiteItem
+} from "#shared/types/navigation-website";
 import { createNavigationWebsite, updateNavigationWebsite } from "@/apis/navigation-website";
 import { BasicModal } from "@/components/basic-modal";
 import { useForm } from "~/composables/useForm";
@@ -10,7 +13,7 @@ import { z } from "zod";
 
 const $notify = useNotification();
 
-const visible = defineModel<boolean>("visible", {
+const open = defineModel<boolean>("open", {
   default: false
 });
 
@@ -62,26 +65,15 @@ const modalTitle = computed(() => {
 });
 
 watch(
-  visible,
+  open,
   (newVal) => {
     if (!newVal) return;
 
     resetForm();
 
     if (props.record) {
-      const {
-        id,
-        name,
-        url,
-        icon,
-        tags,
-        description,
-        type,
-        hot,
-        is_favorite,
-        is_public,
-        status
-      } = props.record;
+      const { id, name, url, icon, tags, description, type, hot, is_favorite, is_public, status } =
+        props.record;
 
       setForm({
         id,
@@ -146,7 +138,7 @@ const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => 
       });
     }
 
-    visible.value = false;
+    open.value = false;
 
     emits("close", {
       action: "submitted"
@@ -166,7 +158,7 @@ const handleConfirm = async () => {
 };
 
 const handleCancel = () => {
-  visible.value = false;
+  open.value = false;
   emits("close", {
     action: "cancelled"
   });
@@ -174,7 +166,7 @@ const handleCancel = () => {
 </script>
 <template>
   <BasicModal
-    v-model:visible="visible"
+    v-model:open="open"
     :title="modalTitle"
     :submitting="formState.submitting"
     @cancel="handleCancel"
@@ -249,7 +241,12 @@ const handleCancel = () => {
         :disabled="formState.submitting"
         @click="handleCancel"
       />
-      <UButton label="确认" color="primary" :loading="formState.submitting" @click="handleConfirm" />
+      <UButton
+        label="确认"
+        color="primary"
+        :loading="formState.submitting"
+        @click="handleConfirm"
+      />
     </template>
   </BasicModal>
 </template>

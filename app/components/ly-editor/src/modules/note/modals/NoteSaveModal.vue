@@ -10,7 +10,7 @@ import { z } from "zod";
 
 const $notify = useNotification();
 
-const visible = defineModel<boolean>("visible", {
+const open = defineModel<boolean>("open", {
   default: false
 });
 
@@ -62,7 +62,7 @@ const folderData = ref<FolderTreeItem[]>();
 
 // 监听弹窗显示，初始化笔记表单
 watch(
-  visible,
+  open,
   async (newVal) => {
     if (!newVal) {
       state.tabItem = undefined;
@@ -72,12 +72,12 @@ watch(
     const tabItem = props.tab;
 
     if (!tabItem || tabItem.type !== "note") {
-      visible.value = false;
+      open.value = false;
       return;
     }
 
     if (tabItem.data.id) {
-      visible.value = false;
+      open.value = false;
       return;
     }
 
@@ -126,13 +126,13 @@ const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => 
 
     if (state.tabItem) {
       const tab = state.tabItem;
-      visible.value = false;
+      open.value = false;
       emits("close", {
         action: "saved",
         tab
       });
     } else {
-      visible.value = false;
+      open.value = false;
     }
 
     lyEditorEmitter.emit("cmd.note-manager:reload");
@@ -151,7 +151,7 @@ const handleConfirm = async () => {
 };
 
 const handleCancel = () => {
-  visible.value = false;
+  open.value = false;
   emits("close", {
     action: "cancelled"
   });
@@ -159,7 +159,7 @@ const handleCancel = () => {
 </script>
 <template>
   <BasicModal
-    v-model:visible="visible"
+    v-model:open="open"
     title="保存文件"
     :submitting="state.submitting"
     @cancel="handleCancel"

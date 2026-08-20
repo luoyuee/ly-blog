@@ -287,8 +287,8 @@ const open = ref(false);
       <UIcon name="lucide:search" :size="20" />
     </div>
   </div>
-  <SearchDrawer v-model:visible="showSearch" />
-  <HeaderDrawer v-model:visible="drawerVisible" />
+  <SearchDrawer v-model:open="showSearch" />
+  <HeaderDrawer v-model:open="drawerVisible" />
 </template>
 <style scoped lang="scss">
 @import url("../style/header.scss");

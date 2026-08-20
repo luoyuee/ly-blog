@@ -6,7 +6,7 @@ import { useForm } from "@/composables/useForm";
 
 const $notify = useNotification();
 
-const visible = defineModel<boolean>("visible", {
+const open = defineModel<boolean>("open", {
   default: false
 });
 
@@ -24,7 +24,7 @@ const { formData, formState, resetForm, setFieldValue } = useForm<{
 
 const uploadProgress = ref<number>(0);
 
-watch(visible, (newVal) => {
+watch(open, (newVal) => {
   if (!newVal) return;
 
   resetForm();
@@ -55,7 +55,7 @@ const handleConfirm = async () => {
     });
 
     setTimeout(() => {
-      visible.value = false;
+      open.value = false;
     }, 500);
   } catch (error) {
     $notify.error({
@@ -68,7 +68,7 @@ const handleConfirm = async () => {
 };
 
 const handleCancel = () => {
-  visible.value = false;
+  open.value = false;
   emits("close", {
     action: "cancelled"
   });
@@ -85,7 +85,7 @@ const handleChange = (e: Event) => {
 </script>
 <template>
   <BasicModal
-    v-model:visible="visible"
+    v-model:open="open"
     title="导入数据"
     :submitting="formState.submitting"
     @cancel="handleCancel"

@@ -291,7 +291,7 @@ defineExpose({ exportICal });
       </div>
       <div ref="calendarEl"></div>
       <CalendarEventFormModal
-        v-model:visible="formVisible"
+        v-model:open="formVisible"
         :mode="formMode"
         :record="formRecord"
         @submit="handleFormSubmit"

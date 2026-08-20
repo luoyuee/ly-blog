@@ -208,7 +208,7 @@ const columns: TableColumn<IClientConfigSwiperItem>[] = [
     </div>
 
     <BasicModal
-      v-model:visible="modalState.visible"
+      v-model:open="modalState.visible"
       :title="modalState.isEdit ? '编辑数据' : '添加数据'"
       @confirm="handleModalConfirm"
     >

@@ -6,7 +6,7 @@ import { BasicModal } from "@/components/basic-modal";
 import { watch } from "vue";
 import dayjs from "dayjs";
 
-const visible = defineModel<boolean>("visible", {
+const open = defineModel<boolean>("open", {
   default: false
 });
 
@@ -33,7 +33,7 @@ const data = ref<Partial<ArticleCategory>>({});
 
 // 监听弹窗显示，加载分类详情
 watch(
-  visible,
+  open,
   async (newVal) => {
     if (!newVal) {
       data.value = {};
@@ -50,7 +50,7 @@ watch(
 );
 
 const handleCancel = () => {
-  visible.value = false;
+  open.value = false;
   emits("close", {
     action: "closed"
   });
@@ -58,7 +58,7 @@ const handleCancel = () => {
 </script>
 <template>
   <BasicModal
-    v-model:visible="visible"
+    v-model:open="open"
     title="分类详情"
     cancel-button-text="关闭"
     :show-confirm-button="false"

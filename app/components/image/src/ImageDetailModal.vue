@@ -151,7 +151,7 @@ defineExpose({ show });
 </script>
 
 <template>
-  <BasicModal v-model:visible="state.visible" title="原图预览" content-class="max-w-[1080px]">
+  <BasicModal v-model:open="state.visible" title="原图预览" content-class="max-w-[1080px]">
     <div v-if="image" class="image-preview-content">
       <div style="width: 600px; height: 500px">
         <ImagePreview v-if="state.visible" :src="`/static/image/${image.hash}.${image.format}`" />

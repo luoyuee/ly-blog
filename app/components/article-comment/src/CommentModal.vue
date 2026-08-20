@@ -76,7 +76,7 @@ defineExpose({
 </script>
 <template>
   <BasicModal
-    v-model:visible="state.visible"
+    v-model:open="state.visible"
     title="留言"
     confirm-button-text="更新"
     @confirm="handleSubmit"

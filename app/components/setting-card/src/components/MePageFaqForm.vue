@@ -222,7 +222,7 @@ onBeforeUnmount(() => {
     </div>
 
     <BasicModal
-      v-model:visible="modalState.visible"
+      v-model:open="modalState.visible"
       :title="modalState.editingIndex === null ? '添加 FAQ' : '编辑 FAQ'"
       @confirm="confirmModal"
     >

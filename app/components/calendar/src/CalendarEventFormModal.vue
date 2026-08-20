@@ -15,7 +15,7 @@ import dayjs from "dayjs";
 import { computed, watch } from "vue";
 import { z } from "zod";
 
-const visible = defineModel<boolean>("visible", {
+const open = defineModel<boolean>("open", {
   default: false
 });
 
@@ -182,7 +182,7 @@ const combineDateTime = (
 
 // 监听弹窗显示，初始化表单与回填数据
 watch(
-  visible,
+  open,
   (newVal) => {
     if (!newVal) return;
 
@@ -270,7 +270,7 @@ const handleConfirm = () => {
 };
 
 const handleCancel = () => {
-  visible.value = false;
+  open.value = false;
 };
 
 const handleDelete = () => {
@@ -282,7 +282,7 @@ const handleDelete = () => {
 
 <template>
   <BasicModal
-    v-model:visible="visible"
+    v-model:open="open"
     :title="modalTitle"
     :submitting="formState.submitting"
     @cancel="handleCancel"

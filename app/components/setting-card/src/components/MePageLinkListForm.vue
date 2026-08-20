@@ -290,7 +290,7 @@ onBeforeUnmount(() => {
     </div>
 
     <BasicModal
-      v-model:visible="modalState.visible"
+      v-model:open="modalState.visible"
       :title="modalState.editingIndex === null ? '添加卡片' : '编辑卡片'"
       @confirm="confirmModal"
     >

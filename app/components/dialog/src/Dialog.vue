@@ -180,7 +180,7 @@ const RenderFooter = () => {
 
 <template>
   <BasicModal
-    v-model:visible="open"
+    v-model:open="open"
     :title="props.titleRender ? undefined : props.title"
     :description="props.description"
     :content="renderContent"

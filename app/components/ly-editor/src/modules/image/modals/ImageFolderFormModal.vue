@@ -9,7 +9,7 @@ import { z } from "zod";
 
 const $notify = useNotification();
 
-const visible = defineModel<boolean>("visible", {
+const open = defineModel<boolean>("open", {
   default: false
 });
 
@@ -52,7 +52,7 @@ const { formData, formState, resetForm, setForm } = useForm<FormData>({
 
 // 监听弹窗显示，初始化表单与回填数据
 watch(
-  visible,
+  open,
   (newVal) => {
     if (!newVal) return;
 
@@ -95,7 +95,7 @@ const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => 
       });
     }
 
-    visible.value = false;
+    open.value = false;
 
     emits("close", {
       action: "submitted"
@@ -115,7 +115,7 @@ const handleConfirm = async () => {
 };
 
 const handleCancel = () => {
-  visible.value = false;
+  open.value = false;
   emits("close", {
     action: "cancelled"
   });
@@ -123,7 +123,7 @@ const handleCancel = () => {
 </script>
 <template>
   <BasicModal
-    v-model:visible="visible"
+    v-model:open="open"
     :title="formData.id ? '修改目录' : '创建目录'"
     :submitting="formState.submitting"
     @cancel="handleCancel"

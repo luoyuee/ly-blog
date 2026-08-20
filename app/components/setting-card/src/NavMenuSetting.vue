@@ -257,7 +257,7 @@ const handleAddSub = (item: IClientConfigNavMenuItem) => {
     </UTree>
 
     <BasicModal
-      v-model:visible="state.modalVisible"
+      v-model:open="state.modalVisible"
       :title="state.isEdit ? '编辑菜单' : '添加菜单'"
       @confirm="handleModalConfirm"
     >

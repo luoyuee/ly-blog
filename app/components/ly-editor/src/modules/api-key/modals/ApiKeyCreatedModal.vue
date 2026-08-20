@@ -6,7 +6,7 @@ import { BasicModal } from "@/components/basic-modal";
 
 const $notify = useNotification();
 
-const visible = defineModel<boolean>("visible", {
+const open = defineModel<boolean>("open", {
   default: false
 });
 
@@ -46,7 +46,7 @@ const displayedToken = computed(() => {
 });
 
 watch(
-  visible,
+  open,
   (newVal) => {
     if (newVal) {
       tokenVisible.value = false;
@@ -81,7 +81,7 @@ const handleCopyToken = async () => {
  * 关闭弹窗。
  */
 const handleClose = () => {
-  visible.value = false;
+  open.value = false;
   emits("close", {
     action: "closed"
   });
@@ -94,7 +94,7 @@ const handleCancel = () => {
 
 <template>
   <BasicModal
-    v-model:visible="visible"
+    v-model:open="open"
     title="请立即保存 API 密钥"
     confirm-button-text="我已保存"
     :show-cancel-button="false"

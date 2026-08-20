@@ -14,7 +14,7 @@ import { DatePicker } from "@/components/form/date-picker";
 
 const $notify = useNotification();
 
-const visible = defineModel<boolean>("visible", {
+const open = defineModel<boolean>("open", {
   default: false
 });
 
@@ -61,7 +61,7 @@ const isEdit = computed(() => {
 });
 
 watch(
-  visible,
+  open,
   (newVal) => {
     if (!newVal) return;
 
@@ -113,7 +113,7 @@ const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => 
         title: "修改成功"
       });
 
-      visible.value = false;
+      open.value = false;
       emits("close", {
         action: "submitted"
       });
@@ -130,7 +130,7 @@ const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => 
       title: "创建成功"
     });
 
-    visible.value = false;
+    open.value = false;
     emits("close", {
       action: "submitted",
       data: createdApiKey
@@ -150,7 +150,7 @@ const handleConfirm = async () => {
 };
 
 const handleCancel = () => {
-  visible.value = false;
+  open.value = false;
   emits("close", {
     action: "cancelled"
   });
@@ -166,7 +166,7 @@ const scopeOptions = computed<SelectItem[]>(() => {
 
 <template>
   <BasicModal
-    v-model:visible="visible"
+    v-model:open="open"
     :title="modalTitle"
     :submitting="formState.submitting"
     @cancel="handleCancel"

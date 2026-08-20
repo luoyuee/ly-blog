@@ -223,7 +223,7 @@ const linkColumns: TableColumn<IClientConfigAuthorCardLink>[] = [
     </UForm>
 
     <BasicModal
-      v-model:visible="modalState.visible"
+      v-model:open="modalState.visible"
       :title="modalState.isEdit ? '编辑链接' : '添加链接'"
       @confirm="handleModalConfirm"
     >

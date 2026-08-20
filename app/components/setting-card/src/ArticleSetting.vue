@@ -173,7 +173,7 @@ const handleDelete = (index: number) => {
     </UForm>
 
     <BasicModal
-      v-model:visible="modalState.visible"
+      v-model:open="modalState.visible"
       title="添加收款码"
       @confirm="handleModalConfirm"
     >

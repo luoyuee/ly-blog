@@ -6,16 +6,16 @@ import { useDebounceFn } from "@vueuse/core";
 const configStore = useConfigStore();
 const appStore = useAppStore();
 
-const visible = defineModel<boolean>("visible", { default: false });
+const open = defineModel<boolean>("open", { default: false });
 
 const autoHide = useDebounceFn(() => {
   if (window.innerWidth > 1024) {
-    visible.value = false;
+    open.value = false;
     window.removeEventListener("resize", autoHide);
   }
 }, 100);
 
-watch(visible, (newVal) => {
+watch(open, (newVal) => {
   appStore.lockScroll = newVal;
   if (newVal) {
     window.addEventListener("resize", autoHide);
@@ -207,7 +207,7 @@ const handleActive = (e: Event) => {
 };
 </script>
 <template>
-  <USlideover v-model:open="visible" side="left">
+  <USlideover v-model:open="open" side="left">
     <template #content="{ close }">
       <div class="header-drawer">
         <img class="header-drawer__author-bg" src="/images/author_bg.jpg" alt="author_bg" />

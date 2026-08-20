@@ -11,14 +11,14 @@ const $message = useMessage();
 
 const emits = defineEmits(["cancel", "confirm", "closed"]);
 
-const visible = defineModel("visible", {
+const open = defineModel("open", {
   type: Boolean,
   default: false
 });
 
 defineExpose({
   open: () => {
-    visible.value = true;
+    open.value = true;
   }
 });
 
@@ -73,7 +73,7 @@ const selectedMap = computed(() => {
   );
 });
 
-watch(visible, async (newVal) => {
+watch(open, async (newVal) => {
   if (newVal) {
     state.loading = true;
     selectedList.value = props.defaultSelected ?? [];
@@ -160,12 +160,12 @@ const handleConfirm = () => {
   } else {
     emits("confirm", unref(selectedList.value));
   }
-  visible.value = false;
+  open.value = false;
 };
 
 const handleCancel = () => {
   emits("cancel");
-  visible.value = false;
+  open.value = false;
 };
 
 // 上传图片
@@ -185,7 +185,7 @@ const handleSubmit = () => {
 </script>
 <template>
   <BasicModal
-    v-model:visible="visible"
+    v-model:open="open"
     :title="props.title"
     class="image-select-modal"
     content-class="max-w-[800px]"
@@ -283,7 +283,7 @@ const handleSubmit = () => {
 
     <ImageUploadModal
       v-if="currentFolder"
-      v-model:visible="uploadVisible"
+      v-model:open="uploadVisible"
       :folder="currentFolder"
       @submit="handleSubmit"
     />

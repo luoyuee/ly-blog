@@ -23,7 +23,7 @@ const schema = z.object({
 
 const $notify = useNotification();
 
-const visible = defineModel<boolean>("visible", {
+const open = defineModel<boolean>("open", {
   default: false
 });
 
@@ -49,7 +49,7 @@ const formData = ref<NoticeConfig>({
 
 // 监听弹窗显示，加载公告配置
 watch(
-  visible,
+  open,
   async (newVal) => {
     if (!newVal) return;
 
@@ -80,7 +80,7 @@ const handleConfirm = async () => {
       title: "保存成功"
     });
 
-    visible.value = false;
+    open.value = false;
     emits("close", { action: "saved" });
   } catch (error) {
     $notify.error({
@@ -93,7 +93,7 @@ const handleConfirm = async () => {
 };
 
 const handleCancel = () => {
-  visible.value = false;
+  open.value = false;
   emits("close", { action: "cancelled" });
 };
 
@@ -119,7 +119,7 @@ const fullscreenItems = [
 </script>
 <template>
   <BasicModal
-    v-model:visible="visible"
+    v-model:open="open"
     title="公告设置"
     :submitting="submitting"
     @cancel="handleCancel"

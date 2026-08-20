@@ -104,7 +104,7 @@ const handlePreview = (index: number) => {
     </div>
 
     <ImageSelectModal
-      v-model:visible="modalVisible"
+      v-model:open="modalVisible"
       :title="props.title"
       :multiple="props.multiple"
       :limit="props.limit"
