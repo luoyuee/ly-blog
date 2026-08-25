@@ -4,7 +4,8 @@ import { UserRoleEnum } from "#shared/enums";
 import { readFormData } from "h3";
 import { prisma } from "@@/server/db";
 import { z } from "zod";
-import CryptoJS from "crypto-js";
+import { md5 } from "@noble/hashes/legacy.js";
+import { bytesToHex } from "@noble/hashes/utils.js";
 
 export default defineEventHandler(async (event) => {
   try {
@@ -54,7 +55,7 @@ export default defineEventHandler(async (event) => {
         nickname: validForm.nickname,
         username: validForm.username,
         email: validForm.email,
-        password: CryptoJS.MD5(validForm.password).toString(),
+        password: bytesToHex(md5(new TextEncoder().encode(validForm.password))),
         role: UserRoleEnum.ADMIN,
         avatar: userAvatar
       }

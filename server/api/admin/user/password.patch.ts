@@ -2,7 +2,8 @@ import { getBadResponse, getNotAuthResponse, getOKResponse } from "@@/server/uti
 import { prisma } from "@@/server/db";
 import { readBody } from "h3";
 import { z } from "zod";
-import CryptoJS from "crypto-js";
+import { md5 } from "@noble/hashes/legacy.js";
+import { bytesToHex } from "@noble/hashes/utils.js";
 
 export default defineEventHandler(async (event) => {
   if (!event.context.user || !event.context.user.id) {
@@ -28,13 +29,13 @@ export default defineEventHandler(async (event) => {
     return getNotAuthResponse(event);
   }
 
-  const oldPassword = CryptoJS.MD5(body.old_password).toString();
+  const oldPassword = bytesToHex(md5(new TextEncoder().encode(body.old_password)));
 
   if (user.password !== oldPassword) {
     return getBadResponse(event, "原密码错误");
   }
 
-  const newPassword = CryptoJS.MD5(body.new_password).toString();
+  const newPassword = bytesToHex(md5(new TextEncoder().encode(body.new_password)));
 
   await prisma.user.update({
     where: { id: user.id },

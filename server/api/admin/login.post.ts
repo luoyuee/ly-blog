@@ -4,7 +4,8 @@ import { prisma } from "@@/server/db";
 import { readBody, getRequestIP } from "h3";
 import { z } from "zod";
 import config from "@@/server/config";
-import CryptoJS from "crypto-js";
+import { md5 } from "@noble/hashes/legacy.js";
+import { bytesToHex } from "@noble/hashes/utils.js";
 import * as jose from "jose";
 import { useIPLocation } from "@@/server/utils/ip";
 
@@ -31,7 +32,7 @@ export default defineEventHandler(async (event) => {
     return getBadResponse(event, "用户名或密码错误");
   }
 
-  const password = CryptoJS.MD5(body.password).toString();
+  const password = bytesToHex(md5(new TextEncoder().encode(body.password)));
 
   if (user.password !== password) {
     return getBadResponse(event, "用户名或密码错误");
