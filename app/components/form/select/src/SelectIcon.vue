@@ -2,7 +2,10 @@
 import type { SelectMenuItem } from "@nuxt/ui";
 import type { PropType } from "vue";
 import { SelectIconDefaultOptions } from "#shared/constants/icons";
+import { useI18n } from "vue-i18n";
 import { watch } from "vue";
+
+const { t } = useI18n();
 
 const selected = defineModel<string | undefined>();
 
@@ -59,6 +62,10 @@ const handleChange = (value: SelectMenuItem | null | undefined) => {
 
   selected.value = value.icon;
 };
+
+const resolvedPlaceholder = computed(() => {
+  return props.placeholder || t("components.picker.placeholder");
+});
 </script>
 <template>
   <USelectMenu
@@ -66,12 +73,12 @@ const handleChange = (value: SelectMenuItem | null | undefined) => {
     v-bind="$attrs"
     class="w-full"
     :search-input="{
-      placeholder: '搜索...',
+      placeholder: `${resolvedPlaceholder}`,
       icon: 'lucide:search'
     }"
     :items="items"
     :leading-icon="currentValue ? currentValue.icon : undefined"
-    :placeholder="props.placeholder"
+    :placeholder="props.placeholder || $t('components.picker.placeholder')"
     :disabled="props.disabled"
     @update:model-value="handleChange"
   />

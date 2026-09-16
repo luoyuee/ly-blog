@@ -3,6 +3,8 @@ import type { Task, ScheduledTask } from "@/apis/admin/models";
 import { useNotification } from "@/composables/useNotification";
 import { getTasks, runTask } from "@/apis/admin";
 
+const { t } = useI18n();
+
 const tasks = ref<(Task & { running?: boolean })[]>([]);
 const scheduledTasks = ref<ScheduledTask[]>([]);
 
@@ -29,12 +31,12 @@ const handleRunTask = async (name: string) => {
     await runTask(name);
 
     $notify.success({
-      title: "任务执行成功",
+      title: t("components.lyEditor.modules.cron.executeSuccess"),
       description: name
     });
   } catch (error) {
     $notify.error({
-      title: "任务执行失败",
+      title: t("components.lyEditor.modules.cron.executeFailed"),
       error
     });
   } finally {
@@ -45,7 +47,7 @@ const handleRunTask = async (name: string) => {
 <template>
   <div class="space-y-4 h-full p-4 overflow-y-auto slim-scrollbar">
     <UCard>
-      <template #header> 任务列表 </template>
+      <template #header> {{ $t("components.lyEditor.modules.cron.listHeader") }} </template>
 
       <div v-if="tasks.length" class="space-y-2">
         <div
@@ -63,7 +65,7 @@ const handleRunTask = async (name: string) => {
           </div>
 
           <UButton
-            label="运行"
+            :label="$t('components.lyEditor.modules.cron.run')"
             size="xs"
             color="primary"
             variant="soft"
@@ -73,11 +75,13 @@ const handleRunTask = async (name: string) => {
           />
         </div>
       </div>
-      <div v-else class="text-sm text-gray-500"> 暂无任务 </div>
+      <div v-else class="text-sm text-gray-500">
+        {{ $t("components.lyEditor.modules.cron.noTask") }}
+      </div>
     </UCard>
 
     <UCard>
-      <template #header> 定时任务 </template>
+      <template #header> {{ $t("components.lyEditor.modules.cron.jobHeader") }} </template>
 
       <div v-if="scheduledTasks.length" class="space-y-2">
         <div v-for="item in scheduledTasks" :key="item.cron" class="px-3 py-2 rounded bg-white/5">
@@ -85,12 +89,16 @@ const handleRunTask = async (name: string) => {
             {{ item.cron }}
           </div>
           <div class="mt-1 text-xs truncate">
-            <span class="text-gray-500"> 任务: </span>
+            <span class="text-gray-500">
+              {{ $t("components.lyEditor.modules.cron.jobLabel") }}</span
+            >
             {{ item.tasks.join(", ") }}
           </div>
         </div>
       </div>
-      <div v-else class="text-sm text-gray-500"> 暂无定时任务 </div>
+      <div v-else class="text-sm text-gray-500">
+        {{ $t("components.lyEditor.modules.cron.noJob") }}
+      </div>
     </UCard>
   </div>
 </template>

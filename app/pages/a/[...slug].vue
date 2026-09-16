@@ -14,6 +14,8 @@ import { AuthorCard } from "@/components/user-card";
 import { PageFooter } from "@/components/page-footer";
 import { useRoute } from "vue-router";
 
+const { t } = useI18n();
+
 const route = useRoute();
 
 const article = ref<Article | null>(null);
@@ -31,7 +33,7 @@ const { data: response, status: responseStatus } = await useFetch<Article>("/api
 if (responseStatus.value === "error" || !response.value) {
   throw createError({
     statusCode: 404,
-    statusMessage: "文章不存在"
+    statusMessage: t("pages.article.notFound")
   });
 }
 
@@ -65,13 +67,13 @@ const breadcrumb = computed<ArticleBreadcrumbItem[]>(() => {
 
   return [
     {
-      name: "首页",
+      name: t("pages.article.breadcrumbHome"),
       href: "/",
       icon: "colorful:home"
     },
     ...items,
     {
-      name: "正文",
+      name: t("pages.article.breadcrumbContent"),
       href: route.path
     }
   ];
@@ -92,14 +94,22 @@ const breadcrumb = computed<ArticleBreadcrumbItem[]>(() => {
           </div>
 
           <div v-else class="article__locked">
-            <p v-if="route.query.pwd && article.locked" class="article__locked-error">密码错误</p>
+            <p v-if="route.query.pwd && article.locked" class="article__locked-error">
+              {{ $t("pages.article.passwordError") }}
+            </p>
 
             <div class="article__locked-form">
               <UFieldGroup>
-                <UBadge color="neutral" variant="outline" label="访问密码" />
+                <UBadge
+                  color="neutral"
+                  variant="outline"
+                  :label="$t('pages.article.accessPasswordLabel')"
+                />
                 <UInput v-model="formData.password" />
               </UFieldGroup>
-              <UButton color="primary" @click="handleUnlock">提交</UButton>
+              <UButton color="primary" @click="handleUnlock">
+                {{ $t("pages.article.submit") }}
+              </UButton>
             </div>
           </div>
 
@@ -126,7 +136,9 @@ const breadcrumb = computed<ArticleBreadcrumbItem[]>(() => {
           :article-id="article.id"
         />
 
-        <div v-else class="disabled-comment">—— 评论区已禁用 ——</div>
+        <div v-else class="disabled-comment">
+          {{ $t("pages.article.commentDisabled") }}
+        </div>
       </div>
 
       <div class="aside">

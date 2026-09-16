@@ -10,6 +10,8 @@ import { useConfigStore } from "@/stores";
 import { z } from "zod";
 import SettingCard from "./SettingCard.vue";
 
+const { t } = useI18n();
+
 const configStore = useConfigStore();
 
 const UButton = resolveComponent("UButton");
@@ -23,7 +25,7 @@ const { formData, formState, isDirty, setForm, setInitial, resetForm } =
   useForm<IClientConfigAuthorCard>(createInitialFormData());
 
 const schema = z.object({
-  name: z.string().min(1, "请输入名称")
+  name: z.string().min(1, t("components.settingCard.authorCard.validation.nameRequired"))
 });
 
 const syncFormData = () => {
@@ -66,17 +68,21 @@ const modalFormData = reactive<IClientConfigAuthorCardLink>({
 
 const modalSchema = z.object({
   icon: z.string().optional(),
-  title: z.string({ message: "请输入标题" }).min(1, "请输入标题"),
-  href: z.url("请输入合法的链接").superRefine((value, ctx) => {
-    if (modalState.isEdit) return;
+  title: z
+    .string({ message: t("components.settingCard.authorCard.validation.titleRequired") })
+    .min(1, t("components.settingCard.authorCard.validation.titleRequired")),
+  href: z
+    .url(t("components.settingCard.authorCard.validation.linkInvalid"))
+    .superRefine((value, ctx) => {
+      if (modalState.isEdit) return;
 
-    if (formData.links && formData.links.find((item) => item.href === value)) {
-      ctx.addIssue({
-        code: "custom",
-        message: "链接重复"
-      });
-    }
-  })
+      if (formData.links && formData.links.find((item) => item.href === value)) {
+        ctx.addIssue({
+          code: "custom",
+          message: t("components.settingCard.authorCard.validation.duplicateLink")
+        });
+      }
+    })
 });
 
 const modalFormRef = useTemplateRef("modalFormRef");
@@ -114,7 +120,7 @@ const handleModalConfirm = () => {
 const linkColumns: TableColumn<IClientConfigAuthorCardLink>[] = [
   {
     accessorKey: "icon",
-    header: "图标",
+    header: t("components.settingCard.common.icon"),
     cell: ({ row }) => {
       const { icon } = row.original;
       return h(UIcon, {
@@ -124,15 +130,15 @@ const linkColumns: TableColumn<IClientConfigAuthorCardLink>[] = [
   },
   {
     accessorKey: "href",
-    header: "链接"
+    header: t("components.settingCard.common.link")
   },
   {
     accessorKey: "title",
-    header: "标题"
+    header: t("components.settingCard.common.title")
   },
   {
     id: "actions",
-    header: "操作",
+    header: t("components.settingCard.common.actions"),
     meta: {
       class: {
         th: "text-right",
@@ -176,7 +182,7 @@ const linkColumns: TableColumn<IClientConfigAuthorCardLink>[] = [
 <template>
   <SettingCard
     id="author-card-setting"
-    title="作者卡片"
+    :title="$t('components.settingCard.authorCard.title')"
     :is-change="isDirty"
     :submitting="formState.submitting"
     @reset="handleReset"
@@ -190,29 +196,31 @@ const linkColumns: TableColumn<IClientConfigAuthorCardLink>[] = [
       :validate-on-input-delay="100"
       @submit="handleSubmit"
     >
-      <UFormField label="作者名称" prop="name">
+      <UFormField :label="$t('components.settingCard.authorCard.nameLabel')" prop="name">
         <UInput v-model="formData.name" />
       </UFormField>
-      <UFormField label="名称链接" prop="name_link">
+      <UFormField :label="$t('components.settingCard.authorCard.nameLinkLabel')" prop="name_link">
         <UInput v-model="formData.name_link" icon="lucide:link" />
       </UFormField>
-      <UFormField label="头像" prop="avatar">
+      <UFormField :label="$t('components.settingCard.authorCard.avatarLabel')" prop="avatar">
         <UInput v-model="formData.avatar" icon="lucide:link" />
       </UFormField>
-      <UFormField label="格言" prop="motto">
+      <UFormField :label="$t('components.settingCard.authorCard.mottoLabel')" prop="motto">
         <UTextarea v-model="formData.motto" />
       </UFormField>
 
       <UFormField
-        label="链接"
-        description="作者卡片下方显示的外部链接列表"
+        :label="$t('components.settingCard.authorCard.linkListLabel')"
+        :description="$t('components.settingCard.authorCard.linkListDescription')"
         :ui="{
           description: 'text-xs text-gray-400',
           container: 'mt-2'
         }"
       >
         <template #hint>
-          <UButton size="xs" icon="lucide:plus" @click="handleAddLink"> 添加 </UButton>
+          <UButton size="xs" icon="lucide:plus" @click="handleAddLink">
+            {{ $t("common.add") }}
+          </UButton>
         </template>
         <div class="space-y-2">
           <div class="border border-muted rounded-md overflow-hidden">
@@ -224,7 +232,11 @@ const linkColumns: TableColumn<IClientConfigAuthorCardLink>[] = [
 
     <BasicModal
       v-model:open="modalState.visible"
-      :title="modalState.isEdit ? '编辑链接' : '添加链接'"
+      :title="
+        modalState.isEdit
+          ? $t('components.settingCard.authorCard.linkModalEdit')
+          : $t('components.settingCard.authorCard.linkModalAdd')
+      "
       @confirm="handleModalConfirm"
     >
       <UForm
@@ -234,17 +246,20 @@ const linkColumns: TableColumn<IClientConfigAuthorCardLink>[] = [
         :validate-on-input-delay="100"
         @submit="handleModalSubmit"
       >
-        <UFormField label="链接图标" prop="link_icon">
+        <UFormField :label="$t('components.settingCard.authorCard.linkIconLabel')" prop="link_icon">
           <SelectIcon v-model="modalFormData.icon" />
         </UFormField>
-        <UFormField name="title" label="标题">
-          <UInput v-model="modalFormData.title" placeholder="请输入链接标题" />
+        <UFormField name="title" :label="$t('components.settingCard.common.title')">
+          <UInput
+            v-model="modalFormData.title"
+            :placeholder="$t('components.settingCard.authorCard.linkTitlePlaceholder')"
+          />
         </UFormField>
-        <UFormField name="href" label="链接">
+        <UFormField name="href" :label="$t('components.settingCard.common.link')">
           <UInput
             v-model="modalFormData.href"
             icon="lucide:link"
-            placeholder="请输入链接"
+            :placeholder="$t('components.settingCard.authorCard.linkPlaceholder')"
             :disabled="modalState.isEdit"
           />
         </UFormField>

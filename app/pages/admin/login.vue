@@ -8,6 +8,8 @@ definePageMeta({
   layout: "blank"
 });
 
+const { t } = useI18n();
+
 // 检查是否有管理员
 const { data: hasAdminResp } = await useFetch<{ has_admin: boolean }>("/api/user/has-admin/", {
   method: "get"
@@ -18,8 +20,12 @@ if (hasAdminResp?.value && !hasAdminResp.value.has_admin) {
 }
 
 const schema = z.object({
-  username: z.string({ message: "请输入用户名" }).min(1, "请输入用户名"),
-  password: z.string({ message: "请输入密码" }).min(1, "请输入密码"),
+  username: z
+    .string({ message: t("pages.admin.login.validation.usernameRequired") })
+    .min(1, t("pages.admin.login.validation.usernameRequired")),
+  password: z
+    .string({ message: t("pages.admin.login.validation.passwordRequired") })
+    .min(1, t("pages.admin.login.validation.passwordRequired")),
   remember: z.boolean().optional()
 });
 
@@ -47,7 +53,7 @@ const handleSubmit = async (event: FormSubmitEvent<Schema>) => {
       remember: event.data.remember
     });
     toast.add({
-      title: "登录成功",
+      title: t("pages.admin.login.titleSuccess"),
       color: "success"
     });
 
@@ -59,7 +65,7 @@ const handleSubmit = async (event: FormSubmitEvent<Schema>) => {
     }, 500);
   } catch {
     toast.add({
-      title: "登录失败",
+      title: t("pages.admin.login.titleFail"),
       color: "error"
     });
   } finally {
@@ -81,7 +87,7 @@ const handleSubmit = async (event: FormSubmitEvent<Schema>) => {
             v-model="formData.username"
             class="w-full"
             icon="lucide:user"
-            placeholder="用户名或邮箱"
+            :placeholder="$t('pages.admin.login.usernamePlaceholder')"
           />
         </UFormField>
 
@@ -91,7 +97,7 @@ const handleSubmit = async (event: FormSubmitEvent<Schema>) => {
             class="w-full"
             icon="lucide:lock"
             type="password"
-            placeholder="请输入密码"
+            :placeholder="$t('pages.admin.login.passwordPlaceholder')"
           />
         </UFormField>
 
@@ -101,13 +107,15 @@ const handleSubmit = async (event: FormSubmitEvent<Schema>) => {
           :loading="state.submitting"
           loading-icon="lucide:loader-circle"
         >
-          管理员登录
+          {{ $t("pages.admin.login.button") }}
         </UButton>
 
         <div class="h-8 flex items-center justify-between">
-          <UCheckbox label="记住我" :model-value="formData.remember" />
+          <UCheckbox :label="$t('pages.admin.login.remember')" :model-value="formData.remember" />
 
-          <ULink to="/" class="text-primary hover:text-primary-400 text-sm"> 返回首页 </ULink>
+          <ULink to="/" class="text-primary hover:text-primary-400 text-sm">
+            {{ $t("pages.admin.login.backHome") }}
+          </ULink>
         </div>
       </UForm>
     </div>

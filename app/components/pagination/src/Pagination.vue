@@ -4,6 +4,8 @@ import type { PropType } from "vue";
 import { computed, ref, watch } from "vue";
 import numeral from "numeral";
 
+const { t } = useI18n();
+
 const props = defineProps({
   total: {
     type: Number,
@@ -96,13 +98,18 @@ const handlePageSizeChange = () => {
 };
 
 const pageSizeOptions = computed(() => {
-  return props.pageSizes.map((size) => ({ label: `${size}/页`, value: size }));
+  return props.pageSizes.map((size) => ({
+    label: t("components.pagination.pageSize", { size }),
+    value: size
+  }));
 });
 
 /**
  * 总条数文案单独抽离，模板层只负责展示。
  */
-const totalText = computed(() => `共「${numeral(props.total).format("0,0")}」条数据`);
+const totalText = computed(() =>
+  t("components.pagination.total", { total: numeral(props.total).format("0,0") })
+);
 </script>
 
 <template>
@@ -127,7 +134,7 @@ const totalText = computed(() => `共「${numeral(props.total).format("0,0")}」
       />
 
       <div class="flex items-center gap-2">
-        <span>跳转至</span>
+        <span>{{ t("components.pagination.jumpTo") }}</span>
         <UInputNumber
           v-model="jumpInput"
           class="w-20"
@@ -140,7 +147,7 @@ const totalText = computed(() => `共「${numeral(props.total).format("0,0")}」
           @blur="handleJump"
           @keydown="handleJumpKeydown"
         />
-        <span>页 / {{ totalPages }} 页</span>
+        <span>{{ t("components.pagination.page", { total: totalPages }) }}</span>
       </div>
     </div>
   </div>

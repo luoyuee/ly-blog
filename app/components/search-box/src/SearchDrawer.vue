@@ -33,16 +33,20 @@ const formatNumber = (num: number): string => {
     <div class="search-box__search">
       <div class="search-box__title">
         <UIcon name="colorful:record-outline" :size="18" />
-        关键词搜索
+        {{ $t("components.searchDrawer.keywordSearch") }}
       </div>
       <form class="search-box__keyword-search" action="/search" method="get">
-        <input type="text" name="kw" placeholder="请输入关键字…" />
-        <button type="submit">搜索</button>
+        <input
+          type="text"
+          name="kw"
+          :placeholder="$t('components.searchDrawer.keywordPlaceholder')"
+        />
+        <button type="submit">{{ $t("components.searchDrawer.search") }}</button>
       </form>
 
       <div class="search-box__title">
         <UIcon name="colorful:label-outline" :size="18" />
-        标签搜索
+        {{ $t("components.searchDrawer.tagSearch") }}
       </div>
       <div class="search-box__tag-search">
         <a
@@ -59,14 +63,16 @@ const formatNumber = (num: number): string => {
     <div class="search-box__ranking">
       <div class="search-box__title">
         <UIcon name="colorful:hot-outline" :size="18" />
-        热门文章
+        {{ $t("components.searchDrawer.hotArticles") }}
       </div>
       <ul v-if="rank">
         <li v-for="(item, index) in rank" :key="item.id">
           <a :href="'/article/' + item.id">
             <span class="sort">{{ index + 1 }}</span>
             <span class="title">{{ item.title }}</span>
-            <span class="views">{{ formatNumber(item.views_count) }} 阅读</span>
+            <span class="views"
+              >{{ formatNumber(item.views_count) }} {{ $t("components.searchDrawer.read") }}</span
+            >
           </a>
         </li>
       </ul>

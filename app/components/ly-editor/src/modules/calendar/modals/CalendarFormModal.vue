@@ -6,6 +6,7 @@ import { useForm } from "@/composables/useForm";
 import { computed, watch } from "vue";
 import { z } from "zod";
 
+const { t } = useI18n();
 const $notify = useNotification();
 
 const open = defineModel<boolean>("open", {
@@ -36,7 +37,9 @@ interface FormData {
 
 const schema = z.object({
   id: z.number().optional(),
-  title: z.string({ message: "请输入日历标题" }).min(1, "请输入日历标题"),
+  title: z
+    .string({ message: t("components.lyEditor.modules.calendar.form.validation.titleRequired") })
+    .min(1, t("components.lyEditor.modules.calendar.form.validation.titleRequired")),
   description: z.string().optional(),
   color: z.string().optional()
 });
@@ -53,7 +56,9 @@ const isEdit = computed(() => {
 });
 
 const modalTitle = computed(() => {
-  return isEdit.value ? "修改日历" : "新建日历";
+  return isEdit.value
+    ? t("components.lyEditor.modules.calendar.form.editTitle")
+    : t("components.lyEditor.modules.calendar.form.createTitle");
 });
 
 // 监听弹窗显示，初始化表单与回填数据
@@ -81,13 +86,13 @@ watch(
 
 const formRef = useTemplateRef("formRef");
 
-const handleSubmit = async (event: { data: z.output<typeof schema> }) => {
+const handleSubmit = async (_event: { data: z.output<typeof schema> }) => {
   try {
     formState.submitting = true;
 
     // 暂未接入接口，提交仅作占位，后续在此调用 create/update 接口
     $notify.success({
-      title: isEdit.value ? "修改成功" : "创建成功"
+      title: isEdit.value ? t("message.update.success") : t("message.create.success")
     });
 
     open.value = false;
@@ -97,7 +102,7 @@ const handleSubmit = async (event: { data: z.output<typeof schema> }) => {
     });
   } catch (error) {
     $notify.error({
-      title: "操作失败",
+      title: t("message.operate.error"),
       error
     });
   } finally {
@@ -132,16 +137,32 @@ const handleCancel = () => {
       :validate-on-input-delay="100"
       @submit="handleSubmit"
     >
-      <UFormField name="title" label="日历标题" required>
-        <UInput v-model="formData.title" placeholder="请输入日历标题" />
+      <UFormField
+        name="title"
+        :label="t('components.lyEditor.modules.calendar.form.titleLabel')"
+        required
+      >
+        <UInput
+          v-model="formData.title"
+          :placeholder="t('components.lyEditor.modules.calendar.form.titlePlaceholder')"
+        />
       </UFormField>
 
-      <UFormField name="description" label="日历描述">
-        <UTextarea v-model="formData.description" placeholder="请输入日历描述" />
+      <UFormField
+        name="description"
+        :label="t('components.lyEditor.modules.calendar.form.descriptionLabel')"
+      >
+        <UTextarea
+          v-model="formData.description"
+          :placeholder="t('components.lyEditor.modules.calendar.form.descriptionPlaceholder')"
+        />
       </UFormField>
 
-      <UFormField name="color" label="预设颜色">
-        <UInput v-model="formData.color" placeholder="如 #3b82f6，留空使用默认色" />
+      <UFormField name="color" :label="t('components.lyEditor.modules.calendar.form.colorLabel')">
+        <UInput
+          v-model="formData.color"
+          :placeholder="t('components.lyEditor.modules.calendar.form.colorPlaceholder')"
+        />
       </UFormField>
     </UForm>
   </BasicModal>

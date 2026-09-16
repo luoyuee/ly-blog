@@ -10,6 +10,8 @@ definePageMeta({
   layout: "blank"
 });
 
+const { t } = useI18n();
+
 // 检查是否有管理员
 await useFetch<{ has_admin: boolean }>("/api/user/has-admin", {
   method: "get"
@@ -20,15 +22,21 @@ await useFetch<{ has_admin: boolean }>("/api/user/has-admin", {
 });
 
 const schema = z.object({
-  nickname: z.string({ message: "请输入昵称" }).min(1, "请输入昵称"),
-  username: z.string({ message: "请输入用户名" }).min(1, "请输入用户名"),
-  email: z.email({ message: "邮箱格式有误" }),
-  password: z.string({ message: "请输入密码" }).min(6, "请至少输入6位密码"),
+  nickname: z
+    .string({ message: t("pages.admin.register.validation.nicknameRequired") })
+    .min(1, t("pages.admin.register.validation.nicknameRequired")),
+  username: z
+    .string({ message: t("pages.admin.register.validation.usernameRequired") })
+    .min(1, t("pages.admin.register.validation.usernameRequired")),
+  email: z.email({ message: t("pages.admin.register.validation.emailInvalid") }),
+  password: z
+    .string({ message: t("pages.admin.register.validation.passwordRequired") })
+    .min(6, t("pages.admin.register.validation.passwordTooShort")),
   confirmPassword: z
-    .string({ message: "请输入密码" })
-    .min(1, "请输入密码")
+    .string({ message: t("pages.admin.register.validation.passwordRequired") })
+    .min(1, t("pages.admin.register.validation.passwordRequired"))
     .refine((data) => data === formData.password, {
-      message: "密码不一致"
+      message: t("pages.admin.register.validation.passwordMismatch")
     })
 });
 
@@ -100,49 +108,53 @@ const handleAvatarChange = (file: File | null) => {
           <AvatarUpload @change="handleAvatarChange" />
         </div>
 
-        <UFormField name="nickname" label="昵称" required>
+        <UFormField name="nickname" :label="$t('pages.admin.register.nicknameLabel')" required>
           <UInput
             v-model="formData.nickname"
             class="w-full"
             icon="lucide:square-pen"
-            placeholder="请输入管理员昵称"
+            :placeholder="$t('pages.admin.register.nicknamePlaceholder')"
           />
         </UFormField>
 
-        <UFormField name="username" label="账号" required>
+        <UFormField name="username" :label="$t('pages.admin.register.usernameLabel')" required>
           <UInput
             v-model="formData.username"
             class="w-full"
             icon="lucide:user"
-            placeholder="请输入管理员账号"
+            :placeholder="$t('pages.admin.register.usernamePlaceholder')"
           />
         </UFormField>
 
-        <UFormField name="email" label="邮箱" required>
+        <UFormField name="email" :label="$t('pages.admin.register.emailLabel')" required>
           <UInput
             v-model="formData.email"
             class="w-full"
             icon="lucide:mail"
-            placeholder="请输入管理员邮箱"
+            :placeholder="$t('pages.admin.register.emailPlaceholder')"
           />
         </UFormField>
 
-        <UFormField name="password" label="密码" required>
+        <UFormField name="password" :label="$t('pages.admin.register.passwordLabel')" required>
           <InputPassword
             v-model="formData.password"
             class="w-full"
             icon="lucide:lock"
-            placeholder="请输入管理员密码"
+            :placeholder="$t('pages.admin.register.passwordPlaceholder')"
             show-strength
           />
         </UFormField>
 
-        <UFormField name="confirmPassword" label="确认密码" required>
+        <UFormField
+          name="confirmPassword"
+          :label="$t('pages.admin.register.confirmPasswordLabel')"
+          required
+        >
           <InputPassword
             v-model="formData.confirmPassword"
             class="w-full"
             icon="lucide:lock"
-            placeholder="请再次输入密码"
+            :placeholder="$t('pages.admin.register.confirmPasswordPlaceholder')"
           />
         </UFormField>
 
@@ -152,7 +164,7 @@ const handleAvatarChange = (file: File | null) => {
           :loading="state.submitting"
           loading-icon="lucide:loader-circle"
         >
-          创建管理员，开始写作吧
+          {{ $t("pages.admin.register.submit") }}
         </UButton>
       </UForm>
     </div>

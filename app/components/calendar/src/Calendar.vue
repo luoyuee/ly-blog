@@ -287,7 +287,12 @@ defineExpose({ exportICal });
   <ClientOnly>
     <div class="calendar-wrapper">
       <div v-if="creatable" class="mb-4 flex justify-end">
-        <UButton color="primary" icon="lucide:plus" label="添加事件" @click="handleCreate" />
+        <UButton
+          color="primary"
+          icon="lucide:plus"
+          :label="$t('components.calendar.addEvent')"
+          @click="handleCreate"
+        />
       </div>
       <div ref="calendarEl"></div>
       <CalendarEventFormModal
@@ -299,9 +304,9 @@ defineExpose({ exportICal });
       />
     </div>
     <template #fallback>
-      <div class="flex items-center justify-center py-20 text-(--text-color-secondary)"
-        >日历加载中…</div
-      >
+      <div class="flex items-center justify-center py-20 text-(--text-color-secondary)">
+        {{ $t("components.calendar.loading") }}
+      </div>
     </template>
   </ClientOnly>
 </template>

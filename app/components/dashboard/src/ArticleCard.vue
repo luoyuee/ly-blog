@@ -7,6 +7,7 @@ import * as echarts from "echarts";
 import numeral from "numeral";
 
 const $notify = useNotification();
+const { t } = useI18n();
 
 const chartRef = ref<HTMLDivElement | null>(null);
 
@@ -77,7 +78,7 @@ const loadData = async () => {
     data.value = await getArticleDashboard();
   } catch (error) {
     $notify.error({
-      title: "加载文章数据失败",
+      title: t("components.dashboard.article.loadError"),
       error
     });
   } finally {
@@ -89,18 +90,21 @@ const tipsText = computed(() => {
   const text = [];
 
   if (data.value.today_created && data.value.today_created > 0) {
-    text.push(`新增${data.value.today_created}篇文章`);
+    text.push(t("components.dashboard.article.tips.created", { count: data.value.today_created }));
   }
 
   if (data.value.today_updated && data.value.today_updated > 0) {
-    text.push(`更新${data.value.today_updated}篇文章`);
+    text.push(t("components.dashboard.article.tips.updated", { count: data.value.today_updated }));
   }
 
   if (text.length > 0) {
-    return "今日" + text.join("，");
+    return (
+      t("components.dashboard.article.tips.prefix") +
+      text.join(t("components.dashboard.article.tips.separator"))
+    );
   }
 
-  return "暂无更新";
+  return t("components.dashboard.article.tips.empty");
 });
 
 const reload = async () => {
@@ -120,7 +124,7 @@ const reload = async () => {
     }
   } catch (error) {
     $notify.error({
-      title: "刷新失败",
+      title: t("components.dashboard.common.refreshError"),
       error
     });
   }
@@ -132,7 +136,7 @@ onMounted(async () => {
     initChart();
   } catch (error) {
     $notify.error({
-      title: "初始化文章卡片失败",
+      title: t("components.dashboard.article.initError"),
       error
     });
   }
@@ -144,7 +148,7 @@ onMounted(async () => {
     class="flex h-60 flex-col justify-between gap-2 bg-black/40 shadow-md rounded-md px-4 py-3"
   >
     <div class="flex h-6 items-center justify-between leading-6">
-      <span>文章统计</span>
+      <span>{{ $t("components.dashboard.article.title") }}</span>
       <UIcon class="cursor-pointer" name="custom:redo" @click="reload" />
     </div>
     <div class="h-10 text-3xl">

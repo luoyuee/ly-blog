@@ -8,6 +8,8 @@ import { BasicModal } from "@/components/basic-modal";
 import { SelectIcon } from "@/components/form/select";
 import { z } from "zod";
 
+const { t } = useI18n();
+
 const handleClass = "me-page-social-links-form__handle";
 const tbodyClass = "me-page-social-links-form__tbody";
 
@@ -61,8 +63,10 @@ const modalForm = reactive<IMePageConfigSocialLinkItem>({
 
 const modalSchema = z.object({
   title: z.string().optional(),
-  href: z.url("请输入链接"),
-  icon: z.string({ message: "请选择图标" }).min(1, "请选择图标"),
+  href: z.url(t("components.settingCard.socialLinksForm.validation.linkInvalid")),
+  icon: z
+    .string({ message: t("components.settingCard.socialLinksForm.validation.iconRequired") })
+    .min(1, t("components.settingCard.socialLinksForm.validation.iconRequired")),
   hover_bg: z.string().optional()
 });
 
@@ -150,13 +154,13 @@ const columns = computed<TableColumn<RowItem>[]>(() => {
     },
     {
       accessorKey: "icon",
-      header: "图标",
+      header: t("components.settingCard.common.icon"),
       cell: ({ row }) => h(UIcon, { name: row.original.icon })
     },
-    { accessorKey: "title", header: "标题" },
+    { accessorKey: "title", header: t("components.settingCard.common.title") },
     {
       accessorKey: "href",
-      header: "链接",
+      header: t("components.settingCard.common.link"),
       cell: ({ row }) => {
         const href = row.original.href;
         return h(
@@ -171,10 +175,10 @@ const columns = computed<TableColumn<RowItem>[]>(() => {
         );
       }
     },
-    { accessorKey: "hover_bg", header: "Hover 背景" },
+    { accessorKey: "hover_bg", header: t("components.settingCard.common.hoverBg") },
     {
       id: "actions",
-      header: "操作",
+      header: t("components.settingCard.common.actions"),
       meta: {
         class: {
           th: "text-right",
@@ -223,15 +227,15 @@ onBeforeUnmount(() => {
 
 <template>
   <UFormField
-    label="社交链接（Social Links）"
-    description="个人页头像下方的社交按钮列表"
+    :label="$t('components.settingCard.socialLinksForm.label')"
+    :description="$t('components.settingCard.socialLinksForm.description')"
     :ui="{
       description: 'text-xs',
       container: 'mt-2'
     }"
   >
     <template #hint>
-      <UButton size="xs" icon="lucide:plus" @click="openAddModal"> 添加 </UButton>
+      <UButton size="xs" icon="lucide:plus" @click="openAddModal">{{ $t("common.add") }}</UButton>
     </template>
     <div ref="rootRef" class="border border-muted rounded-md overflow-hidden">
       <UTable
@@ -247,7 +251,11 @@ onBeforeUnmount(() => {
 
     <BasicModal
       v-model:open="modalState.visible"
-      :title="modalState.editingIndex === null ? '添加社交链接' : '编辑社交链接'"
+      :title="
+        modalState.editingIndex === null
+          ? $t('components.settingCard.socialLinksForm.addModalTitle')
+          : $t('components.settingCard.socialLinksForm.editModalTitle')
+      "
       @confirm="confirmModal"
     >
       <UForm
@@ -257,17 +265,34 @@ onBeforeUnmount(() => {
         :validate-on-input-delay="100"
         @submit="submitModal"
       >
-        <UFormField name="title" label="标题（可选）">
-          <UInput v-model="modalForm.title" placeholder="例如：GitHub" />
+        <UFormField name="title" :label="$t('components.settingCard.socialLinksForm.titleLabel')">
+          <UInput
+            v-model="modalForm.title"
+            :placeholder="$t('components.settingCard.socialLinksForm.titlePlaceholder')"
+          />
         </UFormField>
-        <UFormField name="href" label="链接" required>
+        <UFormField
+          name="href"
+          :label="$t('components.settingCard.socialLinksForm.linkLabel')"
+          required
+        >
           <UInput v-model="modalForm.href" icon="lucide:link" placeholder="https://..." />
         </UFormField>
-        <UFormField name="icon" label="图标" required>
+        <UFormField
+          name="icon"
+          :label="$t('components.settingCard.socialLinksForm.iconLabel')"
+          required
+        >
           <SelectIcon v-model="modalForm.icon" :items="SocialIconNames" />
         </UFormField>
-        <UFormField name="hover_bg" label="Hover 背景（可选）">
-          <UInput v-model="modalForm.hover_bg" placeholder="例如：#000 或 var(--color-gray-700)" />
+        <UFormField
+          name="hover_bg"
+          :label="$t('components.settingCard.socialLinksForm.hoverBgLabel')"
+        >
+          <UInput
+            v-model="modalForm.hover_bg"
+            :placeholder="$t('components.settingCard.socialLinksForm.hoverBgPlaceholder')"
+          />
         </UFormField>
       </UForm>
     </BasicModal>

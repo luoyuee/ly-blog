@@ -7,7 +7,9 @@ import { getQQInfo, isQQEmail } from "@/utils";
 import { createMessage } from "@/apis/message";
 import { useConfigStore } from "@/stores";
 import { z } from "zod";
+import { useI18n } from "vue-i18n";
 
+const { t } = useI18n();
 const logger = useLogger();
 const $message = useMessage();
 
@@ -57,10 +59,12 @@ const formData = reactive<{
 });
 
 const schema = z.object({
-  nickname: z.string({ message: "请输入昵称" }).min(1, "请输入昵称"),
-  email: z.email("邮箱格式不正确"),
+  nickname: z
+    .string({ message: t("components.messageBoard.editor.nicknameRequired") })
+    .min(1, t("components.messageBoard.editor.nicknameRequired")),
+  email: z.email(t("components.messageBoard.editor.emailInvalid")),
   website: z
-    .url("请输入正确的网址")
+    .url(t("components.messageBoard.editor.websiteInvalid"))
     .optional()
     .or(z.literal("").transform(() => undefined))
 });
@@ -76,14 +80,14 @@ const clearFormData = () => {
 
 const handleSubmit = async () => {
   if (formData.content.trim() === "") {
-    $message.warning("留言不能为空");
+    $message.warning(t("components.messageBoard.editor.emptyWarning"));
     return;
   }
   if (
     configStore.message_board.message_max_length &&
     formData.content.length > configStore.message_board.message_max_length
   ) {
-    $message.warning("留言字数超出上限");
+    $message.warning(t("components.messageBoard.editor.overLimitWarning"));
     return;
   }
 
@@ -100,12 +104,12 @@ const handleSubmit = async () => {
       reply_id: props.replyId
     });
 
-    $message.success("提交成功");
+    $message.success(t("components.messageBoard.editor.submitSuccess"));
     clearFormData();
     emits("submitted");
   } catch (error) {
     logger.error(error);
-    $message.error("提交失败");
+    $message.error(t("components.messageBoard.editor.submitError"));
   } finally {
     state.submitting = false;
   }
@@ -141,18 +145,26 @@ const handelEmailChange = () => {
 
       <UForm class="message-editor__contact-form" :schema="schema" :state="formData">
         <UFormField class="message-editor__contact-form__item" name="nickname">
-          <UInput v-model.trim="formData.nickname" placeholder="昵称（必填）" icon="lucide:user" />
+          <UInput
+            v-model.trim="formData.nickname"
+            :placeholder="$t('components.messageBoard.editor.nicknamePlaceholder')"
+            icon="lucide:user"
+          />
         </UFormField>
         <UFormField class="message-editor__contact-form__item" name="email">
           <UInput
             v-model.trim="formData.email"
-            placeholder="邮箱（必填）"
+            :placeholder="$t('components.messageBoard.editor.emailPlaceholder')"
             icon="lucide:mail"
             @blur="handelEmailChange"
           />
         </UFormField>
         <UFormField class="message-editor__contact-form__item" name="website">
-          <UInput v-model.trim="formData.website" placeholder="网址（选填）" icon="lucide:link" />
+          <UInput
+            v-model.trim="formData.website"
+            :placeholder="$t('components.messageBoard.editor.websitePlaceholder')"
+            icon="lucide:link"
+          />
         </UFormField>
       </UForm>
     </div>
@@ -162,7 +174,7 @@ const handelEmailChange = () => {
     <div class="message-editor__footer">
       <a class="message-editor__md-support" :href="MarkdownSupportURL" target="_blank">
         <UIcon name="custom:markdown-fill" :size="18" />
-        支持Markdown语法
+        {{ $t("components.messageBoard.editor.mdHint") }}
       </a>
       <div class="message-editor__submit-btn">
         <UButton
@@ -172,7 +184,7 @@ const handelEmailChange = () => {
           :disabled="state.submitting"
           @click="handleCancel"
         >
-          取消
+          {{ $t("components.messageBoard.editor.cancel") }}
         </UButton>
         <UButton
           color="primary"
@@ -180,7 +192,7 @@ const handelEmailChange = () => {
           loading-icon="lucide:loader-circle"
           @click="handleSubmit"
         >
-          发送评论
+          {{ $t("components.messageBoard.editor.send") }}
         </UButton>
       </div>
     </div>

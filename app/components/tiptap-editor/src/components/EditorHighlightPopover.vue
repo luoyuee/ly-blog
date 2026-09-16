@@ -3,6 +3,8 @@ import type { Editor } from "@tiptap/vue-3";
 import type { PropType } from "vue";
 import { computed } from "vue";
 
+const { t } = useI18n();
+
 const props = defineProps({
   editor: {
     type: Object as PropType<Editor>,
@@ -10,13 +12,33 @@ const props = defineProps({
   }
 });
 
-const highlightColors = [
-  { label: "默认高亮", value: "", swatchClass: "bg-transparent" },
-  { label: "黄色", value: "#fef08a", swatchClass: "bg-yellow-200" },
-  { label: "绿色", value: "#bbf7d0", swatchClass: "bg-green-200" },
-  { label: "蓝色", value: "#bfdbfe", swatchClass: "bg-blue-200" },
-  { label: "粉色", value: "#fbcfe8", swatchClass: "bg-pink-200" }
-] as const;
+const highlightColors = computed(() => [
+  {
+    label: t("components.tiptapEditor.highlight.default"),
+    value: "",
+    swatchClass: "bg-transparent"
+  },
+  {
+    label: t("components.tiptapEditor.highlight.yellow"),
+    value: "#fef08a",
+    swatchClass: "bg-yellow-200"
+  },
+  {
+    label: t("components.tiptapEditor.highlight.green"),
+    value: "#bbf7d0",
+    swatchClass: "bg-green-200"
+  },
+  {
+    label: t("components.tiptapEditor.highlight.blue"),
+    value: "#bfdbfe",
+    swatchClass: "bg-blue-200"
+  },
+  {
+    label: t("components.tiptapEditor.highlight.pink"),
+    value: "#fbcfe8",
+    swatchClass: "bg-pink-200"
+  }
+]);
 
 const currentHighlightColor = computed(() => {
   const color = props.editor.getAttributes("highlight").color;
@@ -39,7 +61,7 @@ const toggleHighlight = (color: string) => {
 
 <template>
   <UPopover :ui="{ content: 'p-2' }">
-    <UTooltip text="高亮">
+    <UTooltip :text="$t('components.tiptapEditor.highlight.tooltip')">
       <UButton
         icon="lucide:highlighter"
         color="neutral"

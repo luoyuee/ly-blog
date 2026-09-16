@@ -8,6 +8,7 @@ import { useForm } from "~/composables/useForm";
 import { computed, watch } from "vue";
 import { z } from "zod";
 
+const { t } = useI18n();
 const $notify = useNotification();
 
 const open = defineModel<boolean>("open", {
@@ -35,9 +36,17 @@ const emits = defineEmits<{
 
 const schema = z.object({
   id: z.number().optional(),
-  name: z.string({ message: "请输入名称" }).min(1, "请输入名称"),
-  url: z.url("请输入有效的URL地址"),
-  icon: z.string({ message: "请输入图标" }).min(1, "请输入图标"),
+  name: z
+    .string({
+      message: t("components.lyEditor.modules.navigation.shortcutForm.validation.nameRequired")
+    })
+    .min(1, t("components.lyEditor.modules.navigation.shortcutForm.validation.nameRequired")),
+  url: z.url(t("components.lyEditor.modules.navigation.shortcutForm.validation.urlInvalid")),
+  icon: z
+    .string({
+      message: t("components.lyEditor.modules.navigation.shortcutForm.validation.iconRequired")
+    })
+    .min(1, t("components.lyEditor.modules.navigation.shortcutForm.validation.iconRequired")),
   description: z.string().optional(),
   is_public: z.boolean().default(true),
   status: z.number().int().default(1)
@@ -49,7 +58,17 @@ const { formData, formState, resetForm, setForm } = useForm<ShortcutForm>({
   status: 1
 });
 
-const title = computed(() => (formData.id ? "编辑快捷方式" : "新增快捷方式"));
+const title = computed(() =>
+  formData.id
+    ? t("components.lyEditor.modules.navigation.shortcutForm.editTitle")
+    : t("components.lyEditor.modules.navigation.shortcutForm.createTitle")
+);
+
+/** 状态选项 */
+const statusItems = computed(() => [
+  { label: t("components.lyEditor.common.status.enabled"), value: 1 },
+  { label: t("components.lyEditor.common.status.disabled"), value: 2 }
+]);
 
 // 监听弹窗显示，初始化表单与回填数据
 watch(
@@ -86,7 +105,7 @@ const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => 
       });
 
       $notify.success({
-        title: "修改成功"
+        title: t("message.edit.success")
       });
     } else {
       await createShortcut({
@@ -99,7 +118,7 @@ const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => 
       });
 
       $notify.success({
-        title: "添加成功"
+        title: t("message.add.success")
       });
     }
 
@@ -110,7 +129,7 @@ const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => 
     });
   } catch (error) {
     $notify.error({
-      title: "操作失败",
+      title: t("message.operate.error"),
       error
     });
   } finally {
@@ -145,34 +164,63 @@ const handleCancel = () => {
       :validate-on-input-delay="100"
       @submit="handleSubmit"
     >
-      <UFormField name="name" label="名称" required>
-        <UInput v-model="formData.name" placeholder="如：GitHub" />
+      <UFormField
+        name="name"
+        :label="$t('components.lyEditor.modules.navigation.shortcutForm.nameLabel')"
+        required
+      >
+        <UInput
+          v-model="formData.name"
+          :placeholder="$t('components.lyEditor.modules.navigation.shortcutForm.namePlaceholder')"
+        />
       </UFormField>
 
-      <UFormField name="url" label="链接地址" required>
-        <UInput v-model="formData.url" placeholder="如 https://github.com" />
+      <UFormField
+        name="url"
+        :label="$t('components.lyEditor.modules.navigation.shortcutForm.urlLabel')"
+        required
+      >
+        <UInput
+          v-model="formData.url"
+          :placeholder="$t('components.lyEditor.modules.navigation.shortcutForm.urlPlaceholder')"
+        />
       </UFormField>
 
-      <UFormField name="icon" label="图标" required>
-        <SelectIcon v-model="formData.icon" placeholder="请选择图标" />
+      <UFormField
+        name="icon"
+        :label="$t('components.lyEditor.modules.navigation.shortcutForm.iconLabel')"
+        required
+      >
+        <SelectIcon
+          v-model="formData.icon"
+          :placeholder="$t('components.lyEditor.modules.navigation.shortcutForm.iconPlaceholder')"
+        />
       </UFormField>
 
-      <UFormField name="description" label="描述">
-        <UTextarea v-model="formData.description" placeholder="快捷方式描述（可选）" />
+      <UFormField
+        name="description"
+        :label="$t('components.lyEditor.modules.navigation.shortcutForm.descriptionLabel')"
+      >
+        <UTextarea
+          v-model="formData.description"
+          :placeholder="
+            $t('components.lyEditor.modules.navigation.shortcutForm.descriptionPlaceholder')
+          "
+        />
       </UFormField>
 
-      <UFormField name="is_public" label="公开">
+      <UFormField
+        name="is_public"
+        :label="$t('components.lyEditor.modules.navigation.shortcutForm.publicLabel')"
+      >
         <USwitch v-model="formData.is_public" />
       </UFormField>
 
-      <UFormField name="status" label="状态">
-        <USelect
-          v-model="formData.status"
-          :items="[
-            { label: '启用', value: 1 },
-            { label: '禁用', value: 2 }
-          ]"
-        />
+      <UFormField
+        name="status"
+        :label="$t('components.lyEditor.modules.navigation.shortcutForm.statusLabel')"
+      >
+        <USelect v-model="formData.status" :items="statusItems" />
       </UFormField>
     </UForm>
   </BasicModal>

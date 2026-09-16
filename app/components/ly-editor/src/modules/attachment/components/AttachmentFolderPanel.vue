@@ -85,7 +85,7 @@ const columns: TableColumn<AttachmentItem>[] = [
   },
   {
     accessorKey: "name",
-    header: "文件名",
+    header: t("components.lyEditor.modules.attachment.headers.fileName"),
     meta: {
       class: { td: "min-w-72" }
     },
@@ -95,7 +95,7 @@ const columns: TableColumn<AttachmentItem>[] = [
   },
   {
     accessorKey: "mime_type",
-    header: "类型",
+    header: t("components.lyEditor.common.table.type"),
     meta: {
       class: { td: "min-w-40" }
     },
@@ -103,7 +103,7 @@ const columns: TableColumn<AttachmentItem>[] = [
   },
   {
     accessorKey: "download_count",
-    header: "下载",
+    header: t("components.lyEditor.modules.attachment.headers.download"),
     meta: {
       class: { td: "min-w-20" }
     },
@@ -111,7 +111,7 @@ const columns: TableColumn<AttachmentItem>[] = [
   },
   {
     accessorKey: "size",
-    header: "大小",
+    header: t("components.lyEditor.common.table.size"),
     meta: {
       class: { td: "min-w-28" }
     },
@@ -119,7 +119,7 @@ const columns: TableColumn<AttachmentItem>[] = [
   },
   {
     accessorKey: "updated_at",
-    header: "更新日期",
+    header: t("components.lyEditor.common.table.updatedAt"),
     meta: {
       class: { td: "w-46" }
     },
@@ -144,7 +144,7 @@ const columns: TableColumn<AttachmentItem>[] = [
           },
           items: [
             {
-              label: "复制链接",
+              label: t("components.lyEditor.modules.attachment.menu.copyLink"),
               icon: "lucide:link",
               disabled: !row.original.url,
               onSelect: async () => {
@@ -152,12 +152,12 @@ const columns: TableColumn<AttachmentItem>[] = [
 
                 await navigator.clipboard.writeText(window.location.origin + row.original.url);
                 $notify.success({
-                  title: "链接已复制"
+                  title: t("components.lyEditor.modules.attachment.linkCopied")
                 });
               }
             },
             {
-              label: "打开文件",
+              label: t("components.lyEditor.modules.attachment.menu.openFile"),
               icon: "lucide:eye",
               disabled: !row.original.url,
               onSelect: () => {
@@ -167,7 +167,7 @@ const columns: TableColumn<AttachmentItem>[] = [
               }
             },
             {
-              label: "删除文件",
+              label: t("components.lyEditor.modules.attachment.menu.deleteFile"),
               icon: "lucide:trash-2",
               color: "error",
               onSelect: () => {
@@ -208,7 +208,7 @@ const loadData = async () => {
     state.highlightKeyword = state.keyword;
   } catch (error) {
     $notify.error({
-      title: "加载附件失败",
+      title: t("components.lyEditor.modules.attachment.folderLoadFailed"),
       error
     });
   } finally {
@@ -234,7 +234,7 @@ const loadFolderDetail = async () => {
     syncCurrentFolder(folder);
   } catch (error) {
     $notify.error({
-      title: "加载目录详情失败",
+      title: t("components.lyEditor.modules.attachment.folderDetailLoadFailed"),
       error
     });
   }
@@ -267,14 +267,14 @@ const handleFileChange = async (event: Event) => {
     );
 
     $notify.success({
-      title: "上传成功"
+      title: t("message.upload.success")
     });
 
     await loadFolderDetail();
     await loadData();
   } catch (error) {
     $notify.error({
-      title: "上传失败",
+      title: t("message.upload.error"),
       error
     });
   } finally {
@@ -287,15 +287,15 @@ const handleDelete = (record: AttachmentItem) => {
   const displayName = record.original_name || record.filename;
 
   $msgBox.error({
-    title: "确认删除?",
-    message: `即将删除文件「${displayName}」，删除后将无法恢复，是否继续？`,
-    confirmButtonText: "删除",
+    title: t("components.lyEditor.common.deleteConfirm.title"),
+    message: t("components.lyEditor.common.deleteConfirm.message", { name: displayName }),
+    confirmButtonText: t("components.lyEditor.common.deleteConfirm.button"),
     confirmButtonProps: { color: "error" },
     onConfirm: async () => {
       try {
         await deleteAttachment(record.id);
         $notify.success({
-          title: "删除成功"
+          title: t("message.delete.success")
         });
 
         if (data.value.length === 1 && state.page > 1) {
@@ -306,7 +306,7 @@ const handleDelete = (record: AttachmentItem) => {
         await loadData();
       } catch (error) {
         $notify.error({
-          title: "删除失败",
+          title: t("message.delete.error"),
           error
         });
       }
@@ -339,11 +339,19 @@ onMounted(() => {
         :loading="state.loading"
         @click="handleTriggerUpload"
       >
-        上传附件
+        {{ $t("components.lyEditor.modules.attachment.upload") }}
       </UButton>
       <div class="flex items-center gap-2 text-xs text-gray-400">
-        <span>文件数：{{ state.total }}</span>
-        <span>目录容量：{{ numeral(currentFolder.size).format("0.0 b") }}</span>
+        <span>
+          {{ $t("components.lyEditor.modules.attachment.fileCount", { count: state.total }) }}
+        </span>
+        <span>
+          {{
+            $t("components.lyEditor.modules.attachment.folderSize", {
+              size: numeral(currentFolder.size).format("0.0 b")
+            })
+          }}
+        </span>
       </div>
     </template>
 
@@ -352,10 +360,10 @@ onMounted(() => {
         <UInput
           v-model.trim="state.keyword"
           class="w-72"
-          placeholder="请输入文件名关键词"
+          :placeholder="$t('components.lyEditor.modules.attachment.fileNamePlaceholder')"
           @keydown.enter="handleSearch"
         />
-        <UButton icon="lucide:search" @click="handleSearch">搜索</UButton>
+        <UButton icon="lucide:search" @click="handleSearch">{{ $t("common.search") }}</UButton>
       </UFieldGroup>
       <UButton
         color="neutral"
@@ -364,7 +372,7 @@ onMounted(() => {
         :loading="state.loading"
         @click="loadData"
       >
-        刷新
+        {{ $t("common.refresh") }}
       </UButton>
     </template>
   </TabPanelTable>

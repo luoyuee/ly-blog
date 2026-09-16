@@ -12,6 +12,8 @@ import { AuthorCard } from "@/components/user-card";
 import { useLogger } from "@/composables/useLogger";
 import { useRoute } from "vue-router";
 
+const { t } = useI18n();
+
 const logger = useLogger();
 const $message = useMessage();
 const route = useRoute();
@@ -39,7 +41,7 @@ const { data: category } = await useFetch<ArticleCategory>(
 
 const title = computed(() => {
   if (category.value) {
-    return `「${category.value.name}」 共(${state.total})篇`;
+    return t("pages.category.title", { name: category.value.name, total: state.total });
   }
   return "";
 });
@@ -75,7 +77,7 @@ const loadArticles = async () => {
     state.page = response.page;
     state.total = response.total;
   } catch (error) {
-    $message.error("加载数据失败");
+    $message.error(t("pages.category.loadError"));
     logger.error(error);
   } finally {
     state.loading = false;
@@ -105,7 +107,11 @@ onMounted(() => {
     <div class="container mx-auto">
       <div class="content">
         <ArticleList :data="articles" />
-        <ArticleListDivider ref="dividerRef" :loading="state.loading" text="我也是有底线的" />
+        <ArticleListDivider
+          ref="dividerRef"
+          :loading="state.loading"
+          :text="$t('pages.category.bottom')"
+        />
       </div>
 
       <div class="aside">

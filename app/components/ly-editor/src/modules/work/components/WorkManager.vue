@@ -6,6 +6,8 @@ import { SidebarPanel } from "@ly-editor/src/components";
 import { VueDraggable } from "vue-draggable-plus";
 import Scrollbar from "@/components/scrollbar";
 
+const { t } = useI18n();
+
 const $notify = useNotification();
 const $msgBox = useMessageBox();
 const { open } = useLyEditorModal("work-form");
@@ -19,7 +21,7 @@ const loadData = async () => {
     data.value = await getWorkConfig();
   } catch (error) {
     $notify.error({
-      title: "操作失败",
+      title: t("message.operate.error"),
       error
     });
   } finally {
@@ -45,9 +47,9 @@ const handleOpenFormModal = async (e?: WorkItem) => {
 
 const handleDelete = (e: WorkItem) => {
   $msgBox.error({
-    title: "确认删除?",
-    message: `即将删除「${e.name}」，删除后将无法恢复，是否继续？`,
-    confirmButtonText: "删除",
+    title: t("components.lyEditor.common.deleteConfirm.title"),
+    message: t("components.lyEditor.common.deleteConfirm.message", { name: e.name }),
+    confirmButtonText: t("components.lyEditor.common.deleteConfirm.button"),
     confirmButtonProps: {
       color: "error"
     },
@@ -56,12 +58,12 @@ const handleDelete = (e: WorkItem) => {
         const formData = data.value.filter((item) => item.repoUrl !== e.repoUrl);
         await updateWorkConfig(formData);
         $notify.success({
-          title: "删除成功"
+          title: t("message.delete.success")
         });
         loadData();
       } catch (error) {
         $notify.error({
-          title: "操作失败",
+          title: t("message.operate.error"),
           error
         });
       }
@@ -75,24 +77,28 @@ const handleDragEnd = async () => {
   } catch (error) {
     loadData();
     $notify.error({
-      title: "操作失败",
+      title: t("message.operate.error"),
       error
     });
   }
 };
 
-const actions = [
+const actions = computed(() => [
   {
-    label: "新建项目",
+    label: t("components.lyEditor.modules.work.new"),
     icon: "lucide:plus",
     onClick: () => {
       handleOpenFormModal();
     }
   }
-];
+]);
 </script>
 <template>
-  <SidebarPanel title="项目管理" :loading="loading" :actions="actions">
+  <SidebarPanel
+    :title="$t('components.lyEditor.modules.work.title')"
+    :loading="loading"
+    :actions="actions"
+  >
     <div class="flex-1 overflow-hidden">
       <Scrollbar class="h-full">
         <VueDraggable
@@ -115,14 +121,14 @@ const actions = [
                 <UDropdownMenu
                   :items="[
                     {
-                      label: '编辑信息',
+                      label: $t('components.lyEditor.modules.work.menu.editInfo'),
                       icon: 'lucide:edit',
                       onSelect: () => {
                         handleOpenFormModal(item);
                       }
                     },
                     {
-                      label: '删除项目',
+                      label: $t('components.lyEditor.modules.work.menu.delete'),
                       icon: 'lucide:trash-2',
                       color: 'error',
                       onSelect: () => {
@@ -139,7 +145,7 @@ const actions = [
                     content: 'w-48'
                   }"
                 >
-                  <UTooltip text="菜单">
+                  <UTooltip :text="$t('components.lyEditor.modules.work.menu.menu')">
                     <UIcon name="custom:menu-button" class="hover:text-gray-400" :size="20" />
                   </UTooltip>
                 </UDropdownMenu>

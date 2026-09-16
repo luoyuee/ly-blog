@@ -4,70 +4,72 @@ import type { DockItem } from "./types";
 
 const visible = ref(false);
 
-const dockItems = ref<DockItem[]>([
+const { t } = useI18n();
+
+const dockItems = computed<DockItem[]>(() => [
   {
     id: 1,
-    name: "首页",
+    name: t("components.dock.items.home"),
     style: "background-image: linear-gradient(135deg, rgb(84, 174, 229), rgb(147, 106, 209));",
     icon: "mdi:home"
   },
   {
     id: 2,
-    name: "翻译",
+    name: t("components.dock.items.translate"),
     style: "background-image: linear-gradient(135deg, rgb(124, 214, 255), rgb(26, 135, 178));",
     icon: "mdi:translate"
   },
   {
     id: 3,
-    name: "AI工具",
+    name: t("components.dock.items.ai"),
     style: "background-image: linear-gradient(135deg, rgb(220, 227, 91), rgb(68, 128, 0));",
     icon: "hugeicons:chat-gpt"
   },
   {
     id: 4,
-    name: "图片",
+    name: t("components.dock.items.image"),
     style: "background-image: linear-gradient(135deg, rgb(255, 173, 141), rgb(243, 82, 92));",
     icon: "mdi:image"
   },
   {
     id: 5,
-    name: "便签",
+    name: t("components.dock.items.note"),
     style: "background-image: linear-gradient(135deg, rgb(255, 217, 118), rgb(221, 137, 0));",
     icon: "mdi:note-text"
   },
   {
     id: 6,
-    name: "空投快传",
+    name: t("components.dock.items.airdrop"),
     style: "background-image: linear-gradient(135deg, rgb(174, 210, 255), rgb(0, 85, 192));",
     icon: "mdi:cloud"
   },
   {
     id: 7,
-    name: "邮箱",
+    name: t("components.dock.items.mail"),
     style: "background-image: linear-gradient(135deg, rgb(255, 181, 151), rgb(215, 93, 43));",
     icon: "mdi:email"
   },
   {
     id: 8,
-    name: "音乐",
+    name: t("components.dock.items.music"),
     style: "background-image: linear-gradient(135deg, rgb(255, 163, 170), rgb(242, 68, 82));",
     icon: "mdi:music-box"
   },
   {
     id: 9,
-    name: "哔哩哔哩",
+    name: t("components.dock.items.bilibili"),
     style: "background-image: linear-gradient(135deg, rgb(255, 162, 191), rgb(235, 71, 114));",
     icon: "ri:bilibili-fill"
   },
   {
     id: 10,
-    name: "壁纸",
+    name: t("components.dock.items.wallpaper"),
     style: "background-image: linear-gradient(135deg, rgb(84, 174, 229), rgb(147, 106, 209));",
     icon: "mdi:folder-image"
   },
   {
     id: 11,
-    name: "主题",
+    name: t("components.dock.items.theme"),
     style: "background-image: linear-gradient(135deg, rgb(247, 206, 70), rgb(213, 104, 41));",
     icon: "mdi:lightbulb-on"
   }
@@ -157,7 +159,7 @@ defineExpose({
   padding: 10px 10px 50px;
   transition: all 0.25s;
   display: grid;
-  overflow: hidden ;
+  overflow: hidden;
   user-select: none;
   margin: 0 auto;
 

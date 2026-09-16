@@ -53,7 +53,7 @@ const handleReset = () => {
 <template>
   <SettingCard
     id="message-board-setting"
-    title="留言板设置"
+    :title="$t('components.settingCard.messageBoard.title')"
     :is-change="isDirty"
     :submitting="formState.submitting"
     @reset="handleReset"
@@ -69,19 +69,23 @@ const handleReset = () => {
     >
       <UFormField
         name="site_url"
-        label="引言"
-        description="留言板顶部引言"
+        :label="$t('components.settingCard.messageBoard.introLabel')"
+        :description="$t('components.settingCard.messageBoard.introDescription')"
         :ui="{
           description: 'text-xs',
           container: 'mt-2'
         }"
       >
-        <UTextarea v-model="formData.intro" class="w-full" placeholder="请输入引言" />
+        <UTextarea
+          v-model="formData.intro"
+          class="w-full"
+          :placeholder="$t('components.settingCard.messageBoard.introPlaceholder')"
+        />
       </UFormField>
       <UFormField
         name="site_url"
-        label="留言长度"
-        description="限制留言的最大文本长度，默认3000字"
+        :label="$t('components.settingCard.messageBoard.maxLengthLabel')"
+        :description="$t('components.settingCard.messageBoard.maxLengthDescription')"
         :ui="{
           description: 'text-xs',
           container: 'mt-2'
@@ -89,7 +93,7 @@ const handleReset = () => {
       >
         <UInputNumber
           v-model="formData.message_max_length"
-          placeholder="请输入最大长度"
+          :placeholder="$t('components.settingCard.messageBoard.maxLengthPlaceholder')"
           :min="1"
           :max="9999"
         />

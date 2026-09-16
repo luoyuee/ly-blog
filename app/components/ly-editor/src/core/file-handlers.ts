@@ -10,14 +10,19 @@ export const registerFileHandlers = (
   monacoPackage: typeof import("monaco-editor"),
   monacoEditor: import("monaco-editor").editor.IStandaloneCodeEditor,
   lyEditorStore: ReturnType<typeof useLyEditorStore>,
-  handleOpenFile: (path: string) => void
+  handleOpenFile: (path: string) => void,
+  t: ReturnType<typeof useI18n>["t"]
 ) => {
   lyEditorEmitter.on("cmd.editor-core:new:file", () => {
-    const name = `新建文件-${dayjs().format("YYYY/MM/DD HH-mm-ss")}`;
+    const name = t("components.lyEditor.core.newFileName", {
+      date: dayjs().format("YYYY/MM/DD HH-mm-ss")
+    });
 
     const path = getEditorFilePath({ name });
 
-    const content = `# 标题\n\n> 创建时间: ${dayjs().format("YYYY-MM-DD HH:mm:ss")}`;
+    const content = t("components.lyEditor.core.newFileContent", {
+      date: dayjs().format("YYYY-MM-DD HH:mm:ss")
+    });
 
     lyEditorStore.pushTabItem({
       key: path,

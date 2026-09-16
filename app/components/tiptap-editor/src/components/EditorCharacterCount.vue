@@ -2,6 +2,8 @@
 import type { Editor } from "@tiptap/vue-3";
 import type { PropType } from "vue";
 
+const { t } = useI18n();
+
 defineProps({
   editor: {
     type: Object as PropType<Editor>,
@@ -10,7 +12,10 @@ defineProps({
 });
 
 const characterCountText = (editor: Editor) => {
-  return `${editor.storage.characterCount.characters()} 字符 / ${editor.storage.characterCount.words()} 词`;
+  return t("components.tiptapEditor.characterCount", {
+    characters: editor.storage.characterCount.characters(),
+    words: editor.storage.characterCount.words()
+  });
 };
 </script>
 

@@ -17,7 +17,10 @@ const props = defineProps({
 </script>
 
 <template>
-  <div class="grid grid-cols-2 gap-3 md:grid-cols-4" aria-label="基础信息">
+  <div
+    class="grid grid-cols-2 gap-3 md:grid-cols-4"
+    :aria-label="$t('components.baseInfoGrid.ariaLabel')"
+  >
     <div
       v-for="item in props.items"
       :key="item.label"

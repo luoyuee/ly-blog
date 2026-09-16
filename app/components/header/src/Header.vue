@@ -6,6 +6,7 @@ import ThemeSwitch from "@/components/theme-switch";
 import HeaderDrawer from "./HeaderDrawer.vue";
 
 const $message = useMessage();
+const { t } = useI18n();
 
 const configStore = useConfigStore();
 const userStore = useUserStore();
@@ -74,56 +75,56 @@ const headerNavItems = computed<HeaderNavItem[]>(() => {
   const staticItems: HeaderNavItem[] = [
     {
       key: "home",
-      title: "首页",
+      title: t("components.header.menu.home"),
       icon: "colorful:home",
       href: "/",
       type: "link"
     },
     {
       key: "category-group",
-      title: "文档目录",
+      title: t("components.header.menu.docs"),
       icon: "colorful:folder",
       type: "group",
       children: categoryChildren
     },
     {
       key: "sn",
-      title: "闪念笔记",
+      title: t("components.header.menu.sn"),
       icon: "colorful:execute-book",
       href: "/sn",
       type: "link"
     },
     {
       key: "message",
-      title: "留言板",
+      title: t("components.header.menu.message"),
       icon: "colorful:message",
       href: "/message",
       type: "link"
     },
     {
       key: "work",
-      title: "作品",
+      title: t("components.header.menu.work"),
       icon: "colorful:recommend",
       href: "/work",
       type: "link"
     },
     {
       key: "me",
-      title: "我的简介",
+      title: t("components.header.menu.me"),
       icon: "colorful:avatar",
       href: "/me",
       type: "link"
     },
     {
       key: "navigation",
-      title: "导航",
+      title: t("components.header.menu.nav"),
       icon: "colorful:submit",
       href: "/navigation",
       type: "link"
     },
     {
       key: "about",
-      title: "关于",
+      title: t("components.header.menu.about"),
       icon: "colorful:config",
       href: "/about",
       type: "link"
@@ -183,7 +184,7 @@ const switchSearch = () => {
  * 退出登录
  */
 const logout = () => {
-  $message.success("已退出登录，3秒后将刷新页面");
+  $message.success(t("components.header.logoutSuccess"));
 
   setTimeout(() => {
     const auth = useCookie("Authorization");
@@ -263,21 +264,21 @@ const open = ref(false);
             class="flex items-center p-1.5 hover:bg-elevated select-none cursor-pointer text-sm gap-1.5 text-default"
           >
             <UIcon name="lucide:user" class="text-neutral-400" :size="18" />
-            <span>用户信息</span>
+            <span>{{ $t("components.header.userInfo") }}</span>
           </div>
           <div
             class="flex items-center p-1.5 hover:bg-elevated select-none cursor-pointer text-sm gap-1.5 text-default"
             @click="toAdmin"
           >
             <UIcon name="lucide:server" class="text-neutral-400" :size="18" />
-            <span>后台管理</span>
+            <span>{{ $t("components.header.admin") }}</span>
           </div>
           <div
             class="flex items-center p-1.5 hover:bg-elevated select-none cursor-pointer text-sm gap-1.5 text-default"
             @click="logout"
           >
             <UIcon name="lucide:log-out" class="text-neutral-400" :size="18" />
-            <span>退出登录</span>
+            <span>{{ $t("components.header.logout") }}</span>
           </div>
         </div>
       </template>

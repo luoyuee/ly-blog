@@ -12,6 +12,7 @@ import { z } from "zod";
 import dayjs from "dayjs";
 import { DatePicker } from "@/components/form/date-picker";
 
+const { t } = useI18n();
 const $notify = useNotification();
 
 const open = defineModel<boolean>("open", {
@@ -35,12 +36,16 @@ const emits = defineEmits<{
 
 const scopeSchema = z.custom<ApiKeyScope>((value) => {
   return typeof value === "string" && API_KEY_SCOPES.includes(value as ApiKeyScope);
-}, "请选择有效的权限范围");
+}, t("components.lyEditor.modules.apiKey.form.validation.scopeInvalid"));
 
 const schema = z.object({
   id: z.number().optional(),
-  name: z.string({ message: "请输入 API 密钥名称" }).min(1, "请输入 API 密钥名称"),
-  scopes: z.array(scopeSchema).min(1, "请至少选择一个权限范围"),
+  name: z
+    .string({ message: t("components.lyEditor.modules.apiKey.form.validation.nameRequired") })
+    .min(1, t("components.lyEditor.modules.apiKey.form.validation.nameRequired")),
+  scopes: z
+    .array(scopeSchema)
+    .min(1, t("components.lyEditor.modules.apiKey.form.validation.scopeAtLeastOne")),
   expires_at: z.string().nullable().optional()
 });
 
@@ -53,7 +58,9 @@ const { formData, formState, resetForm, setForm } = useForm<ApiKeyForm>({
 });
 
 const modalTitle = computed(() => {
-  return props.mode === "update" ? "编辑 API 密钥" : "新建 API 密钥";
+  return props.mode === "update"
+    ? t("components.lyEditor.modules.apiKey.form.editTitle")
+    : t("components.lyEditor.modules.apiKey.form.createTitle");
 });
 
 const isEdit = computed(() => {
@@ -110,7 +117,7 @@ const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => 
       });
 
       $notify.success({
-        title: "修改成功"
+        title: t("message.update.success")
       });
 
       open.value = false;
@@ -127,7 +134,7 @@ const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => 
     });
 
     $notify.success({
-      title: "创建成功"
+      title: t("message.create.success")
     });
 
     open.value = false;
@@ -137,7 +144,7 @@ const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => 
     });
   } catch (error) {
     $notify.error({
-      title: "操作失败",
+      title: t("message.operate.error"),
       error
     });
   } finally {
@@ -180,22 +187,36 @@ const scopeOptions = computed<SelectItem[]>(() => {
       :validate-on-input-delay="100"
       @submit="handleSubmit"
     >
-      <UFormField name="name" label="名称" required>
-        <UInput v-model="formData.name" placeholder="如：内容导入 API 密钥" />
+      <UFormField
+        name="name"
+        :label="t('components.lyEditor.modules.apiKey.form.nameLabel')"
+        required
+      >
+        <UInput
+          v-model="formData.name"
+          :placeholder="t('components.lyEditor.modules.apiKey.form.namePlaceholder')"
+        />
       </UFormField>
 
-      <UFormField name="scopes" label="权限范围" required>
+      <UFormField
+        name="scopes"
+        :label="t('components.lyEditor.modules.apiKey.form.scopeLabel')"
+        required
+      >
         <USelectMenu
           v-model="formData.scopes"
           class="w-full"
           multiple
           value-key="value"
           :items="scopeOptions"
-          placeholder="请选择权限范围"
+          :placeholder="t('components.lyEditor.modules.apiKey.form.scopePlaceholder')"
         />
       </UFormField>
 
-      <UFormField name="expires_at" label="过期时间">
+      <UFormField
+        name="expires_at"
+        :label="t('components.lyEditor.modules.apiKey.form.expiresAtLabel')"
+      >
         <DatePicker v-model="formData.expires_at" type="datetime" />
       </UFormField>
 
@@ -204,8 +225,8 @@ const scopeOptions = computed<SelectItem[]>(() => {
         color="warning"
         variant="soft"
         icon="lucide:info"
-        title="安全提示"
-        description="API 密钥创建后仅会展示一次明文，请在关闭提示前妥善保存。"
+        :title="t('components.lyEditor.modules.apiKey.form.safeTipTitle')"
+        :description="t('components.lyEditor.modules.apiKey.form.safeTipDescription')"
       />
     </UForm>
   </BasicModal>

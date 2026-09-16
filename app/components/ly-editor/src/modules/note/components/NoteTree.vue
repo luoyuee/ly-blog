@@ -7,6 +7,8 @@ import { useLyEditorStore } from "@/stores";
 import { getNoteDetail } from "@/apis/note";
 import dayjs from "dayjs";
 
+const { t } = useI18n();
+
 const { open: openNotePublishModal } = useLyEditorModal("note-publish");
 const { open: openNoteFolderFormModal } = useLyEditorModal("note-folder-form");
 const editorStore = useLyEditorStore();
@@ -93,50 +95,74 @@ const handleRenameFolder = async (data: FolderTreeItem) => {
     lyEditorEmitter.emit("cmd.note-manager:reload");
   }
 };
+
+/**
+ * 笔记节点右键菜单项，按当前节点动态生成。
+ */
+const getNoteMenuItems = (item: FolderTreeItem) => [
+  {
+    label: t("components.lyEditor.modules.note.menu.openFile"),
+    icon: "lucide:file-pen",
+    color: "primary",
+    onSelect: () => {
+      handleOpenFile(item);
+    }
+  },
+  {
+    label: t("components.lyEditor.modules.note.menu.publish"),
+    icon: "lucide:square-arrow-out-up-right",
+    onSelect: () => {
+      handlePublishNote(item);
+    }
+  },
+  {
+    label: t("components.lyEditor.modules.note.menu.details"),
+    icon: "lucide:file-text",
+    onSelect: () => {}
+  },
+  {
+    label: t("components.lyEditor.modules.note.menu.export"),
+    icon: "lucide:download",
+    onSelect: () => {}
+  },
+  {
+    label: t("components.lyEditor.modules.note.menu.rename"),
+    icon: "lucide:text-cursor-input",
+    onSelect: () => {}
+  },
+  {
+    label: t("components.lyEditor.modules.note.menu.deleteNote"),
+    icon: "lucide:trash-2",
+    color: "error",
+    onSelect: () => {}
+  }
+];
+
+/**
+ * 文件夹节点右键菜单项，按当前节点动态生成。
+ */
+const getFolderMenuItems = (item: FolderTreeItem) => [
+  {
+    label: t("components.lyEditor.modules.note.menu.rename"),
+    icon: "lucide:text-cursor-input",
+    onSelect: () => {
+      handleRenameFolder(item);
+    }
+  },
+  {
+    label: t("components.lyEditor.modules.note.menu.deleteFolder"),
+    icon: "lucide:trash-2",
+    color: "error",
+    onSelect: () => {}
+  }
+];
 </script>
 <template>
   <div class="w-full select-none text-sm">
     <template v-for="item in modelValue" :key="item.key">
       <UContextMenu
         v-if="item.type === 'note'"
-        :items="[
-          {
-            label: '打开文件',
-            icon: 'lucide:file-pen',
-            color: 'primary',
-            onSelect: () => {
-              handleOpenFile(item);
-            }
-          },
-          {
-            label: '发布&更新文章',
-            icon: 'lucide:square-arrow-out-up-right',
-            onSelect: () => {
-              handlePublishNote(item);
-            }
-          },
-          {
-            label: '笔记详情',
-            icon: 'lucide:file-text',
-            onSelect: () => {}
-          },
-          {
-            label: '导出文件',
-            icon: 'lucide:download',
-            onSelect: () => {}
-          },
-          {
-            label: '重命名',
-            icon: 'lucide:text-cursor-input',
-            onSelect: () => {}
-          },
-          {
-            label: '删除笔记',
-            icon: 'lucide:trash-2',
-            color: 'error',
-            onSelect: () => {}
-          }
-        ]"
+        :items="getNoteMenuItems(item)"
         :ui="{ content: 'w-48' }"
       >
         <div
@@ -174,21 +200,7 @@ const handleRenameFolder = async (data: FolderTreeItem) => {
         >
           <UContextMenu
             v-if="item.type === 'folder'"
-            :items="[
-              {
-                label: '重命名',
-                icon: 'lucide:text-cursor-input',
-                onSelect: () => {
-                  handleRenameFolder(item);
-                }
-              },
-              {
-                label: '删除文件夹',
-                icon: 'lucide:trash-2',
-                color: 'error',
-                onSelect: () => {}
-              }
-            ]"
+            :items="getFolderMenuItems(item)"
             :ui="{ content: 'w-48' }"
           >
             <div

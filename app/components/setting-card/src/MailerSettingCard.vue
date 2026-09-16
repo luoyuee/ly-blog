@@ -10,6 +10,8 @@ import SettingCard from "./SettingCard.vue";
 
 const $notify = useNotification();
 
+const { t } = useI18n();
+
 const serverConfigStore = useServerConfigStore();
 
 const createInitialFormData = (): IServerConfigMailer => {
@@ -25,7 +27,9 @@ const schema = z.object({
   tls: z.boolean().optional(),
   user: z.email(),
   pass: z.string(),
-  notify_email: z.email({ message: "请输入内容" }),
+  notify_email: z.email({
+    message: t("components.settingCard.mailer.validation.notifyEmailInvalid")
+  }),
   comment_notify_enabled: z.boolean().optional(),
   enabled: z.boolean().optional()
 });
@@ -62,7 +66,7 @@ const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => 
     }
   } catch (error) {
     $notify.error({
-      title: "验证失败",
+      title: t("components.settingCard.mailer.verifyFail"),
       error
     });
     formState.submitting = false;
@@ -93,11 +97,11 @@ const handleTestEmail = async () => {
       notify_email: formData.notify_email
     });
     $notify.success({
-      title: "测试邮件发送成功"
+      title: t("components.settingCard.mailer.testSuccess")
     });
   } catch (error) {
     $notify.error({
-      title: "测试邮件发送失败",
+      title: t("components.settingCard.mailer.testFail"),
       error
     });
   } finally {
@@ -108,7 +112,7 @@ const handleTestEmail = async () => {
 <template>
   <SettingCard
     id="mailer-setting"
-    title="邮件设置"
+    :title="$t('components.settingCard.mailer.title')"
     :is-change="isDirty"
     :submitting="formState.submitting"
     @reset="handleReset"
@@ -124,8 +128,8 @@ const handleTestEmail = async () => {
     >
       <UFormField
         name="enabled"
-        label="开启邮件通知"
-        description="开启邮件通知后将向指定邮箱发送网站事件通知."
+        :label="$t('components.settingCard.mailer.enableLabel')"
+        :description="$t('components.settingCard.mailer.enableDescription')"
         :ui="{
           description: 'text-xs',
           container: 'mt-2'
@@ -138,8 +142,8 @@ const handleTestEmail = async () => {
       </UFormField>
       <UFormField
         name="host"
-        label="SMTP服务器地址"
-        description="例如：QQ邮箱 「smtp.qq.com」"
+        :label="$t('components.settingCard.mailer.hostLabel')"
+        :description="$t('components.settingCard.mailer.hostDescription')"
         :ui="{
           description: 'text-xs',
           container: 'mt-2'
@@ -149,19 +153,24 @@ const handleTestEmail = async () => {
           v-model="formData.host"
           class="w-full"
           icon="lucide:link"
-          placeholder="请输入SMTP服务器地址"
+          :placeholder="$t('components.settingCard.mailer.hostPlaceholder')"
         />
       </UFormField>
       <UFormField
         name="port"
-        label="SMTP服务器端口号"
-        description="例如：QQ邮箱「25」或「465」或「587（使用SSL时）」"
+        :label="$t('components.settingCard.mailer.portLabel')"
+        :description="$t('components.settingCard.mailer.portDescription')"
         :ui="{
           description: 'text-xs',
           container: 'mt-2'
         }"
       >
-        <UInputNumber v-model="formData.port" :min="0" :max="65535" placeholder="请输入端口号" />
+        <UInputNumber
+          v-model="formData.port"
+          :min="0"
+          :max="65535"
+          :placeholder="$t('components.settingCard.mailer.portPlaceholder')"
+        />
       </UFormField>
       <UFormField
         name="tls"
@@ -175,7 +184,7 @@ const handleTestEmail = async () => {
       </UFormField>
       <UFormField
         name="user"
-        label="系统邮箱"
+        :label="$t('components.settingCard.mailer.systemEmailLabel')"
         :ui="{
           description: 'text-xs',
           container: 'mt-2'
@@ -185,12 +194,12 @@ const handleTestEmail = async () => {
           v-model="formData.user"
           class="w-full"
           icon="lucide:mail"
-          placeholder="请输入系统邮箱"
+          :placeholder="$t('components.settingCard.mailer.systemEmailPlaceholder')"
         />
       </UFormField>
       <UFormField
         name="pass"
-        label="系统邮箱授权码"
+        :label="$t('components.settingCard.mailer.authCodeLabel')"
         :ui="{
           description: 'text-xs',
           container: 'mt-2'
@@ -200,13 +209,13 @@ const handleTestEmail = async () => {
           v-model="formData.pass"
           class="w-full"
           icon="lucide:lock-keyhole"
-          placeholder="请输入系统邮箱授权码"
+          :placeholder="$t('components.settingCard.mailer.authCodePlaceholder')"
         />
       </UFormField>
       <UFormField
         name="notify_email"
-        label="通知邮箱"
-        description="用于接收系统通知的邮箱"
+        :label="$t('components.settingCard.mailer.notifyEmailLabel')"
+        :description="$t('components.settingCard.mailer.notifyEmailDescription')"
         :ui="{
           description: 'text-xs',
           container: 'mt-2'
@@ -217,17 +226,17 @@ const handleTestEmail = async () => {
             v-model="formData.notify_email"
             class="w-full"
             icon="lucide:mail"
-            placeholder="请输入通知邮箱"
+            :placeholder="$t('components.settingCard.mailer.notifyEmailPlaceholder')"
           />
           <UButton class="shrink-0" :loading="sendLoading" @click="handleTestEmail">
-            发送测试邮件
+            {{ $t("components.settingCard.mailer.sendTest") }}
           </UButton>
         </UFieldGroup>
       </UFormField>
       <UFormField
         name="comment_notify_enabled"
-        label="评论通知"
-        description="开启评论通知后，评论被回复时，将通过评论邮箱通知用户"
+        :label="$t('components.settingCard.mailer.commentNotifyLabel')"
+        :description="$t('components.settingCard.mailer.commentNotifyDescription')"
         :ui="{
           description: 'text-xs',
           container: 'mt-2'

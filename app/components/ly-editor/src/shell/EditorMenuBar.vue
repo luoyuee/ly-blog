@@ -6,6 +6,8 @@ import { useLyEditorStore, useUserStore } from "@/stores";
 import { LyEditorTabPanelEnum } from "#shared/enums";
 import { useFullscreen } from "@vueuse/core";
 
+const { t } = useI18n();
+
 const lyEditorStore = useLyEditorStore();
 const userStore = useUserStore();
 
@@ -13,18 +15,18 @@ const { open: openNoticeManager } = useLyEditorModal("notice-manager");
 const { open: openSendEmail } = useLyEditorModal("send-email");
 const { openTabPanel } = useLyEditorTabs();
 
-const dropdownMenu = ref<{ key: number; name: string; items: DropdownMenuItem[] }[]>([
+const dropdownMenu = computed<{ key: number; name: string; items: DropdownMenuItem[] }[]>(() => [
   {
     key: 1,
-    name: "文件",
+    name: t("components.lyEditor.shell.menuBar.file"),
     items: [
       {
-        label: "新建文件",
+        label: t("components.lyEditor.shell.menuBar.newFile"),
         icon: "lucide:file-plus",
         onSelect: () => {}
       },
       {
-        label: "新建文件夹",
+        label: t("components.lyEditor.shell.menuBar.newFolder"),
         icon: "lucide:folder-plus",
         onSelect: () => {}
       }
@@ -32,10 +34,10 @@ const dropdownMenu = ref<{ key: number; name: string; items: DropdownMenuItem[] 
   },
   {
     key: 2,
-    name: "编辑",
+    name: t("components.lyEditor.shell.menuBar.edit"),
     items: [
       {
-        label: "插入Card",
+        label: t("components.lyEditor.shell.menuBar.insertCard"),
         onSelect: () => {}
       }
     ]
@@ -52,7 +54,7 @@ const toggleSidebar = () => {
   lyEditorStore.sidebar.show = !lyEditorStore.sidebar.show;
 };
 
-const userDropdownMenuItem = ref<DropdownMenuItem[][]>([
+const userDropdownMenuItem = computed<DropdownMenuItem[][]>(() => [
   [
     {
       label: "Luoyue",
@@ -61,12 +63,12 @@ const userDropdownMenuItem = ref<DropdownMenuItem[][]>([
   ],
   [
     {
-      label: "用户信息",
+      label: t("components.lyEditor.shell.menuBar.userInfo"),
       icon: "lucide:user",
       onSelect: () => {
         openTabPanel({
           key: LyEditorTabPanelEnum.UserPanel,
-          label: "用户信息",
+          label: t("components.lyEditor.shell.menuBar.userInfo"),
           type: LyEditorTabPanelEnum.UserPanel
         });
       }
@@ -74,7 +76,7 @@ const userDropdownMenuItem = ref<DropdownMenuItem[][]>([
   ],
   [
     {
-      label: "退出登录",
+      label: t("components.lyEditor.shell.menuBar.logout"),
       icon: "lucide:log-out",
       onSelect: () => {}
     }
@@ -116,39 +118,54 @@ const openSendEmailModal = async () => {
     <div class="menu-bar-end-group"></div>
 
     <div class="menu-bar-window-controls">
-      <UTooltip text="切换主侧栏" :content="{ side: 'bottom' }">
+      <UTooltip
+        :text="$t('components.lyEditor.shell.menuBar.toggleMainSidebar')"
+        :content="{ side: 'bottom' }"
+      >
         <div @click="toggleSidebar">
           <UIcon :name="lyEditorStore.sidebar.show ? 'custom:left-bar-fill' : 'custom:left-bar'" />
         </div>
       </UTooltip>
-      <UTooltip text="切换辅助侧栏" :content="{ side: 'bottom' }">
+      <UTooltip
+        :text="$t('components.lyEditor.shell.menuBar.toggleAuxSidebar')"
+        :content="{ side: 'bottom' }"
+      >
         <div @click="togglePreview">
           <UIcon
             :name="lyEditorStore.preview.show ? 'custom:right-bar-fill' : 'custom:right-bar'"
           />
         </div>
       </UTooltip>
-      <UTooltip text="切换全屏" :content="{ side: 'bottom' }">
+      <UTooltip
+        :text="$t('components.lyEditor.shell.menuBar.toggleFullscreen')"
+        :content="{ side: 'bottom' }"
+      >
         <div @click="toggleFullscreen">
           <UIcon :name="isFullscreen ? 'custom:off-screen' : 'custom:full-screen'" />
         </div>
       </UTooltip>
-      <UTooltip text="消息" :content="{ side: 'bottom' }">
+      <UTooltip
+        :text="$t('components.lyEditor.shell.menuBar.message')"
+        :content="{ side: 'bottom' }"
+      >
         <div @click="openNoticeManagerModal">
           <UIcon name="lucide:bell" />
         </div>
       </UTooltip>
-      <UTooltip text="公告" :content="{ side: 'bottom' }">
+      <UTooltip
+        :text="$t('components.lyEditor.shell.menuBar.notice')"
+        :content="{ side: 'bottom' }"
+      >
         <div @click="openNoticeManagerModal">
           <UIcon name="custom:notice" />
         </div>
       </UTooltip>
-      <UTooltip text="邮件" :content="{ side: 'bottom' }">
+      <UTooltip :text="$t('components.lyEditor.shell.menuBar.mail')" :content="{ side: 'bottom' }">
         <div @click="openSendEmailModal">
           <UIcon name="lucide:mail" />
         </div>
       </UTooltip>
-      <UTooltip text="首页" :content="{ side: 'bottom' }">
+      <UTooltip :text="$t('components.lyEditor.shell.menuBar.home')" :content="{ side: 'bottom' }">
         <div v-navigate-to._blank="'/'">
           <UIcon name="custom:home" />
         </div>

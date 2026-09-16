@@ -34,7 +34,7 @@ async function handleSaveNote(e: EditorTabItem) {
   }
 }
 
-export async function initEditor(editorEl: HTMLElement) {
+export async function initEditor(editorEl: HTMLElement, t: ReturnType<typeof useI18n>["t"]) {
   if (!editorEl) return;
 
   const lyEditorStore = useLyEditorStore();
@@ -43,7 +43,7 @@ export async function initEditor(editorEl: HTMLElement) {
   try {
     const { monaco, monacoPackage } = await initMonaco();
 
-    registerEditorLanguage(monaco);
+    registerEditorLanguage(monaco, t);
 
     const monacoEditor = monaco.editor.create(editorEl, {
       language: "mdc",
@@ -86,7 +86,7 @@ export async function initEditor(editorEl: HTMLElement) {
       }
     });
 
-    registerFileHandlers(monacoPackage, monacoEditor, lyEditorStore, handleOpenFile);
+    registerFileHandlers(monacoPackage, monacoEditor, lyEditorStore, handleOpenFile, t);
 
     lyEditorStore.editor.initializing = false;
     return monacoEditor;

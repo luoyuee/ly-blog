@@ -7,6 +7,7 @@ import { useForm } from "@/composables/useForm";
 import { computed, watch } from "vue";
 import { z } from "zod";
 
+const { t } = useI18n();
 const $notify = useNotification();
 
 const open = defineModel<boolean>("open", {
@@ -36,7 +37,9 @@ interface FormData {
 
 const schema = z.object({
   id: z.number().optional(),
-  title: z.string({ message: "请输入流程图标题" }).min(1, "请输入流程图标题"),
+  title: z
+    .string({ message: t("components.lyEditor.modules.flowchart.form.validation.titleRequired") })
+    .min(1, t("components.lyEditor.modules.flowchart.form.validation.titleRequired")),
   description: z.string().optional()
 });
 
@@ -51,7 +54,9 @@ const isEdit = computed(() => {
 });
 
 const modalTitle = computed(() => {
-  return isEdit.value ? "修改流程图" : "新建流程图";
+  return isEdit.value
+    ? t("components.lyEditor.modules.flowchart.form.editTitle")
+    : t("components.lyEditor.modules.flowchart.form.createTitle");
 });
 
 // 监听弹窗显示，初始化表单与回填数据
@@ -86,7 +91,7 @@ const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => 
       });
 
       $notify.success({
-        title: "修改成功"
+        title: t("message.update.success")
       });
     } else {
       await createFlowchart({
@@ -97,7 +102,7 @@ const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => 
       });
 
       $notify.success({
-        title: "创建成功"
+        title: t("message.create.success")
       });
     }
 
@@ -108,7 +113,7 @@ const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => 
     });
   } catch (error) {
     $notify.error({
-      title: "操作失败",
+      title: t("message.operate.error"),
       error
     });
   } finally {
@@ -143,12 +148,25 @@ const handleCancel = () => {
       :validate-on-input-delay="100"
       @submit="handleSubmit"
     >
-      <UFormField name="title" label="流程图标题" required>
-        <UInput v-model="formData.title" placeholder="请输入流程图标题" />
+      <UFormField
+        name="title"
+        :label="t('components.lyEditor.modules.flowchart.form.titleLabel')"
+        required
+      >
+        <UInput
+          v-model="formData.title"
+          :placeholder="t('components.lyEditor.modules.flowchart.form.titlePlaceholder')"
+        />
       </UFormField>
 
-      <UFormField name="description" label="流程图描述">
-        <UTextarea v-model="formData.description" placeholder="请输入流程图描述" />
+      <UFormField
+        name="description"
+        :label="t('components.lyEditor.modules.flowchart.form.descriptionLabel')"
+      >
+        <UTextarea
+          v-model="formData.description"
+          :placeholder="t('components.lyEditor.modules.flowchart.form.descriptionPlaceholder')"
+        />
       </UFormField>
     </UForm>
   </BasicModal>

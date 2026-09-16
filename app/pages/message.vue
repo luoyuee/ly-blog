@@ -10,7 +10,7 @@ const configStore = useConfigStore();
 </script>
 <template>
   <main>
-    <BannerImage title="留言板" />
+    <BannerImage :title="$t('pages.message.bannerTitle')" />
     <div class="container mx-auto">
       <div class="content">
         <div v-if="configStore.message_board.intro" class="intros">

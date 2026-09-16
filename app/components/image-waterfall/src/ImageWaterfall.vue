@@ -246,7 +246,7 @@ const handleImageClick = (item: ImageItem, index: number) => {
         <div class="loading-spinner"></div>
       </div>
       <div v-if="renderData.images[index]?.error" class="image-error-overlay">
-        <span>加载失败</span>
+        <span>{{ $t("components.imageWaterfall.loadError") }}</span>
       </div>
     </div>
   </div>

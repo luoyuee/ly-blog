@@ -5,6 +5,7 @@ import { useDebounceFn } from "@vueuse/core";
 
 const configStore = useConfigStore();
 const appStore = useAppStore();
+const { t } = useI18n();
 
 const open = defineModel<boolean>("open", { default: false });
 
@@ -47,56 +48,56 @@ const drawerNavItems = computed<HeaderDrawerNavItem[]>(() => {
   const staticItems: HeaderDrawerNavItem[] = [
     {
       key: "home",
-      title: "首页",
+      title: t("components.header.menu.home"),
       icon: "colorful:home",
       href: "/",
       type: "link"
     },
     {
       key: "category-group",
-      title: "文档目录",
+      title: t("components.header.menu.docs"),
       icon: "colorful:folder",
       type: "group",
       children: categoryChildren
     },
     {
       key: "sn",
-      title: "闪念笔记",
+      title: t("components.header.menu.sn"),
       icon: "colorful:execute-book",
       href: "/sn",
       type: "link"
     },
     {
       key: "message",
-      title: "留言板",
+      title: t("components.header.menu.message"),
       icon: "colorful:message",
       href: "/message",
       type: "link"
     },
     {
       key: "work",
-      title: "作品",
+      title: t("components.header.menu.work"),
       icon: "colorful:recommend",
       href: "/work",
       type: "link"
     },
     {
       key: "me",
-      title: "我的简介",
+      title: t("components.header.menu.me"),
       icon: "colorful:avatar",
       href: "/me",
       type: "link"
     },
     {
       key: "navigation",
-      title: "导航",
+      title: t("components.header.menu.nav"),
       icon: "colorful:submit",
       href: "/navigation",
       type: "link"
     },
     {
       key: "about",
-      title: "关于",
+      title: t("components.header.menu.about"),
       icon: "colorful:config",
       href: "/about",
       type: "link"
@@ -215,7 +216,7 @@ const handleActive = (e: Event) => {
           <UButton
             color="neutral"
             variant="link"
-            aria-label="关闭"
+            :aria-label="$t('components.headerDrawer.close')"
             icon="lucide:x"
             @click="close"
           />

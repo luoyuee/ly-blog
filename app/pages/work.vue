@@ -28,17 +28,17 @@ useWaterfall(containerRef, {
 </script>
 <template>
   <main>
-    <BannerImage title="我的项目" />
+    <BannerImage :title="$t('pages.work.bannerTitle')" />
     <div class="container mx-auto">
-      <div ref="containerRef" class="content work-masonry" aria-label="项目瀑布流列表">
+      <div ref="containerRef" class="content work-masonry" :aria-label="$t('pages.work.a11y.list')">
         <article v-for="item in data" :key="item.repoUrl" class="work-masonry__item project-card">
-          <header class="project-card__header" aria-label="项目标题">
+          <header class="project-card__header" :aria-label="$t('pages.work.a11y.title')">
             <a
               class="project-card__title"
               :href="item.repoUrl"
               target="_blank"
               rel="noopener noreferrer"
-              aria-label="打开仓库新页面"
+              :aria-label="$t('pages.work.a11y.openRepo')"
             >
               <div class="project-card__title-content">
                 <span class="project-card__icon" aria-hidden="true">{{ item.icon }}</span>
@@ -49,18 +49,18 @@ useWaterfall(containerRef, {
             </a>
           </header>
 
-          <section class="project-card__body" aria-label="项目内容">
+          <section class="project-card__body" :aria-label="$t('pages.work.a11y.content')">
             <p class="project-card__desc">{{ item.description }}</p>
             <img
               class="project-card__image"
               :src="item.image"
-              :alt="`项目 ${item.name} 预览图`"
+              :alt="$t('pages.work.projectPreviewAlt', { name: item.name })"
               loading="lazy"
             />
           </section>
 
-          <footer class="project-card__footer" aria-label="项目底部信息">
-            <ul class="project-card__tags" aria-label="主要编程语言">
+          <footer class="project-card__footer" :aria-label="$t('pages.work.a11y.footer')">
+            <ul class="project-card__tags" :aria-label="$t('pages.work.a11y.languages')">
               <li v-for="lang in item.languages" :key="lang" class="project-card__tag">
                 {{ lang }}
               </li>

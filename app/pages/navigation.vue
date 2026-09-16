@@ -217,7 +217,9 @@ const handleSearchClose = () => {
 }
 
 .search-box-fade-enter-active {
-  transition: opacity 0.24s ease, transform 0.24s ease;
+  transition:
+    opacity 0.24s ease,
+    transform 0.24s ease;
 }
 
 .search-box-fade-enter-from,

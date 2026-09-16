@@ -5,7 +5,7 @@ import MacCard from "./MacCard.vue";
 const configStore = useConfigStore();
 </script>
 <template>
-  <MacCard title="相关链接">
+  <MacCard :title="$t('components.macCard.externalLink')">
     <div class="text-sm space-x-2 space-y-2">
       <a
         v-for="(item, index) in configStore.external_link_card"

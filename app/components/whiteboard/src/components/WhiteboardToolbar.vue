@@ -50,21 +50,47 @@ const emit = defineEmits<{
   save: [];
 }>();
 
-const tools = [
-  { value: WHITEBOARD_TOOLS.select, icon: "lucide:mouse-pointer-2", title: "选择 (V)" },
-  { value: WHITEBOARD_TOOLS.pan, icon: "lucide:hand", title: "抓手平移 (H / 空格)" },
-  { value: WHITEBOARD_TOOLS.note, icon: "lucide:sticky-note", title: "便签 (N)" },
-  { value: WHITEBOARD_TOOLS.pen, icon: "lucide:pen-line", title: "画笔 (P)" },
-  { value: WHITEBOARD_TOOLS.eraser, icon: "lucide:eraser", title: "橡皮擦 (E)" },
-  { value: WHITEBOARD_TOOLS.connect, icon: "lucide:waypoints", title: "连线 (C)" }
-] as const;
+const { t } = useI18n();
+
+const tools = computed(() => [
+  {
+    value: WHITEBOARD_TOOLS.select,
+    icon: "lucide:mouse-pointer-2",
+    title: t("components.whiteboard.toolSelect")
+  },
+  {
+    value: WHITEBOARD_TOOLS.pan,
+    icon: "lucide:hand",
+    title: t("components.whiteboard.toolPan")
+  },
+  {
+    value: WHITEBOARD_TOOLS.note,
+    icon: "lucide:sticky-note",
+    title: t("components.whiteboard.toolNote")
+  },
+  {
+    value: WHITEBOARD_TOOLS.pen,
+    icon: "lucide:pen-line",
+    title: t("components.whiteboard.toolPen")
+  },
+  {
+    value: WHITEBOARD_TOOLS.eraser,
+    icon: "lucide:eraser",
+    title: t("components.whiteboard.toolEraser")
+  },
+  {
+    value: WHITEBOARD_TOOLS.connect,
+    icon: "lucide:waypoints",
+    title: t("components.whiteboard.toolConnect")
+  }
+]);
 
 const zoomLabel = computed(() => `${Math.round(props.zoom * 100)}%`);
 const contextualHint = computed(() => {
-  if (props.tool === WHITEBOARD_TOOLS.connect) return "依次点击两个便签以连线";
-  if (props.tool === WHITEBOARD_TOOLS.pan) return "拖拽以平移画布";
-  if (props.tool === WHITEBOARD_TOOLS.eraser) return "拖动以擦除画笔笔迹";
-  return "选中便签可拖拽、缩放或删除";
+  if (props.tool === WHITEBOARD_TOOLS.connect) return t("components.whiteboard.hintConnect");
+  if (props.tool === WHITEBOARD_TOOLS.pan) return t("components.whiteboard.hintPan");
+  if (props.tool === WHITEBOARD_TOOLS.eraser) return t("components.whiteboard.hintEraser");
+  return t("components.whiteboard.hintDefault");
 });
 
 const onPenWidthInput = (event: Event): void => {
@@ -78,10 +104,10 @@ const onPenWidthInput = (event: Event): void => {
 <template>
   <header class="whiteboard-toolbar">
     <div class="whiteboard-toolbar__brand">
-      <strong>未命名白板</strong>
+      <strong>{{ $t("components.whiteboard.untitled") }}</strong>
     </div>
 
-    <div class="whiteboard-toolbar__tools" aria-label="白板工具">
+    <div class="whiteboard-toolbar__tools" :aria-label="$t('components.whiteboard.toolsLabel')">
       <button
         v-for="item in tools"
         :key="item.value"
@@ -101,7 +127,9 @@ const onPenWidthInput = (event: Event): void => {
 
     <div class="whiteboard-toolbar__context">
       <template v-if="tool === WHITEBOARD_TOOLS.note">
-        <span class="whiteboard-toolbar__context-label">便签颜色</span>
+        <span class="whiteboard-toolbar__context-label">
+          {{ $t("components.whiteboard.noteColor") }}
+        </span>
         <button
           v-for="color in NOTE_COLORS"
           :key="color"
@@ -109,13 +137,13 @@ const onPenWidthInput = (event: Event): void => {
           :class="{ 'whiteboard-toolbar__swatch--selected': noteColor === color }"
           type="button"
           :style="{ backgroundColor: color }"
-          :aria-label="`选择便签颜色 ${color}`"
-          :title="`选择便签颜色 ${color}`"
+          :aria-label="$t('components.whiteboard.selectNoteColor', { color })"
+          :title="$t('components.whiteboard.selectNoteColor', { color })"
           @click="emit('update:noteColor', color)"
         ></button>
       </template>
       <template v-else-if="tool === WHITEBOARD_TOOLS.pen">
-        <span class="whiteboard-toolbar__context-label">画笔</span>
+        <span class="whiteboard-toolbar__context-label">{{ $t("components.whiteboard.pen") }}</span>
         <button
           v-for="color in PEN_COLORS"
           :key="color"
@@ -123,8 +151,8 @@ const onPenWidthInput = (event: Event): void => {
           :class="{ 'whiteboard-toolbar__swatch--selected': penColor === color }"
           type="button"
           :style="{ backgroundColor: color }"
-          :aria-label="`选择画笔颜色 ${color}`"
-          :title="`选择画笔颜色 ${color}`"
+          :aria-label="$t('components.whiteboard.selectPenColor', { color })"
+          :title="$t('components.whiteboard.selectPenColor', { color })"
           @click="emit('update:penColor', color)"
         ></button>
         <input
@@ -133,7 +161,7 @@ const onPenWidthInput = (event: Event): void => {
           min="1"
           max="20"
           :value="penWidth"
-          :aria-label="`画笔粗细 ${penWidth}`"
+          :aria-label="$t('components.whiteboard.penWidth', { width: penWidth })"
           @input="onPenWidthInput"
         />
       </template>
@@ -144,8 +172,8 @@ const onPenWidthInput = (event: Event): void => {
       <button
         class="whiteboard-toolbar__icon-button"
         type="button"
-        title="撤销 (Ctrl+Z)"
-        aria-label="撤销"
+        :title="$t('components.whiteboard.undoTitle')"
+        :aria-label="$t('components.whiteboard.undo')"
         :disabled="!canUndo"
         @click="emit('undo')"
       >
@@ -154,8 +182,8 @@ const onPenWidthInput = (event: Event): void => {
       <button
         class="whiteboard-toolbar__icon-button"
         type="button"
-        title="重做 (Ctrl+Shift+Z)"
-        aria-label="重做"
+        :title="$t('components.whiteboard.redoTitle')"
+        :aria-label="$t('components.whiteboard.redo')"
         :disabled="!canRedo"
         @click="emit('redo')"
       >
@@ -165,32 +193,32 @@ const onPenWidthInput = (event: Event): void => {
         <button
           class="whiteboard-toolbar__zoom-button"
           type="button"
-          title="缩小"
-          aria-label="缩小"
+          :title="$t('components.whiteboard.zoomOut')"
+          :aria-label="$t('components.whiteboard.zoomOut')"
           @click="emit('zoomOut')"
           ><UIcon name="lucide:zoom-out" class="size-4"
         /></button>
         <button
           class="whiteboard-toolbar__zoom-label"
           type="button"
-          title="重置为 100%"
-          aria-label="重置缩放"
+          :title="$t('components.whiteboard.zoomResetTitle')"
+          :aria-label="$t('components.whiteboard.zoomReset')"
           @click="emit('resetZoom')"
           >{{ zoomLabel }}</button
         >
         <button
           class="whiteboard-toolbar__zoom-button"
           type="button"
-          title="放大"
-          aria-label="放大"
+          :title="$t('components.whiteboard.zoomIn')"
+          :aria-label="$t('components.whiteboard.zoomIn')"
           @click="emit('zoomIn')"
           ><UIcon name="lucide:zoom-in" class="size-4"
         /></button>
         <button
           class="whiteboard-toolbar__zoom-button"
           type="button"
-          title="适应内容"
-          aria-label="适应内容"
+          :title="$t('components.whiteboard.fit')"
+          :aria-label="$t('components.whiteboard.fit')"
           @click="emit('fit')"
           ><UIcon name="lucide:scan" class="size-4"
         /></button>
@@ -198,32 +226,32 @@ const onPenWidthInput = (event: Event): void => {
       <button
         class="whiteboard-toolbar__ghost"
         type="button"
-        title="导入白板 JSON 文件"
-        aria-label="导入白板"
+        :title="$t('components.whiteboard.importTitle')"
+        :aria-label="$t('components.whiteboard.importLabel')"
         @click="emit('import')"
       >
         <UIcon name="lucide:upload" class="size-4" />
-        导入
+        {{ $t("components.whiteboard.import") }}
       </button>
       <button
         class="whiteboard-toolbar__ghost"
         type="button"
-        title="导出白板 JSON 文件"
-        aria-label="导出白板"
+        :title="$t('components.whiteboard.exportTitle')"
+        :aria-label="$t('components.whiteboard.exportLabel')"
         @click="emit('export')"
       >
         <UIcon name="lucide:download" class="size-4" />
-        导出
+        {{ $t("components.whiteboard.export") }}
       </button>
       <button
         class="whiteboard-toolbar__primary"
         type="button"
-        title="保存白板到服务器"
-        aria-label="保存白板"
+        :title="$t('components.whiteboard.saveTitle')"
+        :aria-label="$t('components.whiteboard.saveLabel')"
         @click="emit('save')"
       >
         <UIcon name="lucide:save" class="size-4" />
-        保存
+        {{ $t("components.whiteboard.save") }}
       </button>
     </div>
   </header>

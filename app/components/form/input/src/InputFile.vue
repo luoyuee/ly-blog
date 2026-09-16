@@ -4,6 +4,8 @@ import type { PropType } from "vue";
 import { useFileDialog } from "@vueuse/core";
 import { computed } from "vue";
 
+const { t } = useI18n();
+
 type InputFileLayout = "normal" | "reverse";
 
 type InputFileValue = File | null;
@@ -25,11 +27,11 @@ const props = defineProps({
   },
   placeholder: {
     type: String,
-    default: "请选择文件"
+    default: ""
   },
   buttonLabel: {
     type: String,
-    default: "选择文件"
+    default: ""
   },
   icon: {
     type: String,
@@ -80,7 +82,7 @@ const inputDisabled = computed(() => isSelectDisabled.value || Boolean(props.inp
 const mergedInputProps = computed<InputProps<string>>(() => ({
   ...props.inputProps,
   readonly: true,
-  placeholder: props.placeholder,
+  placeholder: props.placeholder || t("components.inputFile.placeholder"),
   icon: props.icon,
   highlight: hasFile.value,
   disabled: inputDisabled.value,
@@ -132,7 +134,7 @@ onChange((files) => {
 <template>
   <UFieldGroup>
     <UButton v-if="isReverse" v-bind="mergedButtonProps" @click="handleSelectFile">
-      {{ props.buttonLabel }}
+      {{ props.buttonLabel || $t("components.inputFile.select") }}
     </UButton>
 
     <UInput v-bind="mergedInputProps" :model-value="fileName" @click="handleInputClick">
@@ -154,7 +156,7 @@ onChange((files) => {
       v-bind="mergedButtonProps"
       @click="handleSelectFile"
     >
-      {{ props.buttonLabel }}
+      {{ props.buttonLabel || $t("components.inputFile.select") }}
     </UButton>
   </UFieldGroup>
 </template>

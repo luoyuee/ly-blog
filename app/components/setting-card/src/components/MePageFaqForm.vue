@@ -6,6 +6,8 @@ import { useSortable } from "@vueuse/integrations/useSortable";
 import { BasicModal } from "@/components/basic-modal";
 import { z } from "zod";
 
+const { t } = useI18n();
+
 const handleClass = "me-page-faq-form__handle";
 const tbodyClass = "me-page-faq-form__tbody";
 
@@ -54,8 +56,12 @@ const modalForm = reactive<IMePageConfigFaqItem>({
 });
 
 const modalSchema = z.object({
-  label: z.string({ message: "请输入问题" }).min(1, "请输入问题"),
-  content: z.string({ message: "请输入回答内容" }).min(1, "请输入回答内容")
+  label: z
+    .string({ message: t("components.settingCard.faqForm.validation.questionRequired") })
+    .min(1, t("components.settingCard.faqForm.validation.questionRequired")),
+  content: z
+    .string({ message: t("components.settingCard.faqForm.validation.answerRequired") })
+    .min(1, t("components.settingCard.faqForm.validation.answerRequired"))
 });
 
 const modalFormRef = useTemplateRef("modalFormRef");
@@ -136,12 +142,12 @@ const columns = computed<TableColumn<RowItem>[]>(() => {
     },
     {
       id: "label",
-      header: "问题",
+      header: t("components.settingCard.faqForm.questionLabel"),
       cell: ({ row }) => row.original.label
     },
     {
       id: "content",
-      header: "回答",
+      header: t("components.settingCard.faqForm.answerLabel"),
       cell: ({ row }) => {
         const text = row.original.content || "";
         return h("div", { class: "whitespace-nowrap overflow-hidden text-ellipsis" }, text);
@@ -149,7 +155,7 @@ const columns = computed<TableColumn<RowItem>[]>(() => {
     },
     {
       id: "actions",
-      header: "操作",
+      header: t("components.settingCard.common.actions"),
       meta: {
         class: {
           th: "text-right",
@@ -199,14 +205,14 @@ onBeforeUnmount(() => {
 <template>
   <UFormField
     label="FAQ"
-    description="对应个人页 FAQ Tab 的折叠面板内容"
+    :description="$t('components.settingCard.faqForm.description')"
     :ui="{
       description: 'text-xs',
       container: 'mt-2'
     }"
   >
     <template #hint>
-      <UButton size="xs" icon="lucide:plus" @click="openAddModal"> 添加 </UButton>
+      <UButton size="xs" icon="lucide:plus" @click="openAddModal">{{ $t("common.add") }}</UButton>
     </template>
     <div ref="rootRef" class="border border-muted rounded-md overflow-hidden">
       <UTable
@@ -223,7 +229,11 @@ onBeforeUnmount(() => {
 
     <BasicModal
       v-model:open="modalState.visible"
-      :title="modalState.editingIndex === null ? '添加 FAQ' : '编辑 FAQ'"
+      :title="
+        modalState.editingIndex === null
+          ? $t('components.settingCard.faqForm.addModalTitle')
+          : $t('components.settingCard.faqForm.editModalTitle')
+      "
       @confirm="confirmModal"
     >
       <UForm
@@ -233,11 +243,26 @@ onBeforeUnmount(() => {
         :validate-on-input-delay="100"
         @submit="submitModal"
       >
-        <UFormField name="label" label="问题" required>
-          <UInput v-model="modalForm.label" placeholder="例如：你在做什么？" />
+        <UFormField
+          name="label"
+          :label="$t('components.settingCard.faqForm.questionLabel')"
+          required
+        >
+          <UInput
+            v-model="modalForm.label"
+            :placeholder="$t('components.settingCard.faqForm.questionPlaceholder')"
+          />
         </UFormField>
-        <UFormField name="content" label="回答" required>
-          <UTextarea v-model="modalForm.content" :rows="5" placeholder="请输入回答内容" />
+        <UFormField
+          name="content"
+          :label="$t('components.settingCard.faqForm.answerLabel')"
+          required
+        >
+          <UTextarea
+            v-model="modalForm.content"
+            :rows="5"
+            :placeholder="$t('components.settingCard.faqForm.answerPlaceholder')"
+          />
         </UFormField>
       </UForm>
     </BasicModal>

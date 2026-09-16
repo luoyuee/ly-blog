@@ -8,6 +8,7 @@ import * as echarts from "echarts";
 import numeral from "numeral";
 
 const $notify = useNotification();
+const { t } = useI18n();
 
 const chartRef = ref<HTMLDivElement | null>(null);
 
@@ -105,7 +106,7 @@ const loadData = async () => {
     data.value = await getCommentDashboard();
   } catch (error) {
     $notify.error({
-      title: "加载评论数据失败",
+      title: t("components.dashboard.comment.loadError"),
       error
     });
   } finally {
@@ -130,7 +131,7 @@ const reload = async () => {
     }
   } catch (error) {
     $notify.error({
-      title: "刷新失败",
+      title: t("components.dashboard.common.refreshError"),
       error
     });
   }
@@ -142,7 +143,7 @@ onMounted(async () => {
     initChart();
   } catch (error) {
     $notify.error({
-      title: "初始化评论卡片失败",
+      title: t("components.dashboard.comment.initError"),
       error
     });
   }
@@ -154,11 +155,11 @@ onMounted(async () => {
     class="flex h-60 flex-col justify-between gap-2 bg-black/40 shadow-md rounded-md px-4 py-3"
   >
     <div class="flex h-6 items-center justify-between leading-6">
-      <span>评论统计</span>
+      <span>{{ $t("components.dashboard.comment.title") }}</span>
       <UIcon class="cursor-pointer" name="custom:redo" @click="reload" />
     </div>
     <div class="h-10 text-3xl">{{ numeral(data.total).format("0,0") }}</div>
     <div ref="chartRef" class="flex-1"></div>
-    <div class="text-sm">{{ `今日新增评论${data.today}条` }}</div>
+    <div class="text-sm">{{ $t("components.dashboard.comment.today", { count: data.today }) }}</div>
   </div>
 </template>

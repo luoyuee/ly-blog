@@ -1,74 +1,23 @@
-<template>
-  <UPopover
-    v-model:open="open"
-    :disabled="disabled"
-    :arrow="arrow"
-    :ui="{ content: 'p-3' }"
-    :content="{
-      side
-    }"
-  >
-    <slot> </slot>
-
-    <template #content>
-      <div class="popconfirm" :style="contentStyle">
-        <div class="popconfirm__body">
-          <div class="popconfirm__icon" :style="{ color: iconColor }">
-            <UIcon :name="icon" />
-          </div>
-          <div class="popconfirm__text">
-            <div class="popconfirm__title">{{ title }}</div>
-
-            <div v-if="description" class="popconfirm__desc">
-              {{ description }}
-            </div>
-          </div>
-        </div>
-        <div class="popconfirm__footer">
-          <UButton
-            v-if="showCancelBtn"
-            size="sm"
-            variant="soft"
-            color="neutral"
-            :disabled="loading"
-            v-bind="cancelBtnProps"
-            @click="handleCancel"
-          >
-            {{ cancelText }}
-          </UButton>
-          <UButton
-            size="sm"
-            loading-icon="lucide:loader-circle"
-            v-bind="confirmBtnProps"
-            :loading="loading"
-            @click="handleConfirm"
-          >
-            {{ confirmText }}
-          </UButton>
-        </div>
-      </div>
-    </template>
-  </UPopover>
-</template>
-
 <script setup lang="ts">
 import type { ButtonProps } from "@nuxt/ui";
 import type { PropType } from "vue";
 import { computed } from "vue";
+
+const { t } = useI18n();
 
 const open = defineModel<boolean>("open", { default: false });
 
 const props = defineProps({
   title: {
     type: String,
-    default: "确认此操作？"
+    default: ""
   },
   description: {
     type: String
   },
   confirmText: {
     type: String,
-    default: "确认"
+    default: ""
   },
   confirmBtnProps: {
     type: Object as () => ButtonProps,
@@ -76,7 +25,7 @@ const props = defineProps({
   },
   cancelText: {
     type: String,
-    default: "取消"
+    default: ""
   },
   cancelBtnProps: {
     type: Object as () => ButtonProps,
@@ -118,6 +67,11 @@ const props = defineProps({
 
 const emit = defineEmits(["confirm", "cancel"]);
 
+// 未显式传入时回退到 i18n 文案（defineProps 默认值不能引用本地 t）
+const resolvedTitle = computed(() => props.title || t("components.popconfirm.title"));
+const resolvedConfirmText = computed(() => props.confirmText || t("components.popconfirm.confirm"));
+const resolvedCancelText = computed(() => props.cancelText || t("components.popconfirm.cancel"));
+
 const contentStyle = computed(() => {
   if (typeof props.width === "number") {
     return { width: `${props.width}px` };
@@ -140,6 +94,59 @@ const handleCancel = () => {
   open.value = false;
 };
 </script>
+
+<template>
+  <UPopover
+    v-model:open="open"
+    :disabled="disabled"
+    :arrow="arrow"
+    :ui="{ content: 'p-3' }"
+    :content="{
+      side
+    }"
+  >
+    <slot> </slot>
+
+    <template #content>
+      <div class="popconfirm" :style="contentStyle">
+        <div class="popconfirm__body">
+          <div class="popconfirm__icon" :style="{ color: iconColor }">
+            <UIcon :name="icon" />
+          </div>
+          <div class="popconfirm__text">
+            <div class="popconfirm__title">{{ resolvedTitle }}</div>
+
+            <div v-if="description" class="popconfirm__desc">
+              {{ description }}
+            </div>
+          </div>
+        </div>
+        <div class="popconfirm__footer">
+          <UButton
+            v-if="showCancelBtn"
+            size="sm"
+            variant="soft"
+            color="neutral"
+            :disabled="loading"
+            v-bind="cancelBtnProps"
+            @click="handleCancel"
+          >
+            {{ resolvedCancelText }}
+          </UButton>
+          <UButton
+            size="sm"
+            loading-icon="lucide:loader-circle"
+            v-bind="confirmBtnProps"
+            :loading="loading"
+            @click="handleConfirm"
+          >
+            {{ resolvedConfirmText }}
+          </UButton>
+        </div>
+      </div>
+    </template>
+  </UPopover>
+</template>
 
 <style scoped lang="scss">
 .popconfirm {

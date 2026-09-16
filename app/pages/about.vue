@@ -4,6 +4,8 @@ import { BannerImage } from "@/components/banner-image";
 import { AuthorCard } from "@/components/user-card";
 import { PageFooter } from "@/components/page-footer";
 
+const { t } = useI18n();
+
 const dependencies = computed(() => {
   return Object.entries(__LY_BLOG_METADATA__?.dependencies || {}).map(([name, version]) => ({
     name,
@@ -18,20 +20,20 @@ const devDependencies = computed(() => {
   }));
 });
 
-const baseInfo = [
+const baseInfo = computed(() => [
   {
-    title: "版本号",
+    title: t("pages.about.versionLabel"),
     content: __LY_BLOG_METADATA__?.appVersion || "0.0.0"
   },
   {
-    title: "构建时间",
+    title: t("pages.about.buildTimeLabel"),
     content: __LY_BLOG_METADATA__?.buildTime || "Unknown"
   },
   {
-    title: "开源许可协议",
+    title: t("pages.about.licenseLabel"),
     content: __LY_BLOG_METADATA__?.license || "Unknown"
   }
-];
+]);
 
 const repoUrl = computed(() => {
   return __LY_BLOG_METADATA__?.repoUrl;
@@ -39,22 +41,21 @@ const repoUrl = computed(() => {
 </script>
 <template>
   <main>
-    <BannerImage title="关于本站" />
+    <BannerImage :title="$t('pages.about.bannerTitle')" />
     <div class="container mx-auto">
       <div class="content">
         <div class="base-card">
           <h2 class="base-card-title">
             <UIcon class="base-card-title-icon" name="lucide:paperclip" />
-            项目简介
+            {{ $t("pages.about.introTitle") }}
           </h2>
-          这是一个基于 Nuxt 4
-          构建的全栈博客系统，支持文章管理、笔记管理、留言板、图片资源管理以及“一言（Hitokoto）”等功能模块，采用现代前端技术与轻量后端方案，开箱即用、易于部署。
+          {{ $t("pages.about.introContent") }}
         </div>
 
         <div class="base-card">
           <h2 class="base-card-title">
             <UIcon class="base-card-title-icon" name="lucide:sliders-horizontal" />
-            基本信息
+            {{ $t("pages.about.basicInfoTitle") }}
           </h2>
           <div
             class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 divide-x divide-y divide-gray-200 border-l border-t border-gray-200"
@@ -71,7 +72,7 @@ const repoUrl = computed(() => {
             <div
               class="flex flex-col items-center p-2 last:border-b last:border-r last:border-gray-200"
             >
-              <span class="text-sm text-gray-700">仓库主页</span>
+              <span class="text-sm text-gray-700">{{ $t("pages.about.repoLabel") }}</span>
               <span class="text-xs text-gray-500">
                 <ULink class="break-all" target="_blank" :href="repoUrl" active>
                   {{ repoUrl }}
@@ -84,7 +85,7 @@ const repoUrl = computed(() => {
         <div class="base-card">
           <h2 class="base-card-title">
             <UIcon class="base-card-title-icon" name="lucide:cpu" />
-            生产环境依赖
+            {{ $t("pages.about.prodDepsTitle") }}
           </h2>
           <div
             class="grid grid-cols-2 md:grid-cols-3 divide-x divide-y divide-gray-200 border-l border-t border-gray-200"
@@ -103,7 +104,7 @@ const repoUrl = computed(() => {
         <div class="base-card">
           <h2 class="base-card-title">
             <UIcon class="base-card-title-icon" name="lucide:box" />
-            开发环境依赖
+            {{ $t("pages.about.devDepsTitle") }}
           </h2>
           <div
             class="grid grid-cols-2 md:grid-cols-3 divide-x divide-y divide-gray-200 border-l border-t border-gray-200"

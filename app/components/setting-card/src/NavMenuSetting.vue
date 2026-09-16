@@ -10,6 +10,8 @@ import { z } from "zod";
 import dayjs from "dayjs";
 import SettingCard from "./SettingCard.vue";
 
+const { t } = useI18n();
+
 const configStore = useConfigStore();
 
 type NavMenuFormData = {
@@ -82,7 +84,9 @@ const {
 
 const modalSchema = z.object({
   id: z.number().int(),
-  title: z.string({ message: "请输入菜单名称" }).min(1, "请输入菜单名称"),
+  title: z
+    .string({ message: t("components.settingCard.navMenu.validation.nameRequired") })
+    .min(1, t("components.settingCard.navMenu.validation.nameRequired")),
   icon: z.string().optional(),
   href: z.string().optional(),
   show: z.boolean()
@@ -217,14 +221,16 @@ const handleAddSub = (item: IClientConfigNavMenuItem) => {
 <template>
   <SettingCard
     id="nav-menu-setting"
-    title="导航菜单"
+    :title="$t('components.settingCard.navMenu.title')"
     :is-change="isDirty"
     :submitting="formState.submitting"
     @reset="handleReset"
     @save="handleSave"
   >
     <div>
-      <UButton icon="lucide:plus" @click="handleAddItem"> 添加导航菜单 </UButton>
+      <UButton icon="lucide:plus" @click="handleAddItem">
+        {{ $t("components.settingCard.navMenu.add") }}
+      </UButton>
     </div>
 
     <USeparator type="dashed" class="my-4" />
@@ -258,7 +264,11 @@ const handleAddSub = (item: IClientConfigNavMenuItem) => {
 
     <BasicModal
       v-model:open="state.modalVisible"
-      :title="state.isEdit ? '编辑菜单' : '添加菜单'"
+      :title="
+        state.isEdit
+          ? $t('components.settingCard.navMenu.editModalTitle')
+          : $t('components.settingCard.navMenu.addModalTitle')
+      "
       @confirm="handleModalConfirm"
     >
       <UForm
@@ -268,16 +278,22 @@ const handleAddSub = (item: IClientConfigNavMenuItem) => {
         :validate-on-input-delay="100"
         @submit="handleModalSubmit"
       >
-        <UFormField name="title" label="名称">
-          <UInput v-model="modalFormData.title" placeholder="请输入菜单名称" />
+        <UFormField name="title" :label="$t('components.settingCard.navMenu.nameLabel')">
+          <UInput
+            v-model="modalFormData.title"
+            :placeholder="$t('components.settingCard.navMenu.namePlaceholder')"
+          />
         </UFormField>
-        <UFormField name="icon" label="菜单图标">
-          <SelectIcon v-model="modalFormData.icon" placeholder="请选择菜单图标" />
+        <UFormField name="icon" :label="$t('components.settingCard.navMenu.iconLabel')">
+          <SelectIcon
+            v-model="modalFormData.icon"
+            :placeholder="$t('components.settingCard.navMenu.iconPlaceholder')"
+          />
         </UFormField>
         <UFormField
           name="href"
-          label="链接"
-          description="如果有子级，该值将被忽略"
+          :label="$t('components.settingCard.navMenu.linkLabel')"
+          :description="$t('components.settingCard.navMenu.linkDescription')"
           :ui="{
             container: 'mt-2',
             description: 'text-xs text-gray-400'
@@ -287,13 +303,13 @@ const handleAddSub = (item: IClientConfigNavMenuItem) => {
             v-model="modalFormData.href"
             icon="lucide:link"
             :disabled="state.isEdit"
-            placeholder="请输入链接"
+            :placeholder="$t('components.settingCard.navMenu.linkPlaceholder')"
           />
         </UFormField>
         <UFormField
           name="show"
-          label="是否显示"
-          description="该值会影响子级"
+          :label="$t('components.settingCard.navMenu.showLabel')"
+          :description="$t('components.settingCard.navMenu.showDescription')"
           :ui="{
             container: 'mt-2',
             description: 'text-xs text-gray-400'

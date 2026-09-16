@@ -12,6 +12,8 @@ import { h, resolveComponent } from "vue";
 import dayjs from "dayjs";
 import { openEditorNoteFile } from "@ly-editor/src/utils";
 
+const { t } = useI18n();
+
 const logger = useLogger();
 const $notify = useNotification();
 const $msgBox = useMessageBox();
@@ -19,14 +21,14 @@ const $msgBox = useMessageBox();
 const UButton = resolveComponent("UButton");
 const UDropdownMenu = resolveComponent("UDropdownMenu");
 
-const categoryOptions = ref<SelectItem[]>([{ label: "全部", value: -1 }]);
+const categoryOptions = ref<SelectItem[]>([{ label: t("common.all"), value: -1 }]);
 const categoryMap = ref<Record<number, ArticleCategoryOption>>({});
 
 const loadCategoryOptions = async () => {
   try {
     const res = await getArticleCategoryOptions();
     categoryOptions.value = [
-      { label: "全部", value: -1 },
+      { label: t("common.all"), value: -1 },
       ...res.map((item) => ({
         label: item.name,
         value: item.id
@@ -73,7 +75,7 @@ const columns: TableColumn<ArticleItem>[] = [
   },
   {
     accessorKey: "title",
-    header: "标题",
+    header: t("components.lyEditor.common.table.title"),
     cell: ({ row }) => {
       const title = (row.getValue("title") ?? "") as string;
       const highlightKeyword = unref(state.highlightKeyword);
@@ -93,12 +95,12 @@ const columns: TableColumn<ArticleItem>[] = [
   },
   {
     accessorKey: "author",
-    header: "作者",
+    header: t("components.lyEditor.common.table.author"),
     cell: ({ row }) => h("div", { class: "w-20" }, row.getValue("author"))
   },
   {
     accessorKey: "category_id",
-    header: "分类",
+    header: t("components.lyEditor.common.table.category"),
     minSize: 200,
     size: 200,
     maxSize: 200,
@@ -114,12 +116,12 @@ const columns: TableColumn<ArticleItem>[] = [
   },
   {
     accessorKey: "chars",
-    header: "字数",
+    header: t("components.lyEditor.modules.article.headers.wordCount"),
     cell: ({ row }) => h("div", { class: "w-20" }, row.getValue("chars"))
   },
   {
     accessorKey: "updated_at",
-    header: "更新日期",
+    header: t("components.lyEditor.common.table.updatedAt"),
     cell: ({ row }) =>
       h(
         "div",
@@ -141,19 +143,19 @@ const columns: TableColumn<ArticleItem>[] = [
             },
             items: [
               {
-                label: "打开关联笔记",
+                label: t("components.lyEditor.modules.article.menu.openNote"),
                 icon: "lucide:square-pen",
                 onSelect: () => {
                   openEditorNoteFile(row.original.note_id);
                 }
               },
               {
-                label: "文章详情",
+                label: t("components.lyEditor.modules.article.menu.details"),
                 icon: "lucide:square-pen",
                 onSelect: () => {}
               },
               {
-                label: "删除文章",
+                label: t("components.lyEditor.modules.article.menu.delete"),
                 icon: "lucide:trash-2",
                 color: "error",
                 onSelect: () => {
@@ -213,9 +215,9 @@ const handleSearch = () => {
 
 const handleDelete = (e: ArticleItem) => {
   $msgBox.error({
-    title: "确认删除?",
-    message: `即将删除「${e.title}」，是否继续？`,
-    confirmButtonText: "删除",
+    title: t("components.lyEditor.common.deleteConfirm.title"),
+    message: t("components.lyEditor.common.deleteConfirm.simpleMessage", { name: e.title }),
+    confirmButtonText: t("components.lyEditor.common.deleteConfirm.button"),
     confirmButtonProps: {
       color: "error"
     },
@@ -223,12 +225,12 @@ const handleDelete = (e: ArticleItem) => {
       try {
         await deleteArticle(e.id);
         $notify.success({
-          title: "删除成功"
+          title: t("message.delete.success")
         });
         loadData();
       } catch (error) {
         $notify.error({
-          title: "操作失败",
+          title: t("message.operate.error"),
           error
         });
       }
@@ -252,10 +254,10 @@ const handleDelete = (e: ArticleItem) => {
         <UInput
           v-model.trim="state.keyword"
           class="w-48"
-          placeholder="请输入关键词"
+          :placeholder="$t('components.lyEditor.common.searchPlaceholder')"
           @keydown.enter="handleSearch"
         />
-        <UButton icon="lucide:search" @click="handleSearch">搜索</UButton>
+        <UButton icon="lucide:search" @click="handleSearch">{{ $t("common.search") }}</UButton>
       </UFieldGroup>
     </template>
   </TabPanelTable>

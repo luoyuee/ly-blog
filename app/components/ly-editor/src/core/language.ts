@@ -4,7 +4,10 @@ import { language as mdc } from "@nuxtlabs/monarch-mdc";
 /**
  * 注册编辑器语言与补全。
  */
-export const registerEditorLanguage = (monaco: typeof MonacoEditor) => {
+export const registerEditorLanguage = (
+  monaco: typeof MonacoEditor,
+  t: ReturnType<typeof useI18n>["t"]
+) => {
   monaco.languages.register({ id: "mdc" });
   monaco.languages.setMonarchTokensProvider("mdc", mdc);
   monaco.languages.setMonarchTokensProvider("markdown", mdc);
@@ -80,8 +83,8 @@ export const registerEditorLanguage = (monaco: typeof MonacoEditor) => {
             label: "card",
             kind: monaco.languages.CompletionItemKind.Function,
             insertText: "::card::\n\n::card::",
-            detail: "Card 组件",
-            documentation: "在文档中使用Card组件",
+            detail: t("components.lyEditor.core.cardCompletionDetail"),
+            documentation: t("components.lyEditor.core.cardCompletionDocumentation"),
             insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
             range: monaco.Range.fromPositions(start)
           }

@@ -4,6 +4,8 @@ import { computed } from "vue";
 
 type EmptySize = string | number;
 
+const { t } = useI18n();
+
 const props = defineProps({
   icon: {
     type: String,
@@ -23,13 +25,19 @@ const props = defineProps({
   },
   imageAlt: {
     type: String,
-    default: "空状态"
+    default: ""
   },
   title: {
     type: String,
-    default: "暂无数据"
+    default: ""
   }
 });
+
+/**
+ * 文案兜底：未传入 prop 时回退到 i18n 文案，避免 defineProps 默认值直接引用本地变量 t()（会触发 Volar 报错）。
+ */
+const resolvedImageAlt = computed(() => props.imageAlt || t("components.empty.title"));
+const resolvedTitle = computed(() => props.title || t("components.empty.description"));
 
 const formatSize = (size: EmptySize) => {
   return typeof size === "number" ? `${size}px` : size;
@@ -52,7 +60,7 @@ const imageStyle = computed<CSSProperties>(() => ({
       <img
         v-if="props.image"
         :src="props.image"
-        :alt="props.imageAlt"
+        :alt="resolvedImageAlt"
         :style="imageStyle"
         class="object-contain"
       />
@@ -61,7 +69,7 @@ const imageStyle = computed<CSSProperties>(() => ({
 
     <div class="flex flex-col items-center gap-2">
       <slot name="title">
-        <p class="text-sm leading-5 text-muted">{{ props.title }}</p>
+        <p class="text-sm leading-5 text-muted">{{ resolvedTitle }}</p>
       </slot>
 
       <slot></slot>

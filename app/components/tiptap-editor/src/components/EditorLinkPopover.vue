@@ -2,6 +2,8 @@
 import type { Editor } from "@tiptap/vue-3";
 import { computed, ref, watch } from "vue";
 
+const { t } = useI18n();
+
 const props = defineProps<{
   editor: Editor;
   autoOpen?: boolean;
@@ -115,7 +117,7 @@ function handleKeyDown(event: KeyboardEvent) {
         name="url"
         type="url"
         variant="none"
-        placeholder="请输入链接..."
+        :placeholder="t('components.tiptapEditor.linkPlaceholder')"
         @keydown="handleKeyDown"
       >
         <div class="flex items-center mr-0.5">

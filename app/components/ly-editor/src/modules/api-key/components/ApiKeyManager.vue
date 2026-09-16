@@ -5,6 +5,7 @@ import { ApiKeyScopeItems } from "#shared/constants/api-key";
 import { useLyEditorTabs } from "@/composables/useLyEditorTabs";
 import { SidebarPanel } from "@ly-editor/src/components";
 
+const { t } = useI18n();
 const { openTabPanel } = useLyEditorTabs();
 
 /**
@@ -31,22 +32,22 @@ const dangerLevelIconMap: Record<ApiKeyDangerLevel, { name: string; class: strin
 const handleOpenApiKeyPanel = () => {
   openTabPanel({
     key: LyEditorTabPanelEnum.ApiKeyPanel,
-    label: "API 密钥管理",
+    label: t("components.lyEditor.modules.apiKey.title"),
     type: LyEditorTabPanelEnum.ApiKeyPanel
   });
 };
 
-const actions = [
+const actions = computed(() => [
   {
-    label: "打开列表",
+    label: t("components.lyEditor.common.openList"),
     icon: "lucide:panel-left-open",
     onClick: handleOpenApiKeyPanel
   }
-];
+]);
 </script>
 
 <template>
-  <SidebarPanel title="API 密钥管理" :actions="actions">
+  <SidebarPanel :title="t('components.lyEditor.modules.apiKey.title')" :actions="actions">
     <div class="flex-1 overflow-hidden">
       <Scrollbar class="h-full">
         <ul class="flex flex-col gap-2 p-2">

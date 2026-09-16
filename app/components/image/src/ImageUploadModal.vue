@@ -13,6 +13,7 @@ import "viewerjs/dist/viewer.css";
 
 const logger = useLogger();
 const $msgBox = useMessageBox();
+const { t } = useI18n();
 
 const props = defineProps({
   folder: {
@@ -64,19 +65,29 @@ const drop = (e: DragEvent): void => {
   }
 };
 
-const statusMap: Record<
-  string,
-  {
-    label?: string;
-    color: "primary" | "success" | "error" | "neutral";
-    progress?: "success" | "exception" | "warning";
+const statusMap = computed<
+  Record<
+    string,
+    {
+      label?: string;
+      color: "primary" | "success" | "error" | "neutral";
+      progress?: "success" | "exception" | "warning";
+    }
+  >
+>(() => ({
+  waiting: { label: t("components.image.uploadModal.statusWaiting"), color: "neutral" },
+  uploading: { label: t("components.image.uploadModal.statusUploading"), color: "primary" },
+  succeed: {
+    label: t("components.image.uploadModal.statusSucceed"),
+    color: "success",
+    progress: "success"
+  },
+  failed: {
+    label: t("components.image.uploadModal.statusFailed"),
+    color: "error",
+    progress: "exception"
   }
-> = {
-  waiting: { label: "等待上传", color: "neutral" },
-  uploading: { label: "上传中", color: "primary" },
-  succeed: { label: "上传成功", color: "success", progress: "success" },
-  failed: { label: "上传失败", color: "error", progress: "exception" }
-};
+}));
 
 const uploading = ref(false);
 const handleConfirm = async (): Promise<void> => {
@@ -149,8 +160,8 @@ const handleBeforeClose = (done: () => void) => {
 
   if (waitingItem) {
     $msgBox.warning({
-      title: "确认关闭？",
-      message: "还有未上传的图片，关闭后将清空列表",
+      title: t("components.image.uploadModal.confirmCloseTitle"),
+      message: t("components.image.uploadModal.confirmCloseMessage"),
       onConfirm() {
         done();
       }
@@ -178,7 +189,7 @@ defineExpose({
   <BasicModal
     v-model:open="open"
     content-class="max-w-[640px]"
-    :title="`上传图片至「${props.folder.name}」`"
+    :title="$t('components.image.uploadModal.title', { folder: props.folder.name })"
     :before-close="handleBeforeClose"
     :modal="false"
     :dismissible="dismissible"
@@ -187,12 +198,14 @@ defineExpose({
     <div class="flex items-center justify-between mb-4">
       <SelectLocalFile multiple @change="handleFileChange">
         <template #default="{ triggerSelect }">
-          <UButton icon="lucide:folder" @click="triggerSelect"> 选择图片 </UButton>
+          <UButton icon="lucide:folder" @click="triggerSelect">
+            {{ $t("components.image.uploadModal.select") }}
+          </UButton>
         </template>
       </SelectLocalFile>
 
       <UButton icon="lucide:trash-2" color="error" variant="outline" @click="clearFileList">
-        清空列表
+        {{ $t("components.image.uploadModal.clear") }}
       </UButton>
     </div>
 
@@ -261,8 +274,10 @@ defineExpose({
     </div>
 
     <template #footer>
-      <UButton :disabled="uploading" @click="handleCancel"> 取消 </UButton>
-      <UButton color="primary" :loading="uploading" @click="handleConfirm"> 上传 </UButton>
+      <UButton :disabled="uploading" @click="handleCancel"> {{ $t("common.cancel") }} </UButton>
+      <UButton color="primary" :loading="uploading" @click="handleConfirm">
+        {{ $t("components.image.uploadModal.upload") }}
+      </UButton>
     </template>
   </BasicModal>
 </template>

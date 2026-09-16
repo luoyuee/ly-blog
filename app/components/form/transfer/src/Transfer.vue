@@ -3,6 +3,8 @@ import type { PropType } from "vue";
 import { computed, ref, watch, nextTick, useTemplateRef, onUnmounted } from "vue";
 import { useSortable } from "@vueuse/integrations/useSortable";
 
+const { t } = useI18n();
+
 export interface TransferOption {
   label: string;
   value: string | number;
@@ -25,8 +27,14 @@ const props = defineProps({
   valueKey: { type: String, default: "value" },
   titles: {
     type: Array as unknown as PropType<[string, string]>,
-    default: () => ["列表 1", "列表 2"]
+    default: () => []
   }
+});
+
+// 未传入标题时回退到 i18n 文案（defineProps 默认值不能引用本地 t）
+const resolvedTitles = computed<[string, string]>(() => {
+  if (props.titles.length >= 2) return props.titles;
+  return [t("components.transfer.list1"), t("components.transfer.list2")];
 });
 
 // ===================== Data =====================
@@ -221,7 +229,7 @@ onUnmounted(() => {
     <!-- 左侧列表 -->
     <div class="flex-1 flex flex-col border border-default rounded overflow-hidden">
       <div class="px-3 py-2 bg-muted border-b border-default flex items-center justify-between">
-        <UCheckbox v-model="leftCheckAll" :label="titles[0]" />
+        <UCheckbox v-model="leftCheckAll" :label="resolvedTitles[0]" />
         <span class="text-xs text-muted">{{ leftChecked.size }}/{{ leftData.length }}</span>
       </div>
 
@@ -240,7 +248,7 @@ onUnmounted(() => {
           />
         </div>
         <div v-if="leftData.length === 0" class="text-center text-dimmed text-sm py-8">
-          暂无数据
+          {{ $t("common.noData") }}
         </div>
       </div>
     </div>
@@ -268,7 +276,7 @@ onUnmounted(() => {
     <!-- 右侧列表 -->
     <div class="flex-1 flex flex-col border border-default rounded overflow-hidden">
       <div class="px-3 py-2 bg-muted border-b border-default flex items-center justify-between">
-        <UCheckbox v-model="rightCheckAll" :label="titles[1]" />
+        <UCheckbox v-model="rightCheckAll" :label="resolvedTitles[1]" />
         <span class="text-xs text-muted">{{ rightChecked.size }}/{{ rightData.length }}</span>
       </div>
 
@@ -287,7 +295,7 @@ onUnmounted(() => {
           />
         </div>
         <div v-if="rightData.length === 0" class="text-center text-dimmed text-sm py-8">
-          暂无数据
+          {{ $t("common.noData") }}
         </div>
       </div>
     </div>

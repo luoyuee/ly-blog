@@ -29,10 +29,10 @@ const props = defineProps({
     type: Array as PropType<string[]>,
     required: true
   },
-  /** 空列提示文案 */
+  /** 空列提示文案（留空回退到 i18n） */
   emptyText: {
     type: String,
-    default: "拖到这里"
+    default: ""
   },
   /** 卡片透传数据，用于插槽作用域渲染 */
   items: {
@@ -40,6 +40,11 @@ const props = defineProps({
     default: () => ({})
   }
 });
+
+const { t } = useI18n();
+
+/** 空列文案：未传入时回退到 i18n */
+const resolvedEmptyText = computed(() => props.emptyText || t("components.kanban.empty"));
 
 defineSlots<{
   /** 列头插槽，作用域暴露 id/index */
@@ -81,7 +86,7 @@ const { isDragging } = useSortable({
           <slot name="card" v-bind="cardProps"></slot>
         </template>
       </KanbanCard>
-      <p v-if="rows.length === 0" class="kanban-column__empty">{{ emptyText }}</p>
+      <p v-if="rows.length === 0" class="kanban-column__empty">{{ resolvedEmptyText }}</p>
     </div>
   </section>
 </template>

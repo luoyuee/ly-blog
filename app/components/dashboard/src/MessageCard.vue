@@ -8,6 +8,7 @@ import numeral from "numeral";
 import { useNotification } from "@/composables/useNotification";
 
 const $notify = useNotification();
+const { t } = useI18n();
 
 const chartRef = ref<HTMLDivElement | null>(null);
 
@@ -105,7 +106,7 @@ const loadData = async () => {
     data.value = await getMessageDashboard();
   } catch (error) {
     $notify.error({
-      title: "加载留言数据失败",
+      title: t("components.dashboard.message.loadError"),
       error
     });
   } finally {
@@ -130,7 +131,7 @@ const reload = async () => {
     }
   } catch (error) {
     $notify.error({
-      title: "刷新失败",
+      title: t("components.dashboard.common.refreshError"),
       error
     });
   }
@@ -142,7 +143,7 @@ onMounted(async () => {
     initChart();
   } catch (error) {
     $notify.error({
-      title: "初始化留言卡片失败",
+      title: t("components.dashboard.message.initError"),
       error
     });
   }
@@ -154,11 +155,11 @@ onMounted(async () => {
     class="flex h-60 flex-col justify-between gap-2 bg-black/40 shadow-md rounded-md px-4 py-3"
   >
     <div class="flex h-6 items-center justify-between leading-6">
-      <span>留言统计</span>
+      <span>{{ $t("components.dashboard.message.title") }}</span>
       <UIcon class="cursor-pointer" name="custom:redo" @click="reload" />
     </div>
     <div class="h-10 text-3xl">{{ numeral(data.total).format("0,0") }}</div>
     <div ref="chartRef" class="flex-1"></div>
-    <div class="text-sm">{{ `今日新增留言${data.today}条` }}</div>
+    <div class="text-sm">{{ $t("components.dashboard.message.today", { count: data.today }) }}</div>
   </div>
 </template>

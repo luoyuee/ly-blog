@@ -9,6 +9,7 @@ import type {
   PickerSelectionState
 } from "./types";
 import { computed, nextTick, ref, watch } from "vue";
+import { useI18n } from "vue-i18n";
 import {
   getPickerColumnItems,
   getPickerDisplayText,
@@ -20,6 +21,8 @@ import {
   resolvePickerSelection
 } from "./utils";
 import PickerPanel from "./PickerPanel.vue";
+
+const { t } = useI18n();
 
 const modelValue = defineModel<PickerPrimitive[]>({ default: () => [] });
 
@@ -43,11 +46,11 @@ const props = defineProps({
   },
   confirmText: {
     type: String,
-    default: "确定"
+    default: ""
   },
   cancelText: {
     type: String,
-    default: "取消"
+    default: ""
   },
   itemHeight: {
     type: Number,
@@ -71,7 +74,7 @@ const props = defineProps({
   },
   placeholder: {
     type: String,
-    default: "请选择"
+    default: ""
   },
   separator: {
     type: String,
@@ -141,7 +144,7 @@ const displayText = computed(() => {
   return getPickerDisplayText(
     displayState.value.columns,
     displayState.value.selection,
-    props.placeholder,
+    props.placeholder || t("components.picker.placeholder"),
     props.separator
   );
 });
@@ -219,7 +222,7 @@ const handleClear = () => {
       :display-text="displayText"
       :clearable="props.clearable"
       :disabled="props.disabled"
-      :placeholder="props.placeholder"
+      :placeholder="props.placeholder || $t('components.picker.placeholder')"
       :clear="handleClear"
     >
       <UButton color="neutral" variant="outline" class="w-full" :disabled="props.disabled">
@@ -264,10 +267,15 @@ const handleClear = () => {
             color="neutral"
             variant="outline"
             size="xs"
-            :label="props.cancelText"
+            :label="props.cancelText || $t('common.cancel')"
             @click="handleCancel"
           />
-          <UButton color="primary" size="xs" :label="props.confirmText" @click="handleConfirm" />
+          <UButton
+            color="primary"
+            size="xs"
+            :label="props.confirmText || $t('common.ok')"
+            @click="handleConfirm"
+          />
         </div>
       </div>
     </template>

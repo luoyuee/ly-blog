@@ -3,20 +3,15 @@ import type { PresetColorOption, PresetColorShape } from "./types";
 import type { PropType } from "vue";
 import chroma from "chroma-js";
 
+const { t } = useI18n();
+
 const modelValue = defineModel<string | undefined>({});
 
 const props = defineProps({
   /** 预设颜色列表，传入后覆盖默认颜色 */
   options: {
     type: Array as PropType<PresetColorOption[]>,
-    default: (): PresetColorOption[] => [
-      { label: "蓝色", value: "#3b82f6" },
-      { label: "红色", value: "#ef4444" },
-      { label: "绿色", value: "#22c55e" },
-      { label: "橙色", value: "#f97316" },
-      { label: "紫色", value: "#a855f7" },
-      { label: "青色", value: "#06b6d4" }
-    ]
+    default: () => []
   },
   /** 是否禁用 */
   disabled: {
@@ -29,6 +24,21 @@ const props = defineProps({
     default: "circle"
   }
 });
+
+/** 默认预设颜色（i18n 标签），未传入 options 时使用 */
+const defaultOptions = computed<PresetColorOption[]>(() => [
+  { label: t("components.colorPicker.presets.blue"), value: "#3b82f6" },
+  { label: t("components.colorPicker.presets.red"), value: "#ef4444" },
+  { label: t("components.colorPicker.presets.green"), value: "#22c55e" },
+  { label: t("components.colorPicker.presets.orange"), value: "#f97316" },
+  { label: t("components.colorPicker.presets.purple"), value: "#a855f7" },
+  { label: t("components.colorPicker.presets.cyan"), value: "#06b6d4" }
+]);
+
+/** 实际渲染的预设颜色列表 */
+const resolvedOptions = computed(() =>
+  props.options.length ? props.options : defaultOptions.value
+);
 
 /** 生成颜色提示文本 */
 const getTooltipText = (option: PresetColorOption): string => {
@@ -50,7 +60,7 @@ const iconClass = (color: string): string => {
 
 <template>
   <div class="flex flex-wrap items-center gap-2">
-    <UTooltip v-for="option in props.options" :key="option.value" :text="getTooltipText(option)">
+    <UTooltip v-for="option in resolvedOptions" :key="option.value" :text="getTooltipText(option)">
       <button
         type="button"
         class="size-6 flex items-center justify-center transition-transform hover:scale-110 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:scale-100"

@@ -4,102 +4,104 @@ import { LyEditorActivityMenuEnum, LyEditorTabPanelEnum } from "#shared/enums";
 import { useLyEditorTabs } from "@/composables/useLyEditorTabs";
 import { useLyEditorStore } from "@/stores";
 
+const { t } = useI18n();
+
 const { openTabPanel } = useLyEditorTabs();
 
 const lyEditorStore = useLyEditorStore();
 
-const activityMenu = ref<ActivityMenuItem[]>([
+const activityMenu = computed<ActivityMenuItem[]>(() => [
   {
     key: LyEditorActivityMenuEnum.NoteManager,
-    label: "笔记管理",
+    label: t("components.lyEditor.shell.activityBar.noteManager"),
     icon: "lucide:files"
   },
   {
     key: LyEditorActivityMenuEnum.ArticleManager,
-    label: "文章管理",
+    label: t("components.lyEditor.shell.activityBar.articleManager"),
     icon: "custom:send"
   },
   {
     key: LyEditorActivityMenuEnum.SearchPanel,
-    label: "搜索",
+    label: t("components.lyEditor.shell.activityBar.search"),
     icon: "lucide:search"
   },
   {
     key: LyEditorActivityMenuEnum.ImageManager,
-    label: "图片管理器",
+    label: t("components.lyEditor.shell.activityBar.imageManager"),
     icon: "custom:pic"
   },
   {
     key: LyEditorActivityMenuEnum.AttachmentManager,
-    label: "附件管理器",
+    label: t("components.lyEditor.shell.activityBar.attachmentManager"),
     icon: "lucide:folder-open"
   },
   {
     key: LyEditorActivityMenuEnum.HitokotoManager,
-    label: "一言管理",
+    label: t("components.lyEditor.shell.activityBar.hitokotoManager"),
     icon: "custom:hitokoto"
   },
   {
     key: LyEditorActivityMenuEnum.NavigationManager,
-    label: "导航网站",
+    label: t("components.lyEditor.shell.activityBar.navigationManager"),
     icon: "lucide:link",
     panel: LyEditorTabPanelEnum.NavigationWebsitePanel
   },
   {
     key: LyEditorActivityMenuEnum.WorkManager,
-    label: "项目管理",
+    label: t("components.lyEditor.shell.activityBar.workManager"),
     icon: "lucide:briefcase"
   },
   {
     key: LyEditorActivityMenuEnum.ApiKeyManager,
-    label: "API 密钥管理",
+    label: t("components.lyEditor.shell.activityBar.apiKeyManager"),
     icon: "lucide:key",
     panel: LyEditorTabPanelEnum.ApiKeyPanel
   },
   {
     key: LyEditorActivityMenuEnum.WhiteboardManager,
-    label: "白板管理",
+    label: t("components.lyEditor.shell.activityBar.whiteboardManager"),
     icon: "lucide:pencil-sparkles"
   },
   {
     key: LyEditorActivityMenuEnum.KanbanManager,
-    label: "看板管理",
+    label: t("components.lyEditor.shell.activityBar.kanbanManager"),
     icon: "lucide:square-kanban"
   },
   {
     key: LyEditorActivityMenuEnum.FlowchartManager,
-    label: "流程图管理",
+    label: t("components.lyEditor.shell.activityBar.flowchartManager"),
     icon: "lucide:workflow"
   },
   {
     key: LyEditorActivityMenuEnum.MindmapManager,
-    label: "思维导图管理",
+    label: t("components.lyEditor.shell.activityBar.mindmapManager"),
     icon: "lucide:network"
   },
   {
     key: LyEditorActivityMenuEnum.CalendarManager,
-    label: "日历管理",
+    label: t("components.lyEditor.shell.activityBar.calendarManager"),
     icon: "lucide:calendar",
     panel: LyEditorTabPanelEnum.CalendarPanel
   }
 ]);
 
-const actionMenu = ref<ActivityMenuItem[]>([
+const actionMenu = computed<ActivityMenuItem[]>(() => [
   {
     key: LyEditorActivityMenuEnum.DashboardPanel,
-    label: "仪表盘",
+    label: t("components.lyEditor.shell.activityBar.dashboard"),
     icon: "lucide:chart-column",
     panel: LyEditorTabPanelEnum.DashboardPanel
   },
   {
     key: LyEditorActivityMenuEnum.CronJobPanel,
-    label: "定时任务",
+    label: t("components.lyEditor.shell.activityBar.cronJob"),
     icon: "lucide:timer",
     panel: LyEditorTabPanelEnum.CronJobPanel
   },
   {
     key: LyEditorActivityMenuEnum.SettingPanel,
-    label: "设置",
+    label: t("components.lyEditor.shell.activityBar.setting"),
     icon: "lucide:settings",
     panel: LyEditorTabPanelEnum.SettingPanel
   }

@@ -9,6 +9,7 @@ import ArticleReward from "./ArticleReward.vue";
 const logger = useLogger();
 const configStore = useConfigStore();
 const localStorage = useLocalStorage("article");
+const { t } = useI18n();
 
 const likesCount = defineModel<number>({ default: 0 });
 
@@ -55,7 +56,7 @@ const handleLike = async () => {
     localStorage.set("like", likeList);
   } catch (error) {
     const $message = useMessage();
-    $message.error("点赞失败");
+    $message.error(t("components.article.like.error"));
     logger.error(error);
   }
 };
@@ -70,7 +71,7 @@ const handleLike = async () => {
       >
         <UIcon :name="isLiked ? 'custom:upvote-fill' : 'custom:upvote'" :size="24" />
       </div>
-      <span class="article-actions__label">{{ likesCount }} 赞</span>
+      <span class="article-actions__label">{{ likesCount }} {{ t("components.article.like.count") }}</span>
     </div>
 
     <UPopover v-if="showReward">
@@ -78,7 +79,7 @@ const handleLike = async () => {
         <div class="article-actions__button">
           <UIcon name="custom:reward" :size="28" />
         </div>
-        <span class="article-actions__label">打赏</span>
+        <span class="article-actions__label">{{ t("components.article.like.reward") }}</span>
       </div>
 
       <template #content>

@@ -26,14 +26,14 @@ const { open: openHitokotoForm } = useLyEditorModal("hitokoto-form");
 const UButton = resolveComponent("UButton");
 const UDropdownMenu = resolveComponent("UDropdownMenu");
 
-const typeOptions = ref<SelectItem[]>([{ label: "全部", value: -1 }]);
+const typeOptions = ref<SelectItem[]>([{ label: t("common.all"), value: -1 }]);
 const typeMap = ref<Record<number, HitokotoTypeItem>>({});
 
 const loadTypeOptions = async () => {
   try {
     const res = await getHitokotoTypeOptions();
     typeOptions.value = [
-      { label: "全部", value: -1 },
+      { label: t("common.all"), value: -1 },
       ...res.map((item) => ({
         label: item.name,
         value: item.id
@@ -69,7 +69,7 @@ const state = reactive<{
   loading: false
 });
 
-const columns: TableColumn<HitokotoItem>[] = [
+const columns = computed<TableColumn<HitokotoItem>[]>(() => [
   {
     accessorKey: "id",
     header: "#",
@@ -80,7 +80,7 @@ const columns: TableColumn<HitokotoItem>[] = [
   },
   {
     accessorKey: "content",
-    header: "内容",
+    header: t("components.lyEditor.common.table.content"),
     cell: ({ row }) => {
       const content = (row.getValue("content") ?? "") as string;
       const highlightKeyword = unref(state.highlightKeyword);
@@ -99,21 +99,21 @@ const columns: TableColumn<HitokotoItem>[] = [
   },
   {
     accessorKey: "source",
-    header: "来源",
+    header: t("components.lyEditor.modules.hitokoto.headers.source"),
     meta: {
       class: { td: "min-w-24" }
     }
   },
   {
     accessorKey: "author",
-    header: "作者",
+    header: t("components.lyEditor.common.table.author"),
     meta: {
       class: { td: "min-w-24" }
     }
   },
   {
     accessorKey: "type",
-    header: "类型",
+    header: t("components.lyEditor.common.table.type"),
     meta: {
       class: { td: "min-w-24" }
     },
@@ -129,14 +129,14 @@ const columns: TableColumn<HitokotoItem>[] = [
   },
   {
     accessorKey: "length",
-    header: "长度",
+    header: t("components.lyEditor.modules.hitokoto.headers.length"),
     meta: {
       class: { td: "min-w-24" }
     }
   },
   {
     accessorKey: "updated_at",
-    header: "更新日期",
+    header: t("components.lyEditor.common.table.updatedAt"),
     meta: {
       class: { td: "w-46" }
     },
@@ -160,14 +160,14 @@ const columns: TableColumn<HitokotoItem>[] = [
           },
           items: [
             {
-              label: "编辑语句",
+              label: t("components.lyEditor.modules.hitokoto.menu.edit"),
               icon: "lucide:edit",
               onSelect: () => {
                 handleOpenHitokotoFormModal("update", row.original);
               }
             },
             {
-              label: "删除语句",
+              label: t("components.lyEditor.modules.hitokoto.menu.delete"),
               icon: "lucide:trash-2",
               color: "error",
               onSelect: () => {
@@ -184,7 +184,7 @@ const columns: TableColumn<HitokotoItem>[] = [
           })
       )
   }
-];
+]);
 
 const loadData = async () => {
   try {
@@ -238,11 +238,11 @@ const handleExportData = async () => {
     });
 
     $notify.success({
-      title: "导出成功"
+      title: t("message.export.success")
     });
   } catch (error) {
     $notify.error({
-      title: "导出失败",
+      title: t("message.export.error"),
       error
     });
   } finally {
@@ -265,20 +265,20 @@ const handleSearch = () => {
 
 const handleDelete = (e: HitokotoItem) => {
   $msgBox.error({
-    title: "确认删除?",
-    message: `即将删除「${e.content}」，删除后将无法恢复，是否继续？`,
-    confirmButtonText: "删除",
+    title: t("components.lyEditor.common.deleteConfirm.title"),
+    message: t("components.lyEditor.common.deleteConfirm.message", { name: e.content }),
+    confirmButtonText: t("components.lyEditor.common.deleteConfirm.button"),
     confirmButtonProps: { color: "error" },
     onConfirm: async () => {
       try {
         await deleteHitokoto(e.id);
         $notify.success({
-          title: "删除成功"
+          title: t("message.delete.success")
         });
         loadData();
       } catch (error) {
         $notify.error({
-          title: "操作失败",
+          title: t("message.operate.error"),
           error
         });
       }
@@ -299,11 +299,13 @@ const handleDelete = (e: HitokotoItem) => {
     <template #header-left>
       <div class="flex items-center gap-4">
         <UButton icon="lucide:plus" @click="() => handleOpenHitokotoFormModal('create')">
-          新增
+          {{ t("components.lyEditor.modules.hitokoto.add") }}
         </UButton>
-        <UButton icon="lucide:upload" @click="handleImportData">导入</UButton>
+        <UButton icon="lucide:upload" @click="handleImportData">
+          {{ t("components.lyEditor.common.import") }}
+        </UButton>
         <UButton icon="lucide:download" :loading="exporting" @click="handleExportData">
-          导出
+          {{ t("components.lyEditor.common.export") }}
         </UButton>
       </div>
     </template>
@@ -312,9 +314,15 @@ const handleDelete = (e: HitokotoItem) => {
       <UFieldGroup>
         <USelect v-model="state.type" :items="typeOptions" class="w-24" />
 
-        <UInput v-model.trim="state.keyword" class="w-48" placeholder="请输入关键词" />
+        <UInput
+          v-model.trim="state.keyword"
+          class="w-48"
+          :placeholder="t('components.lyEditor.common.searchPlaceholder')"
+        />
 
-        <UButton icon="lucide:search" @click="handleSearch">搜索</UButton>
+        <UButton icon="lucide:search" @click="handleSearch">
+          {{ t("common.search") }}
+        </UButton>
       </UFieldGroup>
     </template>
   </TabPanelTable>

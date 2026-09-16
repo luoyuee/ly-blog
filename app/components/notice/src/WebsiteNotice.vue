@@ -3,6 +3,7 @@ import { onMounted, watch } from "vue";
 import { useNoticeStore } from "@/stores";
 import { getNoticeConfig } from "@/apis/config";
 
+const { t } = useI18n();
 const noticeStore = useNoticeStore();
 
 const noticeModalVisible = ref(false);
@@ -64,7 +65,7 @@ onMounted(() => {
 
         if (!sessionClosed) {
           toast.add({
-            title: "网站公告",
+            title: t("components.websiteNotice.title"),
             icon: "lucide:bell",
             description: noticeStore.toast.content,
             duration: 0,
@@ -107,15 +108,19 @@ onMounted(() => {
     <template #title>
       <div class="flex items-center">
         <UIcon name="lucide:bell" class="text-primary mr-2" :size="20" />
-        <span>网站公告</span>
+        <span>{{ $t("components.websiteNotice.title") }}</span>
       </div>
     </template>
     <template #body>
       {{ noticeStore.modal.content }}
     </template>
     <template #footer="{ close }">
-      <UButton label="不再打开" variant="outline" @click="handleNoticeNeverOpen" />
-      <UButton label="确认" color="primary" @click="close" />
+      <UButton
+        :label="$t('components.websiteNotice.neverOpen')"
+        variant="outline"
+        @click="handleNoticeNeverOpen"
+      />
+      <UButton :label="$t('components.websiteNotice.confirm')" color="primary" @click="close" />
     </template>
   </UModal>
 </template>

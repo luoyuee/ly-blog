@@ -14,6 +14,7 @@ import { lyEditorEmitter } from "@/events";
 import { watch } from "vue";
 import { z } from "zod";
 
+const { t } = useI18n();
 const $notify = useNotification();
 
 const open = defineModel<boolean>("open", {
@@ -42,7 +43,9 @@ const emits = defineEmits<{
 const schema = z.object({
   id: z.number().optional(),
   parent_id: z.number().optional(),
-  name: z.string({ message: "请输入分类名称" }),
+  name: z.string({
+    message: t("components.lyEditor.modules.article.categoryForm.validation.nameRequired")
+  }),
   icon: z.string().optional(),
   description: z.string().optional()
 });
@@ -88,7 +91,7 @@ const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => 
         description: event.data.description
       });
 
-      $notify.success({ title: "修改成功" });
+      $notify.success({ title: t("message.update.success") });
     } else {
       await createArticleCategory({
         parent_id: event.data.parent_id,
@@ -97,7 +100,7 @@ const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => 
         description: event.data.description
       });
 
-      $notify.success({ title: "创建成功" });
+      $notify.success({ title: t("message.create.success") });
     }
 
     open.value = false;
@@ -106,7 +109,7 @@ const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => 
       action: "submitted"
     });
   } catch (error) {
-    $notify.error({ title: "操作失败", error });
+    $notify.error({ title: t("message.operate.error"), error });
   } finally {
     lyEditorEmitter.emit("cmd.article-manager:reload");
     formState.submitting = false;
@@ -133,7 +136,11 @@ onMounted(async () => {
 <template>
   <BasicModal
     v-model:open="open"
-    :title="formData.id ? '修改分类' : '新建分类'"
+    :title="
+      formData.id
+        ? t('components.lyEditor.modules.article.categoryForm.editTitle')
+        : t('components.lyEditor.modules.article.categoryForm.createTitle')
+    "
     :submitting="formState.submitting"
     @cancel="handleCancel"
     @confirm="handleConfirm"
@@ -146,27 +153,52 @@ onMounted(async () => {
       :validate-on-input-delay="100"
       @submit="handleSubmit"
     >
-      <UFormField name="parent_id" label="父级分类">
+      <UFormField
+        name="parent_id"
+        :label="t('components.lyEditor.modules.article.categoryForm.parentLabel')"
+      >
         <TreeSelect
           v-model="formData.parent_id"
           class="w-full"
           value-key="id"
           label-key="name"
-          placeholder="请选择父级分类"
+          :placeholder="t('components.lyEditor.modules.article.categoryForm.parentPlaceholder')"
           :options="categoryData"
         />
       </UFormField>
 
-      <UFormField name="name" label="分类名称" required>
-        <UInput v-model="formData.name" placeholder="请输入分类名称" />
+      <UFormField
+        name="name"
+        :label="t('components.lyEditor.modules.article.categoryForm.nameLabel')"
+        required
+      >
+        <UInput
+          v-model="formData.name"
+          :placeholder="t('components.lyEditor.modules.article.categoryForm.namePlaceholder')"
+        />
       </UFormField>
 
-      <UFormField name="icon" label="分类图标">
-        <SelectIcon v-model="formData.icon" prefix="colorful:" placeholder="请选择分类图标" />
+      <UFormField
+        name="icon"
+        :label="t('components.lyEditor.modules.article.categoryForm.iconLabel')"
+      >
+        <SelectIcon
+          v-model="formData.icon"
+          prefix="colorful:"
+          :placeholder="t('components.lyEditor.modules.article.categoryForm.iconPlaceholder')"
+        />
       </UFormField>
 
-      <UFormField name="description" label="分类描述">
-        <UTextarea v-model="formData.description" placeholder="请输入分类描述" />
+      <UFormField
+        name="description"
+        :label="t('components.lyEditor.modules.article.categoryForm.descriptionLabel')"
+      >
+        <UTextarea
+          v-model="formData.description"
+          :placeholder="
+            t('components.lyEditor.modules.article.categoryForm.descriptionPlaceholder')
+          "
+        />
       </UFormField>
     </UForm>
   </BasicModal>

@@ -1,123 +1,9 @@
-<template>
-  <UPopover
-    v-model:open="open"
-    class="min-w-[200px]"
-    modal
-    :disabled="props.disabled"
-    :content="{
-      collisionPadding: {
-        left: 0,
-        right: 0
-      }
-    }"
-    :ui="{ content: 'w-(--reka-popper-anchor-width)' }"
-  >
-    <template #anchor>
-      <UButton
-        color="neutral"
-        variant="outline"
-        class="w-full justify-between"
-        :disabled="props.disabled"
-        @click="handleClick"
-      >
-        <div class="truncate pointer-events-none">
-          <template v-if="props.multiple && selectedLabels.length > 0">
-            <div class="flex flex-wrap gap-1 overflow-hidden">
-              <div v-for="(label, index) in displayedLabels" :key="index" class="truncate">
-                {{ label }}{{ index < displayedLabels.length - 1 ? "," : "" }}
-              </div>
-              <div v-if="selectedLabels.length > displayedLabels.length" class="opacity-50">
-                +{{ selectedLabels.length - displayedLabels.length }}
-              </div>
-            </div>
-          </template>
-          <template v-else-if="selectedLabel">
-            {{ selectedLabel }}
-          </template>
-          <template v-else>
-            <span class="text-dimmed">{{ placeholder }}</span>
-          </template>
-        </div>
-
-        <template #trailing>
-          <UIcon
-            v-if="hasSelected"
-            name="lucide:x"
-            class="cursor-pointer"
-            :class="{ 'opacity-50': props.disabled }"
-            @click.stop="handleClear"
-          />
-          <UIcon
-            v-else
-            :name="open ? 'lucide:chevron-up' : 'lucide:chevron-down'"
-            :class="{ 'opacity-50': props.disabled }"
-          />
-        </template>
-      </UButton>
-    </template>
-
-    <template #content>
-      <div class="w-full">
-        <div v-if="searchable" class="p-2 border-b border-gray-200 dark:border-gray-700">
-          <UInput
-            v-model="searchQuery"
-            class="w-full"
-            placeholder="搜索..."
-            autofocus
-            icon="lucide:search"
-            @focus="handleSearchFocus"
-          />
-        </div>
-
-        <div class="max-h-[300px] overflow-y-auto">
-          <ul v-if="filteredNodes.length" class="space-y-1 p-1">
-            <TreeNode
-              v-for="node in filteredNodes"
-              :key="node[props.valueKey]"
-              :node="node"
-              :selected="selectedIds"
-              :expanded="expandedIds"
-              :depth="0"
-              :label-key="props.labelKey"
-              :value-key="props.valueKey"
-              :multiple="multiple"
-              :indeterminate="indeterminateIds"
-              @select="handleSelect"
-              @toggle="handleToggle"
-            />
-          </ul>
-          <div v-else class="p-4 text-center text-gray-500">
-            {{ searchQuery ? "未找到匹配项" : "无数据" }}
-          </div>
-        </div>
-
-        <!-- 多选模式底部操作区 -->
-        <div
-          v-if="multiple && filteredNodes.length"
-          class="p-2 border-t border-gray-200 dark:border-gray-700 flex justify-between items-center"
-        >
-          <div class="text-sm text-gray-500"> 已选择 {{ selectedIds.length }} 项 </div>
-          <button
-            class="text-sm cursor-pointer"
-            :class="
-              isAllSelected
-                ? 'text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-300'
-                : 'text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300'
-            "
-            @click="handleToggleSelectAll"
-          >
-            {{ isAllSelected ? "清除" : "全选" }}
-          </button>
-        </div>
-      </div>
-    </template>
-  </UPopover>
-</template>
-
 <script setup lang="ts">
 import type { ITreeNode, IndeterminateState, TreeSelectValue } from "./types";
 import TreeNode from "./TreeNode.vue";
 import { ref, computed, watch, type PropType } from "vue";
+
+const { t } = useI18n();
 
 // 使用defineModel定义支持多选的模型值
 const modelValue = defineModel<TreeSelectValue>();
@@ -129,7 +15,7 @@ const props = defineProps({
   },
   placeholder: {
     type: String,
-    default: "请选择"
+    default: ""
   },
   searchable: {
     type: Boolean,
@@ -164,6 +50,10 @@ const props = defineProps({
 });
 
 const open = ref(false);
+// 未显式传入时回退到 i18n 文案（defineProps 默认值不能引用本地 t）
+const resolvedPlaceholder = computed(
+  () => props.placeholder || t("components.treeSelect.placeholder")
+);
 // 用数组保存选中的ID，支持单选和多选
 const selectedIds = ref<(string | number)[]>([]);
 // 半选状态的节点ID
@@ -624,3 +514,127 @@ watch(
   { immediate: true }
 );
 </script>
+
+<template>
+  <UPopover
+    v-model:open="open"
+    class="min-w-[200px]"
+    modal
+    :disabled="props.disabled"
+    :content="{
+      collisionPadding: {
+        left: 0,
+        right: 0
+      }
+    }"
+    :ui="{ content: 'w-(--reka-popper-anchor-width)' }"
+  >
+    <template #anchor>
+      <UButton
+        color="neutral"
+        variant="outline"
+        class="w-full justify-between"
+        :disabled="props.disabled"
+        @click="handleClick"
+      >
+        <div class="truncate pointer-events-none">
+          <template v-if="props.multiple && selectedLabels.length > 0">
+            <div class="flex flex-wrap gap-1 overflow-hidden">
+              <div v-for="(label, index) in displayedLabels" :key="index" class="truncate">
+                {{ label }}{{ index < displayedLabels.length - 1 ? "," : "" }}
+              </div>
+              <div v-if="selectedLabels.length > displayedLabels.length" class="opacity-50">
+                +{{ selectedLabels.length - displayedLabels.length }}
+              </div>
+            </div>
+          </template>
+          <template v-else-if="selectedLabel">
+            {{ selectedLabel }}
+          </template>
+          <template v-else>
+            <span class="text-dimmed">{{ resolvedPlaceholder }}</span>
+          </template>
+        </div>
+
+        <template #trailing>
+          <UIcon
+            v-if="hasSelected"
+            name="lucide:x"
+            class="cursor-pointer"
+            :class="{ 'opacity-50': props.disabled }"
+            @click.stop="handleClear"
+          />
+          <UIcon
+            v-else
+            :name="open ? 'lucide:chevron-up' : 'lucide:chevron-down'"
+            :class="{ 'opacity-50': props.disabled }"
+          />
+        </template>
+      </UButton>
+    </template>
+
+    <template #content>
+      <div class="w-full">
+        <div v-if="searchable" class="p-2 border-b border-gray-200 dark:border-gray-700">
+          <UInput
+            v-model="searchQuery"
+            class="w-full"
+            :placeholder="$t('components.treeSelect.searchPlaceholder')"
+            autofocus
+            icon="lucide:search"
+            @focus="handleSearchFocus"
+          />
+        </div>
+
+        <div class="max-h-[300px] overflow-y-auto">
+          <ul v-if="filteredNodes.length" class="space-y-1 p-1">
+            <TreeNode
+              v-for="node in filteredNodes"
+              :key="node[props.valueKey]"
+              :node="node"
+              :selected="selectedIds"
+              :expanded="expandedIds"
+              :depth="0"
+              :label-key="props.labelKey"
+              :value-key="props.valueKey"
+              :multiple="multiple"
+              :indeterminate="indeterminateIds"
+              @select="handleSelect"
+              @toggle="handleToggle"
+            />
+          </ul>
+          <div v-else class="p-4 text-center text-gray-500">
+            {{
+              searchQuery ? $t("components.treeSelect.noMatch") : $t("components.treeSelect.noData")
+            }}
+          </div>
+        </div>
+
+        <!-- 多选模式底部操作区 -->
+        <div
+          v-if="multiple && filteredNodes.length"
+          class="p-2 border-t border-gray-200 dark:border-gray-700 flex justify-between items-center"
+        >
+          <div class="text-sm text-gray-500">
+            {{ $t("components.treeSelect.selected", { count: selectedIds.length }) }}
+          </div>
+          <button
+            class="text-sm cursor-pointer"
+            :class="
+              isAllSelected
+                ? 'text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-300'
+                : 'text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300'
+            "
+            @click="handleToggleSelectAll"
+          >
+            {{
+              isAllSelected
+                ? $t("components.treeSelect.clear")
+                : $t("components.treeSelect.selectAll")
+            }}
+          </button>
+        </div>
+      </div>
+    </template>
+  </UPopover>
+</template>

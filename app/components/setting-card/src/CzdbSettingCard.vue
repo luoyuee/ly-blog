@@ -6,10 +6,14 @@ import { useForm } from "@/composables/useForm";
 import { useServerConfigStore } from "@/stores";
 import { z } from "zod";
 
+const { t } = useI18n();
+
 const serverConfigStore = useServerConfigStore();
 
 const schema = z.object({
-  download_url: z.union([z.url("请输入正确的下载链接"), z.literal("")]).optional()
+  download_url: z
+    .union([z.url(t("components.settingCard.czdb.validation.urlInvalid")), z.literal("")])
+    .optional()
 });
 
 const createInitialFormData = (): IServerConfigCzdb => {
@@ -53,7 +57,7 @@ const handleReset = () => {
 <template>
   <SettingCard
     id="czdb-setting"
-    title="CZDB 设置"
+    :title="$t('components.settingCard.czdb.title')"
     :is-change="isDirty"
     :submitting="formState.submitting"
     @reset="handleReset"
@@ -69,8 +73,8 @@ const handleReset = () => {
     >
       <UFormField
         name="download_url"
-        label="下载链接"
-        description="用于下载 CZDB 压缩包并更新 v4/v6 数据库文件"
+        :label="$t('components.settingCard.czdb.downloadUrlLabel')"
+        :description="$t('components.settingCard.czdb.downloadUrlDescription')"
         :ui="{
           description: 'text-xs',
           container: 'mt-2'
@@ -80,7 +84,7 @@ const handleReset = () => {
           v-model="formData.download_url"
           class="w-full"
           icon="lucide:link"
-          placeholder="请输入 CZDB 下载链接"
+          :placeholder="$t('components.settingCard.czdb.downloadUrlPlaceholder')"
         />
       </UFormField>
     </UForm>

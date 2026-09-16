@@ -52,7 +52,7 @@ const handleReset = () => {
 <template>
   <SettingCard
     id="fleeting-thought-setting"
-    title="闪念笔记设置"
+    :title="$t('components.settingCard.fleetingThought.title')"
     :is-change="isDirty"
     :submitting="formState.submitting"
     @reset="handleReset"
@@ -68,14 +68,18 @@ const handleReset = () => {
     >
       <UFormField
         name="intro"
-        label="引言"
-        description="闪念笔记顶部引言"
+        :label="$t('components.settingCard.fleetingThought.introLabel')"
+        :description="$t('components.settingCard.fleetingThought.introDescription')"
         :ui="{
           description: 'text-xs',
           container: 'mt-2'
         }"
       >
-        <UTextarea v-model="formData.intro" class="w-full" placeholder="请输入引言" />
+        <UTextarea
+          v-model="formData.intro"
+          class="w-full"
+          :placeholder="$t('components.settingCard.fleetingThought.introPlaceholder')"
+        />
       </UFormField>
     </UForm>
   </SettingCard>

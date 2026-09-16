@@ -1,32 +1,15 @@
-<template>
-  <node-view-wrapper class="code-block-wrapper">
-    <div v-if="isEditable" class="code-block-wrapper__header">
-      <select
-        :value="language"
-        class="code-block-wrapper__language-select"
-        @change="updateLanguage"
-      >
-        <option v-for="item in languages" :key="item.value" :value="item.value">
-          {{ item.label }}
-        </option>
-      </select>
-    </div>
-    <pre
-      class="code-block-wrapper__pre"
-    ><code><node-view-content class="code-block-wrapper__content" /></code></pre>
-  </node-view-wrapper>
-</template>
-
 <script setup lang="ts">
 import { computed } from "vue";
 import { NodeViewContent, NodeViewWrapper, nodeViewProps } from "@tiptap/vue-3";
+
+const { t } = useI18n();
 
 const props = defineProps({
   ...nodeViewProps
 });
 
 const languages = [
-  { value: "auto", label: "自动检测" },
+  { value: "auto", label: t("components.tiptapEditor.codeBlockAuto") },
   { value: "html", label: "HTML" },
   { value: "css", label: "CSS" },
   { value: "js", label: "JavaScript" },
@@ -59,6 +42,25 @@ const updateLanguage = (event: Event) => {
   });
 };
 </script>
+
+<template>
+  <node-view-wrapper class="code-block-wrapper">
+    <div v-if="isEditable" class="code-block-wrapper__header">
+      <select
+        :value="language"
+        class="code-block-wrapper__language-select"
+        @change="updateLanguage"
+      >
+        <option v-for="item in languages" :key="item.value" :value="item.value">
+          {{ item.label }}
+        </option>
+      </select>
+    </div>
+    <pre
+      class="code-block-wrapper__pre"
+    ><code><node-view-content class="code-block-wrapper__content" /></code></pre>
+  </node-view-wrapper>
+</template>
 
 <style scoped>
 .code-block-wrapper {

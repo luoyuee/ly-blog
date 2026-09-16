@@ -6,6 +6,8 @@ import { TiptapRender } from "@/components/tiptap-editor";
 import { useUserStore } from "@/stores";
 import dayjs from "dayjs";
 
+const { t } = useI18n();
+
 const props = defineProps({
   data: {
     type: Object as PropType<ArticleComment>,
@@ -68,7 +70,7 @@ const handleDelete = () => {
       <div class="comment-footer">
         <div>
           <span v-if="props.data.created_at" class="time">
-            {{ dayjs(props.data.created_at).format("YYYY年MM月DD日 HH:mm") }}
+            {{ dayjs(props.data.created_at).format(t("components.commentItem.dateFormat")) }}
           </span>
           <span v-if="props.data.location" class="location">
             {{ props.data.location }}
@@ -77,18 +79,18 @@ const handleDelete = () => {
         <div>
           <span class="reply-btn" @click="handleReply">
             <UIcon name="custom:edit" />
-            回复
+            {{ t("components.commentItem.reply") }}
           </span>
           <Popconfirm
             v-if="userStore.isAdmin"
-            title="确认删除?"
+            :title="t('components.commentItem.deleteConfirmTitle')"
             side="top"
-            description="删除后将无法恢复"
+            :description="t('components.commentItem.deleteConfirmDescription')"
             @confirm="handleDelete"
           >
             <span class="delete-btn">
               <UIcon name="lucide:trash-2" />
-              删除
+              {{ t("components.commentItem.delete") }}
             </span>
           </Popconfirm>
         </div>

@@ -9,9 +9,15 @@ import { useUserStore } from "@/stores";
 import { z } from "zod";
 import dayjs from "dayjs";
 
+const { t } = useI18n();
+
 const userStore = useUserStore();
 
-const { formData: profileForm, setForm: setProfileForm, setInitial: setProfileInitial } = useForm<{
+const {
+  formData: profileForm,
+  setForm: setProfileForm,
+  setInitial: setProfileInitial
+} = useForm<{
   username: string;
   nickname: string;
   email: string;
@@ -45,10 +51,10 @@ watch(
 
 const roleLabel = computed(() => {
   const role = userStore.profile?.role;
-  if (role === UserRoleEnum.ADMIN) return "管理员";
-  if (role === UserRoleEnum.NORMAL_USER) return "普通用户";
-  if (role === UserRoleEnum.VISITOR) return "游客";
-  return "未知";
+  if (role === UserRoleEnum.ADMIN) return t("components.lyEditor.modules.user.roles.admin");
+  if (role === UserRoleEnum.NORMAL_USER) return t("components.lyEditor.modules.user.roles.normal");
+  if (role === UserRoleEnum.VISITOR) return t("components.lyEditor.modules.user.roles.visitor");
+  return t("components.lyEditor.modules.user.roles.unknown");
 });
 
 const profileSubmitting = ref(false);
@@ -62,7 +68,7 @@ const handleAvatarChange = (file: File | null) => {
 
 const handleSaveProfile = async () => {
   if (!profileForm.username || !profileForm.email) {
-    $message.error("请填写用户名和邮箱");
+    $message.error(t("components.lyEditor.modules.user.profileRequired"));
     return;
   }
 
@@ -79,11 +85,11 @@ const handleSaveProfile = async () => {
     await userStore.fetchProfile();
 
     $notify.success({
-      title: "保存成功"
+      title: t("message.save.success")
     });
   } catch (error) {
     $notify.error({
-      title: "保存失败",
+      title: t("message.save.error"),
       error
     });
   } finally {
@@ -99,13 +105,17 @@ const { formData: passwordForm, resetForm: resetPasswordForm } = useForm({
   confirm_password: ""
 });
 const passwordSchema = z.object({
-  old_password: z.string({ message: "请输入当前密码" }).min(1, "请输入当前密码"),
-  new_password: z.string({ message: "请输入新密码" }).min(6, "请至少输入6位新密码"),
+  old_password: z
+    .string({ message: t("components.lyEditor.modules.user.validation.oldPasswordRequired") })
+    .min(1, t("components.lyEditor.modules.user.validation.oldPasswordRequired")),
+  new_password: z
+    .string({ message: t("components.lyEditor.modules.user.validation.newPasswordMin") })
+    .min(6, t("components.lyEditor.modules.user.validation.newPasswordMin")),
   confirm_password: z
-    .string({ message: "请确认新密码" })
-    .min(1, "请确认新密码")
+    .string({ message: t("components.lyEditor.modules.user.validation.confirmPasswordRequired") })
+    .min(1, t("components.lyEditor.modules.user.validation.confirmPasswordRequired"))
     .refine((data) => data === passwordForm.new_password, {
-      message: "两次输入的新密码不一致"
+      message: t("components.lyEditor.modules.user.validation.passwordMismatch")
     })
 });
 
@@ -126,13 +136,13 @@ const handleSubmitPassword = async () => {
     });
 
     $notify.success({
-      title: "密码已更新"
+      title: t("components.lyEditor.modules.user.passwordUpdated")
     });
 
     passwordVisible.value = false;
   } catch (error) {
     $notify.error({
-      title: "修改密码失败",
+      title: t("components.lyEditor.modules.user.passwordFailed"),
       error
     });
   } finally {
@@ -150,7 +160,7 @@ const handleCancelPassword = () => {
 };
 
 const handleLogout = () => {
-  $message.success("已退出登录，3秒后将刷新页面");
+  $message.success(t("components.lyEditor.modules.user.logoutSuccess"));
   setTimeout(() => {
     const auth = useCookie("Authorization");
     auth.value = null;
@@ -174,14 +184,22 @@ const handleLogout = () => {
 
       <div class="flex-1 space-y-1">
         <div class="text-base font-medium">
-          {{ userStore.profile?.nickname || userStore.profile?.username || "未登录" }}
+          {{
+            userStore.profile?.nickname ||
+            userStore.profile?.username ||
+            $t("components.lyEditor.modules.user.notLoggedIn")
+          }}
         </div>
         <div class="text-xs text-gray-400">
-          <span>角色：{{ roleLabel }}</span>
+          <span>{{ $t("components.lyEditor.modules.user.roleLabel", { role: roleLabel }) }}</span>
         </div>
         <div v-if="userStore.profile?.last_login_time" class="text-xs text-gray-400">
           <span>
-            最后登录：{{ dayjs(userStore.profile?.last_login_time).format("YYYY-MM-DD HH:mm:ss") }}
+            {{
+              $t("components.lyEditor.modules.user.lastLoginLabel", {
+                time: dayjs(userStore.profile?.last_login_time).format("YYYY-MM-DD HH:mm:ss")
+              })
+            }}
           </span>
         </div>
         <div class="text-xs text-gray-400 flex gap-2">
@@ -189,22 +207,30 @@ const handleLogout = () => {
             IP：{{ userStore.profile?.last_login_ip }}
           </span>
           <span v-if="userStore.profile?.last_login_location" class="break-all whitespace-normal">
-            位置：{{ userStore.profile?.last_login_location }}
+            {{
+              $t("components.lyEditor.modules.user.locationLabel", {
+                location: userStore.profile?.last_login_location
+              })
+            }}
           </span>
         </div>
       </div>
 
       <div class="flex gap-2">
-        <UButton size="sm" variant="outline" @click="openPasswordModal"> 修改密码 </UButton>
+        <UButton size="sm" variant="outline" @click="openPasswordModal">
+          {{ $t("components.lyEditor.modules.user.changePassword") }}
+        </UButton>
         <UButton size="sm" color="error" variant="outline" @click="handleLogout">
-          退出登录
+          {{ $t("components.lyEditor.modules.user.logout") }}
         </UButton>
       </div>
     </div>
 
     <div class="bg-black/30 rounded p-4 space-y-4">
       <div class="flex items-center justify-between">
-        <h3 class="text-sm font-medium">基本信息</h3>
+        <h3 class="text-sm font-medium">
+          {{ $t("components.lyEditor.modules.user.basicInfo") }}
+        </h3>
         <div class="space-x-2">
           <UButton
             size="sm"
@@ -212,36 +238,61 @@ const handleLogout = () => {
             :loading="profileSubmitting"
             @click="handleSaveProfile"
           >
-            保存更改
+            {{ $t("components.lyEditor.modules.user.saveChanges") }}
           </UButton>
         </div>
       </div>
 
       <UForm :state="profileForm" class="space-y-4 flex-1">
-        <UFormField label="头像" name="avatar" orientation="horizontal">
+        <UFormField
+          :label="$t('components.lyEditor.modules.user.avatar')"
+          name="avatar"
+          orientation="horizontal"
+        >
           <AvatarUpload
             :src="userStore.profile?.avatar ?? '/images/avatar.webp'"
             @change="handleAvatarChange"
           />
         </UFormField>
 
-        <UFormField label="用户名" name="username" orientation="horizontal">
-          <UInput v-model="profileForm.username" placeholder="请输入用户名" />
+        <UFormField
+          :label="$t('components.lyEditor.modules.user.username')"
+          name="username"
+          orientation="horizontal"
+        >
+          <UInput
+            v-model="profileForm.username"
+            :placeholder="$t('components.lyEditor.modules.user.usernamePlaceholder')"
+          />
         </UFormField>
 
-        <UFormField label="昵称" name="nickname" orientation="horizontal">
-          <UInput v-model="profileForm.nickname" placeholder="请输入昵称" />
+        <UFormField
+          :label="$t('components.lyEditor.modules.user.nickname')"
+          name="nickname"
+          orientation="horizontal"
+        >
+          <UInput
+            v-model="profileForm.nickname"
+            :placeholder="$t('components.lyEditor.modules.user.nicknamePlaceholder')"
+          />
         </UFormField>
 
-        <UFormField label="邮箱" name="email" orientation="horizontal">
-          <UInput v-model="profileForm.email" placeholder="请输入邮箱" />
+        <UFormField
+          :label="$t('components.lyEditor.modules.user.email')"
+          name="email"
+          orientation="horizontal"
+        >
+          <UInput
+            v-model="profileForm.email"
+            :placeholder="$t('components.lyEditor.modules.user.emailPlaceholder')"
+          />
         </UFormField>
       </UForm>
     </div>
 
     <BasicModal
       v-model:open="passwordVisible"
-      title="修改密码"
+      :title="$t('components.lyEditor.modules.user.passwordModalTitle')"
       @confirm="handleConfirmPassword"
       @cancel="handleCancelPassword"
     >
@@ -252,21 +303,28 @@ const handleLogout = () => {
         class="space-y-4"
         @submit="handleSubmitPassword"
       >
-        <UFormField label="当前密码" name="old_password">
+        <UFormField :label="$t('components.lyEditor.modules.user.oldPassword')" name="old_password">
           <UInput
             v-model="passwordForm.old_password"
             type="password"
-            placeholder="请输入当前密码"
+            :placeholder="$t('components.lyEditor.modules.user.oldPasswordPlaceholder')"
           />
         </UFormField>
-        <UFormField label="新密码" name="new_password">
-          <UInput v-model="passwordForm.new_password" type="password" placeholder="请输入新密码" />
+        <UFormField :label="$t('components.lyEditor.modules.user.newPassword')" name="new_password">
+          <UInput
+            v-model="passwordForm.new_password"
+            type="password"
+            :placeholder="$t('components.lyEditor.modules.user.newPasswordPlaceholder')"
+          />
         </UFormField>
-        <UFormField label="确认密码" name="confirm_password">
+        <UFormField
+          :label="$t('components.lyEditor.modules.user.confirmPassword')"
+          name="confirm_password"
+        >
           <UInput
             v-model="passwordForm.confirm_password"
             type="password"
-            placeholder="请再次输入新密码"
+            :placeholder="$t('components.lyEditor.modules.user.confirmPasswordPlaceholder')"
           />
         </UFormField>
       </UForm>

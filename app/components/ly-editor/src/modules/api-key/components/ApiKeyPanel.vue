@@ -7,6 +7,7 @@ import { TabPanelTable } from "@ly-editor/src/components";
 import { h, resolveComponent } from "vue";
 import dayjs from "dayjs";
 
+const { t } = useI18n();
 const $notify = useNotification();
 const $msgBox = useMessageBox();
 
@@ -44,23 +45,23 @@ const getStatusMeta = (status: number) => {
   switch (status) {
     case 1:
       return {
-        label: "启用",
+        label: t("components.lyEditor.common.status.enabled"),
         className: "text-emerald-400"
       };
     case 0:
       return {
-        label: "禁用",
+        label: t("components.lyEditor.common.status.disabled"),
         className: "text-amber-400"
       };
     default:
       return {
-        label: "未知",
+        label: t("components.lyEditor.common.status.unknown"),
         className: "text-red-400"
       };
   }
 };
 
-const columns: TableColumn<ApiKeyItem>[] = [
+const columns = computed<TableColumn<ApiKeyItem>[]>(() => [
   {
     accessorKey: "id",
     header: "#",
@@ -68,12 +69,12 @@ const columns: TableColumn<ApiKeyItem>[] = [
   },
   {
     accessorKey: "name",
-    header: "名称",
+    header: t("components.lyEditor.common.table.name"),
     cell: ({ row }) => h("div", { class: "max-w-52 truncate" }, row.getValue("name"))
   },
   {
     accessorKey: "scopes",
-    header: "权限范围",
+    header: t("components.lyEditor.modules.apiKey.headers.scope"),
     cell: ({ row }) => {
       const scopes = row.original.scopes;
 
@@ -98,10 +99,10 @@ const columns: TableColumn<ApiKeyItem>[] = [
   },
   {
     accessorKey: "expires_at",
-    header: "过期时间",
+    header: t("components.lyEditor.modules.apiKey.headers.expiresAt"),
     cell: ({ row }) => {
       if (!row.original.expires_at) {
-        return h("div", "永不过期");
+        return h("div", t("components.lyEditor.common.status.neverExpire"));
       }
 
       return h(
@@ -113,7 +114,7 @@ const columns: TableColumn<ApiKeyItem>[] = [
   },
   {
     accessorKey: "last_used_at",
-    header: "最近使用",
+    header: t("components.lyEditor.modules.apiKey.headers.lastUsedAt"),
     cell: ({ row }) => {
       if (!row.original.last_used_at) {
         return h("div", "-");
@@ -128,23 +129,23 @@ const columns: TableColumn<ApiKeyItem>[] = [
   },
   {
     accessorKey: "last_used_ip",
-    header: "最近 IP",
+    header: t("components.lyEditor.modules.apiKey.headers.lastIp"),
     cell: ({ row }) => h("div", row.original.last_used_ip || "-")
   },
   {
     accessorKey: "use_count",
-    header: "调用次数",
+    header: t("components.lyEditor.modules.apiKey.headers.callCount"),
     cell: ({ row }) => h("div", row.original.use_count)
   },
   {
     accessorKey: "created_at",
-    header: "创建时间",
+    header: t("components.lyEditor.common.table.createdAt"),
     cell: ({ row }) =>
       h("div", { class: "w-36" }, dayjs(row.original.created_at).format("YYYY/MM/DD HH:mm:ss"))
   },
   {
     accessorKey: "status",
-    header: "状态",
+    header: t("components.lyEditor.common.table.status"),
     cell: ({ row }) => {
       const meta = getStatusMeta(row.original.status);
 
@@ -171,14 +172,14 @@ const columns: TableColumn<ApiKeyItem>[] = [
             },
             items: [
               {
-                label: "编辑",
+                label: t("common.edit"),
                 icon: "lucide:edit",
                 onSelect: () => {
                   handleOpenFormModal(row.original);
                 }
               },
               {
-                label: "禁用",
+                label: t("components.lyEditor.modules.apiKey.disable"),
                 icon: "lucide:circle-minus",
                 color: "error",
                 onSelect: () => {
@@ -198,7 +199,7 @@ const columns: TableColumn<ApiKeyItem>[] = [
       );
     }
   }
-];
+]);
 
 /**
  * 加载 API 密钥列表。
@@ -216,7 +217,7 @@ const loadData = async () => {
     data.value = res.data;
   } catch (error) {
     $notify.error({
-      title: "加载失败",
+      title: t("components.lyEditor.modules.apiKey.loadFailed"),
       error
     });
   } finally {
@@ -253,9 +254,9 @@ const handleOpenFormModal = async (record?: ApiKeyItem) => {
  */
 const handleDisable = (record: ApiKeyItem) => {
   $msgBox.error({
-    title: "确认禁用?",
-    message: `即将禁用「${record.name}」，禁用后当前前后端列表将不再展示该 API 密钥，是否继续？`,
-    confirmButtonText: "禁用",
+    title: t("components.lyEditor.modules.apiKey.disableConfirmTitle"),
+    message: t("components.lyEditor.modules.apiKey.disableConfirmMessage", { name: record.name }),
+    confirmButtonText: t("components.lyEditor.modules.apiKey.disable"),
     confirmButtonProps: {
       color: "error"
     },
@@ -263,12 +264,12 @@ const handleDisable = (record: ApiKeyItem) => {
       try {
         await disableApiKey(record.id);
         $notify.success({
-          title: "禁用成功"
+          title: t("components.lyEditor.modules.apiKey.disableSuccess")
         });
         loadData();
       } catch (error) {
         $notify.error({
-          title: "操作失败",
+          title: t("message.operate.error"),
           error
         });
       }
@@ -288,11 +289,13 @@ const handleDisable = (record: ApiKeyItem) => {
     @refresh="loadData"
   >
     <template #header-left>
-      <UButton icon="lucide:plus" @click="handleOpenFormModal()">新建 API 密钥</UButton>
+      <UButton icon="lucide:plus" @click="handleOpenFormModal()">
+        {{ t("components.lyEditor.modules.apiKey.newKey") }}
+      </UButton>
     </template>
     <template #header-right>
       <UButton icon="lucide:refresh-cw" color="neutral" variant="soft" @click="loadData">
-        刷新
+        {{ t("common.refresh") }}
       </UButton>
     </template>
   </TabPanelTable>

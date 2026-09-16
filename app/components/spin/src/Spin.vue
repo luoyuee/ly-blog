@@ -27,6 +27,8 @@ let fullscreenLockCount = 0;
  */
 let originalBodyOverflow = "";
 
+const { t } = useI18n();
+
 const props = defineProps({
   /**
    * 是否显示遮罩层。
@@ -57,7 +59,7 @@ const props = defineProps({
    */
   text: {
     type: String,
-    default: "加载中..."
+    default: ""
   },
   /**
    * 次级说明文案。
@@ -88,6 +90,11 @@ const props = defineProps({
  * 这个计算属性用于集中驱动 Teleport 与 body 滚动锁逻辑。
  */
 const isActiveFullscreen = computed(() => props.loading && props.fullscreen);
+
+/**
+ * 未显式传入时的主提示文案回退（defineProps 默认值不能引用本地 t）。
+ */
+const resolvedText = computed(() => props.text || t("components.spin.loading"));
 
 /**
  * 是否传入默认插槽内容。
@@ -161,7 +168,9 @@ const Overlay = defineComponent({
                   class: mergedUI.value.spinner
                 }),
             h("div", { class: "space-y-1" }, [
-              slots.title ? slots.title() : h("div", { class: mergedUI.value.title }, props.text),
+              slots.title
+                ? slots.title()
+                : h("div", { class: mergedUI.value.title }, resolvedText.value),
               slots.description || props.description
                 ? h(
                     "div",

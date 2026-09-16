@@ -4,6 +4,7 @@ import { uploadHitokotoData } from "@/apis/hitokoto";
 import { BasicModal } from "@/components/basic-modal";
 import { useForm } from "@/composables/useForm";
 
+const { t } = useI18n();
 const $notify = useNotification();
 
 const open = defineModel<boolean>("open", {
@@ -47,7 +48,7 @@ const handleConfirm = async () => {
     });
 
     $notify.success({
-      title: "导入成功"
+      title: t("message.import.success")
     });
 
     emits("close", {
@@ -59,7 +60,7 @@ const handleConfirm = async () => {
     }, 500);
   } catch (error) {
     $notify.error({
-      title: "操作失败",
+      title: t("message.operate.error"),
       error
     });
   } finally {
@@ -86,7 +87,7 @@ const handleChange = (e: Event) => {
 <template>
   <BasicModal
     v-model:open="open"
-    title="导入数据"
+    :title="t('components.lyEditor.modules.hitokoto.importTitle')"
     :submitting="formState.submitting"
     @cancel="handleCancel"
     @confirm="handleConfirm"

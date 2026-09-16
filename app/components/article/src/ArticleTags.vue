@@ -13,7 +13,7 @@ const props = defineProps({
       {{ item }}
     </a>
     <span v-if="!props.tags || props.tags.length === 0" class="article-tags__no-tag">
-      暂无标签
+      {{ $t("components.article.tags.empty") }}
     </span>
   </div>
 </template>

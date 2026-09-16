@@ -11,6 +11,8 @@ import { AuthorCard } from "@/components/user-card";
 import { useLogger } from "@/composables/useLogger";
 import { ref } from "vue";
 
+const { t } = useI18n();
+
 const logger = useLogger();
 const $message = useMessage();
 
@@ -63,7 +65,7 @@ const loadData = async () => {
     state.more = state.page * state.per_page < state.total;
   } catch (error) {
     logger.error(error);
-    $message.error("加载数据失败");
+    $message.error(t("pages.sn.loadError"));
   }
 };
 
@@ -85,7 +87,7 @@ const handleChangePage = () => {
 </script>
 <template>
   <main>
-    <BannerImage title="闪念笔记" />
+    <BannerImage :title="$t('pages.sn.bannerTitle')" />
     <div class="container mx-auto">
       <div class="content">
         <div v-if="configStore.fleeting_thought.intro" class="intros">

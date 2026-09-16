@@ -3,6 +3,7 @@ import type { ShortcutItem } from "#shared/types/navigation-website";
 import { getShortcutList, deleteShortcut } from "~/apis/navigation-website";
 import { useLyEditorModal } from "@ly-editor";
 
+const { t } = useI18n();
 const $notify = useNotification();
 const $msgBox = useMessageBox();
 const { open } = useLyEditorModal("shortcut-form");
@@ -14,7 +15,7 @@ const loadShortcuts = async () => {
     const res = await getShortcutList();
     shortcuts.value = res.data;
   } catch (error) {
-    $notify.error({ title: "操作失败", error });
+    $notify.error({ title: t("message.operate.error"), error });
   }
 };
 
@@ -32,17 +33,17 @@ const handleOpenShortcutFormModal = async (e?: ShortcutItem) => {
 
 const handleDeleteShortcut = (e: ShortcutItem) => {
   $msgBox.error({
-    title: "确认删除?",
-    message: `即将删除快捷方式「${e.name}」，是否继续？`,
-    confirmButtonText: "删除",
+    title: t("components.lyEditor.common.deleteConfirm.title"),
+    message: t("components.lyEditor.common.deleteConfirm.simpleMessage", { name: e.name }),
+    confirmButtonText: t("components.lyEditor.common.deleteConfirm.button"),
     confirmButtonProps: { color: "error" },
     onConfirm: async () => {
       try {
         await deleteShortcut(e.id);
-        $notify.success({ title: "删除成功" });
+        $notify.success({ title: t("message.delete.success") });
         loadShortcuts();
       } catch (error) {
-        $notify.error({ title: "操作失败", error });
+        $notify.error({ title: t("message.operate.error"), error });
       }
     }
   });
@@ -64,7 +65,11 @@ defineExpose({
       <div class="text-sm truncate flex-1">{{ item.name }}</div>
 
       <UBadge :color="item.is_public ? 'success' : 'neutral'" variant="subtle" size="xs">
-        {{ item.is_public ? "公开" : "私有" }}
+        {{
+          item.is_public
+            ? $t("components.lyEditor.common.status.public")
+            : $t("components.lyEditor.common.status.private")
+        }}
       </UBadge>
 
       <div
@@ -89,7 +94,7 @@ defineExpose({
       <UChip standalone inset :color="item.status === 1 ? 'success' : 'error'" />
     </div>
     <div v-if="shortcuts.length === 0" class="text-xs text-gray-500 text-center py-4">
-      暂无数据，点击上方 + 新增
+      {{ $t("components.lyEditor.modules.navigation.sectionEmpty") }}
     </div>
   </div>
 </template>

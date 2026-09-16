@@ -7,6 +7,7 @@ import { getWhiteboardDetail, updateWhiteboard } from "@/apis/canvas-document";
 import { useLogger } from "@/composables/useLogger";
 
 const logger = useLogger();
+const { t } = useI18n();
 const $notify = useNotification();
 
 const props = defineProps({
@@ -36,7 +37,7 @@ const loadData = async () => {
   } catch (error) {
     logger.error(error);
     $notify.error({
-      title: "加载白板失败",
+      title: t("components.lyEditor.modules.whiteboard.panelLoadFailed"),
       error
     });
   } finally {
@@ -53,12 +54,12 @@ const handleSave = async (document: WhiteboardDocument) => {
     });
 
     $notify.success({
-      title: "保存成功"
+      title: t("message.save.success")
     });
   } catch (error) {
     logger.error(error);
     $notify.error({
-      title: "保存失败",
+      title: t("message.save.error"),
       error
     });
   }

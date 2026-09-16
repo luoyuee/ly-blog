@@ -8,6 +8,7 @@ import { useLogger } from "@/composables/useLogger";
 
 const logger = useLogger();
 const $message = useMessage();
+const { t } = useI18n();
 
 const emits = defineEmits(["submitted", "updated", "cancel"]);
 
@@ -37,7 +38,7 @@ const formData = reactive<{
 
 const handleSubmit = async () => {
   if (formData.content.trim() === "") {
-    $message.warning("内容不能为空");
+    $message.warning(t("components.fleetingThought.editor.emptyWarning"));
     return;
   }
 
@@ -58,11 +59,11 @@ const handleSubmit = async () => {
       emits("submitted", response);
     }
 
-    $message.success("提交成功");
+    $message.success(t("components.fleetingThought.editor.submitSuccess"));
     formData.content = "";
   } catch (error) {
     logger.error(error);
-    $message.error("提交失败" + error);
+    $message.error(t("components.fleetingThought.editor.submitError") + error);
   } finally {
     state.submitting = false;
   }
@@ -79,7 +80,7 @@ const handleCancel = () => {
     <div class="fleeting-thought-editor__footer">
       <a class="fleeting-thought-editor__md-support" :href="MarkdownSupportURL" target="_blank">
         <UIcon name="custom:markdown-fill" :size="18" />
-        支持Markdown语法
+        {{ $t("components.fleetingThought.editor.mdHint") }}
       </a>
       <div class="fleeting-thought-editor__submit-btn">
         <USwitch
@@ -95,10 +96,14 @@ const handleCancel = () => {
           :disabled="state.submitting"
           @click="handleCancel"
         >
-          取消
+          {{ $t("components.fleetingThought.editor.cancel") }}
         </UButton>
         <UButton color="primary" :loading="state.submitting" @click="handleSubmit">
-          {{ props.data ? "更新笔记" : "提交笔记" }}
+          {{
+            props.data
+              ? $t("components.fleetingThought.editor.update")
+              : $t("components.fleetingThought.editor.submit")
+          }}
         </UButton>
       </div>
     </div>

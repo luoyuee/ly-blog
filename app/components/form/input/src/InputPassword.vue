@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 
+const { t } = useI18n();
+
 const modelValue = defineModel<string>({ default: "" });
 
 const props = defineProps({
@@ -52,7 +54,7 @@ const passwordStrength = computed<PasswordStrengthState>(() => {
   if (password.length < 6) {
     return {
       level: "weak",
-      label: "非常弱",
+      label: t("components.inputPassword.weak"),
       filledBlocks: 2,
       textClass: "text-error"
     };
@@ -66,7 +68,7 @@ const passwordStrength = computed<PasswordStrengthState>(() => {
   if (score === 1) {
     return {
       level: "weak",
-      label: "非常弱",
+      label: t("components.inputPassword.weak"),
       filledBlocks: 2,
       textClass: "text-error"
     };
@@ -75,7 +77,7 @@ const passwordStrength = computed<PasswordStrengthState>(() => {
   if (score === 2) {
     return {
       level: "medium",
-      label: "一般",
+      label: t("components.inputPassword.medium"),
       filledBlocks: 6,
       textClass: "text-warning"
     };
@@ -83,7 +85,7 @@ const passwordStrength = computed<PasswordStrengthState>(() => {
 
   return {
     level: "strong",
-    label: "非常强",
+    label: t("components.inputPassword.strong"),
     filledBlocks: 10,
     textClass: "text-success"
   };
@@ -111,7 +113,9 @@ const passwordStrength = computed<PasswordStrengthState>(() => {
     </UInput>
 
     <div v-if="props.showStrength" class="flex items-center gap-2">
-      <span class="text-sm text-dimmed shrink-0">强度：</span>
+      <span class="text-sm text-dimmed shrink-0">
+        {{ $t("components.inputPassword.strengthLabel") }}
+      </span>
       <!-- 左侧固定渲染 10 个块，通过填充数量表达强度。 -->
       <div class="flex flex-1 items-center gap-1">
         <div

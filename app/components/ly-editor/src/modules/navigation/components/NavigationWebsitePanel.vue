@@ -14,6 +14,7 @@ import { h, resolveComponent } from "vue";
 import dayjs from "dayjs";
 
 const logger = useLogger();
+const { t } = useI18n();
 const $notify = useNotification();
 const $msgBox = useMessageBox();
 
@@ -46,39 +47,39 @@ const state = reactive<{
   loading: false
 });
 
-const statusOptions = [
-  { label: "全部", value: -1 },
-  { label: "启用", value: 1 },
-  { label: "禁用", value: 2 }
-];
+const statusOptions = computed(() => [
+  { label: t("common.all"), value: -1 },
+  { label: t("components.lyEditor.common.status.enabled"), value: 1 },
+  { label: t("components.lyEditor.common.status.disabled"), value: 2 }
+]);
 
 const getStatusMeta = (status: number) => {
   switch (status) {
     case 1:
       return {
-        label: "启用",
+        label: t("components.lyEditor.common.status.enabled"),
         className: "text-green-400"
       };
     case 2:
       return {
-        label: "禁用",
+        label: t("components.lyEditor.common.status.disabled"),
         className: "text-amber-400"
       };
     default:
       return {
-        label: "未知",
+        label: t("components.lyEditor.common.status.unknown"),
         className: "text-red-400"
       };
   }
 };
 
-const typeOptions = [
-  { label: "全部", value: -1 },
-  { label: "网站", value: 1 },
-  { label: "书签", value: 2 }
-];
+const typeOptions = computed(() => [
+  { label: t("common.all"), value: -1 },
+  { label: t("components.lyEditor.modules.navigation.website.typeWebsite"), value: 1 },
+  { label: t("components.lyEditor.modules.navigation.website.typeBookmark"), value: 2 }
+]);
 
-const columns: TableColumn<NavigationWebsiteItem>[] = [
+const columns = computed<TableColumn<NavigationWebsiteItem>[]>(() => [
   {
     accessorKey: "id",
     header: "#",
@@ -86,7 +87,7 @@ const columns: TableColumn<NavigationWebsiteItem>[] = [
   },
   {
     accessorKey: "name",
-    header: "名称",
+    header: t("components.lyEditor.common.table.name"),
     cell: ({ row }) => {
       const name = (row.getValue("name") ?? "") as string;
       const highlightKeyword = unref(state.highlightKeyword);
@@ -105,7 +106,7 @@ const columns: TableColumn<NavigationWebsiteItem>[] = [
   },
   {
     accessorKey: "url",
-    header: "地址",
+    header: t("components.lyEditor.common.table.url"),
     cell: ({ row }) => {
       const url = (row.getValue("url") ?? "") as string;
       return h(
@@ -121,7 +122,7 @@ const columns: TableColumn<NavigationWebsiteItem>[] = [
   },
   {
     accessorKey: "icon",
-    header: "图标",
+    header: t("components.lyEditor.common.table.icon"),
     cell: ({ row }) => {
       const icon = row.original.icon;
 
@@ -132,7 +133,7 @@ const columns: TableColumn<NavigationWebsiteItem>[] = [
   },
   {
     accessorKey: "tags",
-    header: "标签",
+    header: t("components.lyEditor.common.table.tags"),
     cell: ({ row }) => {
       const tags = row.original.tags as string[] | null | undefined;
       if (!tags || tags.length === 0) return h("div", "-");
@@ -147,12 +148,12 @@ const columns: TableColumn<NavigationWebsiteItem>[] = [
   },
   {
     accessorKey: "description",
-    header: "描述",
+    header: t("components.lyEditor.common.table.description"),
     cell: ({ row }) => h("div", { class: "max-w-48 truncate" }, row.getValue("description") ?? "-")
   },
   {
     accessorKey: "type",
-    header: "类型",
+    header: t("components.lyEditor.common.table.type"),
     cell: ({ row }) => {
       const type = row.original.type;
       return h(
@@ -160,18 +161,20 @@ const columns: TableColumn<NavigationWebsiteItem>[] = [
         {
           class: type === 2 ? "text-sky-400" : "text-emerald-400"
         },
-        type === 2 ? "书签" : "网站"
+        type === 2
+          ? t("components.lyEditor.modules.navigation.website.typeBookmark")
+          : t("components.lyEditor.modules.navigation.website.typeWebsite")
       );
     }
   },
   {
     accessorKey: "hot",
-    header: "热度",
+    header: t("components.lyEditor.modules.navigation.website.headers.hot"),
     cell: ({ row }) => h("div", row.getValue("hot") ?? 0)
   },
   {
     accessorKey: "is_favorite",
-    header: "收藏",
+    header: t("components.lyEditor.modules.navigation.website.headers.favorite"),
     cell: ({ row }) => {
       const isFavorite = row.getValue<boolean>("is_favorite");
       return h(
@@ -179,13 +182,15 @@ const columns: TableColumn<NavigationWebsiteItem>[] = [
         {
           class: isFavorite ? "text-yellow-400" : "text-gray-400"
         },
-        isFavorite ? "已收藏" : "未收藏"
+        isFavorite
+          ? t("components.lyEditor.common.status.favorite")
+          : t("components.lyEditor.common.status.unfavorite")
       );
     }
   },
   {
     accessorKey: "is_public",
-    header: "公开",
+    header: t("components.lyEditor.modules.navigation.website.headers.public"),
     cell: ({ row }) => {
       const isPublic = row.getValue<boolean>("is_public");
       return h(
@@ -193,13 +198,15 @@ const columns: TableColumn<NavigationWebsiteItem>[] = [
         {
           class: isPublic ? "text-emerald-400" : "text-gray-400"
         },
-        isPublic ? "公开" : "私有"
+        isPublic
+          ? t("components.lyEditor.common.status.public")
+          : t("components.lyEditor.common.status.private")
       );
     }
   },
   {
     accessorKey: "status",
-    header: "状态",
+    header: t("components.lyEditor.common.table.status"),
     cell: ({ row }) => {
       const status = row.getValue<number>("status");
       const meta = getStatusMeta(status);
@@ -215,7 +222,7 @@ const columns: TableColumn<NavigationWebsiteItem>[] = [
   },
   {
     accessorKey: "updated_at",
-    header: "更新日期",
+    header: t("components.lyEditor.common.table.updatedAt"),
     cell: ({ row }) =>
       h(
         "div",
@@ -237,14 +244,14 @@ const columns: TableColumn<NavigationWebsiteItem>[] = [
             },
             items: [
               {
-                label: "编辑网站",
+                label: t("components.lyEditor.modules.navigation.website.menu.edit"),
                 icon: "lucide:square-pen",
                 onSelect: () => {
                   handleOpenFormModal(row.original);
                 }
               },
               {
-                label: "删除网站",
+                label: t("components.lyEditor.modules.navigation.website.menu.delete"),
                 icon: "lucide:trash-2",
                 color: "error",
                 onSelect: () => {
@@ -264,7 +271,7 @@ const columns: TableColumn<NavigationWebsiteItem>[] = [
       );
     }
   }
-];
+]);
 
 const loadData = async () => {
   try {
@@ -327,11 +334,11 @@ const handleExportData = async () => {
     });
 
     $notify.success({
-      title: "导出成功"
+      title: t("message.export.success")
     });
   } catch (error) {
     $notify.error({
-      title: "导出失败",
+      title: t("message.export.error"),
       error
     });
   } finally {
@@ -346,9 +353,9 @@ const handleSearch = () => {
 
 const handleDelete = (e: NavigationWebsiteItem) => {
   $msgBox.error({
-    title: "确认删除?",
-    message: `即将删除「${e.name}」，是否继续？`,
-    confirmButtonText: "删除",
+    title: t("components.lyEditor.common.deleteConfirm.title"),
+    message: t("components.lyEditor.common.deleteConfirm.simpleMessage", { name: e.name }),
+    confirmButtonText: t("components.lyEditor.common.deleteConfirm.button"),
     confirmButtonProps: {
       color: "error"
     },
@@ -356,12 +363,12 @@ const handleDelete = (e: NavigationWebsiteItem) => {
       try {
         await deleteNavigationWebsite(e.id);
         $notify.success({
-          title: "删除成功"
+          title: t("message.delete.success")
         });
         loadData();
       } catch (error) {
         $notify.error({
-          title: "操作失败",
+          title: t("message.operate.error"),
           error
         });
       }
@@ -381,10 +388,14 @@ const handleDelete = (e: NavigationWebsiteItem) => {
   >
     <template #header-left>
       <div class="flex items-center gap-4">
-        <UButton icon="lucide:plus" @click="handleOpenFormModal()">新增</UButton>
-        <UButton icon="lucide:upload" @click="handleImportData">导入</UButton>
+        <UButton icon="lucide:plus" @click="handleOpenFormModal()">
+          {{ t("components.lyEditor.modules.navigation.website.new") }}
+        </UButton>
+        <UButton icon="lucide:upload" @click="handleImportData">
+          {{ t("components.lyEditor.common.import") }}
+        </UButton>
         <UButton icon="lucide:download" :loading="exporting" @click="handleExportData">
-          导出
+          {{ t("components.lyEditor.common.export") }}
         </UButton>
       </div>
     </template>
@@ -396,10 +407,12 @@ const handleDelete = (e: NavigationWebsiteItem) => {
         <UInput
           v-model.trim="state.keyword"
           class="w-48"
-          placeholder="请输入关键词"
+          :placeholder="t('components.lyEditor.common.searchPlaceholder')"
           @keydown.enter="handleSearch"
         />
-        <UButton icon="lucide:search" @click="handleSearch">搜索</UButton>
+        <UButton icon="lucide:search" @click="handleSearch">
+          {{ t("common.search") }}
+        </UButton>
       </UFieldGroup>
     </template>
   </TabPanelTable>

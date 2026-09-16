@@ -26,11 +26,13 @@ interface HierarchyResult {
   children?: HierarchyResult[];
 }
 
+const { t } = useI18n();
+
 const model = defineModel<MindmapData>({
   default: () => ({
     id: "1",
     type: "topic",
-    label: "中心主题",
+    label: "",
     width: 160,
     height: 50,
     children: []
@@ -279,7 +281,7 @@ const addChildNode = (id: string, type: MindmapNodeType): MindmapData | null => 
     item = {
       id: `${id}-${length + 1}`,
       type: "topic-branch",
-      label: `分支主题${length + 1}`,
+      label: t("components.mindmap.branchTopic", { index: length + 1 }),
       width: 100,
       height: 40
     };
@@ -287,7 +289,7 @@ const addChildNode = (id: string, type: MindmapNodeType): MindmapData | null => 
     item = {
       id: `${id}-${length + 1}`,
       type: "topic-child",
-      label: `子主题${length + 1}`,
+      label: t("components.mindmap.childTopic", { index: length + 1 }),
       width: 60,
       height: 30
     };
@@ -390,6 +392,11 @@ const exportData = (): MindmapData => {
 defineExpose({ importData, exportData });
 
 onMounted(() => {
+  // 根节点标题为空时回退到 i18n（defineModel 默认值无法直接引用 t()）
+  if (model.value && !model.value.label) {
+    model.value.label = t("components.mindmap.centerTopic");
+  }
+
   registerShapes();
   initGraph();
   render();

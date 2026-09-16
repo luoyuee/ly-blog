@@ -14,6 +14,8 @@ import { AuthorCard } from "@/components/user-card";
 import { useRoute } from "vue-router";
 import { PageFooter } from "@/components/page-footer";
 
+const { t } = useI18n();
+
 const route = useRoute();
 
 const article = ref<Article | null>(null);
@@ -62,13 +64,13 @@ const breadcrumb = computed(() => {
 
   return [
     {
-      name: "首页",
+      name: t("pages.article.breadcrumbHome"),
       href: "/",
       icon: "colorful:home"
     },
     ...items,
     {
-      name: "正文",
+      name: t("pages.article.breadcrumbContent"),
       href: "/article/" + route.params.id
     }
   ];
@@ -88,14 +90,22 @@ const breadcrumb = computed(() => {
           </div>
 
           <div v-else class="h-50 flex items-center justify-center">
-            <p v-if="route.query.pwd && article.locked">密码错误</p>
+            <p v-if="route.query.pwd && article.locked">
+              {{ $t("pages.article.passwordError") }}
+            </p>
 
             <div>
               <UFieldGroup>
-                <UBadge color="neutral" variant="outline" label="访问密码" />
+                <UBadge
+                  color="neutral"
+                  variant="outline"
+                  :label="$t('pages.article.accessPasswordLabel')"
+                />
                 <UInput v-model="formData.password" />
               </UFieldGroup>
-              <UButton color="primary" @click="handleUnlock">提交</UButton>
+              <UButton color="primary" @click="handleUnlock">
+                {{ $t("pages.article.submit") }}
+              </UButton>
             </div>
           </div>
 
@@ -122,7 +132,9 @@ const breadcrumb = computed(() => {
           :article-id="article.id"
         />
 
-        <div v-else class="disabled-comment">—— 评论区已禁用 ——</div>
+        <div v-else class="disabled-comment">
+          {{ $t("pages.article.commentDisabled") }}
+        </div>
       </div>
       <div class="aside">
         <AuthorCard class="mb-4" />

@@ -2,102 +2,1978 @@
   "common": {
     "cancel": "取消",
     "confirm": "确认",
-    "save": "保存"
+    "save": "保存",
+    "delete": "删除",
+    "create": "创建",
+    "edit": "编辑",
+    "search": "搜索",
+    "reset": "重置",
+    "submit": "提交",
+    "back": "返回",
+    "close": "关闭",
+    "loading": "加载中...",
+    "all": "全部",
+    "none": "无",
+    "yes": "是",
+    "no": "否",
+    "required": "必填",
+    "optional": "选填",
+    "pleaseSelect": "请选择",
+    "pleaseInput": "请输入",
+    "ok": "确定",
+    "noData": "暂无数据",
+    "add": "添加",
+    "total": "共 {total} 条",
+    "refresh": "刷新"
   },
   "components": {
     "lifeCountdownCard": {
-      "month": {
-        "after": "天",
-        "before": "本月已经过去"
-      },
       "title": "人生倒计时",
-      "today": {
-        "after": "小时",
-        "before": "今日已经过去"
+      "year": {
+        "before": "今年已经过去",
+        "after": "月"
+      },
+      "month": {
+        "before": "本月已经过去",
+        "after": "天"
       },
       "week": {
-        "after": "天",
-        "before": "这周已经过去"
+        "before": "这周已经过去",
+        "after": "天"
       },
-      "year": {
-        "after": "月",
-        "before": "今年已经过去"
+      "today": {
+        "before": "今日已经过去",
+        "after": "小时"
       }
     },
     "noticeCard": {
       "title": "网站公告"
     },
-    "settingCard": {
-      "storage": {
-        "form": {
-          "basePathRequired": "请输入存储桶基础路径",
-          "endPointRequired": "请输入对象存储服务端点",
-          "typeDescription": "文件存储的类型，可选本地目录或对象存储",
-          "typeLabel": "存储类型",
-          "typePlaceholder": "请选择存储类型",
-          "typeRequired": "请选择存储类型"
-        },
-        "title": "存储设置"
-      }
-    },
     "tagCard": {
       "title": "标签云"
-    }
-  },
-  "confirm": "确认",
-  "dateFormat": "YYYY-MM-DD HH:mm:ss",
-  "delete": "删除",
-  "editor": {
-    "folder": {
-      "name": {
-        "label": "文件名",
-        "placeholder": "请输入文件名"
+    },
+    "settingCard": {
+      "common": {
+        "icon": "图标",
+        "link": "链接",
+        "title": "标题",
+        "actions": "操作",
+        "label": "标签",
+        "color": "颜色",
+        "content": "内容",
+        "image": "图片",
+        "description": "描述",
+        "question": "问题",
+        "answer": "回答",
+        "skill": "技能",
+        "hoverBg": "Hover 背景",
+        "validation": {
+          "titleRequired": "请输入标题",
+          "linkInvalid": "请输入正确的链接",
+          "iconRequired": "请选择图标",
+          "descriptionRequired": "请输入描述",
+          "labelRequired": "请输入标签",
+          "contentRequired": "请输入内容",
+          "duplicateLink": "链接重复",
+          "imageLinkRequired": "请输入图片链接",
+          "imageLinkInvalid": "请输入正确的图片链接"
+        }
       },
-      "parent": {
-        "label": "父目录"
+      "storage": {
+        "title": "存储设置",
+        "form": {
+          "typeLabel": "存储类型",
+          "typeDescription": "文件存储的类型，可选本地目录或对象存储",
+          "typePlaceholder": "请选择存储类型",
+          "typeRequired": "请选择存储类型",
+          "basePathRequired": "请输入存储桶基础路径",
+          "basePathInvalid": "请输入存储路径",
+          "basePathDescription": "存储桶基础路径，默认为：storage",
+          "basePathPlaceholder": "请输入 base path",
+          "endPointRequired": "请输入对象存储服务端点",
+          "endPointDescription": "对象存储服务端点，如腾讯云：cos.ap-chengdu.myqcloud.com",
+          "endPointPlaceholder": "请输入 end point",
+          "portDescription": "端口号，例：433、80",
+          "portPlaceholder": "请输入端口号",
+          "sslDescription": "是否启用SSL",
+          "urlFormatHint": "文件链接模板，例：",
+          "urlFormatPlaceholder": "请输入 url format",
+          "bucketNameLabel": "存储桶名称：",
+          "regionLabel": "存储桶地域：",
+          "filenameLabel": "文件名：",
+          "regionDescription": "对象存储地域，如：ap-chengdu",
+          "regionPlaceholder": "请输入 region",
+          "bucketDescription": "对象存储桶名称",
+          "bucketPlaceholder": "请输入 bucket",
+          "accessKeyPlaceholder": "请输入 access key",
+          "secretKeyPlaceholder": "请输入 secret key"
+        }
       },
-      "title": {
-        "1": "新建文件夹",
-        "2": "重命名文件夹"
+      "article": {
+        "title": "文章设置",
+        "commentLengthLabel": "评论长度",
+        "commentLengthDescription": "限制文章评论的最大文本长度，默认3000字",
+        "commentLengthPlaceholder": "最大长度",
+        "rewardQrLabel": "打赏收款码",
+        "addQr": "添加收款码",
+        "qrModalTitle": "添加收款码",
+        "qrNameLabel": "收款码名称",
+        "qrNamePlaceholder": "请输入收款码名称",
+        "qrImageLabel": "收款码图片链接",
+        "qrImagePlaceholder": "请输入链接",
+        "validation": {
+          "lengthInt": "评论长度必须为整数",
+          "lengthNonNegative": "评论长度不能为负数",
+          "qrNameRequired": "请输入收款码名称",
+          "qrImageInvalid": "请输入合法的图片链接"
+        }
+      },
+      "authorCard": {
+        "title": "作者卡片",
+        "nameLabel": "作者名称",
+        "nameLinkLabel": "名称链接",
+        "avatarLabel": "头像",
+        "mottoLabel": "格言",
+        "linkListLabel": "链接",
+        "linkListDescription": "作者卡片下方显示的外部链接列表",
+        "linkModalEdit": "编辑链接",
+        "linkModalAdd": "添加链接",
+        "linkIconLabel": "链接图标",
+        "linkTitlePlaceholder": "请输入链接标题",
+        "linkPlaceholder": "请输入链接",
+        "validation": {
+          "nameRequired": "请输入名称",
+          "titleRequired": "请输入标题",
+          "linkInvalid": "请输入合法的链接",
+          "duplicateLink": "链接重复"
+        }
+      },
+      "basic": {
+        "title": "基本信息",
+        "siteNameLabel": "站点名称",
+        "siteNameDescription": "站点的名称将显示在网页的标题处",
+        "siteNamePlaceholder": "请输入站点名称",
+        "siteUrlLabel": "站点地址",
+        "siteUrlDescription": "站点地址主要用于生成内容的永久链接",
+        "siteDescLabel": "站点描述",
+        "siteDescDescription": "站点描述将显示在网页代码的头部",
+        "siteDescPlaceholder": "请输入站点描述",
+        "keywordsLabel": "关键词"
+      },
+      "beian": {
+        "title": "备案信息",
+        "policeLabel": "网安备案号",
+        "policeDescription": "站点地址主要用于生成内容的永久链接",
+        "policePlaceholder": "请输入网安备案号",
+        "icpLabel": "ICP备案号",
+        "icpDescription": "站点地址主要用于生成内容的永久链接",
+        "icpPlaceholder": "请输入ICP备案号"
+      },
+      "czdb": {
+        "title": "CZDB 设置",
+        "downloadUrlLabel": "下载链接",
+        "downloadUrlDescription": "用于下载 CZDB 压缩包并更新 v4/v6 数据库文件",
+        "downloadUrlPlaceholder": "请输入 CZDB 下载链接",
+        "validation": {
+          "urlInvalid": "请输入正确的下载链接"
+        }
+      },
+      "fleetingThought": {
+        "title": "闪念笔记设置",
+        "introLabel": "引言",
+        "introDescription": "闪念笔记顶部引言",
+        "introPlaceholder": "请输入引言"
+      },
+      "hero": {
+        "title": "顶部背景设置",
+        "homeImageLabel": "首屏图片",
+        "imageDescription": "填写图片 URL，不填将随机图片，下面图片设置同理",
+        "imagePlaceholder": "请输入图片链接",
+        "homeTitleLabel": "首屏标题",
+        "homeTitlePlaceholder": "请输入标题",
+        "homeSubTitleLabel": "首屏副标题",
+        "homeSubTitleDescription": "一行一句，循环播放",
+        "homeSubTitlePlaceholder": "请输入副标题",
+        "catalogImageLabel": "分类页头图",
+        "tagImageLabel": "标签分类页头图",
+        "articleImageLabel": "文章页头图",
+        "randomImagePlaceholder": "随机图片"
+      },
+      "hitokoto": {
+        "title": "一言",
+        "typeLabel": "一言类型",
+        "typeDescription": "没有选择时，将不限定类型",
+        "typePlaceholder": "请选择类型",
+        "maxLengthLabel": "文本长度",
+        "maxLengthPlaceholder": "请输入文本长度",
+        "loadError": "获取分类失败"
+      },
+      "live2d": {
+        "title": "Live2D 看板娘",
+        "enableLabel": "启用 Live2D",
+        "modelsLabel": "模型配置",
+        "modelsDescriptionPrefix": "请输入 JSON 格式的模型配置数组，参考",
+        "docsLink": "oh-my-live2d 文档",
+        "updateSuccess": "更新成功",
+        "updateError": "更新失败",
+        "validation": {
+          "jsonParseError": "JSON 解析失败，请检查格式",
+          "modelsMustBeArray": "JSON 格式错误：models 必须是数组",
+          "itemMustBeObject": "第 {index} 项必须是对象",
+          "itemMissingPath": "第 {index} 项缺少 path 字段",
+          "itemPathInvalid": "第 {index} 项的 path 不是合法的 URL"
+        },
+        "parseError": "模型配置 JSON 解析失败"
+      },
+      "mailer": {
+        "title": "邮件设置",
+        "enableLabel": "开启邮件通知",
+        "enableDescription": "开启邮件通知后将向指定邮箱发送网站事件通知.",
+        "hostLabel": "SMTP服务器地址",
+        "hostDescription": "例如：QQ邮箱 「smtp.qq.com」",
+        "hostPlaceholder": "请输入SMTP服务器地址",
+        "portLabel": "SMTP服务器端口号",
+        "portDescription": "例如：QQ邮箱「25」或「465」或「587（使用SSL时）」",
+        "portPlaceholder": "请输入端口号",
+        "systemEmailLabel": "系统邮箱",
+        "systemEmailPlaceholder": "请输入系统邮箱",
+        "authCodeLabel": "系统邮箱授权码",
+        "authCodePlaceholder": "请输入系统邮箱授权码",
+        "notifyEmailLabel": "通知邮箱",
+        "notifyEmailDescription": "用于接收系统通知的邮箱",
+        "notifyEmailPlaceholder": "请输入通知邮箱",
+        "sendTest": "发送测试邮件",
+        "commentNotifyLabel": "评论通知",
+        "commentNotifyDescription": "开启评论通知后，评论被回复时，将通过评论邮箱通知用户",
+        "verifyFail": "验证失败",
+        "testSuccess": "测试邮件发送成功",
+        "testFail": "测试邮件发送失败",
+        "validation": {
+          "notifyEmailInvalid": "请输入内容"
+        }
+      },
+      "mePage": {
+        "title": "个人页（Me）配置",
+        "avatarLabel": "头像",
+        "avatarDescription": "个人页头像（author.avatar）；留空将回退到默认头像",
+        "avatarPlaceholder": "https://... 或 /images/avatar.webp",
+        "authorNameLabel": "作者名称",
+        "authorNameDescription": "个人页左侧卡片展示的名称",
+        "authorNamePlaceholder": "请输入作者名称",
+        "locationLabel": "所在地",
+        "locationPlaceholder": "例如：成都",
+        "devRoleLabel": "职位/角色",
+        "devRolePlaceholder": "例如：前端工程师",
+        "devDirectionLabel": "方向",
+        "devDirectionDescription": "显示在 Hello 标题下方的那一行",
+        "devDirectionPlaceholder": "例如：Web / Full Stack",
+        "quoteLabel": "简介/座右铭",
+        "quotePlaceholder": "一句话介绍",
+        "snakeLightLabel": "GitHub Snake（亮色）",
+        "snakeLightDescription": "建议填写图片 URL",
+        "snakeDarkLabel": "GitHub Snake（暗色）",
+        "interestTagsLabel": "兴趣标签",
+        "interestTagsDescription": "对应个人页的“我的兴趣”",
+        "interestTagsPlaceholder": "添加兴趣",
+        "languagesLabel": "语言能力",
+        "languagesDescription": "对应个人页的“语言能力”",
+        "languagesPlaceholder": "添加语言",
+        "validation": {
+          "nameRequired": "请输入名称",
+          "avatarInvalid": "请输入正确的头像链接",
+          "imageInvalid": "请输入正确的图片链接"
+        }
+      },
+      "messageBoard": {
+        "title": "留言板设置",
+        "introLabel": "引言",
+        "introDescription": "留言板顶部引言",
+        "introPlaceholder": "请输入引言",
+        "maxLengthLabel": "留言长度",
+        "maxLengthDescription": "限制留言的最大文本长度，默认3000字",
+        "maxLengthPlaceholder": "请输入最大长度"
+      },
+      "navMenu": {
+        "title": "导航菜单",
+        "add": "添加导航菜单",
+        "editModalTitle": "编辑菜单",
+        "addModalTitle": "添加菜单",
+        "nameLabel": "名称",
+        "namePlaceholder": "请输入菜单名称",
+        "iconLabel": "菜单图标",
+        "iconPlaceholder": "请选择菜单图标",
+        "linkLabel": "链接",
+        "linkDescription": "如果有子级，该值将被忽略",
+        "linkPlaceholder": "请输入链接",
+        "showLabel": "是否显示",
+        "showDescription": "该值会影响子级",
+        "validation": {
+          "nameRequired": "请输入菜单名称"
+        }
+      },
+      "swiper": {
+        "title": "轮播图",
+        "listHint": "首页轮播展示的图片列表",
+        "editModalTitle": "编辑数据",
+        "addModalTitle": "添加数据",
+        "titleLabel": "标题",
+        "titlePlaceholder": "请输入链接标题",
+        "linkLabel": "链接",
+        "linkPlaceholder": "请输入链接",
+        "imageLabel": "图片",
+        "imagePlaceholder": "请输入图片链接",
+        "imageAlt": "轮播图图片",
+        "validation": {
+          "titleRequired": "请输入标题",
+          "linkInvalid": "请输入链接",
+          "duplicateLink": "链接重复",
+          "imageRequired": "请输入图片链接"
+        }
+      },
+      "baseInfoForm": {
+        "label": "基础信息（Base Info）",
+        "description": "支持配置年龄/工作经验等；个人页会根据“年龄/工作经验”自动做年份计算",
+        "addModalTitle": "添加基础信息",
+        "editModalTitle": "编辑基础信息",
+        "titleLabel": "标题",
+        "titlePlaceholder": "例如：年龄 / 工作经验",
+        "valueLabel": "内容",
+        "valuePlaceholder": "例如：2000-01-01 / 2020-01",
+        "iconLabel": "图标",
+        "linkLabel": "链接（可选）",
+        "validation": {
+          "labelRequired": "请输入标签",
+          "valueRequired": "请输入内容",
+          "iconRequired": "请选择图标",
+          "linkInvalid": "请输入正确的链接"
+        }
+      },
+      "faqForm": {
+        "label": "FAQ",
+        "description": "对应个人页 FAQ Tab 的折叠面板内容",
+        "addModalTitle": "添加 FAQ",
+        "editModalTitle": "编辑 FAQ",
+        "questionLabel": "问题",
+        "questionPlaceholder": "例如：你在做什么？",
+        "answerLabel": "回答",
+        "answerPlaceholder": "请输入回答内容",
+        "validation": {
+          "questionRequired": "请输入问题",
+          "answerRequired": "请输入回答内容"
+        }
+      },
+      "linkListForm": {
+        "websiteLabel": "网站（Website List）",
+        "websiteDescription": "对应个人页 Projects Tab 下的“网站”卡片列表",
+        "projectLabel": "项目（Project List）",
+        "projectDescription": "对应个人页 Projects Tab 下的“项目”卡片列表",
+        "addModalTitle": "添加卡片",
+        "editModalTitle": "编辑卡片",
+        "titleLabel": "标题",
+        "titlePlaceholder": "例如：我的博客",
+        "descLabel": "描述",
+        "descPlaceholder": "一句话描述",
+        "linkLabel": "链接",
+        "iconLabel": "图标图片链接",
+        "iconDescription": "用于卡片右侧图标展示（建议 64x64 或 128x128，支持 https://... 或 /images/...",
+        "iconPlaceholder": "请输入图片链接",
+        "validation": {
+          "titleRequired": "请输入标题",
+          "descRequired": "请输入描述",
+          "linkInvalid": "请输入正确的链接",
+          "iconRequired": "请输入图标图片链接",
+          "iconImageInvalid": "请输入正确的图片链接"
+        }
+      },
+      "profileTagsForm": {
+        "label": "个人标签",
+        "description": "个人页左侧头像下方的标签列表",
+        "addModalTitle": "添加标签",
+        "editModalTitle": "编辑标签",
+        "labelLabel": "标签文本",
+        "labelPlaceholder": "例如：独立开发",
+        "colorLabel": "颜色",
+        "validation": {
+          "labelRequired": "请输入标签文本",
+          "duplicateLabel": "标签重复"
+        }
+      },
+      "skillGridForm": {
+        "label": "技能卡片（Grid）",
+        "description": "对应个人页 Projects Tab 下的技能卡片区域",
+        "addModalTitle": "添加技能卡片",
+        "editModalTitle": "编辑技能卡片",
+        "titleLabel": "标题",
+        "titlePlaceholder": "例如：Nuxt / Node.js",
+        "iconLabel": "图标",
+        "linkLabel": "链接（可选）",
+        "validation": {
+          "titleRequired": "请输入标题",
+          "iconRequired": "请选择图标",
+          "linkInvalid": "请输入正确的链接"
+        }
+      },
+      "skillsSortableTable": {
+        "label": "相关技能（列表）",
+        "description": "对应个人页的“相关技能”有序列表",
+        "addModalTitle": "添加技能",
+        "editModalTitle": "编辑技能",
+        "nameLabel": "技能描述",
+        "namePlaceholder": "例如：Nuxt / Node.js",
+        "validation": {
+          "nameRequired": "请输入技能名称"
+        }
+      },
+      "socialLinksForm": {
+        "label": "社交链接（Social Links）",
+        "description": "个人页头像下方的社交按钮列表",
+        "addModalTitle": "添加社交链接",
+        "editModalTitle": "编辑社交链接",
+        "titleLabel": "标题（可选）",
+        "titlePlaceholder": "例如：GitHub",
+        "linkLabel": "链接",
+        "iconLabel": "图标",
+        "hoverBgLabel": "Hover 背景（可选）",
+        "hoverBgPlaceholder": "例如：#000 或 var(--color-gray-700)",
+        "validation": {
+          "linkInvalid": "请输入链接",
+          "iconRequired": "请选择图标"
+        }
+      }
+    },
+    "editor": {
+      "folder": {
+        "title": {
+          "1": "新建文件夹",
+          "2": "重命名文件夹"
+        },
+        "name": {
+          "label": "文件名",
+          "placeholder": "请输入文件名"
+        },
+        "parent": {
+          "label": "父目录"
+        }
+      }
+    },
+    "empty": {
+      "title": "空状态",
+      "description": "暂无数据"
+    },
+    "pagination": {
+      "total": "共「{total}」条数据",
+      "jumpTo": "跳转至",
+      "page": "页 / {total} 页",
+      "pageSize": "{size}/页"
+    },
+    "commentEditor": {
+      "nicknamePlaceholder": "昵称（必填）",
+      "emailPlaceholder": "邮箱（必填，QQ邮箱自动获取信息）",
+      "websitePlaceholder": "网址（选填）",
+      "mdHint": "支持Markdown语法",
+      "send": "发送评论",
+      "cancel": "取消",
+      "emptyWarning": "评论不能为空",
+      "overLimitWarning": "评论字数超出上限",
+      "submitSuccess": "提交成功",
+      "submitError": "提交失败",
+      "nicknameRequired": "请输入昵称",
+      "emailInvalid": "邮箱格式不正确",
+      "websiteInvalid": "请输入正确的网址"
+    },
+    "commentList": {
+      "title": "—— 评论区 ——",
+      "loadError": "加载数据失败",
+      "deleteSuccess": "删除成功",
+      "deleteError": "删除失败"
+    },
+    "commentItem": {
+      "reply": "回复",
+      "deleteConfirmTitle": "确认删除?",
+      "deleteConfirmDescription": "删除后将无法恢复",
+      "delete": "删除",
+      "dateFormat": "YYYY年MM月DD日 HH:mm"
+    },
+    "commentModal": {
+      "title": "留言",
+      "confirm": "更新",
+      "emptyWarning": "留言不能为空",
+      "nicknamePlaceholder": "昵称（必填）",
+      "emailPlaceholder": "邮箱（必填，QQ邮箱自动获取信息）",
+      "websitePlaceholder": "网址（选填）"
+    },
+    "header": {
+      "menu": {
+        "home": "首页",
+        "docs": "文档目录",
+        "sn": "闪念笔记",
+        "message": "留言板",
+        "work": "作品",
+        "me": "我的简介",
+        "nav": "导航",
+        "about": "关于"
+      },
+      "userInfo": "用户信息",
+      "admin": "后台管理",
+      "logout": "退出登录",
+      "logoutSuccess": "已退出登录，3秒后将刷新页面"
+    },
+    "headerDrawer": {
+      "close": "关闭"
+    },
+    "articleBanner": {
+      "read": "阅读",
+      "comment": "评论",
+      "like": "点赞"
+    },
+    "dock": {
+      "items": {
+        "all": "所有捷径",
+        "home": "首页",
+        "translate": "翻译",
+        "ai": "AI工具",
+        "image": "图片",
+        "note": "便签",
+        "airdrop": "空投快传",
+        "mail": "邮箱",
+        "music": "音乐",
+        "bilibili": "哔哩哔哩",
+        "wallpaper": "壁纸",
+        "theme": "主题"
+      }
+    },
+    "searchBox": {
+      "search": "搜索",
+      "noEngine": "暂无可用搜索引擎"
+    },
+    "copyable": {
+      "copied": "已复制",
+      "copy": "复制"
+    },
+    "popconfirm": {
+      "title": "确认此操作？",
+      "confirm": "确认",
+      "cancel": "取消"
+    },
+    "themeSwitch": {
+      "system": "自动",
+      "light": "浅色",
+      "dark": "深色"
+    },
+    "spin": {
+      "loading": "加载中..."
+    },
+    "websiteNotice": {
+      "title": "网站公告",
+      "neverOpen": "不再打开",
+      "confirm": "确认"
+    },
+    "pageFooter": {
+      "copyright": "版权所有",
+      "poweredByPrefix": "本站由",
+      "poweredBySuffix": "强力驱动",
+      "updateTitle": "每小时更新",
+      "visits": "总访问：{count} 次"
+    },
+    "macCard": {
+      "hitokoto": "一言",
+      "externalLink": "相关链接"
+    },
+    "baseInfoGrid": {
+      "ariaLabel": "基础信息"
+    },
+    "imageWaterfall": {
+      "loadError": "加载失败"
+    },
+    "searchDrawer": {
+      "keywordSearch": "关键词搜索",
+      "keywordPlaceholder": "请输入关键字…",
+      "search": "搜索",
+      "tagSearch": "标签搜索",
+      "hotArticles": "热门文章",
+      "read": "阅读"
+    },
+    "treeSelect": {
+      "placeholder": "请选择",
+      "searchPlaceholder": "搜索...",
+      "noMatch": "未找到匹配项",
+      "noData": "无数据",
+      "selected": "已选择 {count} 项",
+      "clear": "清除",
+      "selectAll": "全选"
+    },
+    "colorPicker": {
+      "placeholder": "选择颜色",
+      "alpha": "透明度",
+      "presets": {
+        "blue": "蓝色",
+        "red": "红色",
+        "green": "绿色",
+        "orange": "橙色",
+        "purple": "紫色",
+        "cyan": "青色"
+      }
+    },
+    "datePicker": {
+      "placeholder": "请选择日期",
+      "rangePlaceholder": "请选择日期范围"
+    },
+    "timePicker": {
+      "placeholder": "请选择时间",
+      "rangePlaceholder": "请选择时间范围",
+      "startPlaceholder": "开始时间",
+      "endPlaceholder": "结束时间"
+    },
+    "picker": {
+      "placeholder": "请选择"
+    },
+    "inputFile": {
+      "placeholder": "请选择文件",
+      "select": "选择文件"
+    },
+    "inputTagArea": {
+      "placeholder": "添加标签"
+    },
+    "inputPassword": {
+      "strengthLabel": "强度：",
+      "weak": "非常弱",
+      "medium": "一般",
+      "strong": "非常强"
+    },
+    "selectIcon": {
+      "searchPlaceholder": "搜索..."
+    },
+    "transfer": {
+      "list1": "列表 1",
+      "list2": "列表 2",
+      "noData": "暂无数据"
+    },
+    "messageBoard": {
+      "editor": {
+        "nicknamePlaceholder": "昵称（必填）",
+        "emailPlaceholder": "邮箱（必填）",
+        "websitePlaceholder": "网址（选填）",
+        "mdHint": "支持Markdown语法",
+        "send": "发送评论",
+        "cancel": "取消",
+        "emptyWarning": "留言不能为空",
+        "overLimitWarning": "留言字数超出上限",
+        "submitSuccess": "提交成功",
+        "submitError": "提交失败",
+        "nicknameRequired": "请输入昵称",
+        "emailInvalid": "邮箱格式不正确",
+        "websiteInvalid": "请输入正确的网址"
+      },
+      "list": {
+        "title": "—— 评论区 ——",
+        "loadError": "加载数据失败",
+        "deleteSuccess": "删除成功",
+        "deleteError": "删除失败"
+      },
+      "item": {
+        "reply": "回复",
+        "deleteConfirmTitle": "确认删除?",
+        "deleteConfirmDescription": "删除后将无法恢复",
+        "delete": "删除",
+        "dateFormat": "YYYY年MM月DD日 HH:mm"
+      }
+    },
+    "fleetingThought": {
+      "item": {
+        "deleteSuccess": "删除成功",
+        "deleteError": "删除失败",
+        "operateError": "操作失败",
+        "edit": "编辑",
+        "deleteConfirmTitle": "确认删除?",
+        "deleteConfirmDescription": "删除后将无法恢复",
+        "delete": "删除",
+        "dateFormat": "YYYY年MM月DD日 HH:mm"
+      },
+      "editor": {
+        "emptyWarning": "内容不能为空",
+        "submitSuccess": "提交成功",
+        "submitError": "提交失败",
+        "mdHint": "支持Markdown语法",
+        "cancel": "取消",
+        "update": "更新笔记",
+        "submit": "提交笔记"
+      }
+    },
+    "article": {
+      "copyright": {
+        "authorLabel": "发布作者：",
+        "updateLabel": "最后更新：",
+        "urlLabel": "本文链接：",
+        "licenseLabel": "作品版权：",
+        "licenseName": "署名-非商业性使用-相同方式共享 4.0 国际 (CC BY-NC-SA4.0)",
+        "licenseSuffix": "》许可协议授权"
+      },
+      "like": {
+        "error": "点赞失败",
+        "count": "赞",
+        "reward": "打赏"
+      },
+      "listDivider": {
+        "loading": "加载中..."
+      },
+      "listItem": {
+        "pinned": "置顶",
+        "abstractTitle": "文章摘要",
+        "uncategorized": "未分类"
+      },
+      "tags": {
+        "empty": "暂无标签"
+      },
+      "toc": {
+        "title": "文章目录"
+      }
+    },
+    "dashboard": {
+      "common": {
+        "refreshError": "刷新失败"
+      },
+      "article": {
+        "title": "文章统计",
+        "loadError": "加载文章数据失败",
+        "initError": "初始化文章卡片失败",
+        "tips": {
+          "created": "新增{count}篇文章",
+          "updated": "更新{count}篇文章",
+          "prefix": "今日",
+          "separator": "，",
+          "empty": "暂无更新"
+        }
+      },
+      "comment": {
+        "title": "评论统计",
+        "loadError": "加载评论数据失败",
+        "initError": "初始化评论卡片失败",
+        "today": "今日新增评论{count}条"
+      },
+      "fleetingThought": {
+        "title": "闪念笔记统计",
+        "loadError": "加载闪念笔记数据失败",
+        "initError": "初始化闪念笔记卡片失败",
+        "today": "今日新增闪念笔记{count}篇"
+      },
+      "image": {
+        "title": "图库统计",
+        "loadError": "加载图库数据失败",
+        "initError": "初始化图库卡片失败",
+        "countLabel": "图片数量",
+        "sizeLabel": "存储大小",
+        "todayUpload": "今日上传{count}张图片",
+        "todayEmpty": "今日无新增图片"
+      },
+      "like": {
+        "title": "点赞统计",
+        "loadError": "加载点赞数据失败",
+        "initError": "初始化点赞卡片失败",
+        "today": "今日点赞{count}次"
+      },
+      "message": {
+        "title": "留言统计",
+        "loadError": "加载留言数据失败",
+        "initError": "初始化留言卡片失败",
+        "today": "今日新增留言{count}条"
+      },
+      "note": {
+        "title": "笔记统计",
+        "loadError": "加载笔记数据失败",
+        "initError": "初始化笔记卡片失败",
+        "tips": {
+          "created": "新增{count}篇笔记",
+          "updated": "更新{count}篇笔记",
+          "prefix": "今日",
+          "separator": "，",
+          "empty": "暂无更新"
+        }
+      },
+      "overview": {
+        "title": "总览",
+        "loadError": "加载统计数据失败",
+        "initError": "初始化阅读卡片失败",
+        "apiRequest": "API请求",
+        "pageRequest": "页面请求",
+        "staticRequest": "静态资源请求"
+      },
+      "view": {
+        "title": "阅读统计",
+        "loadError": "加载阅读数据失败",
+        "initError": "初始化阅读卡片失败",
+        "today": "今日阅读{count}次"
+      }
+    },
+    "image": {
+      "selectTitle": "选择图片",
+      "selectModal": {
+        "upload": "上传图片",
+        "keywordPlaceholder": "请输入关键词",
+        "notSelected": "暂未选择图片",
+        "selectedCount": "已选择（{count}）",
+        "folderError": "获取文件夹失败",
+        "imageError": "获取图片失败"
+      },
+      "uploadModal": {
+        "title": "上传图片至「{folder}」",
+        "select": "选择图片",
+        "clear": "清空列表",
+        "confirmCloseTitle": "确认关闭？",
+        "confirmCloseMessage": "还有未上传的图片，关闭后将清空列表",
+        "statusWaiting": "等待上传",
+        "statusUploading": "上传中",
+        "statusSucceed": "上传成功",
+        "statusFailed": "上传失败",
+        "upload": "上传"
+      },
+      "detailModal": {
+        "title": "原图预览",
+        "updateTags": "更新标签",
+        "downloadOriginal": "下载原图",
+        "fieldImageId": "图片ID",
+        "fieldPixel": "图片像素",
+        "fieldTags": "图片标签",
+        "fieldFolder": "所属图库",
+        "fieldCreatedAt": "上传日期",
+        "fieldUpdatedAt": "更新日期",
+        "fieldSize": "原图大小",
+        "fieldHash": "原图哈希",
+        "fieldLink": "原图链接",
+        "fieldDownload": "图片下载"
+      }
+    },
+    "kanban": {
+      "empty": "拖到这里",
+      "loading": "加载中…"
+    },
+    "authorCard": {
+      "article": "文章",
+      "like": "点赞",
+      "tag": "标签",
+      "articleTitle": "累计文章数",
+      "likeTitle": "累计点赞数",
+      "tagTitle": "累计标签数"
+    },
+    "calendar": {
+      "addEvent": "添加事件",
+      "loading": "日历加载中…",
+      "form": {
+        "createTitle": "新建事件",
+        "editTitle": "编辑事件",
+        "titleLabel": "事件标题",
+        "titlePlaceholder": "请输入事件标题",
+        "eventTypeLabel": "事件类型",
+        "single": "普通事件",
+        "recurring": "重复事件",
+        "allDayLabel": "全天事件",
+        "frequencyLabel": "重复频率",
+        "intervalLabel": "重复间隔",
+        "endTypeLabel": "结束方式",
+        "countLabel": "重复次数",
+        "untilLabel": "截止日期",
+        "untilPlaceholder": "选择截止日期",
+        "startLabel": "开始时间",
+        "endLabel": "结束时间",
+        "datePlaceholder": "选择日期",
+        "locationLabel": "地点",
+        "locationPlaceholder": "请输入地点",
+        "colorLabel": "事件颜色",
+        "descriptionLabel": "描述",
+        "descriptionPlaceholder": "请输入事件描述",
+        "daily": "每天",
+        "weekly": "每周",
+        "monthly": "每月",
+        "yearly": "每年",
+        "endNever": "永不结束",
+        "endByCount": "按次数结束",
+        "endByUntil": "按日期结束"
+      },
+      "validation": {
+        "titleRequired": "请输入事件标题",
+        "intervalMin": "重复间隔不能小于 1",
+        "countMin": "重复次数不能小于 1",
+        "startRequired": "请选择开始日期",
+        "endRequired": "请选择结束日期",
+        "untilRequired": "请选择截止日期"
+      }
+    },
+    "flowchart": {
+      "stencilTitle": "流程图",
+      "groupBasic": "基础流程图",
+      "groupSystem": "系统设计图",
+      "shapeStart": "开始",
+      "shapeProcess": "过程",
+      "shapeOptional": "可选过程",
+      "shapeDecision": "决策",
+      "shapeData": "数据",
+      "shapeConnect": "连接"
+    },
+    "mindmap": {
+      "centerTopic": "中心主题",
+      "branchTopic": "分支主题{index}",
+      "childTopic": "子主题{index}"
+    },
+    "whiteboard": {
+      "untitled": "未命名白板",
+      "importError": "导入白板失败，请确认文件为有效 JSON",
+      "selectFile": "选择白板 JSON 文件",
+      "minimapLabel": "白板缩略图",
+      "noteLabel": "便签内容",
+      "deleteNote": "删除便签",
+      "resizeNote": "调整便签大小",
+      "resizeTitle": "拖拽调整大小",
+      "toolsLabel": "白板工具",
+      "toolSelect": "选择 (V)",
+      "toolPan": "抓手平移 (H / 空格)",
+      "toolNote": "便签 (N)",
+      "toolPen": "画笔 (P)",
+      "toolEraser": "橡皮擦 (E)",
+      "toolConnect": "连线 (C)",
+      "hintConnect": "依次点击两个便签以连线",
+      "hintPan": "拖拽以平移画布",
+      "hintEraser": "拖动以擦除画笔笔迹",
+      "hintDefault": "选中便签可拖拽、缩放或删除",
+      "noteColor": "便签颜色",
+      "selectNoteColor": "选择便签颜色 {color}",
+      "pen": "画笔",
+      "selectPenColor": "选择画笔颜色 {color}",
+      "penWidth": "画笔粗细 {width}",
+      "undo": "撤销",
+      "undoTitle": "撤销 (Ctrl+Z)",
+      "redo": "重做",
+      "redoTitle": "重做 (Ctrl+Shift+Z)",
+      "zoomOut": "缩小",
+      "zoomReset": "重置缩放",
+      "zoomResetTitle": "重置为 100%",
+      "zoomIn": "放大",
+      "fit": "适应内容",
+      "import": "导入",
+      "importTitle": "导入白板 JSON 文件",
+      "importLabel": "导入白板",
+      "export": "导出",
+      "exportTitle": "导出白板 JSON 文件",
+      "exportLabel": "导出白板",
+      "save": "保存",
+      "saveTitle": "保存白板到服务器",
+      "saveLabel": "保存白板",
+      "viewport": {
+        "drag": "拖拽",
+        "pan": "平移",
+        "wheel": "滚轮",
+        "zoom": "缩放",
+        "dblclick": "双击",
+        "editNote": "编辑便签",
+        "rightclick": "右键",
+        "remove": "删除",
+        "space": "空格",
+        "tempPan": "临时抓手"
+      }
+    },
+    "lyEditor": {
+      "shell": {
+        "activityBar": {
+          "noteManager": "笔记管理",
+          "articleManager": "文章管理",
+          "search": "搜索",
+          "imageManager": "图片管理器",
+          "attachmentManager": "附件管理器",
+          "hitokotoManager": "一言管理",
+          "navigationManager": "导航网站",
+          "workManager": "项目管理",
+          "apiKeyManager": "API 密钥管理",
+          "whiteboardManager": "白板管理",
+          "kanbanManager": "看板管理",
+          "flowchartManager": "流程图管理",
+          "mindmapManager": "思维导图管理",
+          "calendarManager": "日历管理",
+          "dashboard": "仪表盘",
+          "cronJob": "定时任务",
+          "setting": "设置"
+        },
+        "menuBar": {
+          "file": "文件",
+          "edit": "编辑",
+          "newFile": "新建文件",
+          "newFolder": "新建文件夹",
+          "insertCard": "插入Card",
+          "userInfo": "用户信息",
+          "logout": "退出登录",
+          "toggleMainSidebar": "切换主侧栏",
+          "toggleAuxSidebar": "切换辅助侧栏",
+          "toggleFullscreen": "切换全屏",
+          "message": "消息",
+          "notice": "公告",
+          "mail": "邮件",
+          "home": "首页"
+        },
+        "tabBar": {
+          "close": "关闭",
+          "closeOthers": "关闭其他",
+          "closeRight": "关闭右侧标签页",
+          "closeSaved": "关闭已保存",
+          "closeAll": "全部关闭"
+        },
+        "preview": {
+          "empty": "暂无预览内容"
+        }
+      },
+      "core": {
+        "newFileName": "新建文件-{date}",
+        "newFileContent": "# 标题\n\n> 创建时间: {date}",
+        "cardCompletionDetail": "Card 组件",
+        "cardCompletionDocumentation": "在文档中使用Card组件"
+      },
+      "common": {
+        "setting": "设置",
+        "noDescription": "暂无描述",
+        "openList": "打开列表",
+        "rename": "重命名",
+        "editInfo": "编辑信息",
+        "details": "详情",
+        "menu": "菜单",
+        "openFile": "打开文件",
+        "upload": "上传",
+        "import": "导入",
+        "export": "导出",
+        "searchPlaceholder": "请输入关键词",
+        "deleteConfirm": {
+          "title": "确认删除?",
+          "message": "即将删除「{name}」，删除后将无法恢复，是否继续？",
+          "simpleMessage": "即将删除「{name}」，是否继续？",
+          "button": "删除"
+        },
+        "status": {
+          "enabled": "启用",
+          "disabled": "禁用",
+          "unknown": "未知",
+          "public": "公开",
+          "private": "私有",
+          "favorite": "已收藏",
+          "unfavorite": "未收藏",
+          "collect": "收藏",
+          "neverExpire": "永不过期"
+        },
+        "table": {
+          "name": "名称",
+          "title": "标题",
+          "author": "作者",
+          "category": "分类",
+          "type": "类型",
+          "status": "状态",
+          "size": "大小",
+          "icon": "图标",
+          "url": "地址",
+          "tags": "标签",
+          "description": "描述",
+          "content": "内容",
+          "count": "数量",
+          "keyword": "关键词",
+          "createdAt": "创建时间",
+          "updatedAt": "更新日期"
+        }
+      },
+      "modules": {
+        "apiKey": {
+          "title": "API 密钥管理",
+          "newKey": "新建 API 密钥",
+          "loadFailed": "加载失败",
+          "headers": {
+            "scope": "权限范围",
+            "expiresAt": "过期时间",
+            "lastUsedAt": "最近使用",
+            "lastIp": "最近 IP",
+            "callCount": "调用次数"
+          },
+          "disable": "禁用",
+          "disableConfirmTitle": "确认禁用?",
+          "disableConfirmMessage": "即将禁用「{name}」，禁用后当前前后端列表将不再展示该 API 密钥，是否继续？",
+          "disableSuccess": "禁用成功",
+          "created": {
+            "title": "请立即保存 API 密钥",
+            "confirm": "我已保存",
+            "alertTitle": "明文 API 密钥仅展示一次",
+            "alertDescription": "关闭当前弹窗后，系统将无法再次查看该明文 API 密钥，请先复制并妥善保管。",
+            "plainLabel": "API 密钥明文",
+            "copyFailedDescription": "请手动复制当前 API 密钥。"
+          },
+          "form": {
+            "editTitle": "编辑 API 密钥",
+            "createTitle": "新建 API 密钥",
+            "nameLabel": "名称",
+            "namePlaceholder": "如：内容导入 API 密钥",
+            "scopeLabel": "权限范围",
+            "scopePlaceholder": "请选择权限范围",
+            "expiresAtLabel": "过期时间",
+            "safeTipTitle": "安全提示",
+            "safeTipDescription": "API 密钥创建后仅会展示一次明文，请在关闭提示前妥善保存。",
+            "validation": {
+              "scopeInvalid": "请选择有效的权限范围",
+              "nameRequired": "请输入 API 密钥名称",
+              "scopeAtLeastOne": "请至少选择一个权限范围"
+            }
+          }
+        },
+        "article": {
+          "title": "文章管理",
+          "newCategory": "新建分类",
+          "loadCategoryFailed": "获取数据失败",
+          "categoryMenu": {
+            "rename": "重命名",
+            "details": "分类详情",
+            "delete": "删除分类"
+          },
+          "headers": {
+            "wordCount": "字数"
+          },
+          "menu": {
+            "openNote": "打开关联笔记",
+            "details": "文章详情",
+            "delete": "删除文章"
+          },
+          "categoryDetailsTitle": "分类详情",
+          "categoryFields": {
+            "parent": "父级分类",
+            "name": "分类名称",
+            "icon": "分类图标",
+            "description": "分类描述",
+            "createdAt": "创建日期",
+            "updatedAt": "更新日期",
+            "count": "文章数量"
+          },
+          "categoryForm": {
+            "editTitle": "修改分类",
+            "createTitle": "新建分类",
+            "parentLabel": "父级分类",
+            "parentPlaceholder": "请选择父级分类",
+            "nameLabel": "分类名称",
+            "namePlaceholder": "请输入分类名称",
+            "iconLabel": "分类图标",
+            "iconPlaceholder": "请选择分类图标",
+            "descriptionLabel": "分类描述",
+            "descriptionPlaceholder": "请输入分类描述",
+            "validation": {
+              "nameRequired": "请输入分类名称"
+            }
+          }
+        },
+        "attachment": {
+          "title": "附件管理器",
+          "newFolder": "新建目录",
+          "loadFolderFailed": "加载目录失败",
+          "headers": {
+            "fileName": "文件名",
+            "download": "下载"
+          },
+          "menu": {
+            "copyLink": "复制链接",
+            "openFile": "打开文件",
+            "deleteFile": "删除文件"
+          },
+          "linkCopied": "链接已复制",
+          "folderLoadFailed": "加载附件失败",
+          "folderDetailLoadFailed": "加载目录详情失败",
+          "upload": "上传附件",
+          "fileCount": "文件数：{count}",
+          "folderSize": "目录容量：{size}",
+          "fileNamePlaceholder": "请输入文件名关键词",
+          "folderMenu": {
+            "rename": "重命名",
+            "delete": "删除目录"
+          },
+          "folderForm": {
+            "editTitle": "编辑附件目录",
+            "createTitle": "新建附件目录",
+            "nameLabel": "目录名称",
+            "namePlaceholder": "请输入目录名称",
+            "iconLabel": "目录图标",
+            "iconPlaceholder": "请选择目录图标",
+            "descriptionLabel": "目录描述",
+            "descriptionPlaceholder": "请输入目录描述",
+            "validation": {
+              "nameRequired": "请输入目录名称"
+            }
+          }
+        },
+        "calendar": {
+          "title": "日历管理",
+          "new": "新建日历",
+          "loadFailed": "加载日历列表失败",
+          "searchPlaceholder": "搜索日历标题或描述",
+          "menu": {
+            "editInfo": "编辑信息",
+            "delete": "删除日历"
+          },
+          "panelLoadFailed": "加载日历失败",
+          "exportICal": "导出 iCal",
+          "form": {
+            "editTitle": "修改日历",
+            "createTitle": "新建日历",
+            "titleLabel": "日历标题",
+            "titlePlaceholder": "请输入日历标题",
+            "descriptionLabel": "日历描述",
+            "descriptionPlaceholder": "请输入日历描述",
+            "colorLabel": "预设颜色",
+            "colorPlaceholder": "如 #3b82f6，留空使用默认色",
+            "validation": {
+              "titleRequired": "请输入日历标题"
+            }
+          }
+        },
+        "cron": {
+          "title": "定时任务",
+          "executeSuccess": "任务执行成功",
+          "executeFailed": "任务执行失败",
+          "listHeader": "任务列表",
+          "run": "运行",
+          "noTask": "暂无任务",
+          "jobHeader": "定时任务",
+          "jobLabel": "任务: ",
+          "noJob": "暂无定时任务"
+        },
+        "dashboard": {
+          "title": "仪表盘"
+        },
+        "flowchart": {
+          "title": "流程图管理",
+          "new": "新建流程图",
+          "loadFailed": "加载流程图列表失败",
+          "searchPlaceholder": "搜索流程图标题或描述",
+          "menu": {
+            "editInfo": "编辑信息",
+            "delete": "删除流程图"
+          },
+          "panelLoadFailed": "加载流程图失败",
+          "form": {
+            "editTitle": "修改流程图",
+            "createTitle": "新建流程图",
+            "titleLabel": "流程图标题",
+            "titlePlaceholder": "请输入流程图标题",
+            "descriptionLabel": "流程图描述",
+            "descriptionPlaceholder": "请输入流程图描述",
+            "validation": {
+              "titleRequired": "请输入流程图标题"
+            }
+          }
+        },
+        "kanban": {
+          "title": "看板管理",
+          "new": "新建看板",
+          "loadFailed": "加载看板列表失败",
+          "searchPlaceholder": "搜索看板标题或描述",
+          "menu": {
+            "editInfo": "编辑信息",
+            "delete": "删除看板"
+          },
+          "panelLoadFailed": "加载看板失败",
+          "form": {
+            "editTitle": "修改看板",
+            "createTitle": "新建看板",
+            "titleLabel": "看板标题",
+            "titlePlaceholder": "请输入看板标题",
+            "descriptionLabel": "看板描述",
+            "descriptionPlaceholder": "请输入看板描述",
+            "validation": {
+              "titleRequired": "请输入看板标题"
+            }
+          },
+          "panelNewColumn": "新建列",
+          "panelNewCard": "新建卡片"
+        },
+        "mindmap": {
+          "title": "思维导图管理",
+          "new": "新建思维导图",
+          "loadFailed": "加载思维导图列表失败",
+          "searchPlaceholder": "搜索思维导图标题或描述",
+          "menu": {
+            "editInfo": "编辑信息",
+            "delete": "删除思维导图"
+          },
+          "panelLoadFailed": "加载思维导图失败",
+          "form": {
+            "editTitle": "修改思维导图",
+            "createTitle": "新建思维导图",
+            "titleLabel": "思维导图标题",
+            "titlePlaceholder": "请输入思维导图标题",
+            "descriptionLabel": "思维导图描述",
+            "descriptionPlaceholder": "请输入思维导图描述",
+            "validation": {
+              "titleRequired": "请输入思维导图标题"
+            },
+            "centerTopic": "中心主题"
+          },
+          "panelCenterTopic": "中心主题"
+        },
+        "whiteboard": {
+          "title": "白板管理",
+          "new": "新建白板",
+          "loadFailed": "加载白板列表失败",
+          "searchPlaceholder": "搜索白板标题或描述",
+          "menu": {
+            "editInfo": "编辑信息",
+            "delete": "删除白板"
+          },
+          "panelLoadFailed": "加载白板失败",
+          "form": {
+            "editTitle": "修改白板",
+            "createTitle": "新建白板",
+            "titleLabel": "白板标题",
+            "titlePlaceholder": "请输入白板标题",
+            "descriptionLabel": "白板描述",
+            "descriptionPlaceholder": "请输入白板描述",
+            "validation": {
+              "titleRequired": "请输入白板标题"
+            }
+          }
+        },
+        "hitokoto": {
+          "title": "一言管理",
+          "typePanelTitle": "一言分类",
+          "newType": "新建分类",
+          "loadTypeFailed": "加载分类失败",
+          "typeMenu": {
+            "rename": "重命名",
+            "details": "分类详情",
+            "delete": "删除分类"
+          },
+          "headers": {
+            "source": "来源",
+            "length": "长度"
+          },
+          "menu": {
+            "edit": "编辑语句",
+            "delete": "删除语句"
+          },
+          "add": "新增",
+          "form": {
+            "editTitle": "修改语句",
+            "addTitle": "添加语句",
+            "typeLabel": "语句分类",
+            "typePlaceholder": "请选择语句分类",
+            "sourceLabel": "语句来源",
+            "sourcePlaceholder": "请输入语句来源",
+            "authorLabel": "语句作者",
+            "authorPlaceholder": "请输入语句作者",
+            "contentLabel": "语句内容",
+            "contentPlaceholder": "请输入语句内容",
+            "validation": {
+              "contentRequired": "请输入内容"
+            }
+          },
+          "importTitle": "导入数据",
+          "typeDetailsTitle": "分类详情",
+          "typeFields": {
+            "name": "分类名称",
+            "description": "分类描述",
+            "createdAt": "创建日期",
+            "updatedAt": "更新日期",
+            "count": "语句数量"
+          },
+          "typeForm": {
+            "createTitle": "新建分类",
+            "editTitle": "修改分类",
+            "nameLabel": "分类名称",
+            "namePlaceholder": "请输入分类名称",
+            "descriptionLabel": "分类描述",
+            "descriptionPlaceholder": "请输入分类描述",
+            "validation": {
+              "nameRequired": "请输入分类名称"
+            }
+          }
+        },
+        "image": {
+          "title": "图片管理器",
+          "newFolder": "新建目录",
+          "menu": {
+            "rename": "重命名",
+            "details": "目录详情",
+            "delete": "删除目录"
+          },
+          "folderForm": {
+            "editTitle": "修改目录",
+            "createTitle": "创建目录",
+            "nameLabel": "目录名称",
+            "namePlaceholder": "请输入目录名称",
+            "descriptionLabel": "目录描述",
+            "descriptionPlaceholder": "请输入目录描述",
+            "validation": {
+              "nameRequired": "请输入目录名称"
+            }
+          }
+        },
+        "navigation": {
+          "title": "导航管理",
+          "searchHistory": "搜索历史",
+          "history": "历史记录",
+          "shortcut": "快捷方式",
+          "searchEngine": "搜索引擎",
+          "newShortcut": "新增快捷方式",
+          "newSearchEngine": "新增搜索引擎",
+          "all": "全部",
+          "website": {
+            "headers": {
+              "hot": "热度",
+              "favorite": "收藏",
+              "public": "公开"
+            },
+            "typeWebsite": "网站",
+            "typeBookmark": "书签",
+            "menu": {
+              "edit": "编辑网站",
+              "delete": "删除网站"
+            },
+            "new": "新增"
+          },
+          "sectionEmpty": "暂无数据，点击上方 + 新增",
+          "historyHeaders": {
+            "engine": "搜索引擎",
+            "userId": "用户ID",
+            "searchedAt": "搜索日期"
+          },
+          "historyMenuDelete": "删除记录",
+          "engineLoadFailed": "搜索引擎加载失败",
+          "historyLoadFailed": "搜索历史加载失败",
+          "websiteForm": {
+            "editTitle": "编辑网站",
+            "createTitle": "新增网站",
+            "nameLabel": "网站名称",
+            "namePlaceholder": "请输入网站名称",
+            "urlLabel": "网站地址",
+            "urlPlaceholder": "请输入网站地址，如 https://example.com",
+            "iconLabel": "图标",
+            "iconPlaceholder": "请输入图标名称或URL",
+            "tagsLabel": "标签",
+            "tagsPlaceholder": "回车添加标签，如：工具,搜索",
+            "descriptionLabel": "描述",
+            "descriptionPlaceholder": "请输入网站描述",
+            "typeLabel": "类型",
+            "hotLabel": "热度",
+            "hotPlaceholder": "请输入热度，默认 0",
+            "favoriteLabel": "收藏",
+            "publicLabel": "公开",
+            "statusLabel": "状态",
+            "validation": {
+              "nameRequired": "请输入网站名称",
+              "urlInvalid": "请输入有效的URL地址",
+              "iconInvalid": "请输入有效的图标URL地址"
+            }
+          },
+          "websiteImport": {
+            "title": "导入导航网站",
+            "successDescription": "共 {total} 条，新增 {created} 条，跳过 {skipped} 条"
+          },
+          "searchEngineForm": {
+            "editTitle": "编辑搜索引擎",
+            "createTitle": "新增搜索引擎",
+            "nameLabel": "名称",
+            "namePlaceholder": "如：Google",
+            "urlLabel": "搜索地址",
+            "urlPlaceholder": "请输入搜索地址，如 https://www.google.com/search?q=",
+            "iconLabel": "图标",
+            "iconPlaceholder": "请选择图标",
+            "descriptionLabel": "描述",
+            "descriptionPlaceholder": "搜索引擎描述（可选）",
+            "publicLabel": "公开",
+            "statusLabel": "状态",
+            "validation": {
+              "nameRequired": "请输入名称",
+              "urlInvalid": "请输入有效的URL地址",
+              "iconRequired": "请输入图标"
+            }
+          },
+          "shortcutForm": {
+            "editTitle": "编辑快捷方式",
+            "createTitle": "新增快捷方式",
+            "nameLabel": "名称",
+            "namePlaceholder": "如：GitHub",
+            "urlLabel": "链接地址",
+            "urlPlaceholder": "如 https://github.com",
+            "iconLabel": "图标",
+            "iconPlaceholder": "请选择图标",
+            "descriptionLabel": "描述",
+            "descriptionPlaceholder": "快捷方式描述（可选）",
+            "publicLabel": "公开",
+            "statusLabel": "状态",
+            "validation": {
+              "nameRequired": "请输入名称",
+              "urlInvalid": "请输入有效的URL地址",
+              "iconRequired": "请输入图标"
+            }
+          }
+        },
+        "note": {
+          "title": "笔记管理",
+          "newFile": "新建文件",
+          "newFolder": "新建文件夹",
+          "refreshFolder": "刷新目录",
+          "menu": {
+            "openFile": "打开文件",
+            "publish": "发布&更新文章",
+            "details": "笔记详情",
+            "export": "导出文件",
+            "rename": "重命名",
+            "deleteNote": "删除笔记",
+            "deleteFolder": "删除文件夹"
+          },
+          "folderForm": {
+            "renameTitle": "重命名",
+            "createTitle": "创建目录",
+            "parentLabel": "父目录",
+            "nameLabel": "目录名称",
+            "namePlaceholder": "请输入目录名称",
+            "validation": {
+              "nameRequired": "请输入目录名称"
+            }
+          },
+          "publish": {
+            "loadFailed": "加载数据失败",
+            "publishSuccess": "发布成功",
+            "publishFailed": "发布失败",
+            "updateTitle": "更新文章",
+            "publishTitle": "发布文章",
+            "titleLabel": "文章标题",
+            "titlePlaceholder": "请输入标题",
+            "authorLabel": "作者",
+            "authorPlaceholder": "请输入作者名称",
+            "categoryLabel": "分类",
+            "abstractLabel": "摘要",
+            "abstractPlaceholder": "请输入摘要",
+            "coverLabel": "封面",
+            "sourceLabel": "文章来源",
+            "statusLabel": "文章状态",
+            "statusPublished": "已发布",
+            "statusUnpublished": "未发布",
+            "updatedAtLabel": "最近更新",
+            "needSyncLabel": "需要同步",
+            "publishedAtLabel": "发布时间",
+            "tagsLabel": "标签",
+            "pinnedLabel": "置顶",
+            "pinPriorityLabel": "置顶优先级",
+            "commentLabel": "评论",
+            "rewardLabel": "赞赏",
+            "passwordLabel": "访问密码",
+            "optionalPlaceholder": "可选",
+            "customUrlLabel": "自定义链接",
+            "customUrlOnly": "仅自定义链接访问",
+            "copyFullLink": "复制完整链接",
+            "validation": {
+              "titleRequired": "请输入标题",
+              "authorRequired": "请输入作者",
+              "abstractRequired": "请输入摘要"
+            }
+          },
+          "save": {
+            "title": "保存文件",
+            "folderFailed": "获取目录失败",
+            "parentLabel": "父目录",
+            "nameLabel": "文件名",
+            "namePlaceholder": "请输入文件名",
+            "validation": {
+              "nameRequired": "请输入名称"
+            }
+          }
+        },
+        "notice": {
+          "settingsTitle": "公告设置",
+          "tabs": {
+            "card": "卡片",
+            "toast": "提示",
+            "modal": "弹窗"
+          },
+          "positions": {
+            "topLeft": "左上角",
+            "topCenter": "顶部居中",
+            "topRight": "右上角",
+            "bottomLeft": "左下角",
+            "bottomCenter": "底部居中",
+            "bottomRight": "右下角"
+          },
+          "toggleOn": "开启",
+          "toggleOff": "关闭",
+          "contentLabel": "公告内容",
+          "contentDescription": "博客公告将显示在网页右侧",
+          "delayLabel": "弹出延迟（毫秒）",
+          "positionLabel": "弹出位置",
+          "fullscreenLabel": "是否全屏",
+          "email": {
+            "title": "发送邮件",
+            "send": "发送",
+            "submitted": "已提交发送请求",
+            "sendFailed": "发送失败",
+            "toLabel": "收件人邮箱",
+            "toPlaceholder": "请输入收件人邮箱",
+            "subjectLabel": "邮件主题",
+            "subjectPlaceholder": "请输入邮件主题",
+            "contentLabel": "邮件内容",
+            "contentPlaceholder": "请输入邮件内容",
+            "validation": {
+              "toInvalid": "请输入正确的收件人邮箱",
+              "toRequired": "请选择收件人",
+              "subjectRequired": "请输入邮件主题",
+              "contentRequired": "请输入邮件内容"
+            }
+          }
+        },
+        "settings": {
+          "title": "设置",
+          "sections": {
+            "article": "文章设置",
+            "authorCard": "作者卡片",
+            "mePage": "个人页配置",
+            "basic": "基本信息",
+            "beian": "备案信息",
+            "hero": "顶部背景",
+            "navMenu": "导航菜单",
+            "swiper": "轮播图",
+            "fleetingThought": "闪念笔记",
+            "messageBoard": "留言板",
+            "hitokoto": "一言",
+            "mailer": "邮件设置",
+            "czdb": "CZDB 设置"
+          },
+          "transfer": {
+            "scopeClient": "客户端配置",
+            "scopeServer": "服务端配置",
+            "scopeMePage": "个人主页配置",
+            "scopeAll": "全部配置",
+            "menuClient": "客户端",
+            "menuServer": "服务端",
+            "menuMePage": "个人主页",
+            "menuAll": "全部配置",
+            "exported": "{scope}已导出",
+            "imported": "{scope}已导入",
+            "importFailed": "导入配置失败",
+            "importTooltip": "导入配置",
+            "exportTooltip": "导出配置",
+            "actionImport": "导入",
+            "actionExport": "导出",
+            "errors": {
+              "topLevelObject": "JSON 顶层必须是对象",
+              "typeMismatch": "文件类型与所选的{scope}不一致",
+              "contentObject": "{scope}内容必须是对象",
+              "allRequired": "全部配置必须包含 client、server 和 me_page 对象"
+            }
+          }
+        },
+        "user": {
+          "title": "用户信息",
+          "roles": {
+            "admin": "管理员",
+            "normal": "普通用户",
+            "visitor": "游客",
+            "unknown": "未知"
+          },
+          "notLoggedIn": "未登录",
+          "roleLabel": "角色：{role}",
+          "lastLoginLabel": "最后登录：{time}",
+          "locationLabel": "位置：{location}",
+          "changePassword": "修改密码",
+          "logout": "退出登录",
+          "basicInfo": "基本信息",
+          "saveChanges": "保存更改",
+          "avatar": "头像",
+          "username": "用户名",
+          "usernamePlaceholder": "请输入用户名",
+          "nickname": "昵称",
+          "nicknamePlaceholder": "请输入昵称",
+          "email": "邮箱",
+          "emailPlaceholder": "请输入邮箱",
+          "profileRequired": "请填写用户名和邮箱",
+          "passwordUpdated": "密码已更新",
+          "passwordFailed": "修改密码失败",
+          "logoutSuccess": "已退出登录，3秒后将刷新页面",
+          "passwordModalTitle": "修改密码",
+          "oldPassword": "当前密码",
+          "oldPasswordPlaceholder": "请输入当前密码",
+          "newPassword": "新密码",
+          "newPasswordPlaceholder": "请输入新密码",
+          "confirmPassword": "确认密码",
+          "confirmPasswordPlaceholder": "请再次输入新密码",
+          "validation": {
+            "oldPasswordRequired": "请输入当前密码",
+            "newPasswordMin": "请至少输入6位新密码",
+            "confirmPasswordRequired": "请确认新密码",
+            "passwordMismatch": "两次输入的新密码不一致"
+          }
+        },
+        "work": {
+          "title": "项目管理",
+          "new": "新建项目",
+          "menu": {
+            "editInfo": "编辑信息",
+            "delete": "删除项目",
+            "menu": "菜单"
+          },
+          "form": {
+            "editTitle": "修改信息",
+            "createTitle": "新建项目",
+            "exists": "项目已存在",
+            "nameLabel": "项目名称",
+            "namePlaceholder": "请输入项目名称",
+            "iconLabel": "项目图标",
+            "repoLabel": "仓库链接",
+            "repoPlaceholder": "请输入仓库链接",
+            "descriptionLabel": "项目描述",
+            "descriptionPlaceholder": "请输入项目描述",
+            "languagesLabel": "项目语言",
+            "languagesPlaceholder": "请输入项目语言",
+            "imageLabel": "项目图片",
+            "validation": {
+              "nameRequired": "请输入项目名称",
+              "iconRequired": "请选择项目图标",
+              "descriptionRequired": "请输入项目描述",
+              "imageRequired": "请选择项目预览图",
+              "languagesRequired": "请选择项目语言",
+              "repoRequired": "请输入项目仓库地址"
+            }
+          }
+        }
+      }
+    },
+    "tiptapEditor": {
+      "placeholder": "开始输入内容...",
+      "characterCount": "{characters} 字符 / {words} 词",
+      "codeBlockAuto": "自动检测",
+      "highlight": {
+        "default": "默认高亮",
+        "yellow": "黄色",
+        "green": "绿色",
+        "blue": "蓝色",
+        "pink": "粉色",
+        "tooltip": "高亮"
+      },
+      "textColor": {
+        "default": "默认颜色",
+        "blue": "蓝色",
+        "green": "绿色",
+        "orange": "橙色",
+        "red": "红色",
+        "tooltip": "文字颜色"
+      },
+      "linkPlaceholder": "请输入链接...",
+      "toolbar": {
+        "undo": "撤销",
+        "redo": "重做",
+        "paragraph": "正文",
+        "heading1": "一级标题",
+        "heading2": "二级标题",
+        "heading3": "三级标题",
+        "bulletList": "无序列表",
+        "orderedList": "有序列表",
+        "taskList": "任务列表",
+        "blockquote": "引用",
+        "codeBlock": "代码块",
+        "horizontalRule": "分割线",
+        "link": "链接",
+        "textColor": "文字颜色",
+        "bold": "加粗",
+        "italic": "斜体",
+        "underline": "下划线",
+        "strike": "删除线",
+        "code": "行内代码",
+        "highlight": "高亮",
+        "clearFormat": "清除格式"
       }
     }
   },
   "format": {
     "date": "YYYY-MM-DD",
-    "datetime": "YYYY-MM-DD HH:mm:ss"
-  },
-  "login_page": {
-    "back_home": "返回首页",
-    "login_box_title": "LY Blog",
-    "login_btn_text": "管理员登录",
-    "password": {
-      "placeholder": "密码"
-    },
-    "remember": "记住我",
-    "username": {
-      "placeholder": "用户名或邮箱"
-    }
+    "datetime": "YYYY-MM-DD HH:mm:ss",
+    "time": "HH:mm:ss",
+    "commentDate": "YYYY年MM月DD日 HH:mm",
+    "longDatetime": "YYYY年MM月DD日 HH时mm分"
   },
   "message": {
     "create": {
-      "error": "创建失败",
-      "success": "创建成功"
-    },
-    "delete": {
-      "error": "删除失败",
-      "success": "删除成功"
-    },
-    "read": {
-      "error": "获取失败",
-      "success": "获取成功"
+      "success": "创建成功",
+      "error": "创建失败"
     },
     "update": {
-      "error": "更新失败",
-      "success": "更新成功"
+      "success": "更新成功",
+      "error": "更新失败"
+    },
+    "delete": {
+      "success": "删除成功",
+      "error": "删除失败"
+    },
+    "read": {
+      "success": "获取成功",
+      "error": "获取失败"
+    },
+    "submit": {
+      "success": "提交成功",
+      "error": "提交失败"
+    },
+    "login": {
+      "success": "登录成功",
+      "error": "登录失败"
+    },
+    "logout": {
+      "success": "退出成功",
+      "error": "退出失败"
+    },
+    "upload": {
+      "success": "上传成功",
+      "error": "上传失败"
+    },
+    "download": {
+      "success": "下载成功",
+      "error": "下载失败"
+    },
+    "copy": {
+      "success": "复制成功",
+      "error": "复制失败"
+    },
+    "export": {
+      "success": "导出成功",
+      "error": "导出失败"
+    },
+    "import": {
+      "success": "导入成功",
+      "error": "导入失败"
+    },
+    "operate": {
+      "success": "操作成功",
+      "error": "操作失败"
+    },
+    "save": {
+      "success": "保存成功",
+      "error": "保存失败"
+    },
+    "add": {
+      "success": "添加成功",
+      "error": "添加失败"
+    },
+    "edit": {
+      "success": "修改成功",
+      "error": "修改失败"
     }
   },
   "placeholder": {
     "hyphen": "--",
-    "underline": "__"
+    "underline": "__",
+    "search": "请输入关键词",
+    "loading": "加载中...",
+    "input": "请输入",
+    "select": "请选择"
+  },
+  "pages": {
+    "login": {
+      "loginBoxTitle": "LY Blog",
+      "loginBtnText": "管理员登录",
+      "backHome": "返回首页",
+      "remember": "记住我",
+      "username": {
+        "placeholder": "用户名或邮箱"
+      },
+      "password": {
+        "placeholder": "密码"
+      }
+    },
+    "admin": {
+      "login": {
+        "titleSuccess": "登录成功",
+        "titleFail": "登录失败",
+        "usernamePlaceholder": "用户名或邮箱",
+        "passwordPlaceholder": "请输入密码",
+        "button": "管理员登录",
+        "remember": "记住我",
+        "backHome": "返回首页",
+        "validation": {
+          "usernameRequired": "请输入用户名",
+          "passwordRequired": "请输入密码"
+        }
+      },
+      "register": {
+        "nicknameLabel": "昵称",
+        "usernameLabel": "账号",
+        "emailLabel": "邮箱",
+        "passwordLabel": "密码",
+        "confirmPasswordLabel": "确认密码",
+        "nicknamePlaceholder": "请输入管理员昵称",
+        "usernamePlaceholder": "请输入管理员账号",
+        "emailPlaceholder": "请输入管理员邮箱",
+        "passwordPlaceholder": "请输入管理员密码",
+        "confirmPasswordPlaceholder": "请再次输入密码",
+        "submit": "创建管理员，开始写作吧",
+        "validation": {
+          "nicknameRequired": "请输入昵称",
+          "usernameRequired": "请输入用户名",
+          "emailInvalid": "邮箱格式有误",
+          "passwordRequired": "请输入密码",
+          "passwordTooShort": "请至少输入6位密码",
+          "passwordMismatch": "密码不一致"
+        }
+      }
+    },
+    "index": {
+      "loadError": "加载文章失败",
+      "bottom": "我也是有底线的"
+    },
+    "article": {
+      "breadcrumbHome": "首页",
+      "breadcrumbContent": "正文",
+      "passwordError": "密码错误",
+      "accessPasswordLabel": "访问密码",
+      "submit": "提交",
+      "commentDisabled": "—— 评论区已禁用 ——",
+      "notFound": "文章不存在"
+    },
+    "category": {
+      "title": "「{name}」 共({total})篇",
+      "loadError": "加载数据失败",
+      "bottom": "我也是有底线的"
+    },
+    "tag": {
+      "title": "「{tag}」 共({total})篇",
+      "loadError": "加载数据失败",
+      "bottom": "我也是有底线的"
+    },
+    "about": {
+      "bannerTitle": "关于本站",
+      "versionLabel": "版本号",
+      "buildTimeLabel": "构建时间",
+      "licenseLabel": "开源许可协议",
+      "introTitle": "项目简介",
+      "basicInfoTitle": "基本信息",
+      "prodDepsTitle": "生产环境依赖",
+      "devDepsTitle": "开发环境依赖",
+      "introContent": "这是一个基于 Nuxt 4 构建的全栈博客系统，支持文章管理、笔记管理、留言板、图片资源管理以及“一言（Hitokoto）”等功能模块，采用现代前端技术与轻量后端方案，开箱即用、易于部署。",
+      "repoLabel": "仓库主页"
+    },
+    "work": {
+      "bannerTitle": "我的项目",
+      "projectPreviewAlt": "项目 {name} 预览图",
+      "a11y": {
+        "list": "项目瀑布流列表",
+        "title": "项目标题",
+        "openRepo": "打开仓库新页面",
+        "content": "项目内容",
+        "footer": "项目底部信息",
+        "languages": "主要编程语言"
+      }
+    },
+    "message": {
+      "bannerTitle": "留言板"
+    },
+    "sn": {
+      "bannerTitle": "闪念笔记",
+      "loadError": "加载数据失败"
+    },
+    "me": {
+      "websiteTitle": "🔥 网站",
+      "projectTitle": "💻 项目",
+      "skillTitle": "⚡ 技能",
+      "basicInfo": "基础信息",
+      "relatedSkills": "相关技能",
+      "myInterest": "我的兴趣",
+      "languages": "语言能力",
+      "a11y": {
+        "profileCard": "个人卡片",
+        "tags": "标签",
+        "socialLinks": "社交链接",
+        "contentNav": "内容导航"
+      },
+      "workYears": "{years}年"
+    }
   }
 }

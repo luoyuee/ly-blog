@@ -7,6 +7,7 @@ import { useResizeObserver } from "@vueuse/core";
 import { useNotification } from "@/composables/useNotification";
 
 const $notify = useNotification();
+const { t } = useI18n();
 
 const chartRef = ref<HTMLDivElement | null>(null);
 
@@ -42,7 +43,7 @@ const initChart = () => {
       },
       series: [
         {
-          name: "图片数量",
+          name: t("components.dashboard.image.countLabel"),
           data: data.value.series[0],
           type: "bar",
           itemStyle: {
@@ -52,7 +53,7 @@ const initChart = () => {
           }
         },
         {
-          name: "存储大小",
+          name: t("components.dashboard.image.sizeLabel"),
           data: data.value.series[1],
           type: "bar",
           itemStyle: {
@@ -88,7 +89,7 @@ const loadData = async () => {
     data.value = await getImageDashboard();
   } catch (error) {
     $notify.error({
-      title: "加载图库数据失败",
+      title: t("components.dashboard.image.loadError"),
       error
     });
   } finally {
@@ -116,7 +117,7 @@ const reload = async () => {
     }
   } catch (error) {
     $notify.error({
-      title: "刷新失败",
+      title: t("components.dashboard.common.refreshError"),
       error
     });
   }
@@ -128,7 +129,7 @@ onMounted(async () => {
     initChart();
   } catch (error) {
     $notify.error({
-      title: "初始化图库卡片失败",
+      title: t("components.dashboard.image.initError"),
       error
     });
   }
@@ -140,7 +141,7 @@ onMounted(async () => {
     class="flex h-60 flex-col justify-between gap-2 bg-black/40 shadow-md rounded-md px-4 py-3"
   >
     <div class="flex h-6 items-center justify-between leading-6">
-      <span>图库统计</span>
+      <span>{{ $t("components.dashboard.image.title") }}</span>
       <UIcon class="cursor-pointer" name="custom:redo" @click="reload" />
     </div>
     <div class="h-10 text-3xl">
@@ -149,7 +150,11 @@ onMounted(async () => {
     </div>
     <div ref="chartRef" class="flex-1"></div>
     <div class="text-sm">
-      {{ data.today_upload ? `今日上传${data.today_upload}张图片` : "今日无新增图片" }}
+      {{
+        data.today_upload
+          ? $t("components.dashboard.image.todayUpload", { count: data.today_upload })
+          : $t("components.dashboard.image.todayEmpty")
+      }}
     </div>
   </div>
 </template>

@@ -8,6 +8,8 @@ import { SidebarPanel, SidebarPanelListItem } from "@ly-editor/src/components";
 import Scrollbar from "@/components/scrollbar";
 import numeral from "numeral";
 
+const { t } = useI18n();
+
 const $notify = useNotification();
 const $msgBox = useMessageBox();
 
@@ -26,7 +28,7 @@ const loadData = async (): Promise<void> => {
     data.value = await getAllAttachmentFolder();
   } catch (error) {
     $notify.error({
-      title: "加载目录失败",
+      title: t("components.lyEditor.modules.attachment.loadFolderFailed"),
       error
     });
   } finally {
@@ -62,20 +64,20 @@ const handleOpenAttachmentFolder = (record: AttachmentFolder) => {
 
 const handleDeleteFolder = (record: AttachmentFolder) => {
   $msgBox.error({
-    title: "确认删除?",
-    message: `即将删除「${record.name}」目录，删除后将无法恢复，是否继续？`,
-    confirmButtonText: "删除",
+    title: t("components.lyEditor.common.deleteConfirm.title"),
+    message: t("components.lyEditor.common.deleteConfirm.message", { name: record.name }),
+    confirmButtonText: t("components.lyEditor.common.deleteConfirm.button"),
     confirmButtonProps: { color: "error" },
     onConfirm: async () => {
       try {
         await deleteAttachmentFolder(record.id);
         $notify.success({
-          title: "删除成功"
+          title: t("message.delete.success")
         });
         await loadData();
       } catch (error) {
         $notify.error({
-          title: "删除失败",
+          title: t("message.delete.error"),
           error
         });
       }
@@ -83,19 +85,23 @@ const handleDeleteFolder = (record: AttachmentFolder) => {
   });
 };
 
-const actions = [
+const actions = computed(() => [
   {
-    label: "新建目录",
+    label: t("components.lyEditor.modules.attachment.newFolder"),
     icon: "lucide:plus",
     onClick: () => {
       handleOpenFormModal();
     }
   }
-];
+]);
 </script>
 
 <template>
-  <SidebarPanel title="附件管理器" :loading="loading" :actions="actions">
+  <SidebarPanel
+    :title="$t('components.lyEditor.modules.attachment.title')"
+    :loading="loading"
+    :actions="actions"
+  >
     <div class="flex-1 overflow-hidden">
       <Scrollbar class="h-full">
         <SidebarPanelListItem
@@ -110,14 +116,14 @@ const actions = [
           ]"
           :action-items="[
             {
-              label: '重命名',
+              label: $t('components.lyEditor.modules.attachment.folderMenu.rename'),
               icon: 'lucide:edit',
               onSelect: () => {
                 handleOpenFormModal(item);
               }
             },
             {
-              label: '删除目录',
+              label: $t('components.lyEditor.modules.attachment.folderMenu.delete'),
               icon: 'lucide:trash-2',
               color: 'error',
               onSelect: () => {

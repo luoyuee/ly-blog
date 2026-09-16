@@ -12,6 +12,8 @@ import { AuthorCard } from "@/components/user-card";
 import { useLogger } from "@/composables/useLogger";
 import { useRoute } from "vue-router";
 
+const { t } = useI18n();
+
 const logger = useLogger();
 const $message = useMessage();
 const route = useRoute();
@@ -32,7 +34,7 @@ const currentTag = route.params["tag"] as string;
 
 const hasMore = computed(() => state.page * state.per_page < state.total);
 
-const title = computed(() => `「${currentTag}」 共(${state.total})篇`);
+const title = computed(() => t("pages.tag.title", { tag: currentTag, total: state.total }));
 
 const articles = ref<ArticleItem[]>([]);
 
@@ -65,7 +67,7 @@ const loadArticles = async () => {
     state.page = response.page;
     state.total = response.total;
   } catch (error) {
-    $message.error("加载数据失败");
+    $message.error(t("pages.tag.loadError"));
     logger.error(error);
   } finally {
     state.loading = false;
@@ -95,7 +97,11 @@ onMounted(() => {
     <div class="container mx-auto">
       <div class="content">
         <ArticleList :data="articles" />
-        <ArticleListDivider ref="dividerRef" :loading="state.loading" text="我也是有底线的" />
+        <ArticleListDivider
+          ref="dividerRef"
+          :loading="state.loading"
+          :text="$t('pages.tag.bottom')"
+        />
       </div>
 
       <div class="aside">

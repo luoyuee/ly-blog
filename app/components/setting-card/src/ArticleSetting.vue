@@ -8,6 +8,8 @@ import { cloneDeep } from "es-toolkit";
 import { z } from "zod";
 import SettingCard from "./SettingCard.vue";
 
+const { t } = useI18n();
+
 const configStore = useConfigStore();
 
 const createInitialFormData = (): IClientConfigArticle => {
@@ -20,14 +22,16 @@ const { formData, formState, isDirty, setForm, setInitial, resetForm } =
 const schema = z.object({
   comment_max_length: z
     .number()
-    .int("评论长度必须为整数")
-    .nonnegative("评论长度不能为负数")
+    .int(t("components.settingCard.article.validation.lengthInt"))
+    .nonnegative(t("components.settingCard.article.validation.lengthNonNegative"))
     .optional(),
   payment_qr_code: z
     .array(
       z.object({
-        name: z.string({ message: "请输入收款码名称" }).min(1, "请输入收款码名称"),
-        image: z.url("请输入合法的图片链接")
+        name: z
+          .string({ message: t("components.settingCard.article.validation.qrNameRequired") })
+          .min(1, t("components.settingCard.article.validation.qrNameRequired")),
+        image: z.url(t("components.settingCard.article.validation.qrImageInvalid"))
       })
     )
     .optional()
@@ -81,8 +85,10 @@ const modalFormData = reactive<{
 });
 
 const modalSchema = z.object({
-  name: z.string({ message: "请输入收款码名称" }).min(1, "请输入收款码名称"),
-  image: z.url({ message: "请输入合法的图片链接" })
+  name: z
+    .string({ message: t("components.settingCard.article.validation.qrNameRequired") })
+    .min(1, t("components.settingCard.article.validation.qrNameRequired")),
+  image: z.url({ message: t("components.settingCard.article.validation.qrImageInvalid") })
 });
 
 const modalFormRef = useTemplateRef("modalFormRef");
@@ -119,7 +125,7 @@ const handleDelete = (index: number) => {
 <template>
   <SettingCard
     id="article-setting"
-    title="文章设置"
+    :title="$t('components.settingCard.article.title')"
     :is-change="isDirty"
     :submitting="formState.submitting"
     @reset="handleReset"
@@ -135,18 +141,21 @@ const handleDelete = (index: number) => {
     >
       <UFormField
         name="comment_max_length"
-        label="评论长度"
-        description="限制文章评论的最大文本长度，默认3000字"
+        :label="$t('components.settingCard.article.commentLengthLabel')"
+        :description="$t('components.settingCard.article.commentLengthDescription')"
         :ui="{
           container: 'mt-2',
           description: 'text-xs text-gray-400'
         }"
       >
-        <UInputNumber v-model="formData.comment_max_length" placeholder="最大长度" />
+        <UInputNumber
+          v-model="formData.comment_max_length"
+          :placeholder="$t('components.settingCard.article.commentLengthPlaceholder')"
+        />
       </UFormField>
       <UFormField
         name="payment_qr_code"
-        label="打赏收款码"
+        :label="$t('components.settingCard.article.rewardQrLabel')"
         :ui="{
           container: 'mt-2'
         }"
@@ -165,7 +174,7 @@ const handleDelete = (index: number) => {
           <li class="qr-list__item">
             <button type="button" class="qr-list__add-btn" @click="handleAddQr">
               <UIcon name="lucide:plus" size="36" />
-              <span>添加收款码</span>
+              <span>{{ $t("components.settingCard.article.addQr") }}</span>
             </button>
           </li>
         </ul>
@@ -174,7 +183,7 @@ const handleDelete = (index: number) => {
 
     <BasicModal
       v-model:open="modalState.visible"
-      title="添加收款码"
+      :title="$t('components.settingCard.article.qrModalTitle')"
       @confirm="handleModalConfirm"
     >
       <UForm
@@ -184,11 +193,18 @@ const handleDelete = (index: number) => {
         :validate-on-input-delay="100"
         @submit="handleModalSubmit"
       >
-        <UFormField name="name" label="收款码名称">
-          <UInput v-model="modalFormData.name" placeholder="请输入收款码名称" />
+        <UFormField name="name" :label="$t('components.settingCard.article.qrNameLabel')">
+          <UInput
+            v-model="modalFormData.name"
+            :placeholder="$t('components.settingCard.article.qrNamePlaceholder')"
+          />
         </UFormField>
-        <UFormField name="image" label="收款码图片链接">
-          <UInput v-model="modalFormData.image" icon="lucide:link" placeholder="请输入链接" />
+        <UFormField name="image" :label="$t('components.settingCard.article.qrImageLabel')">
+          <UInput
+            v-model="modalFormData.image"
+            icon="lucide:link"
+            :placeholder="$t('components.settingCard.article.qrImagePlaceholder')"
+          />
         </UFormField>
       </UForm>
     </BasicModal>

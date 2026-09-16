@@ -7,6 +7,7 @@ import { useMePageConfigStore } from "@/stores";
 import { SocialBtn, Skills, LinkCards, BaseInfoGrid, GitHubSnake } from "@/components/me";
 
 const { $dayjs } = useNuxtApp();
+const { t } = useI18n();
 
 const mePageConfigStore = useMePageConfigStore();
 
@@ -44,7 +45,7 @@ const getWorkExperienceTextFromStart = (startText: string): string => {
   if (!startDate) return startText;
 
   const years = Math.max(0, $dayjs().diff(startDate, "year"));
-  return `${years}年`;
+  return t("pages.me.workYears", { years });
 };
 
 const baseInfo = computed(() =>
@@ -86,7 +87,7 @@ const tabItems = [
         <div class="content">
           <section
             class="grid grid-cols-1 gap-5 p-5 mb-4 rounded-2xl bg-white/70 border border-black/10 shadow-sm md:grid-cols-[240px_1fr] md:items-start"
-            aria-label="个人卡片"
+            :aria-label="$t('pages.me.a11y.profileCard')"
           >
             <div class="flex flex-col gap-3 items-start">
               <img
@@ -107,7 +108,7 @@ const tabItems = [
                 </div>
               </div>
 
-              <div class="flex flex-wrap gap-2" aria-label="标签">
+              <div class="flex flex-wrap gap-2" :aria-label="$t('pages.me.a11y.tags')">
                 <UBadge
                   v-for="item in profileTags"
                   :key="item.label"
@@ -135,7 +136,10 @@ const tabItems = [
                 {{ authorQuote }}
               </p>
 
-              <div class="flex items-center gap-2 mt-3" aria-label="社交链接">
+              <div
+                class="flex items-center gap-2 mt-3"
+                :aria-label="$t('pages.me.a11y.socialLinks')"
+              >
                 <SocialBtn
                   v-for="(item, idx) in socialLinks"
                   :key="idx"
@@ -153,15 +157,21 @@ const tabItems = [
 
           <section
             class="p-5 rounded-2xl bg-white/70 border border-black/10 shadow-sm"
-            aria-label="内容导航"
+            :aria-label="$t('pages.me.a11y.contentNav')"
           >
             <UTabs :items="tabItems">
               <template #projects>
-                <h3 class="flex items-center mt-8 mb-4 font-semibold text-xl"> 🔥 网站 </h3>
+                <h3 class="flex items-center mt-8 mb-4 font-semibold text-xl">
+                  {{ $t("pages.me.websiteTitle") }}
+                </h3>
                 <LinkCards :items="websiteLinks" />
-                <h3 class="flex items-center mt-8 mb-4 font-semibold text-xl"> 💻 项目 </h3>
+                <h3 class="flex items-center mt-8 mb-4 font-semibold text-xl">
+                  {{ $t("pages.me.projectTitle") }}
+                </h3>
                 <LinkCards :items="projectLinks" />
-                <h3 class="flex items-center mt-8 mb-4 font-semibold text-xl"> ⚡ 技能 </h3>
+                <h3 class="flex items-center mt-8 mb-4 font-semibold text-xl">
+                  {{ $t("pages.me.skillTitle") }}
+                </h3>
                 <Skills :data="skillsGrid" />
               </template>
 
@@ -171,7 +181,7 @@ const tabItems = [
                     class="text-xl font-bold pb-2 mb-3 flex items-center border-b-2 border-(--text-color-5)"
                   >
                     <UIcon class="mr-1" name="lucide:user" />
-                    基础信息
+                    {{ $t("pages.me.basicInfo") }}
                   </h2>
 
                   <BaseInfoGrid :items="baseInfo" />
@@ -182,7 +192,7 @@ const tabItems = [
                     class="text-xl font-bold pb-2 mb-3 flex items-center border-b-2 border-(--text-color-5)"
                   >
                     <UIcon class="mr-1" name="lucide:cpu" />
-                    相关技能
+                    {{ $t("pages.me.relatedSkills") }}
                   </h2>
                   <ol class="pl-5 leading-[1.9] text-(--text-color-2)">
                     <li v-for="(item, idx) in skills" :key="idx" class="mb-2">
@@ -196,7 +206,7 @@ const tabItems = [
                     class="text-xl font-bold pb-2 mb-3 flex items-center border-b-2 border-(--text-color-5)"
                   >
                     <UIcon class="mr-1" name="lucide:star" />
-                    我的兴趣
+                    {{ $t("pages.me.myInterest") }}
                   </h2>
                   <div class="flex flex-wrap gap-2">
                     <UBadge v-for="tag in interestTags" :key="tag" color="neutral" variant="soft">
@@ -210,7 +220,7 @@ const tabItems = [
                     class="text-xl font-bold pb-2 mb-3 flex items-center border-b-2 border-(--text-color-5)"
                   >
                     <UIcon class="mr-1" name="lucide:message-circle" />
-                    语言能力
+                    {{ $t("pages.me.languages") }}
                   </h2>
                   <ul class="pl-5 text-(--text-color-2) leading-[1.9]">
                     <li v-for="item in languageProficiency" :key="item">

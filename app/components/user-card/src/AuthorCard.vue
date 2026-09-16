@@ -34,19 +34,19 @@ const { data } = await useFetch<{
       </p>
     </div>
     <div v-if="data" class="author-card__stats">
-      <div class="author-card__stat-item" title="累计文章数">
+      <div class="author-card__stat-item" :title="$t('components.authorCard.articleTitle')">
         <span class="author-card__stat-value">
           {{ data.article_count ?? 0 }}
         </span>
-        <span class="author-card__stat-label">文章</span>
+        <span class="author-card__stat-label">{{ $t("components.authorCard.article") }}</span>
       </div>
-      <div class="author-card__stat-item" title="累计文章数">
+      <div class="author-card__stat-item" :title="$t('components.authorCard.likeTitle')">
         <span class="author-card__stat-value">{{ data.like_count ?? 0 }}</span>
-        <span class="author-card__stat-label">点赞</span>
+        <span class="author-card__stat-label">{{ $t("components.authorCard.like") }}</span>
       </div>
-      <div class="author-card__stat-item" title="累计标签数">
+      <div class="author-card__stat-item" :title="$t('components.authorCard.tagTitle')">
         <span class="author-card__stat-value">{{ data.tag_count ?? 0 }}</span>
-        <span class="author-card__stat-label">标签</span>
+        <span class="author-card__stat-label">{{ $t("components.authorCard.tag") }}</span>
       </div>
     </div>
     <ul class="author-card__links">

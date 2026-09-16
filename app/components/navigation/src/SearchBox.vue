@@ -757,7 +757,7 @@ defineExpose({
       @click="handleShowSearch"
     >
       <UIcon name="mdi:search" :size="18" />
-      <span>搜索</span>
+      <span>{{ $t("components.searchBox.search") }}</span>
     </button>
 
     <div v-else class="search-box__input">
@@ -766,7 +766,7 @@ defineExpose({
           ref="engineButtonRef"
           class="search-box__engine-button"
           type="button"
-          :title="isSearchEnabled ? currentEngine?.name : '暂无可用搜索引擎'"
+          :title="isSearchEnabled ? currentEngine?.name : $t('components.searchBox.noEngine')"
           @click="toggleEngineSelector"
         >
           <UIcon :name="currentEngineIcon" :size="24" />
@@ -819,7 +819,9 @@ defineExpose({
       <button
         class="search-box__submit"
         type="button"
-        :title="isSearchEnabled ? '搜索' : '暂无可用搜索引擎'"
+        :title="
+          isSearchEnabled ? $t('components.searchBox.search') : $t('components.searchBox.noEngine')
+        "
         @click="handleSearch()"
       >
         <UIcon name="mdi:search" :size="24" class="text-blue-400" />

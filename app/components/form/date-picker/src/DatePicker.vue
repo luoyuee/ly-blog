@@ -10,12 +10,15 @@ import type {
 } from "./types";
 import { TimePicker } from "@/components/form/time-picker";
 import { computed, ref, shallowRef, watch } from "vue";
+import { useI18n } from "vue-i18n";
 import {
   createDayjsFromCalendarValue,
   formatDatePickerValue,
   parsePickerModelValue,
   syncSinglePickerValue
 } from "./utils";
+
+const { t } = useI18n();
 
 const modelValue = defineModel<DatePickerValue>({});
 
@@ -30,15 +33,15 @@ const props = defineProps({
   },
   placeholder: {
     type: String,
-    default: "请选择日期"
+    default: ""
   },
   confirmText: {
     type: String,
-    default: "确定"
+    default: ""
   },
   cancelText: {
     type: String,
-    default: "取消"
+    default: ""
   },
   format: {
     type: String,
@@ -125,7 +128,7 @@ const displayText = computed(() => {
   const selectedValue = parsePickerModelValue(modelValue.value, props.format);
 
   if (!selectedValue?.isValid()) {
-    return props.placeholder;
+    return props.placeholder || t("components.datePicker.placeholder");
   }
 
   if (props.type === "date") {
@@ -204,10 +207,15 @@ const displayDate = computed(() => {
           color="neutral"
           variant="outline"
           size="xs"
-          :label="props.cancelText"
+          :label="props.cancelText || $t('common.cancel')"
           @click="handleCancel"
         />
-        <UButton color="primary" size="xs" :label="props.confirmText" @click="handleConfirm" />
+        <UButton
+          color="primary"
+          size="xs"
+          :label="props.confirmText || $t('common.ok')"
+          @click="handleConfirm"
+        />
       </div>
     </template>
   </UPopover>

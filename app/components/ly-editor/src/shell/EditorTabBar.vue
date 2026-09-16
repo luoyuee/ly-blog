@@ -9,6 +9,8 @@ import { onBeforeUnmount } from "vue";
 import { storeToRefs } from "pinia";
 import Scrollbar from "@/components/scrollbar";
 
+const { t } = useI18n();
+
 const lyEditorStore = useLyEditorStore();
 const { tabs } = storeToRefs(lyEditorStore);
 
@@ -61,34 +63,34 @@ const getContextMenuItems = (e: EditorTabItem): ContextMenuItem[] => {
 
   return [
     {
-      label: "关闭",
+      label: t("components.lyEditor.shell.tabBar.close"),
       onSelect: () => {
         closeTabs([e]);
       }
     },
     {
-      label: "关闭其他",
+      label: t("components.lyEditor.shell.tabBar.closeOthers"),
       disabled: lyEditorStore.tabs.length <= 1,
       onSelect: () => {
         closeTabs(lyEditorStore.tabs.filter((item) => item.key !== e.key));
       }
     },
     {
-      label: "关闭右侧标签页",
+      label: t("components.lyEditor.shell.tabBar.closeRight"),
       disabled: rightTabs.length === 0,
       onSelect: () => {
         closeTabs(rightTabs);
       }
     },
     {
-      label: "关闭已保存",
+      label: t("components.lyEditor.shell.tabBar.closeSaved"),
       disabled: savedTabs.length === 0,
       onSelect: () => {
         closeTabs(savedTabs);
       }
     },
     {
-      label: "全部关闭",
+      label: t("components.lyEditor.shell.tabBar.closeAll"),
       disabled: lyEditorStore.tabs.length === 0,
       onSelect: () => {
         closeTabs([...lyEditorStore.tabs]);

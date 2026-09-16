@@ -10,6 +10,8 @@ import SettingCard from "./SettingCard.vue";
 
 const $notify = useNotification();
 
+const { t } = useI18n();
+
 const configStore = useConfigStore();
 
 const typeOptions = ref<HitokotoTypeSelectOption[]>([]);
@@ -19,7 +21,7 @@ const loadHitokotoTypes = async () => {
     typeOptions.value = await getHitokotoTypeOptions();
   } catch (error) {
     $notify.error({
-      title: "获取分类失败",
+      title: t("components.settingCard.hitokoto.loadError"),
       error
     });
   }
@@ -74,7 +76,7 @@ const handleReset = () => {
 <template>
   <SettingCard
     id="hitokoto-setting"
-    title="一言"
+    :title="$t('components.settingCard.hitokoto.title')"
     :is-change="isDirty"
     :submitting="formState.submitting"
     @reset="handleReset"
@@ -90,8 +92,8 @@ const handleReset = () => {
     >
       <UFormField
         name="site_url"
-        label="一言类型"
-        description="没有选择时，将不限定类型"
+        :label="$t('components.settingCard.hitokoto.typeLabel')"
+        :description="$t('components.settingCard.hitokoto.typeDescription')"
         :ui="{
           description: 'text-xs',
           container: 'mt-2'
@@ -105,18 +107,21 @@ const handleReset = () => {
           label-key="name"
           multiple
           highlight
-          placeholder="请选择类型"
+          :placeholder="$t('components.settingCard.hitokoto.typePlaceholder')"
         />
       </UFormField>
       <UFormField
         name="max_length"
-        label="文本长度"
+        :label="$t('components.settingCard.hitokoto.maxLengthLabel')"
         :ui="{
           description: 'text-xs',
           container: 'mt-2'
         }"
       >
-        <UInputNumber v-model="formData.max_length" placeholder="请输入文本长度" />
+        <UInputNumber
+          v-model="formData.max_length"
+          :placeholder="$t('components.settingCard.hitokoto.maxLengthPlaceholder')"
+        />
       </UFormField>
     </UForm>
   </SettingCard>

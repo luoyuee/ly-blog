@@ -23,6 +23,8 @@ import {
   parseTimePickerValue
 } from "./utils";
 
+const { t } = useI18n();
+
 defineOptions({ inheritAttrs: false });
 
 const attrs = useAttrs();
@@ -71,15 +73,15 @@ const props = defineProps({
   },
   placeholder: {
     type: String,
-    default: "请选择时间范围"
+    default: ""
   },
   startPlaceholder: {
     type: String,
-    default: "开始时间"
+    default: ""
   },
   endPlaceholder: {
     type: String,
-    default: "结束时间"
+    default: ""
   },
   separator: {
     type: String,
@@ -87,11 +89,11 @@ const props = defineProps({
   },
   confirmText: {
     type: String,
-    default: "确定"
+    default: ""
   },
   cancelText: {
     type: String,
-    default: "取消"
+    default: ""
   },
   itemHeight: {
     type: Number,
@@ -232,14 +234,14 @@ const displayText = computed(() => {
   const endValue = modelValue.value?.end ?? null;
 
   if (!startValue || !endValue) {
-    return props.placeholder;
+    return props.placeholder || t("components.timePicker.rangePlaceholder");
   }
 
   const startDisplayText = formatDisplayValue(startValue);
   const endDisplayText = formatDisplayValue(endValue);
 
   if (!startDisplayText || !endDisplayText) {
-    return props.placeholder;
+    return props.placeholder || t("components.timePicker.rangePlaceholder");
   }
 
   return `${startDisplayText} ${props.separator} ${endDisplayText}`;
@@ -290,7 +292,7 @@ const displayText = computed(() => {
       <div class="flex items-stretch gap-2 p-2">
         <div class="min-w-0 w-40 overflow-hidden rounded-md border border-default">
           <div class="border-b border-default px-3 py-2 text-center text-xs text-muted">
-            {{ props.startPlaceholder }}
+            {{ props.startPlaceholder || $t("components.timePicker.startPlaceholder") }}
           </div>
           <PickerPanel
             v-model="startSelection"
@@ -304,7 +306,7 @@ const displayText = computed(() => {
 
         <div class="min-w-0 w-40 overflow-hidden rounded-md border border-default">
           <div class="border-b border-default px-3 py-2 text-center text-xs text-muted">
-            {{ props.endPlaceholder }}
+            {{ props.endPlaceholder || $t("components.timePicker.endPlaceholder") }}
           </div>
           <PickerPanel
             v-model="endSelection"
@@ -322,10 +324,15 @@ const displayText = computed(() => {
           color="neutral"
           variant="outline"
           size="xs"
-          :label="props.cancelText"
+          :label="props.cancelText || $t('common.cancel')"
           @click="handleCancel"
         />
-        <UButton color="primary" size="xs" :label="props.confirmText" @click="handleConfirm" />
+        <UButton
+          color="primary"
+          size="xs"
+          :label="props.confirmText || $t('common.ok')"
+          @click="handleConfirm"
+        />
       </div>
     </template>
   </UPopover>

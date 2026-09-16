@@ -7,13 +7,12 @@ import { getMindmapDetail, updateMindmap } from "@/apis/canvas-document";
 import { useLogger } from "@/composables/useLogger";
 
 const logger = useLogger();
+const { t } = useI18n();
 const $notify = useNotification();
 
 const props = defineProps({
   tab: {
-    type: Object as PropType<
-      EditorTabItem & { type: "mindmap-panel"; data: MindmapPanelData }
-    >,
+    type: Object as PropType<EditorTabItem & { type: "mindmap-panel"; data: MindmapPanelData }>,
     required: true,
     validator: (value: EditorTabItem) => value.type === "mindmap-panel"
   }
@@ -22,7 +21,7 @@ const props = defineProps({
 const data = ref<MindmapData>({
   id: "1",
   type: "topic",
-  label: "中心主题",
+  label: t("components.lyEditor.modules.mindmap.panelCenterTopic"),
   width: 160,
   height: 50,
   children: []
@@ -44,7 +43,7 @@ const loadData = async () => {
   } catch (error) {
     logger.error(error);
     $notify.error({
-      title: "加载思维导图失败",
+      title: t("components.lyEditor.modules.mindmap.panelLoadFailed"),
       error
     });
   } finally {
@@ -62,12 +61,12 @@ const handleSave = async () => {
     });
 
     $notify.success({
-      title: "保存成功"
+      title: t("message.save.success")
     });
   } catch (error) {
     logger.error(error);
     $notify.error({
-      title: "保存失败",
+      title: t("message.save.error"),
       error
     });
   } finally {
@@ -92,7 +91,7 @@ onMounted(() => {
           :disabled="loading"
           @click="handleSave"
         >
-          保存
+          {{ t("common.save") }}
         </UButton>
       </div>
     </div>

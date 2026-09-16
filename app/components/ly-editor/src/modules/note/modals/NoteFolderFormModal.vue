@@ -8,6 +8,7 @@ import { useForm } from "@/composables/useForm";
 import { watch } from "vue";
 import { z } from "zod";
 
+const { t } = useI18n();
 const $notify = useNotification();
 
 const open = defineModel<boolean>("open", {
@@ -36,7 +37,9 @@ const emits = defineEmits<{
 const schema = z.object({
   id: z.number().optional(),
   parent_id: z.number().optional(),
-  name: z.string({ message: "请输入目录名称" }).min(1, "请输入目录名称")
+  name: z
+    .string({ message: t("components.lyEditor.modules.note.folderForm.validation.nameRequired") })
+    .min(1, t("components.lyEditor.modules.note.folderForm.validation.nameRequired"))
 });
 
 const { formData, formState, resetForm, setForm } = useForm<NoteFolderForm>({
@@ -79,7 +82,7 @@ const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => 
       });
 
       $notify.success({
-        title: "修改成功"
+        title: t("message.update.success")
       });
     } else {
       await createFolder({
@@ -88,7 +91,7 @@ const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => 
       });
 
       $notify.success({
-        title: "创建成功"
+        title: t("message.create.success")
       });
     }
 
@@ -99,7 +102,7 @@ const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => 
     });
   } catch (error) {
     $notify.error({
-      title: "操作失败",
+      title: t("message.operate.error"),
       error
     });
   } finally {
@@ -121,7 +124,11 @@ const handleCancel = () => {
 <template>
   <BasicModal
     v-model:open="open"
-    :title="formData.id ? '重命名' : '创建目录'"
+    :title="
+      formData.id
+        ? t('components.lyEditor.modules.note.folderForm.renameTitle')
+        : t('components.lyEditor.modules.note.folderForm.createTitle')
+    "
     :submitting="formState.submitting"
     @cancel="handleCancel"
     @confirm="handleConfirm"
@@ -134,7 +141,11 @@ const handleCancel = () => {
       :validate-on-input-delay="100"
       @submit="handleSubmit"
     >
-      <UFormField v-if="!formData.id" name="parent_id" label="父目录">
+      <UFormField
+        v-if="!formData.id"
+        name="parent_id"
+        :label="t('components.lyEditor.modules.note.folderForm.parentLabel')"
+      >
         <TreeSelect
           v-model="formData.parent_id"
           label-key="name"
@@ -142,8 +153,15 @@ const handleCancel = () => {
           :options="folderTree"
         />
       </UFormField>
-      <UFormField name="name" label="目录名称" required>
-        <UInput v-model="formData.name" placeholder="请输入目录名称" />
+      <UFormField
+        name="name"
+        :label="t('components.lyEditor.modules.note.folderForm.nameLabel')"
+        required
+      >
+        <UInput
+          v-model="formData.name"
+          :placeholder="t('components.lyEditor.modules.note.folderForm.namePlaceholder')"
+        />
       </UFormField>
     </UForm>
   </BasicModal>

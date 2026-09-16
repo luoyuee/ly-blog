@@ -7,6 +7,8 @@ import SettingCard from "./SettingCard.vue";
 
 const $notify = useNotification();
 
+const { t } = useI18n();
+
 const configStore = useConfigStore();
 
 /**
@@ -24,7 +26,7 @@ const schema = z.object({
     } catch {
       ctx.addIssue({
         code: "custom",
-        message: "JSON 解析失败，请检查格式"
+        message: t("components.settingCard.live2d.validation.jsonParseError")
       });
       return;
     }
@@ -32,7 +34,7 @@ const schema = z.object({
     if (!Array.isArray(parsed)) {
       ctx.addIssue({
         code: "custom",
-        message: "JSON 格式错误：models 必须是数组"
+        message: t("components.settingCard.live2d.validation.modelsMustBeArray")
       });
       return;
     }
@@ -41,7 +43,9 @@ const schema = z.object({
       if (typeof item !== "object" || item === null) {
         ctx.addIssue({
           code: "custom",
-          message: `第 ${index + 1} 项必须是对象`
+          message: t("components.settingCard.live2d.validation.itemMustBeObject", {
+            index: index + 1
+          })
         });
         return;
       }
@@ -49,7 +53,9 @@ const schema = z.object({
       if (!("path" in item) || typeof item.path !== "string") {
         ctx.addIssue({
           code: "custom",
-          message: `第 ${index + 1} 项缺少 path 字段`
+          message: t("components.settingCard.live2d.validation.itemMissingPath", {
+            index: index + 1
+          })
         });
         return;
       }
@@ -59,7 +65,9 @@ const schema = z.object({
       } catch {
         ctx.addIssue({
           code: "custom",
-          message: `第 ${index + 1} 项的 path 不是合法的 URL`
+          message: t("components.settingCard.live2d.validation.itemPathInvalid", {
+            index: index + 1
+          })
         });
       }
     });
@@ -136,7 +144,7 @@ const parseModels = () => {
   const parsedModelsResult = tryParseModels();
 
   if (!parsedModelsResult.success) {
-    throw new Error("模型配置 JSON 解析失败");
+    throw new Error(t("components.settingCard.live2d.parseError"));
   }
 
   return parsedModelsResult.value;
@@ -153,11 +161,11 @@ const handleSubmit = async () => {
     });
     syncFormData();
     $notify.success({
-      title: "更新成功"
+      title: t("components.settingCard.live2d.updateSuccess")
     });
   } catch (error) {
     $notify.error({
-      title: "更新失败",
+      title: t("components.settingCard.live2d.updateError"),
       error
     });
   } finally {
@@ -184,7 +192,7 @@ const modelsPlaceholder = `[
 <template>
   <SettingCard
     id="live2d-setting"
-    title="Live2D 看板娘"
+    :title="$t('components.settingCard.live2d.title')"
     :is-change="isLive2dDirty"
     :submitting="formState.submitting"
     @reset="handleReset"
@@ -200,7 +208,7 @@ const modelsPlaceholder = `[
     >
       <UFormField
         name="enabled"
-        label="启用 Live2D"
+        :label="$t('components.settingCard.live2d.enableLabel')"
         :ui="{
           container: 'mt-2'
         }"
@@ -209,20 +217,20 @@ const modelsPlaceholder = `[
       </UFormField>
       <UFormField
         name="modelsJsonText"
-        label="模型配置"
+        :label="$t('components.settingCard.live2d.modelsLabel')"
         :ui="{
           description: 'text-xs',
           container: 'mt-2'
         }"
       >
         <template #description>
-          <p>请输入 JSON 格式的模型配置数组，参考</p>
+          <p>{{ $t("components.settingCard.live2d.modelsDescriptionPrefix") }}</p>
           <a
             href="https://www.npmjs.com/package/oh-my-live2d"
             target="_blank"
             class="text-primary hover:underline"
           >
-            oh-my-live2d 文档
+            {{ $t("components.settingCard.live2d.docsLink") }}
           </a>
         </template>
         <UTextarea v-model="formData.modelsJsonText" :rows="10" :placeholder="modelsPlaceholder" />

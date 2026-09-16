@@ -1,13 +1,3 @@
-<template>
-  <!-- 文章目录组件，使用MacCard包装 -->
-  <MacCard title="文章目录" class="article-toc">
-    <div class="article-toc__container">
-      <!-- 渲染目录项，传递当前激活的ID和目录数据 -->
-      <ArticleTocItem v-model="activeId" :toc="props.toc" :depth="0" />
-    </div>
-  </MacCard>
-</template>
-
 <script lang="ts" setup>
 /**
  * 文章目录组件
@@ -182,6 +172,17 @@ onMounted(() => {
 // 组件卸载时清理观察器
 onUnmounted(clearObserver);
 </script>
+
+<template>
+  <!-- 文章目录组件，使用MacCard包装 -->
+  <MacCard :title="$t('components.article.toc.title')" class="article-toc">
+    <div class="article-toc__container">
+      <!-- 渲染目录项，传递当前激活的ID和目录数据 -->
+      <ArticleTocItem v-model="activeId" :toc="props.toc" :depth="0" />
+    </div>
+  </MacCard>
+</template>
+
 <style scoped lang="scss">
 .article-toc {
   :deep(.mac-card-content) {

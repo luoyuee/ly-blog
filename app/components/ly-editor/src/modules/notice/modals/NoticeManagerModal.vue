@@ -5,6 +5,8 @@ import { BasicModal } from "@/components/basic-modal";
 import { watch } from "vue";
 import { z } from "zod";
 
+const { t } = useI18n();
+
 const schema = z.object({
   card: z.object({
     content: z.string()
@@ -65,7 +67,7 @@ const handleConfirm = async () => {
 
   if (error) {
     $notify.error({
-      title: "操作失败",
+      title: t("message.operate.error"),
       error
     });
     return;
@@ -77,14 +79,14 @@ const handleConfirm = async () => {
     await updateNoticeConfig(data);
 
     $notify.success({
-      title: "保存成功"
+      title: t("message.save.success")
     });
 
     open.value = false;
     emits("close", { action: "saved" });
   } catch (error) {
     $notify.error({
-      title: "操作失败",
+      title: t("message.operate.error"),
       error
     });
   } finally {
@@ -97,30 +99,30 @@ const handleCancel = () => {
   emits("close", { action: "cancelled" });
 };
 
-const tabItems = [
-  { label: "卡片", slot: "card" },
-  { label: "提示", slot: "toast" },
-  { label: "弹窗", slot: "modal" }
-];
+const tabItems = computed(() => [
+  { label: t("components.lyEditor.modules.notice.tabs.card"), slot: "card" },
+  { label: t("components.lyEditor.modules.notice.tabs.toast"), slot: "toast" },
+  { label: t("components.lyEditor.modules.notice.tabs.modal"), slot: "modal" }
+]);
 
-const positionItems = [
-  { label: "左上角", value: "top-left" },
-  { label: "顶部居中", value: "top-center" },
-  { label: "右上角", value: "top-right" },
-  { label: "左下角", value: "bottom-left" },
-  { label: "底部居中", value: "bottom-center" },
-  { label: "右下角", value: "bottom-right" }
-];
+const positionItems = computed(() => [
+  { label: t("components.lyEditor.modules.notice.positions.topLeft"), value: "top-left" },
+  { label: t("components.lyEditor.modules.notice.positions.topCenter"), value: "top-center" },
+  { label: t("components.lyEditor.modules.notice.positions.topRight"), value: "top-right" },
+  { label: t("components.lyEditor.modules.notice.positions.bottomLeft"), value: "bottom-left" },
+  { label: t("components.lyEditor.modules.notice.positions.bottomCenter"), value: "bottom-center" },
+  { label: t("components.lyEditor.modules.notice.positions.bottomRight"), value: "bottom-right" }
+]);
 
-const fullscreenItems = [
-  { label: "开启", value: true },
-  { label: "关闭", value: false }
-];
+const fullscreenItems = computed(() => [
+  { label: t("components.lyEditor.modules.notice.toggleOn"), value: true },
+  { label: t("components.lyEditor.modules.notice.toggleOff"), value: false }
+]);
 </script>
 <template>
   <BasicModal
     v-model:open="open"
-    title="公告设置"
+    :title="$t('components.lyEditor.modules.notice.settingsTitle')"
     :submitting="submitting"
     @cancel="handleCancel"
     @confirm="handleConfirm"
@@ -128,7 +130,11 @@ const fullscreenItems = [
     <UTabs :items="tabItems">
       <template #card>
         <UForm :state="formData.card" class="flex flex-col gap-4">
-          <UFormField label="公告内容" name="content" description="博客公告将显示在网页右侧">
+          <UFormField
+            :label="$t('components.lyEditor.modules.notice.contentLabel')"
+            name="content"
+            :description="$t('components.lyEditor.modules.notice.contentDescription')"
+          >
             <UTextarea v-model="formData.card.content" :rows="12" />
           </UFormField>
         </UForm>
@@ -136,13 +142,16 @@ const fullscreenItems = [
 
       <template #toast>
         <UForm :state="formData.toast" class="flex flex-col gap-4">
-          <UFormField label="公告内容" name="content">
+          <UFormField :label="$t('components.lyEditor.modules.notice.contentLabel')" name="content">
             <UTextarea v-model="formData.toast.content" :rows="4" />
           </UFormField>
-          <UFormField label="弹出延迟（毫秒）" name="delay">
+          <UFormField :label="$t('components.lyEditor.modules.notice.delayLabel')" name="delay">
             <UInputNumber v-model="formData.toast.delay" :min="0" :step="100" class="w-full" />
           </UFormField>
-          <UFormField label="弹出位置" name="position">
+          <UFormField
+            :label="$t('components.lyEditor.modules.notice.positionLabel')"
+            name="position"
+          >
             <URadioGroup
               v-model="formData.toast.position"
               variant="card"
@@ -157,13 +166,16 @@ const fullscreenItems = [
 
       <template #modal>
         <UForm :state="formData.modal" class="flex flex-col gap-4">
-          <UFormField label="公告内容" name="content">
+          <UFormField :label="$t('components.lyEditor.modules.notice.contentLabel')" name="content">
             <UTextarea v-model="formData.modal.content" :rows="4" />
           </UFormField>
-          <UFormField label="弹出延迟（毫秒）" name="delay">
+          <UFormField :label="$t('components.lyEditor.modules.notice.delayLabel')" name="delay">
             <UInputNumber v-model="formData.modal.delay" :min="0" :step="100" class="w-full" />
           </UFormField>
-          <UFormField label="是否全屏" name="fullscreen">
+          <UFormField
+            :label="$t('components.lyEditor.modules.notice.fullscreenLabel')"
+            name="fullscreen"
+          >
             <URadioGroup
               v-model="formData.modal.fullscreen"
               variant="table"

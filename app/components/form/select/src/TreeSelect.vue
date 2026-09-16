@@ -26,6 +26,8 @@ import { flattenTreeItems, findParentChain, sortByDepth } from "#shared/utils/tr
 import { isArray, isNil } from "@/utils/typed";
 import { computed, ref, watch } from "vue";
 
+const { t } = useI18n();
+
 // ============================================================
 // 类型定义
 // ============================================================
@@ -96,7 +98,7 @@ const props = defineProps({
    */
   placeholder: {
     type: String,
-    default: "请选择"
+    default: ""
   },
 
   /**
@@ -173,6 +175,11 @@ const props = defineProps({
     default: "auto"
   }
 });
+
+// 未显式传入时回退到 i18n 文案（defineProps 默认值不能引用本地 t）
+const resolvedPlaceholder = computed(
+  () => props.placeholder || t("components.treeSelect.placeholder")
+);
 
 // ============================================================
 // 计算属性 - 配置相关
@@ -661,7 +668,7 @@ watch(
 
           <!-- 无选中值：显示占位符 -->
           <template v-else>
-            <span class="text-dimmed">{{ placeholder }}</span>
+            <span class="text-dimmed">{{ resolvedPlaceholder }}</span>
           </template>
         </div>
 
@@ -720,7 +727,7 @@ watch(
 
       <!-- 无数据时显示空状态 -->
       <div v-else>
-        <div class="text-center text-muted p-2.5 text-sm">暂无数据</div>
+        <div class="text-center text-muted p-2.5 text-sm">{{ $t("common.noData") }}</div>
       </div>
     </template>
   </UPopover>

@@ -12,6 +12,8 @@ import {
   Transform
 } from "@antv/x6";
 
+const { t } = useI18n();
+
 /** 流程图数据（x6 toJSON 结构） */
 type FlowchartData = { cells: Record<string, unknown>[] };
 
@@ -221,31 +223,31 @@ const loadStencilNodes = (): void => {
   // 基础流程图
   const r1 = graph.createNode({
     shape: "custom-rect",
-    label: "开始",
+    label: t("components.flowchart.shapeStart"),
     attrs: { body: { rx: 20, ry: 26 } }
   });
   const r2 = graph.createNode({
     shape: "custom-rect",
-    label: "过程"
+    label: t("components.flowchart.shapeProcess")
   });
   const r3 = graph.createNode({
     shape: "custom-rect",
     attrs: { body: { rx: 6, ry: 6 } },
-    label: "可选过程"
+    label: t("components.flowchart.shapeOptional")
   });
   const r4 = graph.createNode({
     shape: "custom-polygon",
     attrs: { body: { refPoints: "0,10 10,0 20,10 10,20" } },
-    label: "决策"
+    label: t("components.flowchart.shapeDecision")
   });
   const r5 = graph.createNode({
     shape: "custom-polygon",
     attrs: { body: { refPoints: "10,0 40,0 30,20 0,20" } },
-    label: "数据"
+    label: t("components.flowchart.shapeData")
   });
   const r6 = graph.createNode({
     shape: "custom-circle",
-    label: "连接"
+    label: t("components.flowchart.shapeConnect")
   });
   stencil.load([r1, r2, r3, r4, r5, r6], "group1");
 
@@ -466,16 +468,16 @@ const initStencil = (): void => {
   if (!graph || !stencilContainerRef.value) return;
 
   stencil = new Stencil({
-    title: "流程图",
+    title: t("components.flowchart.stencilTitle"),
     target: graph,
     stencilGraphWidth: 200,
     stencilGraphHeight: 180,
     stencilGraphOptions: { panning: true },
     collapsable: true,
     groups: [
-      { title: "基础流程图", name: "group1" },
+      { title: t("components.flowchart.groupBasic"), name: "group1" },
       {
-        title: "系统设计图",
+        title: t("components.flowchart.groupSystem"),
         name: "group2",
         graphHeight: 250,
         layoutOptions: { rowHeight: 70 }

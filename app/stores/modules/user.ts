@@ -12,6 +12,9 @@ export const userStore = defineStore("user", {
   state: (): UserStoreModel => ({
     profile: undefined
   }),
+  getters: {
+    isAdmin: (state) => state.profile?.is_admin ?? false
+  },
   actions: {
     async fetchProfile() {
       const auth = useCookie("Authorization", {

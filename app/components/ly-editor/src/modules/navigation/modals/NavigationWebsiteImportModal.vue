@@ -4,6 +4,7 @@ import { importNavigationWebsiteData } from "@/apis/navigation-website";
 import { BasicModal } from "@/components/basic-modal";
 import { useForm } from "@/composables/useForm";
 
+const { t } = useI18n();
 const $notify = useNotification();
 
 const open = defineModel<boolean>("open", {
@@ -47,8 +48,12 @@ const handleConfirm = async () => {
     });
 
     $notify.success({
-      title: "导入成功",
-      description: `共 ${result.total} 条，新增 ${result.created} 条，跳过 ${result.skipped} 条`
+      title: t("message.import.success"),
+      description: t("components.lyEditor.modules.navigation.websiteImport.successDescription", {
+        total: result.total,
+        created: result.created,
+        skipped: result.skipped
+      })
     });
 
     emits("close", {
@@ -60,7 +65,7 @@ const handleConfirm = async () => {
     }, 500);
   } catch (error) {
     $notify.error({
-      title: "操作失败",
+      title: t("message.operate.error"),
       error
     });
   } finally {
@@ -87,7 +92,7 @@ const handleChange = (e: Event) => {
 <template>
   <BasicModal
     v-model:open="open"
-    title="导入导航网站"
+    :title="$t('components.lyEditor.modules.navigation.websiteImport.title')"
     :submitting="formState.submitting"
     @cancel="handleCancel"
     @confirm="handleConfirm"

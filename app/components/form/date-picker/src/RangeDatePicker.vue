@@ -16,6 +16,8 @@ import {
   syncRangePickerValue
 } from "./utils";
 
+const { t } = useI18n();
+
 const modelValue = defineModel<DatePickerRangeValue | null>({});
 
 const props = defineProps({
@@ -29,15 +31,15 @@ const props = defineProps({
   },
   placeholder: {
     type: String,
-    default: "请选择日期范围"
+    default: ""
   },
   confirmText: {
     type: String,
-    default: "确定"
+    default: ""
   },
   cancelText: {
     type: String,
-    default: "取消"
+    default: ""
   },
   format: {
     type: String,
@@ -134,7 +136,7 @@ const displayText = computed(() => {
   const endValue = parsePickerModelValue(modelValue.value?.end, props.format);
 
   if (!startValue?.isValid() || !endValue?.isValid()) {
-    return props.placeholder;
+    return props.placeholder || t("components.datePicker.rangePlaceholder");
   }
 
   if (props.type === "date") {
@@ -245,10 +247,15 @@ const displayEndDate = computed(() => {
           color="neutral"
           variant="outline"
           size="xs"
-          :label="props.cancelText"
+          :label="props.cancelText || $t('common.cancel')"
           @click="handleCancel"
         />
-        <UButton color="primary" size="xs" :label="props.confirmText" @click="handleConfirm" />
+        <UButton
+          color="primary"
+          size="xs"
+          :label="props.confirmText || $t('common.ok')"
+          @click="handleConfirm"
+        />
       </div>
     </template>
   </UPopover>

@@ -7,6 +7,8 @@ import { useForm } from "@/composables/useForm";
 import { watch } from "vue";
 import { z } from "zod";
 
+const { t } = useI18n();
+
 const $notify = useNotification();
 
 const open = defineModel<boolean>("open", {
@@ -40,7 +42,9 @@ const emits = defineEmits<{
 
 const schema = z.object({
   id: z.number().optional(),
-  name: z.string({ message: "请输入目录名称" }).min(1, "请输入目录名称"),
+  name: z
+    .string({ message: t("components.lyEditor.modules.image.folderForm.validation.nameRequired") })
+    .min(1, t("components.lyEditor.modules.image.folderForm.validation.nameRequired")),
   description: z.string().optional()
 });
 
@@ -82,7 +86,7 @@ const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => 
       });
 
       $notify.success({
-        title: "修改成功"
+        title: t("message.edit.success")
       });
     } else {
       await createImageFolder({
@@ -91,7 +95,7 @@ const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => 
       });
 
       $notify.success({
-        title: "创建成功"
+        title: t("message.create.success")
       });
     }
 
@@ -102,7 +106,7 @@ const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => 
     });
   } catch (error) {
     $notify.error({
-      title: "操作失败",
+      title: t("message.operate.error"),
       error
     });
   } finally {
@@ -124,7 +128,11 @@ const handleCancel = () => {
 <template>
   <BasicModal
     v-model:open="open"
-    :title="formData.id ? '修改目录' : '创建目录'"
+    :title="
+      formData.id
+        ? $t('components.lyEditor.modules.image.folderForm.editTitle')
+        : $t('components.lyEditor.modules.image.folderForm.createTitle')
+    "
     :submitting="formState.submitting"
     @cancel="handleCancel"
     @confirm="handleConfirm"
@@ -137,12 +145,25 @@ const handleCancel = () => {
       :validate-on-input-delay="100"
       @submit="handleSubmit"
     >
-      <UFormField name="name" label="目录名称" required>
-        <UInput v-model="formData.name" placeholder="请输入目录名称" />
+      <UFormField
+        name="name"
+        :label="$t('components.lyEditor.modules.image.folderForm.nameLabel')"
+        required
+      >
+        <UInput
+          v-model="formData.name"
+          :placeholder="$t('components.lyEditor.modules.image.folderForm.namePlaceholder')"
+        />
       </UFormField>
 
-      <UFormField name="description" label="目录描述">
-        <UTextarea v-model="formData.description" placeholder="请输入目录描述" />
+      <UFormField
+        name="description"
+        :label="$t('components.lyEditor.modules.image.folderForm.descriptionLabel')"
+      >
+        <UTextarea
+          v-model="formData.description"
+          :placeholder="$t('components.lyEditor.modules.image.folderForm.descriptionPlaceholder')"
+        />
       </UFormField>
     </UForm>
   </BasicModal>

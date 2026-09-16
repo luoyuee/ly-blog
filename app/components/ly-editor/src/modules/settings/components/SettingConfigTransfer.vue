@@ -21,6 +21,8 @@ type ConfigExportFile = {
   data: unknown;
 };
 
+const { t } = useI18n();
+
 const configStore = useConfigStore();
 const mePageConfigStore = useMePageConfigStore();
 const serverConfigStore = useServerConfigStore();
@@ -36,12 +38,12 @@ const {
   multiple: false
 });
 
-const scopeLabels: Record<ConfigScope, string> = {
-  client: "客户端配置",
-  server: "服务端配置",
-  me_page: "个人主页配置",
-  all: "全部配置"
-};
+const scopeLabels = computed<Record<ConfigScope, string>>(() => ({
+  client: t("components.lyEditor.modules.settings.transfer.scopeClient"),
+  server: t("components.lyEditor.modules.settings.transfer.scopeServer"),
+  me_page: t("components.lyEditor.modules.settings.transfer.scopeMePage"),
+  all: t("components.lyEditor.modules.settings.transfer.scopeAll")
+}));
 
 /** 移除接口管理的时间字段，仅保留客户端可更新配置。 */
 const getClientConfig = (): UpdateClientConfigRequest => {
@@ -82,18 +84,26 @@ const handleExport = (scope: ConfigScope) => {
     mimeType: "application/json;charset=utf-8"
   });
 
-  $notify.success({ title: `${scopeLabels[scope]}已导出` });
+  $notify.success({
+    title: t("components.lyEditor.modules.settings.transfer.exported", {
+      scope: scopeLabels.value[scope]
+    })
+  });
 };
 
 /** 读取本组件导出的包装格式，同时兼容直接以配置对象作为文件内容。 */
 const resolveImportData = (value: unknown, scope: ConfigScope): unknown => {
   if (!isPlainObject(value)) {
-    throw new Error("JSON 顶层必须是对象");
+    throw new Error(t("components.lyEditor.modules.settings.transfer.errors.topLevelObject"));
   }
 
   if ("data" in value && "scope" in value) {
     if (value.scope !== scope) {
-      throw new Error(`文件类型与所选的${scopeLabels[scope]}不一致`);
+      throw new Error(
+        t("components.lyEditor.modules.settings.transfer.errors.typeMismatch", {
+          scope: scopeLabels.value[scope]
+        })
+      );
     }
     return value.data;
   }
@@ -103,7 +113,11 @@ const resolveImportData = (value: unknown, scope: ConfigScope): unknown => {
 
 const updateScope = async (scope: Exclude<ConfigScope, "all">, data: unknown) => {
   if (!isPlainObject(data)) {
-    throw new Error(`${scopeLabels[scope]}内容必须是对象`);
+    throw new Error(
+      t("components.lyEditor.modules.settings.transfer.errors.contentObject", {
+        scope: scopeLabels.value[scope]
+      })
+    );
   }
 
   if (scope === "client") {
@@ -129,7 +143,7 @@ const importConfig = async (scope: ConfigScope, value: unknown) => {
     return;
   }
   if (!isPlainObject(data)) {
-    throw new Error("全部配置必须包含 client、server 和 me_page 对象");
+    throw new Error(t("components.lyEditor.modules.settings.transfer.errors.allRequired"));
   }
 
   await updateScope("client", data.client);
@@ -152,9 +166,16 @@ onFileChange(async (files) => {
     const content = await file.text();
     const value: unknown = JSON.parse(content);
     await importConfig(pendingImportScope.value, value);
-    $notify.success({ title: `${scopeLabels[pendingImportScope.value]}已导入` });
+    $notify.success({
+      title: t("components.lyEditor.modules.settings.transfer.imported", {
+        scope: scopeLabels.value[pendingImportScope.value]
+      })
+    });
   } catch (error) {
-    $notify.error({ title: "导入配置失败", error });
+    $notify.error({
+      title: t("components.lyEditor.modules.settings.transfer.importFailed"),
+      error
+    });
   } finally {
     importing.value = false;
     resetFileDialog();
@@ -162,14 +183,30 @@ onFileChange(async (files) => {
 });
 
 const createMenuItems = (handler: (scope: ConfigScope) => void): DropdownMenuItem[] => [
-  { label: "客户端", icon: "lucide:monitor", onSelect: () => handler("client") },
-  { label: "服务端", icon: "lucide:server", onSelect: () => handler("server") },
-  { label: "个人主页", icon: "lucide:user-round", onSelect: () => handler("me_page") },
-  { label: "全部配置", icon: "lucide:boxes", onSelect: () => handler("all") }
+  {
+    label: t("components.lyEditor.modules.settings.transfer.menuClient"),
+    icon: "lucide:monitor",
+    onSelect: () => handler("client")
+  },
+  {
+    label: t("components.lyEditor.modules.settings.transfer.menuServer"),
+    icon: "lucide:server",
+    onSelect: () => handler("server")
+  },
+  {
+    label: t("components.lyEditor.modules.settings.transfer.menuMePage"),
+    icon: "lucide:user-round",
+    onSelect: () => handler("me_page")
+  },
+  {
+    label: t("components.lyEditor.modules.settings.transfer.menuAll"),
+    icon: "lucide:boxes",
+    onSelect: () => handler("all")
+  }
 ];
 
-const importMenuItems = createMenuItems(openImportFile);
-const exportMenuItems = createMenuItems(handleExport);
+const importMenuItems = computed(() => createMenuItems(openImportFile));
+const exportMenuItems = computed(() => createMenuItems(handleExport));
 </script>
 
 <template>
@@ -179,8 +216,8 @@ const exportMenuItems = createMenuItems(handleExport);
         size="sm"
         icon="mdi:import"
         variant="outline"
-        tooltip="导入配置"
-        label="导入"
+        :tooltip="$t('components.lyEditor.modules.settings.transfer.importTooltip')"
+        :label="$t('components.lyEditor.modules.settings.transfer.actionImport')"
         :loading="importing"
       />
     </UDropdownMenu>
@@ -190,8 +227,8 @@ const exportMenuItems = createMenuItems(handleExport);
         size="sm"
         icon="mdi:export"
         variant="outline"
-        tooltip="导出配置"
-        label="导出"
+        :tooltip="$t('components.lyEditor.modules.settings.transfer.exportTooltip')"
+        :label="$t('components.lyEditor.modules.settings.transfer.actionExport')"
       />
     </UDropdownMenu>
   </div>

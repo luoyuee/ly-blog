@@ -11,6 +11,7 @@ import ImagePreview from "./ImagePreview.vue";
 import numeral from "numeral";
 
 const $notify = useNotification();
+const { t } = useI18n();
 
 const state = reactive<{
   visible: boolean;
@@ -56,11 +57,11 @@ const handleUpdateTags = async (): Promise<void> => {
     });
 
     $notify.success({
-      title: "更新成功"
+      title: t("message.update.success")
     });
   } catch {
     $notify.error({
-      title: "更新失败"
+      title: t("message.update.error")
     });
   } finally {
     state.submitting = false;
@@ -80,7 +81,7 @@ const handleDownload = async (format?: "webp" | "jpg" | "png"): Promise<void> =>
     a.remove();
   } catch {
     $notify.error({
-      title: "下载失败"
+      title: t("message.download.error")
     });
   } finally {
     state.downloading = false;
@@ -120,12 +121,12 @@ const handleDelete = async (): Promise<void> => {
     emits("deleted", image.value.id);
 
     $notify.success({
-      title: "删除成功"
+      title: t("message.delete.success")
     });
     state.visible = false;
   } catch {
     $notify.error({
-      title: "删除失败"
+      title: t("message.delete.error")
     });
   } finally {
     state.deleting = false;
@@ -151,7 +152,11 @@ defineExpose({ show });
 </script>
 
 <template>
-  <BasicModal v-model:open="state.visible" title="原图预览" content-class="max-w-[1080px]">
+  <BasicModal
+    v-model:open="state.visible"
+    :title="$t('components.image.detailModal.title')"
+    content-class="max-w-[1080px]"
+  >
     <div v-if="image" class="image-preview-content">
       <div style="width: 600px; height: 500px">
         <ImagePreview v-if="state.visible" :src="`/static/image/${image.hash}.${image.format}`" />
@@ -159,26 +164,40 @@ defineExpose({ show });
 
       <div class="flex-1 ml-4">
         <Descriptions :column="1">
-          <DescriptionsItem label="图片ID">{{ image.id }}</DescriptionsItem>
-          <DescriptionsItem label="图片像素">
+          <DescriptionsItem :label="$t('components.image.detailModal.fieldImageId')">
+            {{ image.id }}
+          </DescriptionsItem>
+          <DescriptionsItem :label="$t('components.image.detailModal.fieldPixel')">
             {{ image.width + " x " + image.height }}
           </DescriptionsItem>
-          <DescriptionsItem label="图片标签">
+          <DescriptionsItem :label="$t('components.image.detailModal.fieldTags')">
             <InputTagArea v-model:value="image.tags" />
           </DescriptionsItem>
-          <DescriptionsItem label="所属图库">{{ image.folder_id }}</DescriptionsItem>
-          <DescriptionsItem label="上传日期">{{ image.created_at }}</DescriptionsItem>
-          <DescriptionsItem label="更新日期">{{ image.updated_at }}</DescriptionsItem>
-          <DescriptionsItem label="原图大小">
+          <DescriptionsItem :label="$t('components.image.detailModal.fieldFolder')">
+            {{ image.folder_id }}
+          </DescriptionsItem>
+          <DescriptionsItem :label="$t('components.image.detailModal.fieldCreatedAt')">
+            {{ image.created_at }}
+          </DescriptionsItem>
+          <DescriptionsItem :label="$t('components.image.detailModal.fieldUpdatedAt')">
+            {{ image.updated_at }}
+          </DescriptionsItem>
+          <DescriptionsItem :label="$t('components.image.detailModal.fieldSize')">
             {{ numeral(image.size).format("0.00b") }}
           </DescriptionsItem>
-          <DescriptionsItem label="原图哈希">{{ image.hash }}</DescriptionsItem>
-          <DescriptionsItem label="原图链接">
+          <DescriptionsItem :label="$t('components.image.detailModal.fieldHash')">
+            {{ image.hash }}
+          </DescriptionsItem>
+          <DescriptionsItem :label="$t('components.image.detailModal.fieldLink')">
             <Copyable :text="`${state.url}/api/image/${image.hash}`" />
           </DescriptionsItem>
-          <DescriptionsItem label="图片下载">
+          <DescriptionsItem :label="$t('components.image.detailModal.fieldDownload')">
             <UFieldGroup>
-              <UButton variant="subtle" label="下载原图" @click="handleDownload()" />
+              <UButton
+                variant="subtle"
+                :label="$t('components.image.detailModal.downloadOriginal')"
+                @click="handleDownload()"
+              />
 
               <UDropdownMenu :items="items">
                 <UButton color="neutral" variant="outline" icon="lucide:chevron-down" />
@@ -190,7 +209,9 @@ defineExpose({ show });
     </div>
 
     <template #footer>
-      <UButton color="neutral" variant="outline" @click="handleCancel"> 关闭 </UButton>
+      <UButton color="neutral" variant="outline" @click="handleCancel">
+        {{ $t("common.close") }}
+      </UButton>
 
       <UButton
         color="error"
@@ -198,7 +219,7 @@ defineExpose({ show });
         :disabled="state.submitting"
         @click="handleDelete"
       >
-        删除
+        {{ $t("common.delete") }}
       </UButton>
 
       <UButton
@@ -208,7 +229,7 @@ defineExpose({ show });
         :disabled="state.deleting"
         @click="handleUpdateTags"
       >
-        更新标签
+        {{ $t("components.image.detailModal.updateTags") }}
       </UButton>
     </template>
   </BasicModal>

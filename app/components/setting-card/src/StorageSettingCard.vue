@@ -14,7 +14,9 @@ const schema = z.object({
   type: z.string({
     message: t("components.settingCard.storage.form.typeRequired")
   }),
-  base_path: z.string({ message: t("") }).min(1, "请输入存储路径"),
+  base_path: z
+    .string({ message: t("components.settingCard.storage.form.basePathInvalid") })
+    .min(1, t("components.settingCard.storage.form.basePathInvalid")),
   end_point: z.string(),
   url_format: z.string(),
   port: z.number(),
@@ -101,7 +103,7 @@ const handleReset = () => {
       <UFormField
         label="Base Path"
         name="base_path"
-        description="存储桶基础路径，默认为：storage"
+        :description="t('components.settingCard.storage.form.basePathDescription')"
         required
         :ui="{
           description: 'text-xs',
@@ -112,7 +114,7 @@ const handleReset = () => {
           v-model="formData.base_path"
           class="w-full"
           icon="lucide:folder"
-          placeholder="请输入 base path"
+          :placeholder="t('components.settingCard.storage.form.basePathPlaceholder')"
           :disabled="isLocal"
         />
       </UFormField>
@@ -121,7 +123,7 @@ const handleReset = () => {
         name="intro"
         label="End Point"
         required
-        description="对象存储服务端点，如腾讯云：cos.ap-chengdu.myqcloud.com"
+        :description="t('components.settingCard.storage.form.endPointDescription')"
         :ui="{
           description: 'text-xs',
           container: 'mt-2'
@@ -131,7 +133,7 @@ const handleReset = () => {
           v-model="formData.end_point"
           class="w-full"
           icon="lucide:link"
-          placeholder="请输入 end point"
+          :placeholder="t('components.settingCard.storage.form.endPointPlaceholder')"
           :disabled="isLocal"
         />
       </UFormField>
@@ -140,7 +142,7 @@ const handleReset = () => {
         name="intro"
         label="Port"
         required
-        description="端口号，例：433、80"
+        :description="t('components.settingCard.storage.form.portDescription')"
         :ui="{
           description: 'text-xs',
           container: 'mt-2'
@@ -151,7 +153,7 @@ const handleReset = () => {
           class="w-full"
           icon="lucide:ethernet-port"
           type="number"
-          placeholder="请输入 base path"
+          :placeholder="t('components.settingCard.storage.form.portPlaceholder')"
           :disabled="isLocal"
         />
       </UFormField>
@@ -160,7 +162,7 @@ const handleReset = () => {
         name="SSL"
         label="SSL"
         required
-        description="是否启用SSL"
+        :description="t('components.settingCard.storage.form.sslDescription')"
         :ui="{
           description: 'text-xs',
           container: 'mt-2'
@@ -173,7 +175,6 @@ const handleReset = () => {
         name="intro"
         label="Url Format"
         required
-        description="文件链接模板1，例：https://${bucket}.cos.${region}.myqcloud.com/${filename}"
         :ui="{
           description: 'text-xs',
           container: 'mt-2'
@@ -181,11 +182,24 @@ const handleReset = () => {
       >
         <template #description>
           <div>
-            <p> 文件链接模板，例：https://${bucket}.cos.${region}.myqcloud.com/${filename} </p>
+            <p>
+              {{
+                t("components.settingCard.storage.form.urlFormatHint")
+              }}https://${bucket}.cos.${region}.myqcloud.com/${filename}
+            </p>
             <div class="py-2 space-y-1">
-              <p>存储桶名称：<span class="text-blue-400">${bucket}</span></p>
-              <p>存储桶地域：<span class="text-blue-400">${region}</span></p>
-              <p>文件名：<span class="text-blue-400">${filename}</span></p>
+              <p>
+                {{ t("components.settingCard.storage.form.bucketNameLabel")
+                }}<span class="text-blue-400">${bucket}</span>
+              </p>
+              <p>
+                {{ t("components.settingCard.storage.form.regionLabel")
+                }}<span class="text-blue-400">${region}</span>
+              </p>
+              <p>
+                {{ t("components.settingCard.storage.form.filenameLabel")
+                }}<span class="text-blue-400">${filename}</span>
+              </p>
             </div>
           </div>
         </template>
@@ -193,7 +207,7 @@ const handleReset = () => {
           v-model="formData.url_format"
           class="w-full"
           icon="lucide:link"
-          placeholder="请输入 url format"
+          :placeholder="t('components.settingCard.storage.form.urlFormatPlaceholder')"
           :disabled="isLocal"
         />
       </UFormField>
@@ -202,7 +216,7 @@ const handleReset = () => {
         name="intro"
         label="Region"
         required
-        description="对象存储地域，如：ap-chengdu"
+        :description="t('components.settingCard.storage.form.regionDescription')"
         :ui="{
           description: 'text-xs',
           container: 'mt-2'
@@ -212,7 +226,7 @@ const handleReset = () => {
           v-model="formData.region"
           class="w-full"
           icon="lucide:map-pin"
-          placeholder="请输入 region"
+          :placeholder="t('components.settingCard.storage.form.regionPlaceholder')"
           :disabled="isLocal"
         />
       </UFormField>
@@ -221,7 +235,7 @@ const handleReset = () => {
         name="intro"
         label="Bucket"
         required
-        description="对象存储桶名称"
+        :description="t('components.settingCard.storage.form.bucketDescription')"
         :ui="{
           description: 'text-xs',
           container: 'mt-2'
@@ -231,7 +245,7 @@ const handleReset = () => {
           v-model="formData.bucket"
           class="w-full"
           icon="lucide:server"
-          placeholder="请输入 bucket"
+          :placeholder="t('components.settingCard.storage.form.bucketPlaceholder')"
           :disabled="isLocal"
         />
       </UFormField>
@@ -249,7 +263,7 @@ const handleReset = () => {
           v-model="formData.access_key"
           class="w-full"
           icon="lucide:shield-check"
-          placeholder="请输入 access key"
+          :placeholder="t('components.settingCard.storage.form.accessKeyPlaceholder')"
           :disabled="isLocal"
         />
       </UFormField>
@@ -268,7 +282,7 @@ const handleReset = () => {
           class="w-full"
           icon="lucide:key-round"
           type="password"
-          placeholder="请输入 secret key"
+          :placeholder="t('components.settingCard.storage.form.secretKeyPlaceholder')"
           :disabled="isLocal"
         />
       </UFormField>

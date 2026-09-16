@@ -14,7 +14,7 @@ const props = defineProps({
   },
   label: {
     type: String,
-    default: "选择文件"
+    default: ""
   }
 });
 
@@ -66,6 +66,8 @@ defineExpose({
     />
   </form>
   <slot :trigger-select="triggerSelect" :reset-form="resetForm">
-    <UButton color="primary" @click="triggerSelect">{{ props.label }}</UButton>
+    <UButton color="primary" @click="triggerSelect">
+      {{ props.label || $t("components.inputFile.select") }}
+    </UButton>
   </slot>
 </template>

@@ -10,7 +10,9 @@ const editorStore = useLyEditorStore();
     <ResizeArea v-show="editorStore.preview.show" class="h-full" position="left" :max-width="600">
       <div class="ly-editor-preview__body">
         <MDC v-if="editorStore.preview.content" :value="editorStore.preview.content" />
-        <div v-else class="ly-editor-preview__empty">暂无预览内容</div>
+        <div v-else class="ly-editor-preview__empty">
+          {{ $t("components.lyEditor.shell.preview.empty") }}
+        </div>
       </div>
     </ResizeArea>
   </div>

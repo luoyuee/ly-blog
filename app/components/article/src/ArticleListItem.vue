@@ -2,6 +2,7 @@
 import type { ArticleItem } from "#shared/types/article";
 
 const { $dayjs } = useNuxtApp();
+const { t } = useI18n();
 
 const props = defineProps({
   data: {
@@ -27,11 +28,11 @@ const props = defineProps({
         :href="`/article/${props.data.id}`"
         :title="props.data.title"
       >
-        <span v-if="props.data.pinned" class="article-list-item__badge">置顶</span>
+        <span v-if="props.data.pinned" class="article-list-item__badge">{{ t("components.article.listItem.pinned") }}</span>
         {{ props.data.title }}
       </a>
 
-      <a class="article-list-item__abstract" :href="`/article/${props.data.id}`" title="文章摘要">
+      <a class="article-list-item__abstract" :href="`/article/${props.data.id}`" :title="t('components.article.listItem.abstractTitle')">
         {{ props.data.abstract }}
       </a>
 
@@ -83,7 +84,7 @@ const props = defineProps({
         <div class="article-list-item__meta-category">
           <UIcon :name="props.data.category_icon ?? 'colorful:manage-outline'" :size="16" />
           <span class="article-list-item__meta-category-text">
-            {{ props.data.category_name ?? "未分类" }}
+            {{ props.data.category_name ?? t("components.article.listItem.uncategorized") }}
           </span>
         </div>
       </div>

@@ -4,6 +4,7 @@ import type { CreatedApiKey } from "#shared/types/api-key";
 import { writeClipboardText } from "@/utils/clipboard";
 import { BasicModal } from "@/components/basic-modal";
 
+const { t } = useI18n();
 const $notify = useNotification();
 
 const open = defineModel<boolean>("open", {
@@ -66,12 +67,12 @@ const handleCopyToken = async () => {
     await writeClipboardText(secretKeyPlaintext.value);
 
     $notify.success({
-      title: "复制成功"
+      title: t("message.copy.success")
     });
   } catch (error) {
     $notify.error({
-      title: "复制失败",
-      description: "请手动复制当前 API 密钥。",
+      title: t("message.copy.error"),
+      description: t("components.lyEditor.modules.apiKey.created.copyFailedDescription"),
       error
     });
   }
@@ -95,8 +96,8 @@ const handleCancel = () => {
 <template>
   <BasicModal
     v-model:open="open"
-    title="请立即保存 API 密钥"
-    confirm-button-text="我已保存"
+    :title="t('components.lyEditor.modules.apiKey.created.title')"
+    :confirm-button-text="t('components.lyEditor.modules.apiKey.created.confirm')"
     :show-cancel-button="false"
     @confirm="handleClose"
     @cancel="handleCancel"
@@ -107,11 +108,11 @@ const handleCancel = () => {
         color="warning"
         variant="soft"
         icon="lucide:info"
-        title="明文 API 密钥仅展示一次"
-        description="关闭当前弹窗后，系统将无法再次查看该明文 API 密钥，请先复制并妥善保管。"
+        :title="t('components.lyEditor.modules.apiKey.created.alertTitle')"
+        :description="t('components.lyEditor.modules.apiKey.created.alertDescription')"
       />
 
-      <UFormField label="API 密钥明文">
+      <UFormField :label="t('components.lyEditor.modules.apiKey.created.plainLabel')">
         <UInput :model-value="displayedToken" readonly class="w-full">
           <template #trailing>
             <div class="flex items-center gap-1">

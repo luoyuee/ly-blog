@@ -22,6 +22,7 @@ import { ImageSelect } from "@/components/image";
 import { useUserStore } from "@/stores";
 import { parseMarkdown } from "@nuxtjs/mdc/runtime";
 
+const { t } = useI18n();
 const userStore = useUserStore();
 
 const $notify = useNotification();
@@ -66,9 +67,13 @@ const state = reactive<{
 const folderData = ref<ArticleCategoryTree>([]);
 
 const schema = z.object({
-  title: z.string().min(1, "请输入标题"),
-  author: z.string().min(1, "请输入作者"),
-  abstract: z.string().min(1, "请输入摘要")
+  title: z.string().min(1, t("components.lyEditor.modules.note.publish.validation.titleRequired")),
+  author: z
+    .string()
+    .min(1, t("components.lyEditor.modules.note.publish.validation.authorRequired")),
+  abstract: z
+    .string()
+    .min(1, t("components.lyEditor.modules.note.publish.validation.abstractRequired"))
 });
 
 const formData = reactive<ArticleForm & { enable_pinned?: boolean }>({
@@ -138,7 +143,7 @@ const initData = async () => {
     }
   } catch (error) {
     $notify.error({
-      title: "加载数据失败",
+      title: t("components.lyEditor.modules.note.publish.loadFailed"),
       error
     });
   }
@@ -194,7 +199,7 @@ const handleSubmit = async (event: FormSubmitEvent<ArticleForm>) => {
         custom_url_access_only: formData.custom_url ? formData.custom_url_access_only! : false
       });
       $notify.success({
-        title: "更新成功"
+        title: t("message.update.success")
       });
     } else {
       await publishArticle({
@@ -215,7 +220,7 @@ const handleSubmit = async (event: FormSubmitEvent<ArticleForm>) => {
       });
 
       $notify.success({
-        title: "发布成功"
+        title: t("components.lyEditor.modules.note.publish.publishSuccess")
       });
     }
 
@@ -229,7 +234,7 @@ const handleSubmit = async (event: FormSubmitEvent<ArticleForm>) => {
     });
   } catch (error) {
     $notify.error({
-      title: "发布失败",
+      title: t("components.lyEditor.modules.note.publish.publishFailed"),
       error
     });
   }
@@ -256,11 +261,11 @@ const handleCopyCustomUrl = async () => {
   try {
     await navigator.clipboard.writeText(`${customUrlPrefix.value}${formData.custom_url}`);
     $notify.success({
-      title: "复制成功"
+      title: t("message.copy.success")
     });
   } catch (error) {
     $notify.error({
-      title: "复制失败",
+      title: t("message.copy.error"),
       error
     });
   }
@@ -279,7 +284,11 @@ const handleChangePinned = () => {
     <BasicModal
       v-model:open="open"
       content-class="max-w-[1080px] h-[80vh]"
-      :title="article ? '更新文章' : '发布文章'"
+      :title="
+        article
+          ? t('components.lyEditor.modules.note.publish.updateTitle')
+          : t('components.lyEditor.modules.note.publish.publishTitle')
+      "
       @confirm="handleConfirm"
       @cancel="handleCancel"
     >
@@ -293,13 +302,28 @@ const handleChangePinned = () => {
       >
         <div class="flex gap-4">
           <div class="flex-1">
-            <UFormField label="文章标题" name="title">
-              <UInput v-model="formData.title" placeholder="请输入标题" />
+            <UFormField
+              :label="t('components.lyEditor.modules.note.publish.titleLabel')"
+              name="title"
+            >
+              <UInput
+                v-model="formData.title"
+                :placeholder="t('components.lyEditor.modules.note.publish.titlePlaceholder')"
+              />
             </UFormField>
-            <UFormField label="作者" name="author">
-              <UInput v-model="formData.author" placeholder="请输入作者名称" />
+            <UFormField
+              :label="t('components.lyEditor.modules.note.publish.authorLabel')"
+              name="author"
+            >
+              <UInput
+                v-model="formData.author"
+                :placeholder="t('components.lyEditor.modules.note.publish.authorPlaceholder')"
+              />
             </UFormField>
-            <UFormField label="分类" name="category">
+            <UFormField
+              :label="t('components.lyEditor.modules.note.publish.categoryLabel')"
+              name="category"
+            >
               <TreeSelect
                 v-model="formData.category_id"
                 check-strictly
@@ -308,69 +332,118 @@ const handleChangePinned = () => {
                 :options="folderData"
               />
             </UFormField>
-            <UFormField label="摘要" name="abstract">
-              <UTextarea v-model="formData.abstract" :rows="5" placeholder="请输入摘要" />
+            <UFormField
+              :label="t('components.lyEditor.modules.note.publish.abstractLabel')"
+              name="abstract"
+            >
+              <UTextarea
+                v-model="formData.abstract"
+                :rows="5"
+                :placeholder="t('components.lyEditor.modules.note.publish.abstractPlaceholder')"
+              />
             </UFormField>
-            <UFormField label="封面" name="cover">
+            <UFormField
+              :label="t('components.lyEditor.modules.note.publish.coverLabel')"
+              name="cover"
+            >
               <ImageSelect v-model="formData.cover" multiple />
             </UFormField>
           </div>
 
           <div class="w-[320px] space-y-2 shrink-0">
             <Descriptions :column="1">
-              <DescriptionsItem label="文章来源">
+              <DescriptionsItem :label="t('components.lyEditor.modules.note.publish.sourceLabel')">
                 {{ note?.name || $t("placeholder.hyphen") }}
               </DescriptionsItem>
-              <DescriptionsItem label="文章状态">
-                {{ article ? "已发布" : "未发布" }}
+              <DescriptionsItem :label="t('components.lyEditor.modules.note.publish.statusLabel')">
+                {{
+                  article
+                    ? t("components.lyEditor.modules.note.publish.statusPublished")
+                    : t("components.lyEditor.modules.note.publish.statusUnpublished")
+                }}
               </DescriptionsItem>
-              <DescriptionsItem label="最近更新">
+              <DescriptionsItem
+                :label="t('components.lyEditor.modules.note.publish.updatedAtLabel')"
+              >
                 {{
                   note?.updated_at
                     ? dayjs(note.updated_at).format($t("format.datetime"))
                     : $t("placeholder.hyphen")
                 }}
               </DescriptionsItem>
-              <DescriptionsItem label="需要同步">
-                {{ needUpdate ? "是" : "否" }}
+              <DescriptionsItem
+                :label="t('components.lyEditor.modules.note.publish.needSyncLabel')"
+              >
+                {{ needUpdate ? $t("common.yes") : $t("common.no") }}
               </DescriptionsItem>
             </Descriptions>
 
-            <UFormField label="发布时间" name="published_at">
+            <UFormField
+              :label="t('components.lyEditor.modules.note.publish.publishedAtLabel')"
+              name="published_at"
+            >
               <DatePicker v-model="formData.published_at" />
             </UFormField>
 
-            <UFormField label="标签" name="tags">
+            <UFormField
+              :label="t('components.lyEditor.modules.note.publish.tagsLabel')"
+              name="tags"
+            >
               <UInputTags v-model="formData.tags" />
             </UFormField>
 
-            <UFormField label="置顶" name="enable_pinned">
+            <UFormField
+              :label="t('components.lyEditor.modules.note.publish.pinnedLabel')"
+              name="enable_pinned"
+            >
               <USwitch v-model="formData.enable_pinned" @update:model-value="handleChangePinned" />
             </UFormField>
 
-            <UFormField v-if="formData.enable_pinned" label="置顶优先级" name="pin_priority">
+            <UFormField
+              v-if="formData.enable_pinned"
+              :label="t('components.lyEditor.modules.note.publish.pinPriorityLabel')"
+              name="pin_priority"
+            >
               <UInputNumber v-model="formData.pin_priority" :min="1" :step="1" />
             </UFormField>
 
-            <UFormField label="评论" name="allow_comments">
+            <UFormField
+              :label="t('components.lyEditor.modules.note.publish.commentLabel')"
+              name="allow_comments"
+            >
               <USwitch v-model="formData.allow_comments" />
             </UFormField>
 
-            <UFormField label="赞赏" name="allow_rewards">
+            <UFormField
+              :label="t('components.lyEditor.modules.note.publish.rewardLabel')"
+              name="allow_rewards"
+            >
               <USwitch v-model="formData.allow_rewards" />
             </UFormField>
 
-            <UFormField label="访问密码" name="password">
-              <UInput v-model="formData.password" placeholder="可选" />
+            <UFormField
+              :label="t('components.lyEditor.modules.note.publish.passwordLabel')"
+              name="password"
+            >
+              <UInput
+                v-model="formData.password"
+                :placeholder="t('components.lyEditor.modules.note.publish.optionalPlaceholder')"
+              />
             </UFormField>
 
-            <UFormField label="自定义链接" name="custom_url">
-              <UInput v-model="formData.custom_url" placeholder="可选" />
+            <UFormField
+              :label="t('components.lyEditor.modules.note.publish.customUrlLabel')"
+              name="custom_url"
+            >
+              <UInput
+                v-model="formData.custom_url"
+                :placeholder="t('components.lyEditor.modules.note.publish.optionalPlaceholder')"
+              />
             </UFormField>
 
             <UFormField
               v-if="formData.custom_url"
-              label="仅自定义链接访问"
+              :label="t('components.lyEditor.modules.note.publish.customUrlOnly')"
               name="custom_url_access_only"
             >
               <USwitch v-model="formData.custom_url_access_only" />
@@ -383,7 +456,7 @@ const handleChangePinned = () => {
               class="w-full"
               @click="handleCopyCustomUrl"
             >
-              复制完整链接
+              {{ t("components.lyEditor.modules.note.publish.copyFullLink") }}
             </UButton>
           </div>
         </div>

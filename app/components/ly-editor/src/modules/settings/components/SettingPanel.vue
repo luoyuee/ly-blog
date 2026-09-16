@@ -19,6 +19,8 @@ import {
 import { useConfigStore, useMePageConfigStore, useServerConfigStore } from "@/stores";
 import SettingConfigTransfer from "./SettingConfigTransfer.vue";
 
+const { t } = useI18n();
+
 const configStore = useConfigStore();
 const mePageConfigStore = useMePageConfigStore();
 const serverConfigStore = useServerConfigStore();
@@ -29,26 +31,78 @@ type SettingMenuItemConfig = {
   id: string;
 };
 
-const settingMenuGroups: SettingMenuItemConfig[][] = [
+const settingMenuGroups = computed<SettingMenuItemConfig[][]>(() => [
   [
-    { label: "文章设置", icon: "lucide:file-text", id: "article-setting" },
-    { label: "作者卡片", icon: "lucide:user-round", id: "author-card-setting" },
-    { label: "个人页配置", icon: "lucide:id-card", id: "me-page-setting" },
-    { label: "基本信息", icon: "lucide:settings-2", id: "basic-setting" },
-    { label: "备案信息", icon: "lucide:shield-check", id: "beian-setting" },
-    { label: "顶部背景", icon: "lucide:image", id: "hero-setting" },
-    { label: "导航菜单", icon: "lucide:panel-top", id: "nav-menu-setting" },
-    { label: "轮播图", icon: "lucide:images", id: "swiper-setting" }
+    {
+      label: t("components.lyEditor.modules.settings.sections.article"),
+      icon: "lucide:file-text",
+      id: "article-setting"
+    },
+    {
+      label: t("components.lyEditor.modules.settings.sections.authorCard"),
+      icon: "lucide:user-round",
+      id: "author-card-setting"
+    },
+    {
+      label: t("components.lyEditor.modules.settings.sections.mePage"),
+      icon: "lucide:id-card",
+      id: "me-page-setting"
+    },
+    {
+      label: t("components.lyEditor.modules.settings.sections.basic"),
+      icon: "lucide:settings-2",
+      id: "basic-setting"
+    },
+    {
+      label: t("components.lyEditor.modules.settings.sections.beian"),
+      icon: "lucide:shield-check",
+      id: "beian-setting"
+    },
+    {
+      label: t("components.lyEditor.modules.settings.sections.hero"),
+      icon: "lucide:image",
+      id: "hero-setting"
+    },
+    {
+      label: t("components.lyEditor.modules.settings.sections.navMenu"),
+      icon: "lucide:panel-top",
+      id: "nav-menu-setting"
+    },
+    {
+      label: t("components.lyEditor.modules.settings.sections.swiper"),
+      icon: "lucide:images",
+      id: "swiper-setting"
+    }
   ],
   [
-    { label: "闪念笔记", icon: "lucide:notebook-pen", id: "fleeting-thought-setting" },
-    { label: "留言板", icon: "lucide:messages-square", id: "message-board-setting" },
-    { label: "一言", icon: "lucide:quote", id: "hitokoto-setting" },
-    { label: "邮件设置", icon: "lucide:mail", id: "mailer-setting" },
-    { label: "CZDB 设置", icon: "lucide:database", id: "czdb-setting" },
+    {
+      label: t("components.lyEditor.modules.settings.sections.fleetingThought"),
+      icon: "lucide:notebook-pen",
+      id: "fleeting-thought-setting"
+    },
+    {
+      label: t("components.lyEditor.modules.settings.sections.messageBoard"),
+      icon: "lucide:messages-square",
+      id: "message-board-setting"
+    },
+    {
+      label: t("components.lyEditor.modules.settings.sections.hitokoto"),
+      icon: "lucide:quote",
+      id: "hitokoto-setting"
+    },
+    {
+      label: t("components.lyEditor.modules.settings.sections.mailer"),
+      icon: "lucide:mail",
+      id: "mailer-setting"
+    },
+    {
+      label: t("components.lyEditor.modules.settings.sections.czdb"),
+      icon: "lucide:database",
+      id: "czdb-setting"
+    },
     { label: "Live2D", icon: "lucide:bot", id: "live2d-setting" }
   ]
-] as const;
+]);
 
 const contentRef = useTemplateRef("contentRef");
 const activeSettingId = ref("article-setting");
@@ -97,7 +151,7 @@ const createNavigationItem = (item: SettingMenuItemConfig): NavigationMenuItem =
 };
 
 const settingSectionIds = computed(() => {
-  return settingMenuGroups.flat().map((item) => item.id);
+  return settingMenuGroups.value.flat().map((item) => item.id);
 });
 
 const syncActiveSetting = () => {
@@ -161,7 +215,7 @@ const bindScrollListener = () => {
 };
 
 const settingMenuItems = computed<NavigationMenuItem[][]>(() => {
-  return settingMenuGroups.map((group) => {
+  return settingMenuGroups.value.map((group) => {
     return group.map((item) => createNavigationItem(item));
   });
 });

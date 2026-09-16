@@ -7,6 +7,8 @@ import { getAllImageFolder } from "@/apis/image";
 import { useLyEditorStore } from "@/stores";
 import Scrollbar from "@/components/scrollbar";
 
+const { t } = useI18n();
+
 const lyEditorStore = useLyEditorStore();
 const { open } = useLyEditorModal("image-folder-form");
 
@@ -54,16 +56,20 @@ const handleOpenImageFolder = (e: ImageFolder) => {
   lyEditorStore.currentTab = key;
 };
 
-const actions = [
+const actions = computed(() => [
   {
-    label: "新建目录",
+    label: t("components.lyEditor.modules.image.newFolder"),
     icon: "lucide:plus",
     onClick: handleOpenFormModal
   }
-];
+]);
 </script>
 <template>
-  <SidebarPanel title="图片管理器" :loading="loading" :actions="actions">
+  <SidebarPanel
+    :title="$t('components.lyEditor.modules.image.title')"
+    :loading="loading"
+    :actions="actions"
+  >
     <div class="flex-1 overflow-hidden">
       <Scrollbar class="h-full">
         <SidebarPanelListItem
@@ -75,18 +81,18 @@ const actions = [
           :meta-items="[{ text: item.count, icon: 'custom:pic' }]"
           :action-items="[
             {
-              label: '重命名',
+              label: $t('components.lyEditor.modules.image.menu.rename'),
               icon: 'lucide:edit',
               onSelect: () => {
                 handleOpenFormModal(item);
               }
             },
             {
-              label: '目录详情',
+              label: $t('components.lyEditor.modules.image.menu.details'),
               icon: 'lucide:info'
             },
             {
-              label: '删除目录',
+              label: $t('components.lyEditor.modules.image.menu.delete'),
               icon: 'lucide:trash-2',
               color: 'error',
               disabled: item.is_system

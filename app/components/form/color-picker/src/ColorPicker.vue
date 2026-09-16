@@ -28,7 +28,7 @@ const props = defineProps({
   },
   label: {
     type: String,
-    default: "选择颜色"
+    default: ""
   }
 });
 
@@ -67,7 +67,7 @@ const handleReset = () => {
       <UButton
         color="neutral"
         variant="outline"
-        :label="props.label"
+        :label="props.label || $t('components.colorPicker.placeholder')"
         :disabled="props.disabled"
         :size="props.size"
         v-bind="$attrs"
@@ -97,7 +97,7 @@ const handleReset = () => {
 
           <div class="flex justify-between items-center">
             <UButton
-              label="重置"
+              :label="$t('common.reset')"
               color="neutral"
               variant="outline"
               size="xs"
@@ -106,13 +106,18 @@ const handleReset = () => {
 
             <div class="flex gap-2 items-center">
               <UButton
-                label="取消"
+                :label="$t('common.cancel')"
                 color="neutral"
                 variant="outline"
                 size="xs"
                 @click="handleCancel"
               />
-              <UButton label="确认" color="primary" size="xs" @click="handleConfirm" />
+              <UButton
+                :label="$t('common.confirm')"
+                color="primary"
+                size="xs"
+                @click="handleConfirm"
+              />
             </div>
           </div>
         </div>

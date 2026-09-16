@@ -1,14 +1,16 @@
 <script setup lang="ts">
+import type { FormSubmitEvent, SelectMenuItem } from "@nuxt/ui";
 import type { WorkForm, WorkItem } from "#shared/types/config";
 import type { WorkFormModalResult } from "#shared/types/ly-editor";
 import { EmojiOptions } from "#shared/constants/emoji";
-import type { FormSubmitEvent, SelectMenuItem } from "@nuxt/ui";
 import { updateWorkConfig } from "@/apis/config";
 import { BasicModal } from "@/components/basic-modal";
 import { ImageSelect } from "@/components/image";
 import { useForm } from "@/composables/useForm";
 import { computed, watch } from "vue";
 import { z } from "zod";
+
+const { t } = useI18n();
 
 const $notify = useNotification();
 
@@ -35,13 +37,26 @@ const emits = defineEmits<{
   close: [result: WorkFormModalResult];
 }>();
 
+const workValidation = {
+  nameRequired: t("components.lyEditor.modules.work.form.validation.nameRequired"),
+  iconRequired: t("components.lyEditor.modules.work.form.validation.iconRequired"),
+  descriptionRequired: t("components.lyEditor.modules.work.form.validation.descriptionRequired"),
+  imageRequired: t("components.lyEditor.modules.work.form.validation.imageRequired"),
+  languagesRequired: t("components.lyEditor.modules.work.form.validation.languagesRequired"),
+  repoRequired: t("components.lyEditor.modules.work.form.validation.repoRequired")
+};
+
 const schema = z.object({
-  name: z.string({ message: "请输入项目名称" }).min(1, "请输入项目名称"),
-  icon: z.string({ message: "请选择项目图标" }).min(1, "请选择项目图标"),
-  description: z.string({ message: "请输入项目描述" }).min(1, "请输入项目描述"),
-  image: z.string({ message: "请选择项目预览图" }).min(1, "请选择项目预览图"),
-  languages: z.array(z.string({ message: "请选择项目语言" }).min(1, "请选择项目语言")),
-  repoUrl: z.string({ message: "请输入项目仓库地址" }).min(1, "请输入项目仓库地址")
+  name: z.string({ message: workValidation.nameRequired }).min(1, workValidation.nameRequired),
+  icon: z.string({ message: workValidation.iconRequired }).min(1, workValidation.iconRequired),
+  description: z
+    .string({ message: workValidation.descriptionRequired })
+    .min(1, workValidation.descriptionRequired),
+  image: z.string({ message: workValidation.imageRequired }).min(1, workValidation.imageRequired),
+  languages: z.array(
+    z.string({ message: workValidation.languagesRequired }).min(1, workValidation.languagesRequired)
+  ),
+  repoUrl: z.string({ message: workValidation.repoRequired }).min(1, workValidation.repoRequired)
 });
 
 const { formData, formState, resetForm, setForm } = useForm<WorkForm>({
@@ -58,7 +73,9 @@ const isEdit = computed(() => {
 });
 
 const modalTitle = computed(() => {
-  return isEdit.value ? "修改信息" : "新建项目";
+  return isEdit.value
+    ? t("components.lyEditor.modules.work.form.editTitle")
+    : t("components.lyEditor.modules.work.form.createTitle");
 });
 
 const workItems = computed(() => {
@@ -106,7 +123,7 @@ const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => 
 
       if (duplicatedItem) {
         $notify.error({
-          title: "项目已存在"
+          title: t("components.lyEditor.modules.work.form.exists")
         });
         return;
       }
@@ -129,14 +146,14 @@ const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => 
       await updateWorkConfig(data);
 
       $notify.success({
-        title: "修改成功"
+        title: t("message.edit.success")
       });
     } else {
       const isExist = workItems.value.some((item) => item.repoUrl === event.data.repoUrl);
 
       if (isExist) {
         $notify.error({
-          title: "项目已存在"
+          title: t("components.lyEditor.modules.work.form.exists")
         });
         return;
       }
@@ -154,7 +171,7 @@ const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => 
       ]);
 
       $notify.success({
-        title: "创建成功"
+        title: t("message.create.success")
       });
     }
 
@@ -165,7 +182,7 @@ const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => 
     });
   } catch (error) {
     $notify.error({
-      title: "操作失败",
+      title: t("message.operate.error"),
       error
     });
   } finally {
@@ -208,11 +225,18 @@ const emojiItems = computed<SelectMenuItem[]>(() => {
       :validate-on-input-delay="100"
       @submit="handleSubmit"
     >
-      <UFormField name="name" label="项目名称" required>
-        <UInput v-model="formData.name" placeholder="请输入项目名称" />
+      <UFormField
+        name="name"
+        :label="$t('components.lyEditor.modules.work.form.nameLabel')"
+        required
+      >
+        <UInput
+          v-model="formData.name"
+          :placeholder="$t('components.lyEditor.modules.work.form.namePlaceholder')"
+        />
       </UFormField>
 
-      <UFormField name="icon" label="项目图标">
+      <UFormField name="icon" :label="$t('components.lyEditor.modules.work.form.iconLabel')">
         <USelectMenu
           v-model="formData.icon"
           :items="emojiItems"
@@ -223,19 +247,35 @@ const emojiItems = computed<SelectMenuItem[]>(() => {
         />
       </UFormField>
 
-      <UFormField name="repoUrl" label="仓库链接">
-        <UInput v-model="formData.repoUrl" placeholder="请输入仓库链接" icon="custom:github" />
+      <UFormField name="repoUrl" :label="$t('components.lyEditor.modules.work.form.repoLabel')">
+        <UInput
+          v-model="formData.repoUrl"
+          :placeholder="$t('components.lyEditor.modules.work.form.repoPlaceholder')"
+          icon="custom:github"
+        />
       </UFormField>
 
-      <UFormField name="description" label="项目描述">
-        <UTextarea v-model="formData.description" placeholder="请输入项目描述" />
+      <UFormField
+        name="description"
+        :label="$t('components.lyEditor.modules.work.form.descriptionLabel')"
+      >
+        <UTextarea
+          v-model="formData.description"
+          :placeholder="$t('components.lyEditor.modules.work.form.descriptionPlaceholder')"
+        />
       </UFormField>
 
-      <UFormField name="languages" label="项目语言">
-        <UInputTags v-model="formData.languages" placeholder="请输入项目语言" />
+      <UFormField
+        name="languages"
+        :label="$t('components.lyEditor.modules.work.form.languagesLabel')"
+      >
+        <UInputTags
+          v-model="formData.languages"
+          :placeholder="$t('components.lyEditor.modules.work.form.languagesPlaceholder')"
+        />
       </UFormField>
 
-      <UFormField name="image" label="项目图片">
+      <UFormField name="image" :label="$t('components.lyEditor.modules.work.form.imageLabel')">
         <ImageSelect v-model="formData.image" />
       </UFormField>
     </UForm>

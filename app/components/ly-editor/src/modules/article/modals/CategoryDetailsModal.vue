@@ -59,34 +59,44 @@ const handleCancel = () => {
 <template>
   <BasicModal
     v-model:open="open"
-    title="分类详情"
-    cancel-button-text="关闭"
+    :title="$t('components.lyEditor.modules.article.categoryDetailsTitle')"
+    :cancel-button-text="$t('common.close')"
     :show-confirm-button="false"
     @cancel="handleCancel"
   >
     <Descriptions>
-      <DescriptionsItem label="父级分类">{{ data.parent_id }}</DescriptionsItem>
-      <DescriptionsItem label="分类名称">{{ data.name }}</DescriptionsItem>
-      <DescriptionsItem label="分类图标">
+      <DescriptionsItem :label="$t('components.lyEditor.modules.article.categoryFields.parent')">
+        {{ data.parent_id }}
+      </DescriptionsItem>
+      <DescriptionsItem :label="$t('components.lyEditor.modules.article.categoryFields.name')">
+        {{ data.name }}
+      </DescriptionsItem>
+      <DescriptionsItem :label="$t('components.lyEditor.modules.article.categoryFields.icon')">
         <UIcon v-if="data.icon" :name="data.icon" />
         <UIcon v-else name="colorful:folder" />
       </DescriptionsItem>
-      <DescriptionsItem label="分类描述">{{ data.description }}</DescriptionsItem>
-      <DescriptionsItem label="创建日期">
+      <DescriptionsItem
+        :label="$t('components.lyEditor.modules.article.categoryFields.description')"
+      >
+        {{ data.description }}
+      </DescriptionsItem>
+      <DescriptionsItem :label="$t('components.lyEditor.modules.article.categoryFields.createdAt')">
         {{
           data.created_at
             ? dayjs(data.created_at).format($t("format.datetime"))
             : $t("placeholder.hyphen")
         }}
       </DescriptionsItem>
-      <DescriptionsItem label="更新日期">
+      <DescriptionsItem :label="$t('components.lyEditor.modules.article.categoryFields.updatedAt')">
         {{
           data.updated_at
             ? dayjs(data.updated_at).format($t("format.datetime"))
             : $t("placeholder.hyphen")
         }}
       </DescriptionsItem>
-      <DescriptionsItem label="文章数量">{{ data.count }}</DescriptionsItem>
+      <DescriptionsItem :label="$t('components.lyEditor.modules.article.categoryFields.count')">
+        {{ data.count }}
+      </DescriptionsItem>
     </Descriptions>
   </BasicModal>
 </template>

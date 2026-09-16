@@ -41,7 +41,7 @@ const handleSubmit = async () => {
   if (!originalData.value) return;
 
   if (formData.content.trim() === "") {
-    $message.warning("留言不能为空");
+    $message.warning(t("components.commentModal.emptyWarning"));
     return;
   }
 
@@ -77,8 +77,8 @@ defineExpose({
 <template>
   <BasicModal
     v-model:open="state.visible"
-    title="留言"
-    confirm-button-text="更新"
+    :title="t('components.commentModal.title')"
+    :confirm-button-text="t('components.commentModal.confirm')"
     @confirm="handleSubmit"
     @cancel="handleCancel"
   >
@@ -90,17 +90,25 @@ defineExpose({
 
         <UForm class="comment-editor__contact-form" :disabled="true" :state="formData">
           <UFormField class="comment-editor__contact-form__item" name="nickname">
-            <UInput :value="originalData.nickname" placeholder="昵称（必填）" icon="lucide:user" />
+            <UInput
+              :value="originalData.nickname"
+              :placeholder="t('components.commentModal.nicknamePlaceholder')"
+              icon="lucide:user"
+            />
           </UFormField>
           <UFormField class="comment-editor__contact-form__item" name="email">
             <UInput
               :value="originalData.email"
-              placeholder="邮箱（必填，QQ邮箱自动获取信息）"
+              :placeholder="t('components.commentModal.emailPlaceholder')"
               icon="lucide:mail"
             />
           </UFormField>
           <UFormField class="comment-editor__contact-form__item" name="website">
-            <UInput :value="originalData.website" placeholder="网址（选填）" icon="lucide:link" />
+            <UInput
+              :value="originalData.website"
+              :placeholder="t('components.commentModal.websitePlaceholder')"
+              icon="lucide:link"
+            />
           </UFormField>
         </UForm>
       </div>

@@ -18,6 +18,8 @@ import { getPaginatedArticles } from "@/apis/article";
 import { useMessage } from "@/composables/useMessage";
 import { useIntersectionObserver } from "@vueuse/core";
 
+const { t } = useI18n();
+
 const configStore = useConfigStore();
 
 const state = reactive<{
@@ -62,7 +64,7 @@ const loadArticles = async () => {
     state.total = response.total;
   } catch (error) {
     const $message = useMessage();
-    $message.error("加载文章失败", error);
+    $message.error(t("pages.index.loadError"), error);
   } finally {
     state.loading = false;
   }
@@ -97,7 +99,11 @@ const { data: tags } = await useFetch<string[]>("/api/article/tags", { method: "
           :items="configStore.swiper"
         />
         <ArticleList :data="articleList" />
-        <ArticleListDivider ref="dividerRef" :loading="state.loading" text="我也是有底线的" />
+        <ArticleListDivider
+          ref="dividerRef"
+          :loading="state.loading"
+          :text="$t('pages.index.bottom')"
+        />
       </div>
       <div class="aside space-y-4">
         <AuthorCard />

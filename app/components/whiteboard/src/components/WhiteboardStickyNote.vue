@@ -1,7 +1,7 @@
 <script setup lang="ts">
+import type { StickyNote, WhiteboardTool } from "../types";
 import type { PropType } from "vue";
 import { WHITEBOARD_TOOLS } from "../types";
-import type { StickyNote, WhiteboardTool } from "../types";
 
 const props = defineProps({
   note: { type: Object as PropType<StickyNote>, required: true },
@@ -22,7 +22,11 @@ const emit = defineEmits<{
 const textareaRef = useTemplateRef<HTMLTextAreaElement>("textareaRef");
 
 const onNotePointerDown = (event: PointerEvent): void => {
-  if ((props.tool === WHITEBOARD_TOOLS.pen || props.tool === WHITEBOARD_TOOLS.eraser) && !props.editing) return;
+  if (
+    (props.tool === WHITEBOARD_TOOLS.pen || props.tool === WHITEBOARD_TOOLS.eraser) &&
+    !props.editing
+  )
+    return;
   const note = event.currentTarget;
   if (note instanceof HTMLElement) note.setPointerCapture(event.pointerId);
   event.stopPropagation();
@@ -84,7 +88,7 @@ watch(
       :value="note.text"
       :readonly="!editing"
       spellcheck="false"
-      aria-label="便签内容"
+      :aria-label="$t('components.whiteboard.noteLabel')"
       @pointerdown="onTextareaPointerDown"
       @input="onTextInput"
       @keydown.escape.prevent="finishEdit"
@@ -95,8 +99,8 @@ watch(
       v-if="selected"
       class="whiteboard-note__delete"
       type="button"
-      aria-label="删除便签"
-      title="删除便签"
+      :aria-label="$t('components.whiteboard.deleteNote')"
+      :title="$t('components.whiteboard.deleteNote')"
       @pointerdown.stop
       @click="emit('remove', note.id)"
     >
@@ -107,8 +111,8 @@ watch(
       v-if="selected"
       class="whiteboard-note__resize"
       type="button"
-      aria-label="调整便签大小"
-      title="拖拽调整大小"
+      :aria-label="$t('components.whiteboard.resizeNote')"
+      :title="$t('components.whiteboard.resizeTitle')"
       @pointerdown.stop="onResizePointerDown"
     ></button>
   </article>

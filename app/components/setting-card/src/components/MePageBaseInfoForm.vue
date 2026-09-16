@@ -8,6 +8,8 @@ import { SelectIcon } from "@/components/form/select";
 import { CustomIconNames } from "#shared/constants";
 import { z } from "zod";
 
+const { t } = useI18n();
+
 const handleClass = "me-page-base-info-form__handle";
 const tbodyClass = "me-page-base-info-form__tbody";
 
@@ -60,10 +62,18 @@ const modalForm = reactive<IMePageConfigBaseInfoItem>({
 });
 
 const modalSchema = z.object({
-  label: z.string({ message: "请输入标签" }).min(1, "请输入标签"),
-  value: z.string({ message: "请输入内容" }).min(1, "请输入内容"),
-  icon: z.string({ message: "请选择图标" }).min(1, "请选择图标"),
-  href: z.union([z.url("请输入正确的链接"), z.literal("")]).optional()
+  label: z
+    .string({ message: t("components.settingCard.baseInfoForm.validation.labelRequired") })
+    .min(1, t("components.settingCard.baseInfoForm.validation.labelRequired")),
+  value: z
+    .string({ message: t("components.settingCard.baseInfoForm.validation.valueRequired") })
+    .min(1, t("components.settingCard.baseInfoForm.validation.valueRequired")),
+  icon: z
+    .string({ message: t("components.settingCard.baseInfoForm.validation.iconRequired") })
+    .min(1, t("components.settingCard.baseInfoForm.validation.iconRequired")),
+  href: z
+    .union([z.url(t("components.settingCard.baseInfoForm.validation.linkInvalid")), z.literal("")])
+    .optional()
 });
 
 const modalFormRef = useTemplateRef("modalFormRef");
@@ -151,14 +161,14 @@ const columns = computed<TableColumn<RowItem>[]>(() => {
     },
     {
       accessorKey: "icon",
-      header: "图标",
+      header: t("components.settingCard.common.icon"),
       cell: ({ row }) => h(UIcon, { name: row.original.icon })
     },
-    { accessorKey: "label", header: "标题" },
-    { accessorKey: "value", header: "内容" },
+    { accessorKey: "label", header: t("components.settingCard.common.title") },
+    { accessorKey: "value", header: t("components.settingCard.common.content") },
     {
       accessorKey: "href",
-      header: "链接",
+      header: t("components.settingCard.common.link"),
       cell: ({ row }) => {
         const href = row.original.href;
         if (!href) return "";
@@ -176,7 +186,7 @@ const columns = computed<TableColumn<RowItem>[]>(() => {
     },
     {
       id: "actions",
-      header: "操作",
+      header: t("components.settingCard.common.actions"),
       meta: {
         class: {
           th: "text-right",
@@ -229,15 +239,15 @@ defineExpose({
 
 <template>
   <UFormField
-    label="基础信息（Base Info）"
-    description="支持配置年龄/工作经验等；个人页会根据“年龄/工作经验”自动做年份计算"
+    :label="$t('components.settingCard.baseInfoForm.label')"
+    :description="$t('components.settingCard.baseInfoForm.description')"
     :ui="{
       description: 'text-xs',
       container: 'mt-2'
     }"
   >
     <template #hint>
-      <UButton size="xs" icon="lucide:plus" @click="openAddModal"> 添加 </UButton>
+      <UButton size="xs" icon="lucide:plus" @click="openAddModal">{{ $t("common.add") }}</UButton>
     </template>
     <div class="border border-muted rounded-md overflow-hidden">
       <UTable
@@ -253,7 +263,11 @@ defineExpose({
 
     <BasicModal
       v-model:open="modalState.visible"
-      :title="modalState.editingIndex === null ? '添加基础信息' : '编辑基础信息'"
+      :title="
+        modalState.editingIndex === null
+          ? $t('components.settingCard.baseInfoForm.addModalTitle')
+          : $t('components.settingCard.baseInfoForm.editModalTitle')
+      "
       @confirm="confirmModal"
     >
       <UForm
@@ -263,16 +277,34 @@ defineExpose({
         :validate-on-input-delay="100"
         @submit="submitModal"
       >
-        <UFormField name="label" label="标题" required>
-          <UInput v-model="modalForm.label" placeholder="例如：年龄 / 工作经验" />
+        <UFormField
+          name="label"
+          :label="$t('components.settingCard.baseInfoForm.titleLabel')"
+          required
+        >
+          <UInput
+            v-model="modalForm.label"
+            :placeholder="$t('components.settingCard.baseInfoForm.titlePlaceholder')"
+          />
         </UFormField>
-        <UFormField name="value" label="内容" required>
-          <UInput v-model="modalForm.value" placeholder="例如：2000-01-01 / 2020-01" />
+        <UFormField
+          name="value"
+          :label="$t('components.settingCard.baseInfoForm.valueLabel')"
+          required
+        >
+          <UInput
+            v-model="modalForm.value"
+            :placeholder="$t('components.settingCard.baseInfoForm.valuePlaceholder')"
+          />
         </UFormField>
-        <UFormField name="icon" label="图标" required>
+        <UFormField
+          name="icon"
+          :label="$t('components.settingCard.baseInfoForm.iconLabel')"
+          required
+        >
           <SelectIcon v-model="modalForm.icon" :items="CustomIconNames" />
         </UFormField>
-        <UFormField name="href" label="链接（可选）">
+        <UFormField name="href" :label="$t('components.settingCard.baseInfoForm.linkLabel')">
           <UInput v-model="modalForm.href" icon="lucide:link" placeholder="https://..." />
         </UFormField>
       </UForm>

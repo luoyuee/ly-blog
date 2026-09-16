@@ -4,6 +4,7 @@ import { useConfigStore } from "@/stores";
 import numeral from "numeral";
 import dayjs from "dayjs";
 
+const { t } = useI18n();
 const configStore = useConfigStore();
 
 const { data: visitsStats } = await useFetch<VisitsStats>("/api/stats/visits", {
@@ -13,7 +14,7 @@ const { data: visitsStats } = await useFetch<VisitsStats>("/api/stats/visits", {
 const copyright = computed(() => {
   return `Copyright © ${
     configStore.created_at ? dayjs(configStore.created_at).format("YYYY") : dayjs().format("YYYY")
-  } ~ ${dayjs().year()} 版权所有 `;
+  } ~ ${dayjs().year()} ${t("components.pageFooter.copyright")} `;
 });
 </script>
 <template>
@@ -47,7 +48,7 @@ const copyright = computed(() => {
       </a>
     </div>
     <div class="flex items-center">
-      本站由
+      {{ $t("components.pageFooter.poweredByPrefix") }}
       <a
         class="hover:text-primary-400 flex items-center no-underline px-1"
         href="https://nuxt.com"
@@ -56,10 +57,12 @@ const copyright = computed(() => {
         <UIcon name="colorful:nuxt" :size="20" />
         Nuxt
       </a>
-      强力驱动
+      {{ $t("components.pageFooter.poweredBySuffix") }}
     </div>
-    <div class="flex items-center" title="每小时更新">
-      {{ `总访问：${numeral(visitsStats?.page || 0).format("0,0")} 次` }}
+    <div class="flex items-center" :title="$t('components.pageFooter.updateTitle')">
+      {{
+        $t("components.pageFooter.visits", { count: numeral(visitsStats?.page || 0).format("0,0") })
+      }}
     </div>
   </footer>
 </template>

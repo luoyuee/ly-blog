@@ -11,6 +11,8 @@ import {
 } from "./utils";
 import CascaderPanel from "./CascaderPanel.vue";
 
+const { t } = useI18n();
+
 const modelValue = defineModel<CascaderPrimitive[]>({ default: () => [] });
 
 const props = defineProps({
@@ -38,7 +40,7 @@ const props = defineProps({
   },
   placeholder: {
     type: String,
-    default: "请选择"
+    default: ""
   },
   separator: {
     type: String,
@@ -87,7 +89,7 @@ const displayText = computed(() => {
   return getCascaderDisplayText({
     rootNodes: normalizedItems.value,
     selection: modelValue.value,
-    placeholder: props.placeholder,
+    placeholder: props.placeholder || t("components.picker.placeholder"),
     separator: props.separator,
     showAllLevels: props.showAllLevels
   });
@@ -185,7 +187,7 @@ const handleClear = () => {
       :display-text="displayText"
       :clearable="canClear"
       :disabled="props.disabled"
-      :placeholder="props.placeholder"
+      :placeholder="props.placeholder || $t('components.picker.placeholder')"
       :clear="handleClear"
     >
       <UButton

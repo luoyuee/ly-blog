@@ -8,6 +8,7 @@ import { lyEditorEmitter } from "@/events";
 import { reactive, watch } from "vue";
 import { z } from "zod";
 
+const { t } = useI18n();
 const $notify = useNotification();
 
 const open = defineModel<boolean>("open", {
@@ -37,7 +38,9 @@ const emits = defineEmits<{
 const schema = z.object({
   id: z.number().optional(),
   folder_id: z.number().optional(),
-  name: z.string({ message: "请输入名称" }),
+  name: z.string({
+    message: t("components.lyEditor.modules.note.save.validation.nameRequired")
+  }),
   content: z.string()
 });
 
@@ -91,7 +94,7 @@ watch(
       folderData.value = await getFolderTree();
     } catch {
       $notify.error({
-        title: "获取目录失败"
+        title: t("components.lyEditor.modules.note.save.folderFailed")
       });
     }
   },
@@ -121,7 +124,7 @@ const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => 
       });
     }
     $notify.success({
-      title: "保存成功"
+      title: t("message.save.success")
     });
 
     if (state.tabItem) {
@@ -138,7 +141,7 @@ const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => 
     lyEditorEmitter.emit("cmd.note-manager:reload");
   } catch (error) {
     $notify.error({
-      title: "保存失败",
+      title: t("message.save.error"),
       error
     });
   } finally {
@@ -160,7 +163,7 @@ const handleCancel = () => {
 <template>
   <BasicModal
     v-model:open="open"
-    title="保存文件"
+    :title="t('components.lyEditor.modules.note.save.title')"
     :submitting="state.submitting"
     @cancel="handleCancel"
     @confirm="handleConfirm"
@@ -173,7 +176,7 @@ const handleCancel = () => {
       :validate-on-input-delay="100"
       @submit="handleSubmit"
     >
-      <UFormField name="folder_id" label="父目录">
+      <UFormField name="folder_id" :label="t('components.lyEditor.modules.note.save.parentLabel')">
         <TreeSelect
           v-model="formData.folder_id"
           label-key="name"
@@ -181,8 +184,15 @@ const handleCancel = () => {
           :options="folderData"
         />
       </UFormField>
-      <UFormField name="name" label="文件名" required>
-        <UInput v-model="formData.name" placeholder="请输入文件名" />
+      <UFormField
+        name="name"
+        :label="t('components.lyEditor.modules.note.save.nameLabel')"
+        required
+      >
+        <UInput
+          v-model="formData.name"
+          :placeholder="t('components.lyEditor.modules.note.save.namePlaceholder')"
+        />
       </UFormField>
     </UForm>
   </BasicModal>

@@ -8,6 +8,7 @@ import { useForm } from "@/composables/useForm";
 import { computed, watch } from "vue";
 import { z } from "zod";
 
+const { t } = useI18n();
 const $notify = useNotification();
 
 const open = defineModel<boolean>("open", {
@@ -34,7 +35,11 @@ const schema = z.object({
   type: z.coerce.number().optional(),
   source: z.string().optional(),
   author: z.string().optional(),
-  content: z.string({ message: "请输入内容" }).min(1, "请输入内容")
+  content: z
+    .string({
+      message: t("components.lyEditor.modules.hitokoto.form.validation.contentRequired")
+    })
+    .min(1, t("components.lyEditor.modules.hitokoto.form.validation.contentRequired"))
 });
 
 const { formData, formState, resetForm, setForm } = useForm<HitokotoForm>({
@@ -46,7 +51,9 @@ const { formData, formState, resetForm, setForm } = useForm<HitokotoForm>({
 });
 
 const modalTitle = computed(() => {
-  return props.mode === "update" ? "修改语句" : "添加语句";
+  return props.mode === "update"
+    ? t("components.lyEditor.modules.hitokoto.form.editTitle")
+    : t("components.lyEditor.modules.hitokoto.form.addTitle");
 });
 
 watch(
@@ -76,13 +83,13 @@ const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => 
       await updateHitokoto({ id: event.data.id, ...event.data });
 
       $notify.success({
-        title: "修改成功"
+        title: t("message.update.success")
       });
     } else {
       await createHitokoto({ ...event.data });
 
       $notify.success({
-        title: "添加成功"
+        title: t("message.add.success")
       });
     }
 
@@ -93,7 +100,7 @@ const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => 
     });
   } catch (error) {
     $notify.error({
-      title: "操作失败",
+      title: t("message.operate.error"),
       error
     });
   } finally {
@@ -133,23 +140,36 @@ onMounted(async () => {
       :validate-on-input-delay="100"
       @submit="handleSubmit"
     >
-      <UFormField name="type" label="语句分类">
+      <UFormField name="type" :label="t('components.lyEditor.modules.hitokoto.form.typeLabel')">
         <USelect
           v-model="formData.type"
           value-key="id"
           label-key="name"
-          placeholder="请选择语句分类"
+          :placeholder="t('components.lyEditor.modules.hitokoto.form.typePlaceholder')"
           :items="hitokotoTypeOptions"
         />
       </UFormField>
-      <UFormField name="source" label="语句来源">
-        <UInput v-model="formData.source" placeholder="请输入语句来源" />
+      <UFormField name="source" :label="t('components.lyEditor.modules.hitokoto.form.sourceLabel')">
+        <UInput
+          v-model="formData.source"
+          :placeholder="t('components.lyEditor.modules.hitokoto.form.sourcePlaceholder')"
+        />
       </UFormField>
-      <UFormField name="author" label="语句作者">
-        <UInput v-model="formData.author" placeholder="请输入语句作者" />
+      <UFormField name="author" :label="t('components.lyEditor.modules.hitokoto.form.authorLabel')">
+        <UInput
+          v-model="formData.author"
+          :placeholder="t('components.lyEditor.modules.hitokoto.form.authorPlaceholder')"
+        />
       </UFormField>
-      <UFormField name="content" label="语句内容" required>
-        <UTextarea v-model="formData.content" placeholder="请输入语句内容" />
+      <UFormField
+        name="content"
+        :label="t('components.lyEditor.modules.hitokoto.form.contentLabel')"
+        required
+      >
+        <UTextarea
+          v-model="formData.content"
+          :placeholder="t('components.lyEditor.modules.hitokoto.form.contentPlaceholder')"
+        />
       </UFormField>
     </UForm>
 
@@ -160,10 +180,10 @@ onMounted(async () => {
         :disabled="formState.submitting"
         @click="handleCancel"
       >
-        取消
+        {{ t("common.cancel") }}
       </UButton>
       <UButton color="primary" :loading="formState.submitting" @click="handleConfirm">
-        确认
+        {{ t("common.confirm") }}
       </UButton>
     </template>
   </BasicModal>

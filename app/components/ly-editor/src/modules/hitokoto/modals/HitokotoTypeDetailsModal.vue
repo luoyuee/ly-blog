@@ -51,29 +51,38 @@ const handleCancel = () => {
 };
 </script>
 <template>
-  <BasicModal v-model:open="open" title="分类详情">
+  <BasicModal
+    v-model:open="open"
+    :title="$t('components.lyEditor.modules.hitokoto.typeDetailsTitle')"
+  >
     <Descriptions class="w-full" :column="1">
-      <DescriptionsItem label="分类名称">{{ data.name }}</DescriptionsItem>
-      <DescriptionsItem label="分类描述">{{ data.description }}</DescriptionsItem>
-      <DescriptionsItem label="创建日期">
+      <DescriptionsItem :label="$t('components.lyEditor.modules.hitokoto.typeFields.name')">
+        {{ data.name }}
+      </DescriptionsItem>
+      <DescriptionsItem :label="$t('components.lyEditor.modules.hitokoto.typeFields.description')">
+        {{ data.description }}
+      </DescriptionsItem>
+      <DescriptionsItem :label="$t('components.lyEditor.modules.hitokoto.typeFields.createdAt')">
         {{
           data.created_at
             ? dayjs(data.created_at).format($t("format.datetime"))
             : $t("placeholder.hyphen")
         }}
       </DescriptionsItem>
-      <DescriptionsItem label="更新日期">
+      <DescriptionsItem :label="$t('components.lyEditor.modules.hitokoto.typeFields.updatedAt')">
         {{
           data.updated_at
             ? dayjs(data.updated_at).format($t("format.datetime"))
             : $t("placeholder.hyphen")
         }}
       </DescriptionsItem>
-      <DescriptionsItem label="语句数量">{{ data.count }}</DescriptionsItem>
+      <DescriptionsItem :label="$t('components.lyEditor.modules.hitokoto.typeFields.count')">
+        {{ data.count }}
+      </DescriptionsItem>
     </Descriptions>
 
     <template #footer>
-      <UButton label="关闭" @click="handleCancel" />
+      <UButton :label="$t('common.close')" @click="handleCancel" />
     </template>
   </BasicModal>
 </template>

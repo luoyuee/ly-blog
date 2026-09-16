@@ -6,6 +6,8 @@ import { lyEditorEmitter } from "@/events";
 import { onMounted, onBeforeUnmount } from "vue";
 import NoteTree from "./NoteTree.vue";
 
+const { t } = useI18n();
+
 const editorStore = useLyEditorStore();
 const { open: openNoteFolderFormModal } = useLyEditorModal("note-folder-form");
 
@@ -49,26 +51,30 @@ const handleReload = () => {
   loadNoteFolderTree();
 };
 
-const actions = [
+const actions = computed(() => [
   {
-    label: "新建文件",
+    label: t("components.lyEditor.modules.note.newFile"),
     icon: "custom:file-add",
     onClick: handleNewNote
   },
   {
-    label: "新建文件夹",
+    label: t("components.lyEditor.modules.note.newFolder"),
     icon: "custom:folder-plus",
     onClick: handleNewFolder
   },
   {
-    label: "刷新目录",
+    label: t("components.lyEditor.modules.note.refreshFolder"),
     icon: "custom:redo",
     onClick: handleReload
   }
-];
+]);
 </script>
 <template>
-  <SidebarPanel title="笔记管理" :loading="editorStore.noteManager.loading" :actions="actions">
+  <SidebarPanel
+    :title="t('components.lyEditor.modules.note.title')"
+    :loading="editorStore.noteManager.loading"
+    :actions="actions"
+  >
     <NoteTree v-model="editorStore.noteManager.folderTree" />
   </SidebarPanel>
 </template>

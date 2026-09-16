@@ -8,6 +8,7 @@ import ImageUploadModal from "./ImageUploadModal.vue";
 
 const logger = useLogger();
 const $message = useMessage();
+const { t } = useI18n();
 
 const emits = defineEmits(["cancel", "confirm", "closed"]);
 
@@ -35,9 +36,12 @@ const props = defineProps({
   },
   title: {
     type: String,
-    default: "选择图片"
+    default: ""
   }
 });
+
+/** 标题：未传入时回退到 i18n 文案 */
+const resolvedTitle = computed(() => props.title || t("components.image.selectTitle"));
 
 const state = reactive<{
   keyword?: string;
@@ -90,7 +94,7 @@ const loadFolders = async () => {
       state.currentFolder = imageFolder.value[0]!.id;
     }
   } catch (error) {
-    $message.error("获取文件夹失败", error);
+    $message.error(t("components.image.selectModal.folderError"), error);
   }
 };
 
@@ -112,7 +116,7 @@ const loadImages = async (): Promise<void> => {
     state.more = state.page < Math.ceil(response.total / state.per_page);
     state.page += 1;
   } catch (error) {
-    $message.error("获取图片失败", error);
+    $message.error(t("components.image.selectModal.imageError"), error);
   } finally {
     state.loading = false;
   }
@@ -186,7 +190,7 @@ const handleSubmit = () => {
 <template>
   <BasicModal
     v-model:open="open"
-    :title="props.title"
+    :title="resolvedTitle"
     class="image-select-modal"
     content-class="max-w-[800px]"
     @cancel="handleCancel"
@@ -195,7 +199,7 @@ const handleSubmit = () => {
     <div class="image-select-modal__body">
       <div class="image-select-modal__toolbar">
         <UButton icon="lucide:upload" variant="outline" @click="handleUploadClick">
-          上传图片
+          {{ $t("components.image.selectModal.upload") }}
         </UButton>
 
         <UFieldGroup class="image-select-modal__filters">
@@ -210,7 +214,7 @@ const handleSubmit = () => {
           <UInput
             v-model="state.keyword"
             class="image-select-modal__keyword-input"
-            placeholder="请输入关键词"
+            :placeholder="$t('components.image.selectModal.keywordPlaceholder')"
           />
           <UButton icon="lucide:search" />
         </UFieldGroup>
@@ -220,7 +224,9 @@ const handleSubmit = () => {
         <!-- 当已选列表为空时，显示占位图标与提示语 -->
         <div v-if="selectedList.length === 0" class="image-select-modal__placeholder">
           <UIcon name="lucide:image-off" :size="36" />
-          <span class="image-select-modal__placeholder-text">暂未选择图片</span>
+          <span class="image-select-modal__placeholder-text">
+            {{ $t("components.image.selectModal.notSelected") }}
+          </span>
         </div>
 
         <Scrollbar v-else class="image-select-modal__scroll">
@@ -270,13 +276,19 @@ const handleSubmit = () => {
     <template #footer>
       <div class="image-select-modal__footer">
         <span class="image-select-modal__footer-tip">
-          {{ `已选择（${selectedList.length}${props.limit ? "/" + props.limit : ""}）` }}
+          {{
+            $t("components.image.selectModal.selectedCount", {
+              count: selectedList.length + (props.limit ? "/" + props.limit : "")
+            })
+          }}
         </span>
         <div class="image-select-modal__footer-actions">
-          <UButton class="image-select-modal__btn-cancel" @click="handleCancel">取消</UButton>
-          <UButton color="primary" class="image-select-modal__btn-confirm" @click="handleConfirm"
-            >确认</UButton
-          >
+          <UButton class="image-select-modal__btn-cancel" @click="handleCancel">
+            {{ $t("common.cancel") }}
+          </UButton>
+          <UButton color="primary" class="image-select-modal__btn-confirm" @click="handleConfirm">
+            {{ $t("common.confirm") }}
+          </UButton>
         </div>
       </div>
     </template>

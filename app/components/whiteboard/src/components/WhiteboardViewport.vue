@@ -12,7 +12,10 @@ const props = defineProps({
   tool: { type: String as PropType<WhiteboardTool>, required: true },
   selectedId: { type: String, default: null },
   editingId: { type: String, default: null },
-  pendingConnection: { type: Object as PropType<{ readonly from: string; readonly point: Point } | null>, default: null }
+  pendingConnection: {
+    type: Object as PropType<{ readonly from: string; readonly point: Point } | null>,
+    default: null
+  }
 });
 
 const emit = defineEmits<{
@@ -66,7 +69,7 @@ const drawBackground = (): void => {
   let step = GRID_SIZE;
   while (step * props.view.scale < 14) step *= 2;
   context.fillStyle = canvasColor("--whiteboard-grid");
-  const radius = Math.max(.7, Math.min(2.2, 1.1 * props.view.scale));
+  const radius = Math.max(0.7, Math.min(2.2, 1.1 * props.view.scale));
   for (let x = Math.floor(topLeft.x / step) * step; x < bottomRight.x; x += step) {
     for (let y = Math.floor(topLeft.y / step) * step; y < bottomRight.y; y += step) {
       const point = worldToScreen({ x, y }, props.view);
@@ -95,8 +98,14 @@ const drawBackground = (): void => {
     context.fillStyle = canvasColor("--whiteboard-connection");
     context.beginPath();
     context.moveTo(end.x, end.y);
-    context.lineTo(end.x - arrowSize * Math.cos(angle - .4), end.y - arrowSize * Math.sin(angle - .4));
-    context.lineTo(end.x - arrowSize * Math.cos(angle + .4), end.y - arrowSize * Math.sin(angle + .4));
+    context.lineTo(
+      end.x - arrowSize * Math.cos(angle - 0.4),
+      end.y - arrowSize * Math.sin(angle - 0.4)
+    );
+    context.lineTo(
+      end.x - arrowSize * Math.cos(angle + 0.4),
+      end.y - arrowSize * Math.sin(angle + 0.4)
+    );
     context.closePath();
     context.fill();
   });
@@ -151,8 +160,10 @@ const capturePointer = (event: PointerEvent): void => {
   if (viewport) viewport.setPointerCapture(event.pointerId);
 };
 
-const onNotePointerDown = (event: PointerEvent, id: string): void => emit("notePointer", id, getPoint(event));
-const onNoteResizeDown = (event: PointerEvent, id: string): void => emit("noteResize", id, getPoint(event));
+const onNotePointerDown = (event: PointerEvent, id: string): void =>
+  emit("notePointer", id, getPoint(event));
+const onNoteResizeDown = (event: PointerEvent, id: string): void =>
+  emit("noteResize", id, getPoint(event));
 const onWindowMove = (event: PointerEvent): void => emit("move", event, getPoint(event));
 const onWindowRelease = (event: PointerEvent): void => emit("release", getPoint(event));
 const onWindowCancel = (event: PointerEvent): void => emit("cancel", event);
@@ -187,7 +198,10 @@ watch(
     ref="viewportRef"
     class="whiteboard-viewport"
     :class="`whiteboard-viewport--${tool}`"
-    @pointerdown="capturePointer($event); emit('pointer', $event, getPoint($event))"
+    @pointerdown="
+      capturePointer($event);
+      emit('pointer', $event, getPoint($event));
+    "
     @wheel.prevent="emit('wheel', $event, getPoint($event))"
   >
     <canvas ref="backgroundRef" class="whiteboard-viewport__canvas" aria-hidden="true"></canvas>
@@ -211,9 +225,23 @@ watch(
       />
     </section>
     <canvas ref="foregroundRef" class="whiteboard-viewport__canvas" aria-hidden="true"></canvas>
-    <WhiteboardMinimap :content="content" :view="view" :size="viewportSize" @navigate="emit('navigate', $event)" />
+    <WhiteboardMinimap
+      :content="content"
+      :view="view"
+      :size="viewportSize"
+      @navigate="emit('navigate', $event)"
+    />
     <p class="whiteboard-viewport__hint">
-      <b>拖拽</b> 平移 · <b>滚轮</b> 缩放 · <b>双击</b> 编辑便签 · <b>右键</b> 删除 · <b>空格</b> 临时抓手
+      <b>{{ $t("components.whiteboard.viewport.drag") }}</b>
+      {{ $t("components.whiteboard.viewport.pan") }} ·
+      <b>{{ $t("components.whiteboard.viewport.wheel") }}</b>
+      {{ $t("components.whiteboard.viewport.zoom") }} ·
+      <b>{{ $t("components.whiteboard.viewport.dblclick") }}</b>
+      {{ $t("components.whiteboard.viewport.editNote") }} ·
+      <b>{{ $t("components.whiteboard.viewport.rightclick") }}</b>
+      {{ $t("components.whiteboard.viewport.remove") }} ·
+      <b>{{ $t("components.whiteboard.viewport.space") }}</b>
+      {{ $t("components.whiteboard.viewport.tempPan") }}
     </p>
   </main>
 </template>

@@ -11,6 +11,7 @@ import { useForm } from "~/composables/useForm";
 import { computed, watch } from "vue";
 import { z } from "zod";
 
+const { t } = useI18n();
 const $notify = useNotification();
 
 const open = defineModel<boolean>("open", {
@@ -34,9 +35,15 @@ const emits = defineEmits<{
 
 const schema = z.object({
   id: z.number().optional(),
-  name: z.string({ message: "请输入网站名称" }).min(1, "请输入网站名称"),
-  url: z.url("请输入有效的URL地址"),
-  icon: z.url("请输入有效的图标URL地址").optional(),
+  name: z
+    .string({
+      message: t("components.lyEditor.modules.navigation.websiteForm.validation.nameRequired")
+    })
+    .min(1, t("components.lyEditor.modules.navigation.websiteForm.validation.nameRequired")),
+  url: z.url(t("components.lyEditor.modules.navigation.websiteForm.validation.urlInvalid")),
+  icon: z
+    .url(t("components.lyEditor.modules.navigation.websiteForm.validation.iconInvalid"))
+    .optional(),
   tags: z.array(z.string()).optional().nullable(),
   description: z.string().optional(),
   type: z.number().int().default(1),
@@ -61,7 +68,9 @@ const { formData, formState, resetForm, setForm } = useForm<NavigationWebsiteFor
 });
 
 const modalTitle = computed(() => {
-  return props.mode === "update" ? "编辑网站" : "新增网站";
+  return props.mode === "update"
+    ? t("components.lyEditor.modules.navigation.websiteForm.editTitle")
+    : t("components.lyEditor.modules.navigation.websiteForm.createTitle");
 });
 
 watch(
@@ -97,6 +106,16 @@ watch(
 
 const formRef = useTemplateRef("formRef");
 
+const typeOptions = computed(() => [
+  { label: t("components.lyEditor.modules.navigation.website.typeWebsite"), value: 1 },
+  { label: t("components.lyEditor.modules.navigation.website.typeBookmark"), value: 2 }
+]);
+
+const statusOptions = computed(() => [
+  { label: t("components.lyEditor.common.status.enabled"), value: 1 },
+  { label: t("components.lyEditor.common.status.disabled"), value: 2 }
+]);
+
 const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => {
   try {
     formState.submitting = true;
@@ -117,7 +136,7 @@ const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => 
       });
 
       $notify.success({
-        title: "修改成功"
+        title: t("message.update.success")
       });
     } else {
       await createNavigationWebsite({
@@ -134,7 +153,7 @@ const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => 
       });
 
       $notify.success({
-        title: "添加成功"
+        title: t("message.add.success")
       });
     }
 
@@ -145,7 +164,7 @@ const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => 
     });
   } catch (error) {
     $notify.error({
-      title: "操作失败",
+      title: t("message.operate.error"),
       error
     });
   } finally {
@@ -180,69 +199,110 @@ const handleCancel = () => {
       :validate-on-input-delay="100"
       @submit="handleSubmit"
     >
-      <UFormField name="name" label="网站名称" required>
-        <UInput v-model="formData.name" placeholder="请输入网站名称" />
-      </UFormField>
-
-      <UFormField name="url" label="网站地址" required>
-        <UInput v-model="formData.url" placeholder="请输入网站地址，如 https://example.com" />
-      </UFormField>
-
-      <UFormField name="icon" label="图标">
-        <UInput v-model="formData.icon" placeholder="请输入图标名称或URL" />
-      </UFormField>
-
-      <UFormField name="tags" label="标签">
-        <UInputTags v-model="formData.tags" placeholder="回车添加标签，如：工具,搜索" />
-      </UFormField>
-
-      <UFormField name="description" label="描述">
-        <UTextarea v-model="formData.description" placeholder="请输入网站描述" />
-      </UFormField>
-
-      <UFormField name="type" label="类型">
-        <USelect
-          v-model="formData.type"
-          :items="[
-            { label: '网站', value: 1 },
-            { label: '书签', value: 2 }
-          ]"
+      <UFormField
+        name="name"
+        :label="t('components.lyEditor.modules.navigation.websiteForm.nameLabel')"
+        required
+      >
+        <UInput
+          v-model="formData.name"
+          :placeholder="t('components.lyEditor.modules.navigation.websiteForm.namePlaceholder')"
         />
       </UFormField>
 
-      <UFormField name="hot" label="热度">
-        <UInputNumber v-model="formData.hot" :min="0" placeholder="请输入热度，默认 0" />
+      <UFormField
+        name="url"
+        :label="t('components.lyEditor.modules.navigation.websiteForm.urlLabel')"
+        required
+      >
+        <UInput
+          v-model="formData.url"
+          :placeholder="t('components.lyEditor.modules.navigation.websiteForm.urlPlaceholder')"
+        />
       </UFormField>
 
-      <UFormField name="is_favorite" label="收藏">
+      <UFormField
+        name="icon"
+        :label="t('components.lyEditor.modules.navigation.websiteForm.iconLabel')"
+      >
+        <UInput
+          v-model="formData.icon"
+          :placeholder="t('components.lyEditor.modules.navigation.websiteForm.iconPlaceholder')"
+        />
+      </UFormField>
+
+      <UFormField
+        name="tags"
+        :label="t('components.lyEditor.modules.navigation.websiteForm.tagsLabel')"
+      >
+        <UInputTags
+          v-model="formData.tags"
+          :placeholder="t('components.lyEditor.modules.navigation.websiteForm.tagsPlaceholder')"
+        />
+      </UFormField>
+
+      <UFormField
+        name="description"
+        :label="t('components.lyEditor.modules.navigation.websiteForm.descriptionLabel')"
+      >
+        <UTextarea
+          v-model="formData.description"
+          :placeholder="
+            t('components.lyEditor.modules.navigation.websiteForm.descriptionPlaceholder')
+          "
+        />
+      </UFormField>
+
+      <UFormField
+        name="type"
+        :label="t('components.lyEditor.modules.navigation.websiteForm.typeLabel')"
+      >
+        <USelect v-model="formData.type" :items="typeOptions" />
+      </UFormField>
+
+      <UFormField
+        name="hot"
+        :label="t('components.lyEditor.modules.navigation.websiteForm.hotLabel')"
+      >
+        <UInputNumber
+          v-model="formData.hot"
+          :min="0"
+          :placeholder="t('components.lyEditor.modules.navigation.websiteForm.hotPlaceholder')"
+        />
+      </UFormField>
+
+      <UFormField
+        name="is_favorite"
+        :label="t('components.lyEditor.modules.navigation.websiteForm.favoriteLabel')"
+      >
         <USwitch v-model="formData.is_favorite" />
       </UFormField>
 
-      <UFormField name="is_public" label="公开">
+      <UFormField
+        name="is_public"
+        :label="t('components.lyEditor.modules.navigation.websiteForm.publicLabel')"
+      >
         <USwitch v-model="formData.is_public" />
       </UFormField>
 
-      <UFormField name="status" label="状态">
-        <USelect
-          v-model="formData.status"
-          :items="[
-            { label: '启用', value: 1 },
-            { label: '禁用', value: 2 }
-          ]"
-        />
+      <UFormField
+        name="status"
+        :label="t('components.lyEditor.modules.navigation.websiteForm.statusLabel')"
+      >
+        <USelect v-model="formData.status" :items="statusOptions" />
       </UFormField>
     </UForm>
 
     <template #footer>
       <UButton
-        label="取消"
+        :label="t('common.cancel')"
         color="neutral"
         variant="outline"
         :disabled="formState.submitting"
         @click="handleCancel"
       />
       <UButton
-        label="确认"
+        :label="t('common.confirm')"
         color="primary"
         :loading="formState.submitting"
         @click="handleConfirm"

@@ -27,9 +27,11 @@ defineEmits(["reset", "save"]);
       </h3>
       <div v-if="isChange" class="space-x-2">
         <UButton variant="outline" size="sm" :disabled="submitting" @click="$emit('reset')">
-          取消
+          {{ $t("common.cancel") }}
         </UButton>
-        <UButton size="sm" :loading="submitting" @click="$emit('save')"> 保存 </UButton>
+        <UButton size="sm" :loading="submitting" @click="$emit('save')">
+          {{ $t("common.save") }}
+        </UButton>
       </div>
     </div>
 

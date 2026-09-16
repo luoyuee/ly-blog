@@ -3,6 +3,8 @@ import type { Editor } from "@tiptap/vue-3";
 import type { PropType } from "vue";
 import { computed } from "vue";
 
+const { t } = useI18n();
+
 const props = defineProps({
   editor: {
     type: Object as PropType<Editor>,
@@ -10,13 +12,29 @@ const props = defineProps({
   }
 });
 
-const textColors = [
-  { label: "默认颜色", value: "", swatchClass: "bg-transparent" },
-  { label: "蓝色", value: "#3b82f6", swatchClass: "bg-blue-500" },
-  { label: "绿色", value: "#22c55e", swatchClass: "bg-green-500" },
-  { label: "橙色", value: "#f59e0b", swatchClass: "bg-amber-500" },
-  { label: "红色", value: "#ef4444", swatchClass: "bg-red-500" }
-] as const;
+const textColors = computed(() => [
+  {
+    label: t("components.tiptapEditor.textColor.default"),
+    value: "",
+    swatchClass: "bg-transparent"
+  },
+  {
+    label: t("components.tiptapEditor.textColor.blue"),
+    value: "#3b82f6",
+    swatchClass: "bg-blue-500"
+  },
+  {
+    label: t("components.tiptapEditor.textColor.green"),
+    value: "#22c55e",
+    swatchClass: "bg-green-500"
+  },
+  {
+    label: t("components.tiptapEditor.textColor.orange"),
+    value: "#f59e0b",
+    swatchClass: "bg-amber-500"
+  },
+  { label: t("components.tiptapEditor.textColor.red"), value: "#ef4444", swatchClass: "bg-red-500" }
+]);
 
 const currentTextColor = computed(() => {
   const color = props.editor.getAttributes("textStyle").color;
@@ -39,7 +57,7 @@ const setTextColor = (color: string) => {
 
 <template>
   <UPopover :ui="{ content: 'p-2' }">
-    <UTooltip text="文字颜色">
+    <UTooltip :text="$t('components.tiptapEditor.textColor.tooltip')">
       <UButton
         icon="lucide:palette"
         color="neutral"

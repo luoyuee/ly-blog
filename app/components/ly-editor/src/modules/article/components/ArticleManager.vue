@@ -8,6 +8,8 @@ import { useLyEditorModal } from "@ly-editor";
 import { lyEditorEmitter } from "@/events";
 import Scrollbar from "@/components/scrollbar";
 
+const { t } = useI18n();
+
 const $notify = useNotification();
 const $msgBox = useMessageBox();
 
@@ -21,7 +23,7 @@ const loadData = async () => {
   try {
     data.value = await getAllArticleCategory();
   } catch (error) {
-    $notify.error({ title: "获取数据失败", error });
+    $notify.error({ title: t("components.lyEditor.modules.article.loadCategoryFailed"), error });
   }
 };
 
@@ -44,26 +46,26 @@ const handleOpenDetailsModal = async (e: ArticleCategory) => {
 const handleOpenPanel = () => {
   openTabPanel({
     key: LyEditorTabPanelEnum.ArticlePanel,
-    label: "文章管理",
+    label: t("components.lyEditor.modules.article.title"),
     type: LyEditorTabPanelEnum.ArticlePanel
   });
 };
 
 const handleDelete = (e: ArticleCategory) => {
   $msgBox.warning({
-    title: "确认删除?",
-    message: `即将删除「${e.name}」，删除后将无法恢复，是否继续？`,
-    confirmButtonText: "删除",
+    title: t("components.lyEditor.common.deleteConfirm.title"),
+    message: t("components.lyEditor.common.deleteConfirm.message", { name: e.name }),
+    confirmButtonText: t("components.lyEditor.common.deleteConfirm.button"),
     confirmButtonProps: {
       color: "error"
     },
     onConfirm: async () => {
       try {
         await deleteArticleCategory(e.id);
-        $notify.success({ title: "删除成功" });
+        $notify.success({ title: t("message.delete.success") });
         loadData();
       } catch (error) {
-        $notify.error({ title: "操作失败", error });
+        $notify.error({ title: t("message.operate.error"), error });
       }
     }
   });
@@ -73,16 +75,16 @@ lyEditorEmitter.on("cmd.article-manager:reload", () => {
   loadData();
 });
 
-const actions = [
+const actions = computed(() => [
   {
-    label: "新建分类",
+    label: t("components.lyEditor.modules.article.newCategory"),
     icon: "lucide:plus",
     onClick: handleOpenFormModal
   }
-];
+]);
 </script>
 <template>
-  <SidebarPanel title="文章管理" :actions="actions">
+  <SidebarPanel :title="$t('components.lyEditor.modules.article.title')" :actions="actions">
     <div class="flex-1 overflow-hidden">
       <Scrollbar>
         <SidebarPanelListItem
@@ -94,21 +96,21 @@ const actions = [
           :meta-items="[{ text: item.count ?? 0, icon: 'lucide:file-text' }]"
           :action-items="[
             {
-              label: '重命名',
+              label: $t('components.lyEditor.modules.article.categoryMenu.rename'),
               icon: 'lucide:edit',
               onSelect: () => {
                 handleOpenFormModal(item);
               }
             },
             {
-              label: '分类详情',
+              label: $t('components.lyEditor.modules.article.categoryMenu.details'),
               icon: 'lucide:info',
               onSelect: () => {
                 handleOpenDetailsModal(item);
               }
             },
             {
-              label: '删除分类',
+              label: $t('components.lyEditor.modules.article.categoryMenu.delete'),
               icon: 'lucide:trash-2',
               color: 'error',
               onSelect: () => {

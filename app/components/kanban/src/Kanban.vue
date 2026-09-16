@@ -21,11 +21,13 @@ import type { KanbanData, KanbanItem } from "./types";
  *
  * 数据通过 v-model 双向绑定，外部可直接修改数据驱动视图。
  */
+const { t } = useI18n();
+
 const props = defineProps({
-  /** 空列提示文案 */
+  /** 空列提示文案（留空回退到 i18n） */
   emptyText: {
     type: String,
-    default: "拖到这里"
+    default: ""
   },
   /** 卡片透传数据，键为卡片 id，供插槽作用域渲染 */
   items: {
@@ -33,6 +35,9 @@ const props = defineProps({
     default: () => ({})
   }
 });
+
+/** 空列文案：未传入时回退到 i18n */
+const resolvedEmptyText = computed(() => props.emptyText || t("components.kanban.empty"));
 
 defineSlots<{
   /** 列头插槽，作用域暴露 id/index */
@@ -96,7 +101,7 @@ function onDragEnd(event: DragEndEvent) {
           :key="column"
           :index="columnIndex"
           :rows="model[column] ?? []"
-          :empty-text="props.emptyText"
+          :empty-text="resolvedEmptyText"
           :items="props.items"
         >
           <template v-if="$slots.header" #header="headerProps">
@@ -109,7 +114,7 @@ function onDragEnd(event: DragEndEvent) {
       </div>
     </DragDropProvider>
     <template #fallback>
-      <div class="kanban">加载中…</div>
+      <div class="kanban">{{ $t("components.kanban.loading") }}</div>
     </template>
   </ClientOnly>
 </template>

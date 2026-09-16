@@ -7,6 +7,7 @@ import { getKanbanDetail, updateKanban } from "@/apis/canvas-document";
 import { useLogger } from "@/composables/useLogger";
 
 const logger = useLogger();
+const { t } = useI18n();
 const $notify = useNotification();
 
 const props = defineProps({
@@ -40,7 +41,7 @@ const loadData = async () => {
   } catch (error) {
     logger.error(error);
     $notify.error({
-      title: "加载看板失败",
+      title: t("components.lyEditor.modules.kanban.panelLoadFailed"),
       error
     });
   } finally {
@@ -58,12 +59,12 @@ const handleSave = async () => {
     });
 
     $notify.success({
-      title: "保存成功"
+      title: t("message.save.success")
     });
   } catch (error) {
     logger.error(error);
     $notify.error({
-      title: "保存失败",
+      title: t("message.save.error"),
       error
     });
   } finally {
@@ -110,7 +111,7 @@ onMounted(() => {
           :disabled="loading"
           @click="handleAddColumn"
         >
-          新建列
+          {{ t("components.lyEditor.modules.kanban.panelNewColumn") }}
         </UButton>
         <UButton
           icon="lucide:save"
@@ -119,7 +120,7 @@ onMounted(() => {
           :disabled="loading"
           @click="handleSave"
         >
-          保存
+          {{ t("common.save") }}
         </UButton>
       </div>
     </div>
@@ -133,7 +134,7 @@ onMounted(() => {
               icon="lucide:plus"
               size="xs"
               variant="ghost"
-              title="新建卡片"
+              :title="t('components.lyEditor.modules.kanban.panelNewCard')"
               @click.stop="handleAddCard(headerProps.id)"
             />
           </div>

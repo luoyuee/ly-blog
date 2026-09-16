@@ -2,13 +2,15 @@
 import { onBeforeUnmount, onMounted, useTemplateRef } from "vue";
 import { initEditor } from "./editor";
 
+const { t } = useI18n();
+
 const monacoEditorRef = useTemplateRef("monacoEditorRef");
 let disposeEditor: (() => void) | undefined;
 
 onMounted(async () => {
   if (!monacoEditorRef.value) return;
 
-  const editor = await initEditor(monacoEditorRef.value);
+  const editor = await initEditor(monacoEditorRef.value, t);
   if (!editor) return;
 
   disposeEditor = () => {

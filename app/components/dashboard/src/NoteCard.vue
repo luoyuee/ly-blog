@@ -9,6 +9,7 @@ import numeral from "numeral";
 
 const logger = useLogger();
 const $notify = useNotification();
+const { t } = useI18n();
 
 const chartRef = ref<HTMLDivElement | null>(null);
 
@@ -79,7 +80,7 @@ const loadData = async () => {
     data.value = await getNoteDashboard();
   } catch (error) {
     $notify.error({
-      title: "加载笔记数据失败",
+      title: t("components.dashboard.note.loadError"),
       error
     });
   } finally {
@@ -91,18 +92,21 @@ const tipsText = computed(() => {
   const text = [];
 
   if (data.value.today_created && data.value.today_created > 0) {
-    text.push(`新增${data.value.today_created}篇笔记`);
+    text.push(t("components.dashboard.note.tips.created", { count: data.value.today_created }));
   }
 
   if (data.value.today_updated && data.value.today_updated > 0) {
-    text.push(`更新${data.value.today_updated}篇笔记`);
+    text.push(t("components.dashboard.note.tips.updated", { count: data.value.today_updated }));
   }
 
   if (text.length > 0) {
-    return "今日" + text.join("，");
+    return (
+      t("components.dashboard.note.tips.prefix") +
+      text.join(t("components.dashboard.note.tips.separator"))
+    );
   }
 
-  return "暂无更新";
+  return t("components.dashboard.note.tips.empty");
 });
 
 const reload = async () => {
@@ -122,7 +126,7 @@ const reload = async () => {
     }
   } catch (error) {
     $notify.error({
-      title: "刷新失败",
+      title: t("components.dashboard.common.refreshError"),
       error
     });
   }
@@ -135,7 +139,7 @@ onMounted(async () => {
   } catch (error) {
     logger.error(error);
     $notify.error({
-      title: "初始化笔记卡片失败",
+      title: t("components.dashboard.note.initError"),
       error
     });
   }
@@ -147,7 +151,7 @@ onMounted(async () => {
     class="flex h-60 flex-col justify-between gap-2 bg-black/40 shadow-md rounded-md px-4 py-3"
   >
     <div class="flex h-6 items-center justify-between leading-6">
-      <span>笔记统计</span>
+      <span>{{ $t("components.dashboard.note.title") }}</span>
       <UIcon class="cursor-pointer" name="custom:redo" @click="reload" />
     </div>
     <div class="h-10 text-3xl">{{ numeral(data.total).format("0,0") }}</div>

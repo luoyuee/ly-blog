@@ -10,6 +10,8 @@ import { cloneDeep } from "es-toolkit";
 import { z } from "zod";
 import SettingCard from "./SettingCard.vue";
 
+const { t } = useI18n();
+
 const configStore = useConfigStore();
 
 const UButton = resolveComponent("UButton");
@@ -34,18 +36,24 @@ const syncFormData = () => {
 };
 
 const modalSchema = z.object({
-  title: z.string({ message: "请输入标题" }).min(1, "请输入标题"),
-  href: z.url("请输入链接").superRefine((value, ctx) => {
-    if (modalState.isEdit) return;
+  title: z
+    .string({ message: t("components.settingCard.swiper.validation.titleRequired") })
+    .min(1, t("components.settingCard.swiper.validation.titleRequired")),
+  href: z
+    .url(t("components.settingCard.swiper.validation.linkInvalid"))
+    .superRefine((value, ctx) => {
+      if (modalState.isEdit) return;
 
-    if (formData.items.find((item) => item.href === value)) {
-      ctx.addIssue({
-        code: "custom",
-        message: "链接重复"
-      });
-    }
-  }),
-  image: z.string({ message: "请输入图片链接" }).min(1, "请输入图片链接")
+      if (formData.items.find((item) => item.href === value)) {
+        ctx.addIssue({
+          code: "custom",
+          message: t("components.settingCard.swiper.validation.duplicateLink")
+        });
+      }
+    }),
+  image: z
+    .string({ message: t("components.settingCard.swiper.validation.imageRequired") })
+    .min(1, t("components.settingCard.swiper.validation.imageRequired"))
 });
 
 const handleSave = async () => {
@@ -110,11 +118,11 @@ const handleModalConfirm = () => {
 const columns: TableColumn<IClientConfigSwiperItem>[] = [
   {
     accessorKey: "title",
-    header: "标题"
+    header: t("components.settingCard.swiper.titleLabel")
   },
   {
     accessorKey: "href",
-    header: "链接",
+    header: t("components.settingCard.swiper.linkLabel"),
     cell: ({ row }) => {
       const { href } = row.original;
 
@@ -132,14 +140,14 @@ const columns: TableColumn<IClientConfigSwiperItem>[] = [
   },
   {
     accessorKey: "image",
-    header: "图片",
+    header: t("components.settingCard.swiper.imageLabel"),
     cell: ({ row }) => {
       const { image } = row.original;
 
       return h("div", { class: "w-12 h-12 rounded-md overflow-hidden" }, [
         h("img", {
           src: image,
-          alt: "轮播图图片",
+          alt: t("components.settingCard.swiper.imageAlt"),
           class: "w-full h-full object-cover"
         })
       ]);
@@ -147,7 +155,7 @@ const columns: TableColumn<IClientConfigSwiperItem>[] = [
   },
   {
     id: "actions",
-    header: "操作",
+    header: t("components.settingCard.common.actions"),
     meta: {
       class: {
         th: "text-right",
@@ -189,7 +197,7 @@ const columns: TableColumn<IClientConfigSwiperItem>[] = [
 <template>
   <SettingCard
     id="swiper-setting"
-    title="轮播图"
+    :title="$t('components.settingCard.swiper.title')"
     :is-change="isDirty"
     :submitting="formState.submitting"
     @reset="handleReset"
@@ -199,8 +207,10 @@ const columns: TableColumn<IClientConfigSwiperItem>[] = [
 
     <div class="space-y-2">
       <div class="flex justify-between items-center py-2">
-        <span class="text-xs text-gray-400">首页轮播展示的图片列表</span>
-        <UButton size="xs" icon="lucide:plus" @click="handleAdd"> 添加 </UButton>
+        <span class="text-xs text-gray-400">
+          {{ $t("components.settingCard.swiper.listHint") }}
+        </span>
+        <UButton size="xs" icon="lucide:plus" @click="handleAdd">{{ $t("common.add") }}</UButton>
       </div>
       <div class="border border-muted rounded-md overflow-hidden">
         <UTable :data="formData.items" :columns="columns" sticky class="max-h-64" />
@@ -209,7 +219,11 @@ const columns: TableColumn<IClientConfigSwiperItem>[] = [
 
     <BasicModal
       v-model:open="modalState.visible"
-      :title="modalState.isEdit ? '编辑数据' : '添加数据'"
+      :title="
+        modalState.isEdit
+          ? $t('components.settingCard.swiper.editModalTitle')
+          : $t('components.settingCard.swiper.addModalTitle')
+      "
       @confirm="handleModalConfirm"
     >
       <UForm
@@ -219,19 +233,26 @@ const columns: TableColumn<IClientConfigSwiperItem>[] = [
         :validate-on-input-delay="100"
         @submit="handleModalSubmit"
       >
-        <UFormField name="title" label="标题">
-          <UInput v-model="modalFormData.title" placeholder="请输入链接标题" />
+        <UFormField name="title" :label="$t('components.settingCard.swiper.titleLabel')">
+          <UInput
+            v-model="modalFormData.title"
+            :placeholder="$t('components.settingCard.swiper.titlePlaceholder')"
+          />
         </UFormField>
-        <UFormField name="href" label="链接">
+        <UFormField name="href" :label="$t('components.settingCard.swiper.linkLabel')">
           <UInput
             v-model="modalFormData.href"
             icon="lucide:link"
             :disabled="modalState.isEdit"
-            placeholder="请输入链接"
+            :placeholder="$t('components.settingCard.swiper.linkPlaceholder')"
           />
         </UFormField>
-        <UFormField name="image" label="图片">
-          <UInput v-model="modalFormData.image" icon="lucide:link" placeholder="请输入图片链接" />
+        <UFormField name="image" :label="$t('components.settingCard.swiper.imageLabel')">
+          <UInput
+            v-model="modalFormData.image"
+            icon="lucide:link"
+            :placeholder="$t('components.settingCard.swiper.imagePlaceholder')"
+          />
         </UFormField>
       </UForm>
     </BasicModal>

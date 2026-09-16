@@ -6,6 +6,7 @@ import { Calendar } from "@/components/calendar";
 import { useLogger } from "@/composables/useLogger";
 
 const logger = useLogger();
+const { t } = useI18n();
 const $notify = useNotification();
 
 const props = defineProps({
@@ -33,7 +34,7 @@ const loadData = async () => {
   } catch (error) {
     logger.error(error);
     $notify.error({
-      title: "加载日历失败",
+      title: t("components.lyEditor.modules.calendar.panelLoadFailed"),
       error
     });
   } finally {
@@ -47,12 +48,12 @@ const handleSave = async () => {
     saving.value = true;
     // 暂未接入接口，保存仅作占位，后续在此调用更新接口
     $notify.success({
-      title: "保存成功"
+      title: t("message.save.success")
     });
   } catch (error) {
     logger.error(error);
     $notify.error({
-      title: "保存失败",
+      title: t("message.save.error"),
       error
     });
   } finally {
@@ -70,7 +71,7 @@ const handleExport = async () => {
   } catch (error) {
     logger.error(error);
     $notify.error({
-      title: "导出失败",
+      title: t("message.export.error"),
       error
     });
   }
@@ -93,7 +94,7 @@ onMounted(() => {
           :disabled="loading || events.length === 0"
           @click="handleExport"
         >
-          导出 iCal
+          {{ t("components.lyEditor.modules.calendar.exportICal") }}
         </UButton>
         <UButton
           icon="lucide:save"
@@ -102,7 +103,7 @@ onMounted(() => {
           :disabled="loading"
           @click="handleSave"
         >
-          保存
+          {{ t("common.save") }}
         </UButton>
       </div>
     </div>

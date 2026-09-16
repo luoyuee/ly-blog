@@ -77,7 +77,8 @@ export const createSpin = (options: CreateSpinOptions = {}): SpinHandler => {
     } else if (state.text) {
       spinProps.text = "";
     } else {
-      spinProps.text = "加载中...";
+      // 置空交由 Spin 内部的 i18n 兜底处理（此处为纯 TS 模块，无法直接调用 t）
+      spinProps.text = "";
     }
 
     // description：string → prop；VNode/fn → description 插槽；否则空

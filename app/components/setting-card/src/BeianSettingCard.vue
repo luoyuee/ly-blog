@@ -53,7 +53,7 @@ const handleReset = () => {
 <template>
   <SettingCard
     id="beian-setting"
-    title="备案信息"
+    :title="$t('components.settingCard.beian.title')"
     :is-change="isDirty"
     :submitting="formState.submitting"
     @reset="handleReset"
@@ -69,25 +69,33 @@ const handleReset = () => {
     >
       <UFormField
         name="site_url"
-        label="网安备案号"
-        description="站点地址主要用于生成内容的永久链接"
+        :label="$t('components.settingCard.beian.policeLabel')"
+        :description="$t('components.settingCard.beian.policeDescription')"
         :ui="{
           description: 'text-xs',
           container: 'mt-2'
         }"
       >
-        <UInput v-model="formData.beian_code" class="w-full" placeholder="请输入网安备案号" />
+        <UInput
+          v-model="formData.beian_code"
+          class="w-full"
+          :placeholder="$t('components.settingCard.beian.policePlaceholder')"
+        />
       </UFormField>
       <UFormField
         name="site_url"
-        label="ICP备案号"
-        description="站点地址主要用于生成内容的永久链接"
+        :label="$t('components.settingCard.beian.icpLabel')"
+        :description="$t('components.settingCard.beian.icpDescription')"
         :ui="{
           description: 'text-xs',
           container: 'mt-2'
         }"
       >
-        <UInput v-model="formData.icp_code" class="w-full" placeholder="请输入ICP备案号" />
+        <UInput
+          v-model="formData.icp_code"
+          class="w-full"
+          :placeholder="$t('components.settingCard.beian.icpPlaceholder')"
+        />
       </UFormField>
     </UForm>
   </SettingCard>

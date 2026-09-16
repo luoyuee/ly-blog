@@ -9,6 +9,7 @@ import MessageEditor from "./MessageEditor.vue";
 
 const logger = useLogger();
 const $message = useMessage();
+const { t } = useI18n();
 
 const state = reactive<{
   page: number;
@@ -56,7 +57,7 @@ const loadData = async () => {
     state.total = response.total;
   } catch (error) {
     logger.error(error);
-    $message.error("加载数据失败");
+    $message.error(t("components.messageBoard.list.loadError"));
   } finally {
     state.loading = false;
   }
@@ -105,11 +106,11 @@ const handleChangePage = () => {
 const handleDelete = async (id: number) => {
   try {
     await deleteMessage(id);
-    $message.success("删除成功");
+    $message.success(t("components.messageBoard.list.deleteSuccess"));
     loadData();
   } catch (error) {
     logger.error(error);
-    $message.error("删除失败");
+    $message.error(t("components.messageBoard.list.deleteError"));
   }
 };
 </script>
@@ -117,7 +118,9 @@ const handleDelete = async (id: number) => {
   <div class="message-board">
     <MessageEditor :show-cancel-btn="false" @submitted="handleReload" />
 
-    <div ref="divideRef" class="text-2xl text-center my-8 text-gray-400">—— 评论区 ——</div>
+    <div ref="divideRef" class="text-2xl text-center my-8 text-gray-400">
+      {{ $t("components.messageBoard.list.title") }}
+    </div>
 
     <ul class="message-list">
       <li v-for="item in messages" :key="item.id" class="message-list-item">

@@ -56,7 +56,7 @@ const handleReset = () => {
 <template>
   <SettingCard
     id="basic-setting"
-    title="基本信息"
+    :title="$t('components.settingCard.basic.title')"
     :is-change="isDirty"
     :submitting="formState.submitting"
     @reset="handleReset"
@@ -73,19 +73,23 @@ const handleReset = () => {
       <UFormField
         required
         name="title"
-        label="站点名称"
-        description="站点的名称将显示在网页的标题处"
+        :label="$t('components.settingCard.basic.siteNameLabel')"
+        :description="$t('components.settingCard.basic.siteNameDescription')"
         :ui="{
           description: 'text-xs',
           container: 'mt-2'
         }"
       >
-        <UInput v-model="formData.title" class="w-full" placeholder="请输入站点名称" />
+        <UInput
+          v-model="formData.title"
+          class="w-full"
+          :placeholder="$t('components.settingCard.basic.siteNamePlaceholder')"
+        />
       </UFormField>
       <UFormField
         name="site_url"
-        label="站点地址"
-        description="站点地址主要用于生成内容的永久链接"
+        :label="$t('components.settingCard.basic.siteUrlLabel')"
+        :description="$t('components.settingCard.basic.siteUrlDescription')"
         :ui="{
           description: 'text-xs',
           container: 'mt-2'
@@ -95,26 +99,30 @@ const handleReset = () => {
           v-model="formData.site_url"
           class="w-full"
           icon="lucide:link"
-          placeholder="请输入站点名称"
+          :placeholder="$t('components.settingCard.basic.siteNamePlaceholder')"
         />
       </UFormField>
       <UFormField
         required
         name="description"
-        label="站点描述"
-        description="站点描述将显示在网页代码的头部"
+        :label="$t('components.settingCard.basic.siteDescLabel')"
+        :description="$t('components.settingCard.basic.siteDescDescription')"
         :ui="{
           description: 'text-xs',
           container: 'mt-2'
         }"
       >
-        <UTextarea v-model="formData.description" class="w-full" placeholder="请输入站点描述" />
+        <UTextarea
+          v-model="formData.description"
+          class="w-full"
+          :placeholder="$t('components.settingCard.basic.siteDescPlaceholder')"
+        />
       </UFormField>
       <UFormField
         required
         name="keywords"
-        label="关键词"
-        description="站点描述将显示在网页代码的头部"
+        :label="$t('components.settingCard.basic.keywordsLabel')"
+        :description="$t('components.settingCard.basic.siteDescDescription')"
         :ui="{
           description: 'text-xs',
           container: 'mt-2'

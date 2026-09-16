@@ -6,7 +6,7 @@ const tags = defineModel<string[]>({ default: () => [] });
 const props = defineProps({
   label: {
     type: String,
-    default: "添加标签"
+    default: ""
   }
 });
 
@@ -92,7 +92,7 @@ const blurInput = () => {
       class="w-24 shrink-0 justify-center"
       @click="showInput"
     >
-      {{ props.label }}
+      {{ props.label || $t("components.inputTagArea.placeholder") }}
     </UButton>
   </div>
 </template>

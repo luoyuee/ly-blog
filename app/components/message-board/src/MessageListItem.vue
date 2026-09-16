@@ -69,7 +69,7 @@ const handleDelete = () => {
       <div class="message-footer">
         <div>
           <span v-if="props.data.created_at" class="time">
-            {{ dayjs(props.data.created_at).format("YYYY年MM月DD日 HH:mm") }}
+            {{ dayjs(props.data.created_at).format($t("components.messageBoard.item.dateFormat")) }}
           </span>
           <span v-if="props.data.location" class="location">
             {{ props.data.location }}
@@ -78,18 +78,18 @@ const handleDelete = () => {
         <div>
           <span class="reply-btn" @click="handleReply">
             <UIcon name="custom:edit" />
-            回复
+            {{ $t("components.messageBoard.item.reply") }}
           </span>
           <Popconfirm
             v-if="userStore.isAdmin"
-            title="确认删除?"
+            :title="$t('components.messageBoard.item.deleteConfirmTitle')"
             side="top"
-            description="删除后将无法恢复"
+            :description="$t('components.messageBoard.item.deleteConfirmDescription')"
             @confirm="handleDelete"
           >
             <span class="delete-btn">
               <UIcon name="lucide:trash-2" />
-              删除
+              {{ $t("components.messageBoard.item.delete") }}
             </span>
           </Popconfirm>
         </div>

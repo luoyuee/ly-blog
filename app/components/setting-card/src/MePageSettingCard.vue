@@ -14,6 +14,8 @@ import MePageSkillGridForm from "./components/MePageSkillGridForm.vue";
 import MePageSocialLinksForm from "./components/MePageSocialLinksForm.vue";
 import MePageSkillsSortableTable from "./components/MePageSkillsSortableTable.vue";
 
+const { t } = useI18n();
+
 const mePageConfigStore = useMePageConfigStore();
 
 /**
@@ -34,16 +36,24 @@ const { formData, formState, isDirty, setForm, setInitial, resetForm } =
  */
 const schema = z.object({
   author: z.object({
-    name: z.string({ message: "请输入名称" }).min(1, "请输入名称"),
-    avatar: z.union([z.url("请输入正确的头像链接"), z.literal("")]).optional(),
+    name: z
+      .string({ message: t("components.settingCard.mePage.validation.nameRequired") })
+      .min(1, t("components.settingCard.mePage.validation.nameRequired")),
+    avatar: z
+      .union([z.url(t("components.settingCard.mePage.validation.avatarInvalid")), z.literal("")])
+      .optional(),
     location: z.string().optional(),
     dev_role: z.string().optional(),
     dev_direction: z.string().optional(),
     quote: z.string().optional()
   }),
   github_snake: z.object({
-    light: z.union([z.url("请输入正确的图片链接"), z.literal("")]).optional(),
-    dark: z.union([z.url("请输入正确的图片链接"), z.literal("")]).optional()
+    light: z
+      .union([z.url(t("components.settingCard.mePage.validation.imageInvalid")), z.literal("")])
+      .optional(),
+    dark: z
+      .union([z.url(t("components.settingCard.mePage.validation.imageInvalid")), z.literal("")])
+      .optional()
   })
 });
 
@@ -77,7 +87,7 @@ const handleReset = () => {
 <template>
   <SettingCard
     id="me-page-setting"
-    title="个人页（Me）配置"
+    :title="$t('components.settingCard.mePage.title')"
     :is-change="isDirty"
     :submitting="formState.submitting"
     @reset="handleReset"
@@ -92,8 +102,8 @@ const handleReset = () => {
       @submit="handleSubmit"
     >
       <UFormField
-        label="头像"
-        description="个人页头像（author.avatar）；留空将回退到默认头像"
+        :label="$t('components.settingCard.mePage.avatarLabel')"
+        :description="$t('components.settingCard.mePage.avatarDescription')"
         :ui="{
           description: 'text-xs',
           container: 'mt-2'
@@ -103,49 +113,61 @@ const handleReset = () => {
           v-model="formData.author.avatar"
           class="w-full"
           icon="lucide:link"
-          placeholder="https://... 或 /images/avatar.webp"
+          :placeholder="$t('components.settingCard.mePage.avatarPlaceholder')"
         />
       </UFormField>
 
       <UFormField
         name="author.name"
-        label="作者名称"
-        description="个人页左侧卡片展示的名称"
+        :label="$t('components.settingCard.mePage.authorNameLabel')"
+        :description="$t('components.settingCard.mePage.authorNameDescription')"
         required
         :ui="{
           description: 'text-xs',
           container: 'mt-2'
         }"
       >
-        <UInput v-model="formData.author.name" class="w-full" placeholder="请输入作者名称" />
+        <UInput
+          v-model="formData.author.name"
+          class="w-full"
+          :placeholder="$t('components.settingCard.mePage.authorNamePlaceholder')"
+        />
       </UFormField>
 
       <UFormField
         name="author.location"
-        label="所在地"
+        :label="$t('components.settingCard.mePage.locationLabel')"
         :ui="{
           description: 'text-xs',
           container: 'mt-2'
         }"
       >
-        <UInput v-model="formData.author.location" class="w-full" placeholder="例如：成都" />
+        <UInput
+          v-model="formData.author.location"
+          class="w-full"
+          :placeholder="$t('components.settingCard.mePage.locationPlaceholder')"
+        />
       </UFormField>
 
       <UFormField
         name="author.dev_role"
-        label="职位/角色"
+        :label="$t('components.settingCard.mePage.devRoleLabel')"
         :ui="{
           description: 'text-xs',
           container: 'mt-2'
         }"
       >
-        <UInput v-model="formData.author.dev_role" class="w-full" placeholder="例如：前端工程师" />
+        <UInput
+          v-model="formData.author.dev_role"
+          class="w-full"
+          :placeholder="$t('components.settingCard.mePage.devRolePlaceholder')"
+        />
       </UFormField>
 
       <UFormField
         name="author.dev_direction"
-        label="方向"
-        description="显示在 Hello 标题下方的那一行"
+        :label="$t('components.settingCard.mePage.devDirectionLabel')"
+        :description="$t('components.settingCard.mePage.devDirectionDescription')"
         :ui="{
           description: 'text-xs',
           container: 'mt-2'
@@ -154,13 +176,13 @@ const handleReset = () => {
         <UInput
           v-model="formData.author.dev_direction"
           class="w-full"
-          placeholder="例如：Web / Full Stack"
+          :placeholder="$t('components.settingCard.mePage.devDirectionPlaceholder')"
         />
       </UFormField>
 
       <UFormField
         name="author.quote"
-        label="简介/座右铭"
+        :label="$t('components.settingCard.mePage.quoteLabel')"
         :ui="{
           description: 'text-xs',
           container: 'mt-2'
@@ -170,7 +192,7 @@ const handleReset = () => {
           v-model="formData.author.quote"
           class="w-full"
           :rows="3"
-          placeholder="一句话介绍"
+          :placeholder="$t('components.settingCard.mePage.quotePlaceholder')"
         />
       </UFormField>
 
@@ -178,8 +200,8 @@ const handleReset = () => {
 
       <UFormField
         name="github_snake.light"
-        label="GitHub Snake（亮色）"
-        description="建议填写图片 URL"
+        :label="$t('components.settingCard.mePage.snakeLightLabel')"
+        :description="$t('components.settingCard.mePage.snakeLightDescription')"
         :ui="{
           description: 'text-xs',
           container: 'mt-2'
@@ -195,7 +217,7 @@ const handleReset = () => {
 
       <UFormField
         name="github_snake.dark"
-        label="GitHub Snake（暗色）"
+        :label="$t('components.settingCard.mePage.snakeDarkLabel')"
         :ui="{
           description: 'text-xs',
           container: 'mt-2'
@@ -214,25 +236,31 @@ const handleReset = () => {
       <MePageSkillsSortableTable v-model="formData.intro.skills" />
 
       <UFormField
-        label="兴趣标签"
-        description="对应个人页的“我的兴趣”"
+        :label="$t('components.settingCard.mePage.interestTagsLabel')"
+        :description="$t('components.settingCard.mePage.interestTagsDescription')"
         :ui="{
           description: 'text-xs',
           container: 'mt-2'
         }"
       >
-        <InputTagArea v-model="formData.intro.interest_tags" label="添加兴趣" />
+        <InputTagArea
+          v-model="formData.intro.interest_tags"
+          :label="$t('components.settingCard.mePage.interestTagsPlaceholder')"
+        />
       </UFormField>
 
       <UFormField
-        label="语言能力"
-        description="对应个人页的“语言能力”"
+        :label="$t('components.settingCard.mePage.languagesLabel')"
+        :description="$t('components.settingCard.mePage.languagesDescription')"
         :ui="{
           description: 'text-xs',
           container: 'mt-2'
         }"
       >
-        <InputTagArea v-model="formData.intro.language_proficiency" label="添加语言" />
+        <InputTagArea
+          v-model="formData.intro.language_proficiency"
+          :label="$t('components.settingCard.mePage.languagesPlaceholder')"
+        />
       </UFormField>
 
       <MePageSkillGridForm v-model="formData.skills_grid" />

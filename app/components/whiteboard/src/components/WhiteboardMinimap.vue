@@ -1,7 +1,7 @@
 <script setup lang="ts">
+import type { Point, ViewportTransform, WhiteboardContent } from "../types";
 import type { PropType } from "vue";
 import { getContentBounds, screenToWorld } from "../utils/geometry";
-import type { Point, ViewportTransform, WhiteboardContent } from "../types";
 
 type Projection = {
   readonly scale: number;
@@ -28,7 +28,10 @@ const createProjection = (width: number, height: number): Projection => {
   const minY = Math.min(contentBounds?.minY ?? topLeft.y, topLeft.y);
   const maxX = Math.max(contentBounds?.maxX ?? bottomRight.x, bottomRight.x);
   const maxY = Math.max(contentBounds?.maxY ?? bottomRight.y, bottomRight.y);
-  const scale = Math.min((width - 28) / Math.max(maxX - minX, 1), (height - 28) / Math.max(maxY - minY, 1));
+  const scale = Math.min(
+    (width - 28) / Math.max(maxX - minX, 1),
+    (height - 28) / Math.max(maxY - minY, 1)
+  );
 
   return {
     scale,
@@ -47,7 +50,11 @@ const unproject = (point: Point): Point => ({
   y: (point.y - projection.value.offsetY) / projection.value.scale
 });
 
-const drawStroke = (context: CanvasRenderingContext2D, points: readonly Point[], color: string): void => {
+const drawStroke = (
+  context: CanvasRenderingContext2D,
+  points: readonly Point[],
+  color: string
+): void => {
   const first = points[0];
   if (!first) return;
   const start = project(first);
@@ -79,7 +86,12 @@ const redraw = (): void => {
   props.content.notes.forEach((note) => {
     const point = project(note);
     context.fillStyle = note.color;
-    context.fillRect(point.x, point.y, Math.max(3, note.width * projection.value.scale), Math.max(3, note.height * projection.value.scale));
+    context.fillRect(
+      point.x,
+      point.y,
+      Math.max(3, note.width * projection.value.scale),
+      Math.max(3, note.height * projection.value.scale)
+    );
   });
   props.content.strokes.forEach((stroke) => drawStroke(context, stroke.points, stroke.color));
   const topLeft = project(screenToWorld({ x: 0, y: 0 }, props.view));
@@ -94,7 +106,8 @@ const pointerPoint = (event: PointerEvent): Point => {
   return rect ? { x: event.clientX - rect.left, y: event.clientY - rect.top } : { x: 0, y: 0 };
 };
 
-const viewportCenter = (): Point => screenToWorld({ x: props.size.x / 2, y: props.size.y / 2 }, props.view);
+const viewportCenter = (): Point =>
+  screenToWorld({ x: props.size.x / 2, y: props.size.y / 2 }, props.view);
 
 const onPointerDown = (event: PointerEvent): void => {
   const canvas = canvasRef.value;
@@ -102,9 +115,15 @@ const onPointerDown = (event: PointerEvent): void => {
   const point = pointerPoint(event);
   const topLeft = project(screenToWorld({ x: 0, y: 0 }, props.view));
   const bottomRight = project(screenToWorld(props.size, props.view));
-  const isInside = point.x >= topLeft.x && point.x <= bottomRight.x && point.y >= topLeft.y && point.y <= bottomRight.y;
+  const isInside =
+    point.x >= topLeft.x &&
+    point.x <= bottomRight.x &&
+    point.y >= topLeft.y &&
+    point.y <= bottomRight.y;
   const world = unproject(point);
-  dragOffset.value = isInside ? { x: world.x - viewportCenter().x, y: world.y - viewportCenter().y } : { x: 0, y: 0 };
+  dragOffset.value = isInside
+    ? { x: world.x - viewportCenter().x, y: world.y - viewportCenter().y }
+    : { x: 0, y: 0 };
   if (!isInside) emit("navigate", world);
   canvas.setPointerCapture(event.pointerId);
 };
@@ -128,7 +147,7 @@ onMounted(redraw);
   <aside class="whiteboard-minimap">
     <canvas
       ref="canvasRef"
-      aria-label="白板缩略图"
+      :aria-label="$t('components.whiteboard.minimapLabel')"
       @pointerdown.stop="onPointerDown"
       @pointermove.stop="onPointerMove"
       @pointerup="stopDragging"

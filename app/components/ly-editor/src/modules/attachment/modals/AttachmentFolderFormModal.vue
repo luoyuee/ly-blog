@@ -9,6 +9,8 @@ import { useForm } from "@/composables/useForm";
 import { computed, watch } from "vue";
 import { z } from "zod";
 
+const { t } = useI18n();
+
 const $notify = useNotification();
 
 const open = defineModel<boolean>("open", {
@@ -31,12 +33,18 @@ const emits = defineEmits<{
 }>();
 
 const modalTitle = computed(() => {
-  return props.mode === "update" ? "编辑附件目录" : "新建附件目录";
+  return props.mode === "update"
+    ? t("components.lyEditor.modules.attachment.folderForm.editTitle")
+    : t("components.lyEditor.modules.attachment.folderForm.createTitle");
 });
 
 const schema = z.object({
   id: z.number().optional(),
-  name: z.string({ message: "请输入目录名称" }).min(1, "请输入目录名称"),
+  name: z
+    .string({
+      message: t("components.lyEditor.modules.attachment.folderForm.validation.nameRequired")
+    })
+    .min(1, t("components.lyEditor.modules.attachment.folderForm.validation.nameRequired")),
   icon: z.string().optional(),
   description: z.string().optional()
 });
@@ -80,7 +88,7 @@ const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => 
       });
 
       $notify.success({
-        title: "修改成功"
+        title: t("message.edit.success")
       });
     } else {
       await createAttachmentFolder({
@@ -90,7 +98,7 @@ const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => 
       });
 
       $notify.success({
-        title: "创建成功"
+        title: t("message.create.success")
       });
     }
 
@@ -101,7 +109,7 @@ const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => 
     });
   } catch (error) {
     $notify.error({
-      title: "操作失败",
+      title: t("message.operate.error"),
       error
     });
   } finally {
@@ -130,16 +138,37 @@ const handleCancel = () => {
       :validate-on-input-delay="100"
       @submit="handleSubmit"
     >
-      <UFormField name="name" label="目录名称" required>
-        <UInput v-model="formData.name" placeholder="请输入目录名称" />
+      <UFormField
+        name="name"
+        :label="$t('components.lyEditor.modules.attachment.folderForm.nameLabel')"
+        required
+      >
+        <UInput
+          v-model="formData.name"
+          :placeholder="$t('components.lyEditor.modules.attachment.folderForm.namePlaceholder')"
+        />
       </UFormField>
 
-      <UFormField name="icon" label="目录图标">
-        <SelectIcon v-model="formData.icon" placeholder="请选择目录图标" />
+      <UFormField
+        name="icon"
+        :label="$t('components.lyEditor.modules.attachment.folderForm.iconLabel')"
+      >
+        <SelectIcon
+          v-model="formData.icon"
+          :placeholder="$t('components.lyEditor.modules.attachment.folderForm.iconPlaceholder')"
+        />
       </UFormField>
 
-      <UFormField name="description" label="目录描述">
-        <UTextarea v-model="formData.description" placeholder="请输入目录描述" />
+      <UFormField
+        name="description"
+        :label="$t('components.lyEditor.modules.attachment.folderForm.descriptionLabel')"
+      >
+        <UTextarea
+          v-model="formData.description"
+          :placeholder="
+            $t('components.lyEditor.modules.attachment.folderForm.descriptionPlaceholder')
+          "
+        />
       </UFormField>
     </UForm>
 
@@ -150,10 +179,10 @@ const handleCancel = () => {
         :disabled="formState.submitting"
         @click="handleCancel"
       >
-        取消
+        {{ $t("common.cancel") }}
       </UButton>
       <UButton color="primary" :loading="formState.submitting" @click="handleConfirm">
-        确认
+        {{ $t("common.confirm") }}
       </UButton>
     </template>
   </BasicModal>

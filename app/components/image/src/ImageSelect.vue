@@ -17,13 +17,18 @@ const props = defineProps({
   },
   title: {
     type: String,
-    default: "选择图片"
+    default: ""
   },
   size: {
     type: String as PropType<"xs" | "sm" | "md" | "lg" | "xl">,
     default: "md"
   }
 });
+
+const { t } = useI18n();
+
+/** 标题：未传入时回退到 i18n 文案 */
+const resolvedTitle = computed(() => props.title || t("components.image.selectTitle"));
 
 const modalVisible = ref(false);
 
@@ -105,7 +110,7 @@ const handlePreview = (index: number) => {
 
     <ImageSelectModal
       v-model:open="modalVisible"
-      :title="props.title"
+      :title="resolvedTitle"
       :multiple="props.multiple"
       :limit="props.limit"
       @confirm="handleConfirm"

@@ -1,11 +1,12 @@
 <script setup lang="ts">
+const { t } = useI18n();
 const colorMode = useColorMode();
 
-const themes = [
-  { value: "system", label: "自动", icon: "custom:auto-theme" },
-  { value: "light", label: "浅色", icon: "custom:light" },
-  { value: "dark", label: "深色", icon: "custom:dark" }
-];
+const themes = computed(() => [
+  { value: "system", label: t("components.themeSwitch.system"), icon: "custom:auto-theme" },
+  { value: "light", label: t("components.themeSwitch.light"), icon: "custom:light" },
+  { value: "dark", label: t("components.themeSwitch.dark"), icon: "custom:dark" }
+]);
 
 const currentTheme = computed({
   get: () => colorMode.preference,
@@ -15,11 +16,12 @@ const currentTheme = computed({
 });
 
 const cycleTheme = () => {
-  const index = themes.findIndex((item) => item.value === currentTheme.value);
+  const list = themes.value;
+  const index = list.findIndex((item) => item.value === currentTheme.value);
 
-  const nextIndex = (index + 1) % themes.length;
-  if (themes[nextIndex]) {
-    currentTheme.value = themes[nextIndex].value;
+  const nextIndex = (index + 1) % list.length;
+  if (list[nextIndex]) {
+    currentTheme.value = list[nextIndex].value;
   }
 };
 </script>

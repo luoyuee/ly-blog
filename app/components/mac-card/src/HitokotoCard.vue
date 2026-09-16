@@ -37,7 +37,7 @@ const handleChange = async (): Promise<void> => {
 };
 </script>
 <template>
-  <MacCard title="一言">
+  <MacCard :title="$t('components.macCard.hitokoto')">
     <div class="hitokoto">
       <div class="content" :class="contentBorder">
         {{ hitokoto }}

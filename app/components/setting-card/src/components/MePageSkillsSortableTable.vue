@@ -5,6 +5,8 @@ import { BasicModal } from "@/components/basic-modal";
 import { computed, h, onBeforeUnmount, reactive, ref, resolveComponent, watch } from "vue";
 import { z } from "zod";
 
+const { t } = useI18n();
+
 const handleClass = "me-page-skills-sortable-table__handle";
 const tbodyClass = "me-page-skills-sortable-table__tbody";
 
@@ -49,7 +51,9 @@ const modalForm = reactive<{
 });
 
 const modalSchema = z.object({
-  name: z.string({ message: "请输入技能名称" }).min(1, "请输入技能名称")
+  name: z
+    .string({ message: t("components.settingCard.skillsSortableTable.validation.nameRequired") })
+    .min(1, t("components.settingCard.skillsSortableTable.validation.nameRequired"))
 });
 
 const modalFormRef = useTemplateRef("modalFormRef");
@@ -137,11 +141,11 @@ const columns = computed<TableColumn<SkillItem>[]>(() => {
     },
     {
       accessorKey: "name",
-      header: "技能"
+      header: t("components.settingCard.common.skill")
     },
     {
       id: "actions",
-      header: "操作",
+      header: t("components.settingCard.common.actions"),
       meta: {
         class: {
           th: "text-right w-40",
@@ -189,15 +193,15 @@ onBeforeUnmount(() => {
 
 <template>
   <UFormField
-    label="相关技能（列表）"
-    description="对应个人页的“相关技能”有序列表"
+    :label="$t('components.settingCard.skillsSortableTable.label')"
+    :description="$t('components.settingCard.skillsSortableTable.description')"
     :ui="{
       description: 'text-xs',
       container: 'mt-2'
     }"
   >
     <template #hint>
-      <UButton size="xs" icon="lucide:plus" @click="openAddModal"> 添加 </UButton>
+      <UButton size="xs" icon="lucide:plus" @click="openAddModal">{{ $t("common.add") }}</UButton>
     </template>
     <div ref="rootRef" class="me-page-skills-sortable-table">
       <div class="border border-muted rounded-md overflow-hidden">
@@ -215,7 +219,11 @@ onBeforeUnmount(() => {
 
     <BasicModal
       v-model:open="modalState.visible"
-      :title="modalState.editingIndex === null ? '添加技能' : '编辑技能'"
+      :title="
+        modalState.editingIndex === null
+          ? $t('components.settingCard.skillsSortableTable.addModalTitle')
+          : $t('components.settingCard.skillsSortableTable.editModalTitle')
+      "
       @confirm="confirmModal"
     >
       <UForm
@@ -225,8 +233,15 @@ onBeforeUnmount(() => {
         :validate-on-input-delay="100"
         @submit="submitModal"
       >
-        <UFormField name="name" label="技能描述" required>
-          <UTextarea v-model="modalForm.name" placeholder="例如：Nuxt / Node.js" />
+        <UFormField
+          name="name"
+          :label="$t('components.settingCard.skillsSortableTable.nameLabel')"
+          required
+        >
+          <UTextarea
+            v-model="modalForm.name"
+            :placeholder="$t('components.settingCard.skillsSortableTable.namePlaceholder')"
+          />
         </UFormField>
       </UForm>
     </BasicModal>

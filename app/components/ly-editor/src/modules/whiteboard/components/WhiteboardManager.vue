@@ -7,6 +7,7 @@ import { getAllWhiteboards, deleteWhiteboard } from "@/apis/canvas-document";
 import { useLyEditorStore } from "@/stores";
 import Scrollbar from "@/components/scrollbar";
 
+const { t } = useI18n();
 const $notify = useNotification();
 const $msgBox = useMessageBox();
 const lyEditorStore = useLyEditorStore();
@@ -36,7 +37,7 @@ const loadData = async (): Promise<void> => {
     allData.value = response as WhiteboardItem[];
   } catch (error) {
     $notify.error({
-      title: "加载白板列表失败",
+      title: t("components.lyEditor.modules.whiteboard.loadFailed"),
       error
     });
   } finally {
@@ -77,9 +78,9 @@ const handleOpenWhiteboard = (e: WhiteboardItem) => {
 /** 删除白板（软删除） */
 const handleDelete = (e: WhiteboardItem) => {
   $msgBox.error({
-    title: "确认删除?",
-    message: `即将删除「${e.title}」，删除后将无法恢复，是否继续？`,
-    confirmButtonText: "删除",
+    title: t("components.lyEditor.common.deleteConfirm.title"),
+    message: t("components.lyEditor.common.deleteConfirm.message", { name: e.title }),
+    confirmButtonText: t("components.lyEditor.common.deleteConfirm.button"),
     confirmButtonProps: {
       color: "error"
     },
@@ -87,12 +88,12 @@ const handleDelete = (e: WhiteboardItem) => {
       try {
         await deleteWhiteboard(e.id);
         $notify.success({
-          title: "删除成功"
+          title: t("message.delete.success")
         });
         await loadData();
       } catch (error) {
         $notify.error({
-          title: "删除失败",
+          title: t("message.delete.error"),
           error
         });
       }
@@ -100,25 +101,50 @@ const handleDelete = (e: WhiteboardItem) => {
   });
 };
 
-const actions = [
+const actions = computed(() => [
   {
-    label: "新建白板",
+    label: t("components.lyEditor.modules.whiteboard.new"),
     icon: "lucide:plus",
     onClick: () => {
       handleOpenFormModal();
     }
   }
+]);
+
+/**
+ * 列表项操作菜单，按当前白板动态生成。
+ */
+const getActionItems = (item: WhiteboardItem) => [
+  {
+    label: t("components.lyEditor.modules.whiteboard.menu.editInfo"),
+    icon: "lucide:edit",
+    onSelect: () => {
+      handleOpenFormModal(item);
+    }
+  },
+  {
+    label: t("components.lyEditor.modules.whiteboard.menu.delete"),
+    icon: "lucide:trash-2",
+    color: "error",
+    onSelect: () => {
+      handleDelete(item);
+    }
+  }
 ];
 </script>
 <template>
-  <SidebarPanel title="白板管理" :loading="loading" :actions="actions">
+  <SidebarPanel
+    :title="t('components.lyEditor.modules.whiteboard.title')"
+    :loading="loading"
+    :actions="actions"
+  >
     <div class="flex flex-col flex-1 overflow-hidden">
       <div class="px-2 py-2">
         <UInput
           v-model.trim="keyword"
           icon="lucide:search"
           class="w-full"
-          placeholder="搜索白板标题或描述"
+          :placeholder="t('components.lyEditor.modules.whiteboard.searchPlaceholder')"
         />
       </div>
       <div class="flex-1 overflow-hidden">
@@ -130,23 +156,7 @@ const actions = [
             :title="item.title"
             :description="item.description ?? undefined"
             :meta-items="[{ text: item.id, icon: 'lucide:hash' }]"
-            :action-items="[
-              {
-                label: '编辑信息',
-                icon: 'lucide:edit',
-                onSelect: () => {
-                  handleOpenFormModal(item);
-                }
-              },
-              {
-                label: '删除白板',
-                icon: 'lucide:trash-2',
-                color: 'error',
-                onSelect: () => {
-                  handleDelete(item);
-                }
-              }
-            ]"
+            :action-items="getActionItems(item)"
             @click="handleOpenWhiteboard(item)"
           />
         </Scrollbar>

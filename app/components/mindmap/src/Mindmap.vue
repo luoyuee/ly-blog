@@ -25,7 +25,7 @@ const model = defineModel<MindmapData>({
   default: () => ({
     id: "1",
     type: "topic",
-    label: "中心主题",
+    label: "",
     width: 160,
     height: 50,
     children: []

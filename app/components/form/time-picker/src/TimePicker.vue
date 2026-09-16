@@ -21,6 +21,8 @@ import {
   parseTimePickerValue
 } from "./utils";
 
+const { t } = useI18n();
+
 defineOptions({ inheritAttrs: false });
 
 const attrs = useAttrs();
@@ -69,15 +71,15 @@ const props = defineProps({
   },
   placeholder: {
     type: String,
-    default: "请选择时间"
+    default: ""
   },
   confirmText: {
     type: String,
-    default: "确定"
+    default: ""
   },
   cancelText: {
     type: String,
-    default: "取消"
+    default: ""
   },
   itemHeight: {
     type: Number,
@@ -127,7 +129,11 @@ const pickerValue = computed<PickerPrimitive[]>(() => {
 });
 
 const displayText = computed(() => {
-  return formatTimePickerDisplay(selectedTime.value, props.showFormat, props.placeholder);
+  return formatTimePickerDisplay(
+    selectedTime.value,
+    props.showFormat,
+    props.placeholder || t("components.timePicker.placeholder")
+  );
 });
 
 watch(
@@ -171,9 +177,9 @@ const handleClear = () => {
     :disabled="props.disabled"
     :clearable="props.clearable"
     :arrow-control="props.arrowControl"
-    :placeholder="props.placeholder"
-    :confirm-text="props.confirmText"
-    :cancel-text="props.cancelText"
+    :placeholder="props.placeholder || $t('components.timePicker.placeholder')"
+    :confirm-text="props.confirmText || $t('common.ok')"
+    :cancel-text="props.cancelText || $t('common.cancel')"
     :item-height="props.itemHeight"
     :visible-item-count="props.visibleItemCount"
     :popover-content-class="props.popoverContentClass"
@@ -190,7 +196,7 @@ const handleClear = () => {
         :display-text="displayText"
         :clearable="props.clearable"
         :disabled="props.disabled"
-        :placeholder="props.placeholder"
+        :placeholder="props.placeholder || $t('components.timePicker.placeholder')"
         :clear="handleClear"
       >
         <UButton

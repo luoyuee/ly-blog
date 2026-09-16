@@ -1,13 +1,15 @@
 <script setup lang="ts">
 import type { Editor } from "@tiptap/vue-3";
 import type { PropType } from "vue";
-import { bubbleToolbarItems, fixedToolbarItems } from "./config/toolbarItems";
+import { createBubbleToolbarItems, createFixedToolbarItems } from "./config/toolbarItems";
 import { computed } from "vue";
 import EditorLinkPopover from "./components/EditorLinkPopover.vue";
 import EditorTextColorPopover from "./components/EditorTextColorPopover.vue";
 import EditorHighlightPopover from "./components/EditorHighlightPopover.vue";
 import EditorCharacterCount from "./components/EditorCharacterCount.vue";
 import { createExtensions } from "./config/createExtensions";
+
+const { t } = useI18n();
 
 const modelValue = defineModel<string>({ default: "" });
 
@@ -22,7 +24,7 @@ const props = defineProps({
   },
   placeholder: {
     type: String,
-    default: "开始输入内容..."
+    default: ""
   },
   contentType: {
     type: String as PropType<"html" | "markdown">,
@@ -32,7 +34,15 @@ const props = defineProps({
 
 const isEditable = computed(() => !props.readonly && !props.disabled);
 
+/** 未传 placeholder 时回退到 i18n 默认文案 */
+const resolvedPlaceholder = computed(
+  () => props.placeholder || t("components.tiptapEditor.placeholder")
+);
+
 const extensions = createExtensions();
+
+const fixedToolbarItems = computed(() => createFixedToolbarItems(t));
+const bubbleToolbarItems = computed(() => createBubbleToolbarItems(t));
 </script>
 
 <template>
@@ -42,7 +52,7 @@ const extensions = createExtensions();
     :content-type="props.contentType"
     :starter-kit="{ code: {}, codeBlock: false }"
     :extensions="extensions"
-    :placeholder="{ placeholder: props.placeholder, mode: 'firstLine' }"
+    :placeholder="{ placeholder: resolvedPlaceholder, mode: 'firstLine' }"
     :editable="isEditable"
     :ui="{
       root: [
@@ -78,9 +88,7 @@ const extensions = createExtensions();
       :editor="editor"
       :items="bubbleToolbarItems"
       layout="bubble"
-      :should-show="
-        ({ view, state }) => view.hasFocus() && !state.selection.empty
-      "
+      :should-show="({ view, state }) => view.hasFocus() && !state.selection.empty"
     >
       <template #highlight>
         <EditorHighlightPopover :editor="editor as unknown as Editor" />
@@ -91,10 +99,7 @@ const extensions = createExtensions();
       </template>
     </UEditorToolbar>
 
-    <EditorCharacterCount
-      v-if="isEditable"
-      :editor="editor as unknown as Editor"
-    />
+    <EditorCharacterCount v-if="isEditable" :editor="editor as unknown as Editor" />
   </UEditor>
 </template>
 

@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import type { DropdownMenuItem } from "@nuxt/ui";
 import type { PropType } from "vue";
+
+const { t } = useI18n();
+
 /**
  * 侧边面板通用列表项容器。
  *
@@ -43,11 +46,21 @@ const props = defineProps({
       icon: string;
     }>,
     default: () => ({
-      label: "设置",
+      tooltip: "",
       icon: "custom:setting"
     })
   }
 });
+
+/** 操作按钮提示：未显式传入时回退到 i18n 文案。 */
+const resolvedActionTooltip = computed(
+  () => props.actionButton.tooltip || t("components.lyEditor.common.setting")
+);
+
+/** 描述文案：未显式传入时回退到 i18n 文案。 */
+const resolvedDescription = computed(
+  () => props.description || t("components.lyEditor.common.noDescription")
+);
 
 const emit = defineEmits<{
   click: [];
@@ -89,7 +102,7 @@ const handleClick = (): void => {
 
       <p class="flex-1 truncate text-xs text-muted">
         <slot name="description" :description="props.description">
-          {{ props.description || "暂无描述" }}
+          {{ resolvedDescription }}
         </slot>
       </p>
 
@@ -119,7 +132,7 @@ const handleClick = (): void => {
                 sideOffset: 8
               }"
             >
-              <UTooltip :text="props.actionButton.tooltip">
+              <UTooltip :text="resolvedActionTooltip">
                 <UIcon :name="props.actionButton.icon" class="size-4 hover:text-muted" />
               </UTooltip>
             </UDropdownMenu>

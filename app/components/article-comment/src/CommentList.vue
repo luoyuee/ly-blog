@@ -9,6 +9,7 @@ import { useLogger } from "@/composables/useLogger";
 
 const logger = useLogger();
 const $message = useMessage();
+const { t } = useI18n();
 
 const props = defineProps({
   articleId: {
@@ -67,7 +68,7 @@ const loadData = async () => {
     state.total = response.total;
   } catch (error) {
     logger.error(error);
-    $message.error("加载数据失败");
+    $message.error(t("components.commentList.loadError"));
   }
 };
 
@@ -109,17 +110,17 @@ const handleChangePage = () => {
 const handleDelete = async (id: number) => {
   try {
     await deleteArticleComment(id);
-    $message.success("删除成功");
+    $message.success(t("components.commentList.deleteSuccess"));
     loadData();
   } catch (error) {
     logger.error(error);
-    $message.error("删除失败");
+    $message.error(t("components.commentList.deleteError"));
   }
 };
 </script>
 <template>
   <div class="article-comment">
-    <div ref="titleRef" class="title">—— 评论区 ——</div>
+    <div ref="titleRef" class="title">{{ t("components.commentList.title") }}</div>
 
     <CommentEditor
       :article-id="props.articleId"

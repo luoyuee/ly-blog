@@ -5,9 +5,12 @@ import { PlatformIcon, BrowserIcon } from "#shared/constants";
 import { TiptapRender } from "@/components/tiptap-editor";
 import { useConfigStore, useUserStore } from "@/stores";
 import { useLogger } from "@/composables/useLogger";
+import { useI18n } from "vue-i18n";
 import FleetingThoughtEditor from "./FleetingThoughtEditor.vue";
 import Popconfirm from "@/components/popconfirm";
 import dayjs from "dayjs";
+
+const { t } = useI18n();
 
 const logger = useLogger();
 const $message = useMessage();
@@ -46,11 +49,11 @@ const handleDelete = async () => {
   if (userStore.isAdmin) {
     try {
       await deleteFleetingThought(modelValue.value.id);
-      $message.success("删除成功");
+      $message.success(t("components.fleetingThought.item.deleteSuccess"));
       emits("reload");
     } catch (error) {
       logger.error(error);
-      $message.error("删除失败");
+      $message.error(t("components.fleetingThought.item.deleteError"));
     }
   }
 };
@@ -65,7 +68,7 @@ const handleChangePublic = async () => {
   } catch (error) {
     logger.error(error);
     modelValue.value.public = !modelValue.value.public;
-    $message.error("操作失败");
+    $message.error(t("components.fleetingThought.item.operateError"));
   } finally {
     state.submitting = false;
   }
@@ -115,7 +118,11 @@ const handelUpdate = (e: FleetingThought) => {
           <div class="time">
             <div>
               <span v-if="modelValue.created_at">
-                {{ dayjs(modelValue.created_at).format("YYYY年MM月DD日 HH:mm") }}
+                {{
+                  dayjs(modelValue.created_at).format(
+                    $t("components.fleetingThought.item.dateFormat")
+                  )
+                }}
               </span>
               <span v-if="modelValue.location">
                 {{ modelValue.location }}
@@ -125,18 +132,18 @@ const handelUpdate = (e: FleetingThought) => {
           <div class="flex gap-2">
             <span v-if="userStore.isAdmin" class="edit-btn" @click="handleEdit">
               <UIcon name="custom:edit" />
-              编辑
+              {{ $t("components.fleetingThought.item.edit") }}
             </span>
             <Popconfirm
               v-if="userStore.isAdmin"
-              title="确认删除?"
+              :title="$t('components.fleetingThought.item.deleteConfirmTitle')"
               side="top"
-              description="删除后将无法恢复"
+              :description="$t('components.fleetingThought.item.deleteConfirmDescription')"
               @confirm="handleDelete"
             >
               <span class="delete-btn">
                 <UIcon name="lucide:trash-2" />
-                删除
+                {{ $t("components.fleetingThought.item.delete") }}
               </span>
             </Popconfirm>
           </div>

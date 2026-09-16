@@ -62,7 +62,7 @@ const handleReset = () => {
 <template>
   <SettingCard
     id="hero-setting"
-    title="顶部背景设置"
+    :title="$t('components.settingCard.hero.title')"
     :is-change="isDirty"
     :submitting="formState.submitting"
     @reset="handleReset"
@@ -78,66 +78,89 @@ const handleReset = () => {
     >
       <UFormField
         name="home_page_bg"
-        label="首屏图片"
-        description="填写图片 URL，不填将随机图片，下面图片设置同理"
+        :label="$t('components.settingCard.hero.homeImageLabel')"
+        :description="$t('components.settingCard.hero.imageDescription')"
         :ui="{
           container: 'mt-2',
           description: 'text-xs text-gray-400'
         }"
       >
-        <UInput v-model="formData.home_page_bg" placeholder="请输入图片链接" icon="lucide:link" />
+        <UInput
+          v-model="formData.home_page_bg"
+          :placeholder="$t('components.settingCard.hero.imagePlaceholder')"
+          icon="lucide:link"
+        />
       </UFormField>
 
       <UFormField
         name="home_title"
-        label="首屏标题"
+        :label="$t('components.settingCard.hero.homeTitleLabel')"
         :ui="{
           container: 'mt-2'
         }"
       >
-        <UInput v-model="formData.home_title" placeholder="请输入标题" />
+        <UInput
+          v-model="formData.home_title"
+          :placeholder="$t('components.settingCard.hero.homeTitlePlaceholder')"
+        />
       </UFormField>
 
       <UFormField
         name="home_sub_title"
-        label="首屏副标题"
-        description="一行一句，循环播放"
+        :label="$t('components.settingCard.hero.homeSubTitleLabel')"
+        :description="$t('components.settingCard.hero.homeSubTitleDescription')"
         :ui="{
           container: 'mt-2',
           description: 'text-xs text-gray-400'
         }"
       >
-        <UTextarea v-model="formData.home_sub_title" :rows="3" placeholder="请输入副标题" />
+        <UTextarea
+          v-model="formData.home_sub_title"
+          :rows="3"
+          :placeholder="$t('components.settingCard.hero.homeSubTitlePlaceholder')"
+        />
       </UFormField>
 
       <UFormField
         name="catalog_page_bg"
-        label="分类页头图"
+        :label="$t('components.settingCard.hero.catalogImageLabel')"
         :ui="{
           container: 'mt-2'
         }"
       >
-        <UInput v-model="formData.catalog_page_bg" placeholder="随机图片" icon="lucide:link" />
+        <UInput
+          v-model="formData.catalog_page_bg"
+          :placeholder="$t('components.settingCard.hero.randomImagePlaceholder')"
+          icon="lucide:link"
+        />
       </UFormField>
 
       <UFormField
         name="tag_page_bg"
-        label="标签分类页头图"
+        :label="$t('components.settingCard.hero.tagImageLabel')"
         :ui="{
           container: 'mt-2'
         }"
       >
-        <UInput v-model="formData.tag_page_bg" placeholder="随机图片" icon="lucide:link" />
+        <UInput
+          v-model="formData.tag_page_bg"
+          :placeholder="$t('components.settingCard.hero.randomImagePlaceholder')"
+          icon="lucide:link"
+        />
       </UFormField>
 
       <UFormField
         name="article_page_bg"
-        label="文章页头图"
+        :label="$t('components.settingCard.hero.articleImageLabel')"
         :ui="{
           container: 'mt-2'
         }"
       >
-        <UInput v-model="formData.article_page_bg" placeholder="随机图片" icon="lucide:link" />
+        <UInput
+          v-model="formData.article_page_bg"
+          :placeholder="$t('components.settingCard.hero.randomImagePlaceholder')"
+          icon="lucide:link"
+        />
       </UFormField>
     </UForm>
   </SettingCard>

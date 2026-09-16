@@ -6,6 +6,8 @@ import { useSortable } from "@vueuse/integrations/useSortable";
 import { BasicModal } from "@/components/basic-modal";
 import { z } from "zod";
 
+const { t } = useI18n();
+
 const handleClass = "me-page-profile-tags-form__handle";
 const tbodyClass = "me-page-profile-tags-form__tbody";
 
@@ -58,8 +60,8 @@ const modalForm = reactive<IMePageConfigProfileTagItem>({
 
 const modalSchema = z.object({
   label: z
-    .string({ message: "请输入标签文本" })
-    .min(1, "请输入标签文本")
+    .string({ message: t("components.settingCard.profileTagsForm.validation.labelRequired") })
+    .min(1, t("components.settingCard.profileTagsForm.validation.labelRequired"))
     .superRefine((value, ctx) => {
       const duplicateIndex = rows.value.findIndex((item, index) => {
         if (item.label !== value) return false;
@@ -67,7 +69,10 @@ const modalSchema = z.object({
         return index !== modalState.editingIndex;
       });
       if (duplicateIndex !== -1) {
-        ctx.addIssue({ code: "custom", message: "标签重复" });
+        ctx.addIssue({
+          code: "custom",
+          message: t("components.settingCard.profileTagsForm.validation.duplicateLabel")
+        });
       }
     }),
   color: z.enum(badgeColorOptions).optional()
@@ -147,10 +152,10 @@ const columns = computed<TableColumn<RowItem>[]>(() => {
         });
       }
     },
-    { accessorKey: "label", header: "标签" },
+    { accessorKey: "label", header: t("components.settingCard.common.label") },
     {
       accessorKey: "color",
-      header: "颜色",
+      header: t("components.settingCard.common.color"),
       cell: ({ row }) => {
         const { color } = row.original;
         return h(
@@ -166,7 +171,7 @@ const columns = computed<TableColumn<RowItem>[]>(() => {
     },
     {
       id: "actions",
-      header: "操作",
+      header: t("components.settingCard.common.actions"),
       meta: {
         class: {
           th: "text-right",
@@ -219,15 +224,15 @@ defineExpose({
 
 <template>
   <UFormField
-    label="个人标签"
-    description="个人页左侧头像下方的标签列表"
+    :label="$t('components.settingCard.profileTagsForm.label')"
+    :description="$t('components.settingCard.profileTagsForm.description')"
     :ui="{
       description: 'text-xs',
       container: 'mt-2'
     }"
   >
     <template #hint>
-      <UButton size="xs" icon="lucide:plus" @click="openAddModal"> 添加 </UButton>
+      <UButton size="xs" icon="lucide:plus" @click="openAddModal">{{ $t("common.add") }}</UButton>
     </template>
     <div class="border border-muted rounded-md overflow-hidden">
       <UTable
@@ -243,7 +248,11 @@ defineExpose({
 
     <BasicModal
       v-model:open="modalState.visible"
-      :title="modalState.editingIndex === null ? '添加标签' : '编辑标签'"
+      :title="
+        modalState.editingIndex === null
+          ? $t('components.settingCard.profileTagsForm.addModalTitle')
+          : $t('components.settingCard.profileTagsForm.editModalTitle')
+      "
       @confirm="confirmModal"
     >
       <UForm
@@ -253,10 +262,17 @@ defineExpose({
         :validate-on-input-delay="100"
         @submit="submitModal"
       >
-        <UFormField name="label" label="标签文本" required>
-          <UInput v-model="modalForm.label" placeholder="例如：独立开发" />
+        <UFormField
+          name="label"
+          :label="$t('components.settingCard.profileTagsForm.labelLabel')"
+          required
+        >
+          <UInput
+            v-model="modalForm.label"
+            :placeholder="$t('components.settingCard.profileTagsForm.labelPlaceholder')"
+          />
         </UFormField>
-        <UFormField name="color" label="颜色">
+        <UFormField name="color" :label="$t('components.settingCard.profileTagsForm.colorLabel')">
           <USelect v-model="modalForm.color" :items="badgeColorOptions" />
         </UFormField>
       </UForm>

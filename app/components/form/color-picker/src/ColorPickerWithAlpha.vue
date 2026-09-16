@@ -34,7 +34,7 @@ const props = defineProps({
   },
   label: {
     type: String,
-    default: "选择颜色"
+    default: ""
   },
   defaultColor: {
     type: String,
@@ -172,7 +172,7 @@ const handleReset = () => {
 
           <div class="space-y-2">
             <div class="flex items-center justify-between">
-              <span class="text-xs text-muted">透明度</span>
+              <span class="text-xs text-muted">{{ $t("components.colorPicker.alpha") }}</span>
               <span class="text-xs text-muted font-mono"> {{ tempAlpha }}% </span>
             </div>
             <div class="relative w-full rounded-lg bg-checker-8 bg-checker-gray">
@@ -204,7 +204,7 @@ const handleReset = () => {
 
           <div class="flex justify-between items-center">
             <UButton
-              label="重置"
+              :label="$t('common.reset')"
               color="neutral"
               variant="outline"
               size="xs"
@@ -213,13 +213,18 @@ const handleReset = () => {
 
             <div class="flex gap-2 items-center">
               <UButton
-                label="取消"
+                :label="$t('common.cancel')"
                 color="neutral"
                 variant="outline"
                 size="xs"
                 @click="handleCancel"
               />
-              <UButton label="确认" color="primary" size="xs" @click="handleConfirm" />
+              <UButton
+                :label="$t('common.confirm')"
+                color="primary"
+                size="xs"
+                @click="handleConfirm"
+              />
             </div>
           </div>
         </div>

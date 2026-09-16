@@ -10,6 +10,7 @@ import {
 import { h, resolveComponent } from "vue";
 import dayjs from "dayjs";
 
+const { t } = useI18n();
 const $notify = useNotification();
 const $msgBox = useMessageBox();
 
@@ -38,14 +39,14 @@ const state = reactive<{
 });
 
 const searchEngineOptions = computed(() => [
-  { label: "全部", value: -1 },
+  { label: t("common.all"), value: -1 },
   ...searchEngines.value.map((item) => ({
     label: item.name,
     value: item.id
   }))
 ]);
 
-const columns: TableColumn<SearchHistoryItem>[] = [
+const columns = computed<TableColumn<SearchHistoryItem>[]>(() => [
   {
     accessorKey: "id",
     header: "#",
@@ -53,7 +54,7 @@ const columns: TableColumn<SearchHistoryItem>[] = [
   },
   {
     accessorKey: "keyword",
-    header: "关键词",
+    header: t("components.lyEditor.common.table.keyword"),
     cell: ({ row }) => {
       const keyword = (row.getValue("keyword") ?? "") as string;
       const highlightKeyword = unref(state.highlightKeyword);
@@ -72,7 +73,7 @@ const columns: TableColumn<SearchHistoryItem>[] = [
   },
   {
     accessorKey: "NavigationSearchEngine",
-    header: "搜索引擎",
+    header: t("components.lyEditor.modules.navigation.historyHeaders.engine"),
     cell: ({ row }) => {
       const searchEngine = row.original.NavigationSearchEngine;
       if (!searchEngine) return h("div", "-");
@@ -90,12 +91,12 @@ const columns: TableColumn<SearchHistoryItem>[] = [
   },
   {
     accessorKey: "created_by",
-    header: "用户ID",
+    header: t("components.lyEditor.modules.navigation.historyHeaders.userId"),
     cell: ({ row }) => h("div", row.getValue("created_by") ?? "-")
   },
   {
     accessorKey: "created_at",
-    header: "搜索日期",
+    header: t("components.lyEditor.modules.navigation.historyHeaders.searchedAt"),
     cell: ({ row }) =>
       h(
         "div",
@@ -117,7 +118,7 @@ const columns: TableColumn<SearchHistoryItem>[] = [
             },
             items: [
               {
-                label: "删除记录",
+                label: t("components.lyEditor.modules.navigation.historyMenuDelete"),
                 icon: "lucide:trash-2",
                 color: "error",
                 onSelect: () => {
@@ -137,7 +138,7 @@ const columns: TableColumn<SearchHistoryItem>[] = [
       );
     }
   }
-];
+]);
 
 const loadSearchEngines = async () => {
   try {
@@ -145,7 +146,7 @@ const loadSearchEngines = async () => {
     searchEngines.value = res.data;
   } catch (error) {
     $notify.error({
-      title: "搜索引擎加载失败",
+      title: t("components.lyEditor.modules.navigation.engineLoadFailed"),
       error
     });
   }
@@ -172,7 +173,7 @@ const loadData = async () => {
     data.value = res.data;
   } catch (error) {
     $notify.error({
-      title: "搜索历史加载失败",
+      title: t("components.lyEditor.modules.navigation.historyLoadFailed"),
       error
     });
   } finally {
@@ -192,9 +193,9 @@ const handleSearch = () => {
 
 const handleDelete = (e: SearchHistoryItem) => {
   $msgBox.error({
-    title: "确认删除?",
-    message: `即将删除搜索记录「${e.keyword}」，是否继续？`,
-    confirmButtonText: "删除",
+    title: t("components.lyEditor.common.deleteConfirm.title"),
+    message: t("components.lyEditor.common.deleteConfirm.simpleMessage", { name: e.keyword }),
+    confirmButtonText: t("components.lyEditor.common.deleteConfirm.button"),
     confirmButtonProps: {
       color: "error"
     },
@@ -202,12 +203,12 @@ const handleDelete = (e: SearchHistoryItem) => {
       try {
         await deleteSearchHistory(e.id);
         $notify.success({
-          title: "删除成功"
+          title: t("message.delete.success")
         });
         loadData();
       } catch (error) {
         $notify.error({
-          title: "操作失败",
+          title: t("message.operate.error"),
           error
         });
       }
@@ -224,9 +225,15 @@ const handleDelete = (e: SearchHistoryItem) => {
       <UFieldGroup>
         <USelect v-model="state.search_engine_id" :items="searchEngineOptions" class="w-32" />
 
-        <UInput v-model.trim="state.keyword" class="w-48" placeholder="请输入关键词" />
+        <UInput
+          v-model.trim="state.keyword"
+          class="w-48"
+          :placeholder="t('components.lyEditor.common.searchPlaceholder')"
+        />
 
-        <UButton icon="lucide:search" @click="handleSearch">搜索</UButton>
+        <UButton icon="lucide:search" @click="handleSearch">
+          {{ t("common.search") }}
+        </UButton>
       </UFieldGroup>
     </div>
 

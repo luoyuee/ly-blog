@@ -8,6 +8,8 @@ import { SelectIcon } from "@/components/form/select";
 import { SkillIconNames } from "#shared/constants";
 import { z } from "zod";
 
+const { t } = useI18n();
+
 const handleClass = "me-page-skill-grid-form__handle";
 const tbodyClass = "me-page-skill-grid-form__tbody";
 
@@ -58,9 +60,15 @@ const modalForm = reactive<IMePageConfigSkillGridItem>({
 });
 
 const modalSchema = z.object({
-  title: z.string({ message: "请输入标题" }).min(1, "请输入标题"),
-  icon: z.string({ message: "请选择图标" }).min(1, "请选择图标"),
-  href: z.union([z.url("请输入正确的链接"), z.literal("")]).optional()
+  title: z
+    .string({ message: t("components.settingCard.skillGridForm.validation.titleRequired") })
+    .min(1, t("components.settingCard.skillGridForm.validation.titleRequired")),
+  icon: z
+    .string({ message: t("components.settingCard.skillGridForm.validation.iconRequired") })
+    .min(1, t("components.settingCard.skillGridForm.validation.iconRequired")),
+  href: z
+    .union([z.url(t("components.settingCard.skillGridForm.validation.linkInvalid")), z.literal("")])
+    .optional()
 });
 
 const modalFormRef = useTemplateRef("modalFormRef");
@@ -142,13 +150,13 @@ const columns = computed<TableColumn<RowItem>[]>(() => {
     },
     {
       accessorKey: "icon",
-      header: "图标",
+      header: t("components.settingCard.common.icon"),
       cell: ({ row }) => h(UIcon, { name: row.original.icon })
     },
-    { accessorKey: "title", header: "标题" },
+    { accessorKey: "title", header: t("components.settingCard.common.title") },
     {
       accessorKey: "href",
-      header: "链接",
+      header: t("components.settingCard.common.link"),
       cell: ({ row }) => {
         const href = row.original.href;
         if (!href) return "";
@@ -166,7 +174,7 @@ const columns = computed<TableColumn<RowItem>[]>(() => {
     },
     {
       id: "actions",
-      header: "操作",
+      header: t("components.settingCard.common.actions"),
       meta: {
         class: {
           th: "text-right",
@@ -219,15 +227,15 @@ defineExpose({
 
 <template>
   <UFormField
-    label="技能卡片（Grid）"
-    description="对应个人页 Projects Tab 下的技能卡片区域"
+    :label="$t('components.settingCard.skillGridForm.label')"
+    :description="$t('components.settingCard.skillGridForm.description')"
     :ui="{
       description: 'text-xs',
       container: 'mt-2'
     }"
   >
     <template #hint>
-      <UButton size="xs" icon="lucide:plus" @click="openAddModal"> 添加 </UButton>
+      <UButton size="xs" icon="lucide:plus" @click="openAddModal">{{ $t("common.add") }}</UButton>
     </template>
     <div class="border border-muted rounded-md overflow-hidden">
       <UTable
@@ -244,7 +252,11 @@ defineExpose({
 
     <BasicModal
       v-model:open="modalState.visible"
-      :title="modalState.editingIndex === null ? '添加技能卡片' : '编辑技能卡片'"
+      :title="
+        modalState.editingIndex === null
+          ? $t('components.settingCard.skillGridForm.addModalTitle')
+          : $t('components.settingCard.skillGridForm.editModalTitle')
+      "
       @confirm="confirmModal"
     >
       <UForm
@@ -254,13 +266,24 @@ defineExpose({
         :validate-on-input-delay="100"
         @submit="submitModal"
       >
-        <UFormField name="title" label="标题" required>
-          <UInput v-model="modalForm.title" placeholder="例如：Nuxt / Node.js" />
+        <UFormField
+          name="title"
+          :label="$t('components.settingCard.skillGridForm.titleLabel')"
+          required
+        >
+          <UInput
+            v-model="modalForm.title"
+            :placeholder="$t('components.settingCard.skillGridForm.titlePlaceholder')"
+          />
         </UFormField>
-        <UFormField name="icon" label="图标" required>
+        <UFormField
+          name="icon"
+          :label="$t('components.settingCard.skillGridForm.iconLabel')"
+          required
+        >
           <SelectIcon v-model="modalForm.icon" :items="SkillIconNames" />
         </UFormField>
-        <UFormField name="href" label="链接（可选）">
+        <UFormField name="href" :label="$t('components.settingCard.skillGridForm.linkLabel')">
           <UInput v-model="modalForm.href" icon="lucide:link" placeholder="https://..." />
         </UFormField>
       </UForm>

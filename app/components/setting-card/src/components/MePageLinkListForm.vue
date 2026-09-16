@@ -6,6 +6,8 @@ import { computed, h, onBeforeUnmount, reactive, ref, resolveComponent, watch } 
 import { useSortable } from "@vueuse/integrations/useSortable";
 import { z } from "zod";
 
+const { t } = useI18n();
+
 const handleClass = "me-page-link-list-form__handle";
 const tbodyClass = "me-page-link-list-form__tbody";
 
@@ -52,9 +54,9 @@ watch(
 const headerText = computed(() => {
   switch (props.type) {
     case "website":
-      return "网站（Website List）";
+      return t("components.settingCard.linkListForm.websiteLabel");
     case "project":
-      return "项目（Project List）";
+      return t("components.settingCard.linkListForm.projectLabel");
     default:
       return "";
   }
@@ -63,9 +65,9 @@ const headerText = computed(() => {
 const descriptionText = computed(() => {
   switch (props.type) {
     case "website":
-      return "对应个人页 Projects Tab 下的“网站”卡片列表";
+      return t("components.settingCard.linkListForm.websiteDescription");
     case "project":
-      return "对应个人页 Projects Tab 下的“项目”卡片列表";
+      return t("components.settingCard.linkListForm.projectDescription");
     default:
       return "";
   }
@@ -87,14 +89,18 @@ const modalForm = reactive<IMePageConfigLinkItem>({
 });
 
 const modalSchema = z.object({
-  title: z.string({ message: "请输入标题" }).min(1, "请输入标题"),
-  desc: z.string({ message: "请输入描述" }).min(1, "请输入描述"),
-  href: z.url("请输入正确的链接"),
+  title: z
+    .string({ message: t("components.settingCard.linkListForm.validation.titleRequired") })
+    .min(1, t("components.settingCard.linkListForm.validation.titleRequired")),
+  desc: z
+    .string({ message: t("components.settingCard.linkListForm.validation.descRequired") })
+    .min(1, t("components.settingCard.linkListForm.validation.descRequired")),
+  href: z.url(t("components.settingCard.linkListForm.validation.linkInvalid")),
   icon: z
-    .string({ message: "请输入图标图片链接" })
-    .min(1, "请输入图标图片链接")
+    .string({ message: t("components.settingCard.linkListForm.validation.iconRequired") })
+    .min(1, t("components.settingCard.linkListForm.validation.iconRequired"))
     .refine((value) => value.startsWith("/") || /^https?:\/\//.test(value), {
-      message: "请输入正确的图片链接"
+      message: t("components.settingCard.linkListForm.validation.iconImageInvalid")
     })
 });
 
@@ -180,7 +186,7 @@ const columns = computed<TableColumn<RowItem>[]>(() => {
     },
     {
       accessorKey: "icon",
-      header: "图标",
+      header: t("components.settingCard.common.icon"),
       cell: ({ row }) => {
         const icon = row.original.icon;
         const isImageLink = icon.startsWith("/") || /^https?:\/\//.test(icon);
@@ -196,11 +202,11 @@ const columns = computed<TableColumn<RowItem>[]>(() => {
         });
       }
     },
-    { accessorKey: "title", header: "标题" },
-    { accessorKey: "desc", header: "描述" },
+    { accessorKey: "title", header: t("components.settingCard.common.title") },
+    { accessorKey: "desc", header: t("components.settingCard.common.description") },
     {
       accessorKey: "href",
-      header: "链接",
+      header: t("components.settingCard.common.link"),
       cell: ({ row }) => {
         const href = row.original.href;
         return h(
@@ -217,7 +223,7 @@ const columns = computed<TableColumn<RowItem>[]>(() => {
     },
     {
       id: "actions",
-      header: "操作",
+      header: t("components.settingCard.common.actions"),
       meta: {
         class: {
           th: "text-right",
@@ -274,7 +280,7 @@ onBeforeUnmount(() => {
     }"
   >
     <template #hint>
-      <UButton size="xs" icon="lucide:plus" @click="openAddModal"> 添加 </UButton>
+      <UButton size="xs" icon="lucide:plus" @click="openAddModal">{{ $t("common.add") }}</UButton>
     </template>
 
     <div class="border border-muted rounded-md overflow-hidden">
@@ -291,7 +297,11 @@ onBeforeUnmount(() => {
 
     <BasicModal
       v-model:open="modalState.visible"
-      :title="modalState.editingIndex === null ? '添加卡片' : '编辑卡片'"
+      :title="
+        modalState.editingIndex === null
+          ? $t('components.settingCard.linkListForm.addModalTitle')
+          : $t('components.settingCard.linkListForm.editModalTitle')
+      "
       @confirm="confirmModal"
     >
       <UForm
@@ -301,26 +311,48 @@ onBeforeUnmount(() => {
         :validate-on-input-delay="100"
         @submit="submitModal"
       >
-        <UFormField name="title" label="标题" required>
-          <UInput v-model="modalForm.title" placeholder="例如：我的博客" />
+        <UFormField
+          name="title"
+          :label="$t('components.settingCard.linkListForm.titleLabel')"
+          required
+        >
+          <UInput
+            v-model="modalForm.title"
+            :placeholder="$t('components.settingCard.linkListForm.titlePlaceholder')"
+          />
         </UFormField>
-        <UFormField name="desc" label="描述" required>
-          <UInput v-model="modalForm.desc" placeholder="一句话描述" />
+        <UFormField
+          name="desc"
+          :label="$t('components.settingCard.linkListForm.descLabel')"
+          required
+        >
+          <UInput
+            v-model="modalForm.desc"
+            :placeholder="$t('components.settingCard.linkListForm.descPlaceholder')"
+          />
         </UFormField>
-        <UFormField name="href" label="链接" required>
+        <UFormField
+          name="href"
+          :label="$t('components.settingCard.linkListForm.linkLabel')"
+          required
+        >
           <UInput v-model="modalForm.href" icon="lucide:link" placeholder="https://..." />
         </UFormField>
         <UFormField
           name="icon"
-          label="图标图片链接"
-          description="用于卡片右侧图标展示（建议 64x64 或 128x128，支持 https://... 或 /images/..."
+          :label="$t('components.settingCard.linkListForm.iconLabel')"
+          :description="$t('components.settingCard.linkListForm.iconDescription')"
           required
           :ui="{
             description: 'text-xs',
             container: 'mt-2'
           }"
         >
-          <UInput v-model="modalForm.icon" icon="lucide:link" placeholder="请输入图片链接" />
+          <UInput
+            v-model="modalForm.icon"
+            icon="lucide:link"
+            :placeholder="$t('components.settingCard.linkListForm.iconPlaceholder')"
+          />
         </UFormField>
       </UForm>
     </BasicModal>

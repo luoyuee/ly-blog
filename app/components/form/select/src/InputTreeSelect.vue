@@ -30,6 +30,9 @@ import type { PropType } from "vue";
 import { flattenTreeItems, findParentChain, sortByDepth } from "#shared/utils/tree";
 import { isArray, isNil } from "@/utils/typed";
 import { computed, ref, watch } from "vue";
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n();
 
 // ============================================================
 // 类型定义
@@ -114,7 +117,7 @@ const props = defineProps({
    */
   placeholder: {
     type: String,
-    default: "请选择"
+    default: ""
   },
 
   /**
@@ -191,6 +194,11 @@ const props = defineProps({
     default: "auto"
   }
 });
+
+// 未显式传入时回退到 i18n 文案（defineProps 默认值不能引用本地 t）
+const resolvedPlaceholder = computed(
+  () => props.placeholder || t("components.treeSelect.placeholder")
+);
 
 // ============================================================
 // 计算属性 - 配置相关
@@ -824,7 +832,7 @@ watch(
 
         <!-- 占位文本：无选中项时显示 -->
         <span v-if="!showTags || showTags.length === 0" class="text-dimmed">
-          {{ placeholder }}
+          {{ resolvedPlaceholder }}
         </span>
 
         <!-- 自定义输入框：回车添加自定义标签 -->
@@ -875,7 +883,7 @@ watch(
       <UInput
         v-else
         v-model.trim="inputValue"
-        :placeholder="props.placeholder"
+        :placeholder="resolvedPlaceholder"
         @click="handlePopover"
         @change="handleInputChange"
         @keyup.enter="popoverOpen = false"
@@ -935,7 +943,7 @@ watch(
 
       <!-- 无数据时显示空状态 -->
       <div v-else>
-        <div class="text-center text-muted p-2.5 text-sm">暂无数据</div>
+        <div class="text-center text-muted p-2.5 text-sm">{{ $t("common.noData") }}</div>
       </div>
     </template>
   </UPopover>

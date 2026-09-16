@@ -7,6 +7,8 @@ import type { WhiteboardContent, WhiteboardDocument } from "./types";
 import WhiteboardToolbar from "./components/WhiteboardToolbar.vue";
 import WhiteboardViewport from "./components/WhiteboardViewport.vue";
 
+const { t } = useI18n();
+
 const model = defineModel<WhiteboardContent>({
   default: () => ({ notes: [], strokes: [], connections: [] })
 });
@@ -106,7 +108,7 @@ const importFromFile = async (event: Event): Promise<void> => {
     importDocument(parseWhiteboardDocument(await file.text()));
   } catch (error) {
     if (error instanceof Error) {
-      window.alert("导入白板失败，请确认文件为有效 JSON");
+      window.alert(t("components.whiteboard.importError"));
     } else {
       throw error;
     }
@@ -150,7 +152,7 @@ defineExpose({
       hidden
       type="file"
       accept="application/json,.json"
-      aria-label="选择白板 JSON 文件"
+      :aria-label="$t('components.whiteboard.selectFile')"
       @change="importFromFile"
     />
     <WhiteboardViewport

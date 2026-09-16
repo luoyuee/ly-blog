@@ -54,10 +54,14 @@ interface FormData {
   recurrenceUntil: string | null;
 }
 
+const { t } = useI18n();
+
 const schema = z
   .object({
     id: z.string(),
-    title: z.string({ message: "请输入事件标题" }).min(1, "请输入事件标题"),
+    title: z
+      .string({ message: t("components.calendar.validation.titleRequired") })
+      .min(1, t("components.calendar.validation.titleRequired")),
     description: z.string().nullish(),
     location: z.string().nullish(),
     startDate: z.string().nullish(),
@@ -68,9 +72,12 @@ const schema = z
     color: z.string().nullish(),
     eventType: z.enum(["single", "recurring"]),
     recurrenceFrequency: z.enum(["DAILY", "WEEKLY", "MONTHLY", "YEARLY"]),
-    recurrenceInterval: z.coerce.number().int().min(1, "重复间隔不能小于 1"),
+    recurrenceInterval: z.coerce
+      .number()
+      .int()
+      .min(1, t("components.calendar.validation.intervalMin")),
     recurrenceEndType: z.enum(["never", "count", "until"]),
-    recurrenceCount: z.coerce.number().int().min(1, "重复次数不能小于 1"),
+    recurrenceCount: z.coerce.number().int().min(1, t("components.calendar.validation.countMin")),
     recurrenceUntil: z.string().nullish()
   })
   .superRefine((data, ctx) => {
@@ -78,7 +85,7 @@ const schema = z
       ctx.addIssue({
         code: "custom",
         path: ["startDate"],
-        message: "请选择开始日期"
+        message: t("components.calendar.validation.startRequired")
       });
     }
 
@@ -86,7 +93,7 @@ const schema = z
       ctx.addIssue({
         code: "custom",
         path: ["endDate"],
-        message: "请选择结束日期"
+        message: t("components.calendar.validation.endRequired")
       });
     }
 
@@ -98,7 +105,7 @@ const schema = z
       ctx.addIssue({
         code: "custom",
         path: ["recurrenceUntil"],
-        message: "请选择截止日期"
+        message: t("components.calendar.validation.untilRequired")
       });
     }
   });
@@ -124,34 +131,34 @@ const { formData, formState, resetForm, setForm } = useForm<FormData>({
 
 const isEdit = computed(() => props.mode === "edit");
 
-const modalTitle = computed(() => (isEdit.value ? "编辑事件" : "新建事件"));
+const modalTitle = computed(() =>
+  isEdit.value ? t("components.calendar.form.editTitle") : t("components.calendar.form.createTitle")
+);
 
 /** 事件类型选项 */
-const eventTypeOptions = [
-  { label: "普通事件", value: "single" },
-  { label: "重复事件", value: "recurring" }
-];
+const eventTypeOptions = computed(() => [
+  { label: t("components.calendar.form.single"), value: "single" },
+  { label: t("components.calendar.form.recurring"), value: "recurring" }
+]);
 
 /** 周期频率选项 */
-const recurrenceFrequencyOptions: Array<{
-  label: string;
-  value: CalendarRecurrenceFrequency;
-}> = [
-  { label: "每天", value: "DAILY" },
-  { label: "每周", value: "WEEKLY" },
-  { label: "每月", value: "MONTHLY" },
-  { label: "每年", value: "YEARLY" }
-];
+const recurrenceFrequencyOptions = computed<
+  Array<{ label: string; value: CalendarRecurrenceFrequency }>
+>(() => [
+  { label: t("components.calendar.form.daily"), value: "DAILY" },
+  { label: t("components.calendar.form.weekly"), value: "WEEKLY" },
+  { label: t("components.calendar.form.monthly"), value: "MONTHLY" },
+  { label: t("components.calendar.form.yearly"), value: "YEARLY" }
+]);
 
 /** 周期结束方式选项 */
-const recurrenceEndTypeOptions: Array<{
-  label: string;
-  value: CalendarRecurrenceEndType;
-}> = [
-  { label: "永不结束", value: "never" },
-  { label: "按次数结束", value: "count" },
-  { label: "按日期结束", value: "until" }
-];
+const recurrenceEndTypeOptions = computed<
+  Array<{ label: string; value: CalendarRecurrenceEndType }>
+>(() => [
+  { label: t("components.calendar.form.endNever"), value: "never" },
+  { label: t("components.calendar.form.endByCount"), value: "count" },
+  { label: t("components.calendar.form.endByUntil"), value: "until" }
+]);
 
 /**
  * 将 ISO 字符串拆分为日期和时间两部分
@@ -296,11 +303,14 @@ const handleDelete = () => {
       :validate-on-input-delay="100"
       @submit="handleSubmit"
     >
-      <UFormField name="title" label="事件标题" required>
-        <UInput v-model="formData.title" placeholder="请输入事件标题" />
+      <UFormField name="title" :label="$t('components.calendar.form.titleLabel')" required>
+        <UInput
+          v-model="formData.title"
+          :placeholder="$t('components.calendar.form.titlePlaceholder')"
+        />
       </UFormField>
 
-      <UFormField name="eventType" label="事件类型">
+      <UFormField name="eventType" :label="$t('components.calendar.form.eventTypeLabel')">
         <UTabs
           v-model="formData.eventType"
           :items="eventTypeOptions"
@@ -309,12 +319,15 @@ const handleDelete = () => {
         />
       </UFormField>
 
-      <UFormField name="allDay" label="全天事件">
+      <UFormField name="allDay" :label="$t('components.calendar.form.allDayLabel')">
         <USwitch v-model="formData.allDay" />
       </UFormField>
 
       <div v-if="formData.eventType === 'recurring'" class="grid grid-cols-1 gap-2 sm:grid-cols-2">
-        <UFormField name="recurrenceFrequency" label="重复频率">
+        <UFormField
+          name="recurrenceFrequency"
+          :label="$t('components.calendar.form.frequencyLabel')"
+        >
           <USelect
             v-model="formData.recurrenceFrequency"
             :items="recurrenceFrequencyOptions"
@@ -322,11 +335,11 @@ const handleDelete = () => {
           />
         </UFormField>
 
-        <UFormField name="recurrenceInterval" label="重复间隔">
+        <UFormField name="recurrenceInterval" :label="$t('components.calendar.form.intervalLabel')">
           <UInput v-model.number="formData.recurrenceInterval" type="number" :min="1" />
         </UFormField>
 
-        <UFormField name="recurrenceEndType" label="结束方式">
+        <UFormField name="recurrenceEndType" :label="$t('components.calendar.form.endTypeLabel')">
           <USelect
             v-model="formData.recurrenceEndType"
             :items="recurrenceEndTypeOptions"
@@ -337,7 +350,7 @@ const handleDelete = () => {
         <UFormField
           v-if="formData.recurrenceEndType === 'count'"
           name="recurrenceCount"
-          label="重复次数"
+          :label="$t('components.calendar.form.countLabel')"
         >
           <UInput v-model.number="formData.recurrenceCount" type="number" :min="1" />
         </UFormField>
@@ -345,20 +358,24 @@ const handleDelete = () => {
         <UFormField
           v-if="formData.recurrenceEndType === 'until'"
           name="recurrenceUntil"
-          label="截止日期"
+          :label="$t('components.calendar.form.untilLabel')"
           required
         >
-          <DatePicker v-model="formData.recurrenceUntil" type="date" placeholder="选择截止日期" />
+          <DatePicker
+            v-model="formData.recurrenceUntil"
+            type="date"
+            :placeholder="$t('components.calendar.form.untilPlaceholder')"
+          />
         </UFormField>
       </div>
 
-      <UFormField name="startDate" label="开始时间" required>
+      <UFormField name="startDate" :label="$t('components.calendar.form.startLabel')" required>
         <div class="flex items-center gap-2">
           <DatePicker
             v-model="formData.startDate"
             class="flex-1"
             type="date"
-            placeholder="选择日期"
+            :placeholder="$t('components.calendar.form.datePlaceholder')"
           />
           <TimePicker
             v-if="!formData.allDay"
@@ -369,13 +386,13 @@ const handleDelete = () => {
         </div>
       </UFormField>
 
-      <UFormField name="endDate" label="结束时间" required>
+      <UFormField name="endDate" :label="$t('components.calendar.form.endLabel')" required>
         <div class="flex items-center gap-2">
           <DatePicker
             v-model="formData.endDate"
             class="flex-1"
             type="date"
-            placeholder="选择日期"
+            :placeholder="$t('components.calendar.form.datePlaceholder')"
           />
           <TimePicker
             v-if="!formData.allDay"
@@ -386,28 +403,46 @@ const handleDelete = () => {
         </div>
       </UFormField>
 
-      <UFormField name="location" label="地点">
-        <UInput v-model="formData.location" placeholder="请输入地点" />
+      <UFormField name="location" :label="$t('components.calendar.form.locationLabel')">
+        <UInput
+          v-model="formData.location"
+          :placeholder="$t('components.calendar.form.locationPlaceholder')"
+        />
       </UFormField>
 
-      <UFormField name="color" label="事件颜色">
+      <UFormField name="color" :label="$t('components.calendar.form.colorLabel')">
         <PresetColorPicker v-model="formData.color" />
       </UFormField>
 
-      <UFormField name="description" label="描述">
-        <UTextarea v-model="formData.description" placeholder="请输入事件描述" :rows="3" />
+      <UFormField name="description" :label="$t('components.calendar.form.descriptionLabel')">
+        <UTextarea
+          v-model="formData.description"
+          :placeholder="$t('components.calendar.form.descriptionPlaceholder')"
+          :rows="3"
+        />
       </UFormField>
     </UForm>
 
     <template #footer>
       <div class="flex w-full items-center justify-between">
-        <UButton v-if="isEdit" color="error" variant="soft" label="删除" @click="handleDelete" />
+        <UButton
+          v-if="isEdit"
+          color="error"
+          variant="soft"
+          :label="$t('common.delete')"
+          @click="handleDelete"
+        />
         <div v-else></div>
         <div class="flex gap-2">
-          <UButton color="neutral" variant="outline" label="取消" @click="handleCancel" />
+          <UButton
+            color="neutral"
+            variant="outline"
+            :label="$t('common.cancel')"
+            @click="handleCancel"
+          />
           <UButton
             color="primary"
-            label="确定"
+            :label="$t('common.ok')"
             :loading="formState.submitting"
             @click="handleConfirm"
           />

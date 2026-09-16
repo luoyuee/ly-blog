@@ -3,6 +3,7 @@ import type { SearchEngineItem } from "#shared/types/navigation-website";
 import { getSearchEngineList, deleteSearchEngine } from "~/apis/navigation-website";
 import { useLyEditorModal } from "@ly-editor";
 
+const { t } = useI18n();
 const $notify = useNotification();
 const $msgBox = useMessageBox();
 const { open } = useLyEditorModal("search-engine-form");
@@ -14,7 +15,7 @@ const loadSearchEngines = async () => {
     const res = await getSearchEngineList();
     searchEngines.value = res.data;
   } catch (error) {
-    $notify.error({ title: "操作失败", error });
+    $notify.error({ title: t("message.operate.error"), error });
   }
 };
 
@@ -32,17 +33,17 @@ const handleOpenSearchEngineFormModal = async (e?: SearchEngineItem) => {
 
 const handleDeleteSearchEngine = (e: SearchEngineItem) => {
   $msgBox.error({
-    title: "确认删除?",
-    message: `即将删除搜索引擎「${e.name}」，是否继续？`,
-    confirmButtonText: "删除",
+    title: t("components.lyEditor.common.deleteConfirm.title"),
+    message: t("components.lyEditor.common.deleteConfirm.simpleMessage", { name: e.name }),
+    confirmButtonText: t("components.lyEditor.common.deleteConfirm.button"),
     confirmButtonProps: { color: "error" },
     onConfirm: async () => {
       try {
         await deleteSearchEngine(e.id);
-        $notify.success({ title: "删除成功" });
+        $notify.success({ title: t("message.delete.success") });
         loadSearchEngines();
       } catch (error) {
-        $notify.error({ title: "操作失败", error });
+        $notify.error({ title: t("message.operate.error"), error });
       }
     }
   });
@@ -64,14 +65,18 @@ defineExpose({
       <div class="text-sm truncate flex-1">{{ item.name }}</div>
 
       <UBadge :color="item.is_public ? 'success' : 'neutral'" variant="subtle" size="xs">
-        {{ item.is_public ? "公开" : "私有" }}
+        {{
+          item.is_public
+            ? $t("components.lyEditor.common.status.public")
+            : $t("components.lyEditor.common.status.private")
+        }}
       </UBadge>
 
       <div
         class="opacity-0 group-hover:opacity-100 flex items-center gap-0.5 transition-opacity shrink-0"
         @click.stop
       >
-        <UTooltip text="编辑">
+        <UTooltip :text="$t('common.edit')">
           <UButton
             icon="lucide:edit"
             size="xs"
@@ -79,7 +84,7 @@ defineExpose({
             @click="handleOpenSearchEngineFormModal(item)"
           />
         </UTooltip>
-        <UTooltip text="删除">
+        <UTooltip :text="$t('common.delete')">
           <UButton
             icon="lucide:trash-2"
             size="xs"
@@ -93,7 +98,7 @@ defineExpose({
       <UChip standalone inset :color="item.status === 1 ? 'success' : 'error'" />
     </div>
     <div v-if="searchEngines.length === 0" class="text-xs text-gray-500 text-center py-4">
-      暂无数据，点击上方 + 新增
+      {{ $t("components.lyEditor.modules.navigation.sectionEmpty") }}
     </div>
   </div>
 </template>

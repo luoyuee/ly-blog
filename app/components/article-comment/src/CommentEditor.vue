@@ -10,6 +10,7 @@ import { z } from "zod";
 
 const logger = useLogger();
 const $message = useMessage();
+const { t } = useI18n();
 
 const configStore = useConfigStore();
 
@@ -61,10 +62,12 @@ const formData = reactive<{
 });
 
 const schema = z.object({
-  nickname: z.string({ message: "请输入昵称" }).min(1, "请输入昵称"),
-  email: z.email("邮箱格式不正确"),
+  nickname: z
+    .string({ message: t("components.commentEditor.nicknameRequired") })
+    .min(1, t("components.commentEditor.nicknameRequired")),
+  email: z.email(t("components.commentEditor.emailInvalid")),
   website: z
-    .url("请输入正确的网址")
+    .url(t("components.commentEditor.websiteInvalid"))
     .optional()
     .or(z.literal("").transform(() => undefined))
 });
@@ -80,14 +83,14 @@ const clearData = () => {
 
 const handleSubmit = async () => {
   if (formData.content.trim() === "") {
-    $message.warning("评论不能为空");
+    $message.warning(t("components.commentEditor.emptyWarning"));
     return;
   }
   if (
     configStore.article.comment_max_length &&
     formData.content.length > configStore.article.comment_max_length
   ) {
-    $message.warning("评论字数超出上限");
+    $message.warning(t("components.commentEditor.overLimitWarning"));
     return;
   }
 
@@ -104,12 +107,12 @@ const handleSubmit = async () => {
       parent_id: props.parentId,
       reply_id: props.replyId
     });
-    $message.success("提交成功");
+    $message.success(t("components.commentEditor.submitSuccess"));
     clearData();
     emits("submitted");
   } catch (error) {
     logger.error(error);
-    $message.error("提交失败");
+    $message.error(t("components.commentEditor.submitError"));
   } finally {
     state.submitting = false;
   }
@@ -147,18 +150,26 @@ const handelEmailChange = () => {
 
       <UForm class="comment-editor__contact-form" :schema="schema" :state="formData">
         <UFormField class="comment-editor__contact-form__item" name="nickname">
-          <UInput v-model="formData.nickname" placeholder="昵称（必填）" icon="lucide:user" />
+          <UInput
+            v-model="formData.nickname"
+            :placeholder="t('components.commentEditor.nicknamePlaceholder')"
+            icon="lucide:user"
+          />
         </UFormField>
         <UFormField class="comment-editor__contact-form__item" name="email">
           <UInput
             v-model="formData.email"
-            placeholder="邮箱（必填，QQ邮箱自动获取信息）"
+            :placeholder="t('components.commentEditor.emailPlaceholder')"
             icon="lucide:mail"
             @blur="handelEmailChange"
           />
         </UFormField>
         <UFormField class="comment-editor__contact-form__item" name="website">
-          <UInput v-model="formData.website" placeholder="网址（选填）" icon="lucide:link" />
+          <UInput
+            v-model="formData.website"
+            :placeholder="t('components.commentEditor.websitePlaceholder')"
+            icon="lucide:link"
+          />
         </UFormField>
       </UForm>
     </div>
@@ -168,7 +179,7 @@ const handelEmailChange = () => {
     <div class="comment-editor__footer">
       <a class="comment-editor__md-support" :href="MarkdownSupportURL" target="_blank">
         <UIcon name="custom:markdown-fill" :size="18" />
-        支持Markdown语法
+        {{ t("components.commentEditor.mdHint") }}
       </a>
       <div class="comment-editor__submit-btn">
         <UButton
@@ -178,7 +189,7 @@ const handelEmailChange = () => {
           :disabled="state.submitting"
           @click="handleCancel"
         >
-          取消
+          {{ t("components.commentEditor.cancel") }}
         </UButton>
         <UButton
           color="primary"
@@ -186,7 +197,7 @@ const handelEmailChange = () => {
           loading-icon="lucide:loader-circle"
           @click="handleSubmit"
         >
-          发送评论
+          {{ t("components.commentEditor.send") }}
         </UButton>
       </div>
     </div>

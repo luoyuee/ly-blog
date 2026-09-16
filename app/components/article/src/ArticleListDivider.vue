@@ -1,16 +1,6 @@
-<template>
-  <div class="article-list-divider">
-    <span v-if="props.loading" class="article-list-divider__loading">
-      <UIcon name="lucide:loader-circle" class="article-list-divider__icon" />
-      {{ props.loadingText }}
-    </span>
-    <span v-else class="article-list-divider__text">
-      {{ props.text }}
-    </span>
-  </div>
-</template>
-
 <script lang="ts" setup>
+const { t } = useI18n();
+
 const props = defineProps({
   loading: {
     type: Boolean,
@@ -21,10 +11,27 @@ const props = defineProps({
   },
   loadingText: {
     type: String,
-    default: "加载中..."
+    default: ""
   }
 });
+
+/** 加载文案兜底：未传入 loadingText 时回退到 i18n 文案。 */
+const resolvedLoadingText = computed(
+  () => props.loadingText || t("components.article.listDivider.loading")
+);
 </script>
+
+<template>
+  <div class="article-list-divider">
+    <span v-if="props.loading" class="article-list-divider__loading">
+      <UIcon name="lucide:loader-circle" class="article-list-divider__icon" />
+      {{ resolvedLoadingText }}
+    </span>
+    <span v-else class="article-list-divider__text">
+      {{ props.text }}
+    </span>
+  </div>
+</template>
 
 <style scoped lang="scss">
 .article-list-divider {

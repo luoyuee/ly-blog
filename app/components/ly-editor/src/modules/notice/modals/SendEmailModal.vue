@@ -6,12 +6,21 @@ import { getRecipients, sendEmail } from "@/apis/admin";
 import { watch } from "vue";
 import { z } from "zod";
 
+const { t } = useI18n();
+
 const recipientOptions = ref<InputMenuItem[]>([]);
 
 const schema = z.object({
-  to: z.email({ message: "请输入正确的收件人邮箱" }).array().min(1, "请选择收件人"),
-  subject: z.string({ message: "请输入邮件主题" }).min(1, "请输入邮件主题"),
-  content: z.string({ message: "请输入邮件内容" }).min(1, "请输入邮件内容")
+  to: z
+    .email({ message: t("components.lyEditor.modules.notice.email.validation.toInvalid") })
+    .array()
+    .min(1, t("components.lyEditor.modules.notice.email.validation.toRequired")),
+  subject: z
+    .string({ message: t("components.lyEditor.modules.notice.email.validation.subjectRequired") })
+    .min(1, t("components.lyEditor.modules.notice.email.validation.subjectRequired")),
+  content: z
+    .string({ message: t("components.lyEditor.modules.notice.email.validation.contentRequired") })
+    .min(1, t("components.lyEditor.modules.notice.email.validation.contentRequired"))
 });
 
 const $notify = useNotification();
@@ -64,12 +73,12 @@ const handleSubmit = async (event: FormSubmitEvent<z.output<typeof schema>>) => 
 
     await sendEmail(event.data);
 
-    $notify.success({ title: "已提交发送请求" });
+    $notify.success({ title: t("components.lyEditor.modules.notice.email.submitted") });
 
     open.value = false;
     emits("close", { action: "sent" });
   } catch (error) {
-    $notify.error({ title: "发送失败", error });
+    $notify.error({ title: t("components.lyEditor.modules.notice.email.sendFailed"), error });
   } finally {
     submitting.value = false;
   }
@@ -91,8 +100,8 @@ const onCreate = (item: string) => {
 <template>
   <BasicModal
     v-model:open="open"
-    title="发送邮件"
-    confirm-button-text="发送"
+    :title="$t('components.lyEditor.modules.notice.email.title')"
+    :confirm-button-text="$t('components.lyEditor.modules.notice.email.send')"
     :submitting="submitting"
     @cancel="handleCancel"
     @confirm="handleConfirm"
@@ -105,25 +114,38 @@ const onCreate = (item: string) => {
       class="flex flex-col gap-4"
       @submit="handleSubmit"
     >
-      <UFormField label="收件人邮箱" name="to">
+      <UFormField :label="$t('components.lyEditor.modules.notice.email.toLabel')" name="to">
         <UInputMenu
           v-model="formData.to"
           class="w-full"
           create-item
           multiple
-          placeholder="请输入收件人邮箱"
+          :placeholder="$t('components.lyEditor.modules.notice.email.toPlaceholder')"
           value-key="value"
           :items="recipientOptions"
           @create="onCreate"
         />
       </UFormField>
 
-      <UFormField label="邮件主题" name="subject">
-        <UInput v-model="formData.subject" placeholder="请输入邮件主题" />
+      <UFormField
+        :label="$t('components.lyEditor.modules.notice.email.subjectLabel')"
+        name="subject"
+      >
+        <UInput
+          v-model="formData.subject"
+          :placeholder="$t('components.lyEditor.modules.notice.email.subjectPlaceholder')"
+        />
       </UFormField>
 
-      <UFormField label="邮件内容" name="content">
-        <UTextarea v-model="formData.content" :rows="6" placeholder="请输入邮件内容" />
+      <UFormField
+        :label="$t('components.lyEditor.modules.notice.email.contentLabel')"
+        name="content"
+      >
+        <UTextarea
+          v-model="formData.content"
+          :rows="6"
+          :placeholder="$t('components.lyEditor.modules.notice.email.contentPlaceholder')"
+        />
       </UFormField>
     </UForm>
   </BasicModal>

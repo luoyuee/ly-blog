@@ -9,6 +9,7 @@ import { useTemplateRef } from "vue";
 import SearchEngineSection from "./SearchEngineSection.vue";
 import ShortcutSection from "./ShortcutSection.vue";
 
+const { t } = useI18n();
 const { openTabPanel } = useLyEditorTabs();
 
 const shortcutSectionRef = useTemplateRef("shortcutSectionRef");
@@ -21,36 +22,36 @@ const handleOpenSearchHistoryPanel = () => {
   openTabPanel({
     key: LyEditorTabPanelEnum.NavigationHistoryPanel,
     type: LyEditorTabPanelEnum.NavigationHistoryPanel,
-    label: "搜索历史"
+    label: t("components.lyEditor.modules.navigation.searchHistory")
   });
 };
 
-const actions = [
+const actions = computed(() => [
   {
-    label: "历史记录",
+    label: t("components.lyEditor.modules.navigation.history"),
     icon: "mdi:history",
     onClick: handleOpenSearchHistoryPanel
   }
-];
+]);
 
-const panelItems: CollapsiblePanelItem[] = [
+const panelItems = computed<CollapsiblePanelItem[]>(() => [
   {
     value: "shortcut",
-    label: "快捷方式",
+    label: t("components.lyEditor.modules.navigation.shortcut"),
     slot: "shortcut",
     defaultOpen: true,
     resizable: true
   },
   {
     value: "search-engine",
-    label: "搜索引擎",
+    label: t("components.lyEditor.modules.navigation.searchEngine"),
     slot: "searchEngine",
     resizable: true
   }
-];
+]);
 </script>
 <template>
-  <SidebarPanel title="导航管理" :actions="actions">
+  <SidebarPanel :title="t('components.lyEditor.modules.navigation.title')" :actions="actions">
     <div class="min-h-0 flex-1">
       <CollapsiblePanel :items="panelItems" type="multiple" :min-panel-height="120">
         <template #trailing="{ item }">
@@ -60,7 +61,7 @@ const panelItems: CollapsiblePanelItem[] = [
             icon="lucide:plus"
             color="neutral"
             variant="ghost"
-            tooltip="新增快捷方式"
+            :tooltip="t('components.lyEditor.modules.navigation.newShortcut')"
             @click.stop="shortcutSectionRef?.openForm()"
           />
           <ToolTipButton
@@ -69,7 +70,7 @@ const panelItems: CollapsiblePanelItem[] = [
             icon="lucide:plus"
             color="neutral"
             variant="ghost"
-            tooltip="新增搜索引擎"
+            :tooltip="t('components.lyEditor.modules.navigation.newSearchEngine')"
             @click.stop="searchEngineSectionRef?.openForm()"
           />
         </template>

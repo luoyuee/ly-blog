@@ -7,13 +7,12 @@ import { getFlowchartDetail, updateFlowchart } from "@/apis/canvas-document";
 import { useLogger } from "@/composables/useLogger";
 
 const logger = useLogger();
+const { t } = useI18n();
 const $notify = useNotification();
 
 const props = defineProps({
   tab: {
-    type: Object as PropType<
-      EditorTabItem & { type: "flowchart-panel"; data: FlowchartPanelData }
-    >,
+    type: Object as PropType<EditorTabItem & { type: "flowchart-panel"; data: FlowchartPanelData }>,
     required: true,
     validator: (value: EditorTabItem) => value.type === "flowchart-panel"
   }
@@ -37,7 +36,7 @@ const loadData = async () => {
   } catch (error) {
     logger.error(error);
     $notify.error({
-      title: "加载流程图失败",
+      title: t("components.lyEditor.modules.flowchart.panelLoadFailed"),
       error
     });
   } finally {
@@ -55,12 +54,12 @@ const handleSave = async () => {
     });
 
     $notify.success({
-      title: "保存成功"
+      title: t("message.save.success")
     });
   } catch (error) {
     logger.error(error);
     $notify.error({
-      title: "保存失败",
+      title: t("message.save.error"),
       error
     });
   } finally {
@@ -85,7 +84,7 @@ onMounted(() => {
           :disabled="loading"
           @click="handleSave"
         >
-          保存
+          {{ t("common.save") }}
         </UButton>
       </div>
     </div>

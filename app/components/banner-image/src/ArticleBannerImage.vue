@@ -3,6 +3,8 @@ import type { Article } from "#shared/types/article";
 import type { PropType } from "vue";
 import dayjs from "dayjs";
 
+const { t } = useI18n();
+
 const props = defineProps({
   article: {
     type: Object as PropType<Article>,
@@ -21,24 +23,26 @@ const props = defineProps({
         <div class="article-banner__date">
           <UIcon name="colorful:calendar-round-fill" />
           <span>
-            {{ dayjs(props.article.content_updated_at).format("YYYY年MM月DD日 HH时mm分") }}
+            {{ dayjs(props.article.content_updated_at).format(t("format.longDatetime")) }}
           </span>
         </div>
 
         <div class="article-banner__stats">
           <div class="article-banner__stat">
             <UIcon name="colorful:hot-round-fill" />
-            <span>{{ props.article.view_count }} 阅读</span>
+            <span>{{ props.article.view_count }} {{ t("components.articleBanner.read") }}</span>
           </div>
 
           <div class="article-banner__stat">
             <UIcon name="colorful:message-round-fill" />
-            <span>{{ props.article.comment_count }} 评论</span>
+            <span>
+              {{ props.article.comment_count }} {{ t("components.articleBanner.comment") }}
+            </span>
           </div>
 
           <div class="article-banner__stat">
             <UIcon name="colorful:like-round-fill" />
-            <span>{{ props.article.like_count }} 点赞</span>
+            <span>{{ props.article.like_count }} {{ t("components.articleBanner.like") }}</span>
           </div>
         </div>
       </div>
